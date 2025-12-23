@@ -1,0 +1,127 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1759384017718486560
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2194304942054068172}
+  - component: {fileID: 4904852804001733159}
+  - component: {fileID: 7030115308746548594}
+  - component: {fileID: 273419111398279239}
+  m_Layer: 0
+  m_Name: PurrnetLobbyManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2194304942054068172
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759384017718486560}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4904852804001733159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759384017718486560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 018749c98c25d47418932e090d8f8fbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentProvider: {fileID: 7030115308746548594}
+  createRoomArgs:
+    maxPlayers: 5
+    roomProperties:
+      keys:
+      - PurrNet
+      values:
+      - IsTheBest
+      stringKeys: []
+      stringValues: []
+  searchRoomArgs:
+    keys:
+    - PurrNet
+    values:
+    - IsTheBest
+    stringKeys: []
+    stringValues: []
+  OnRoomJoined:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRoomJoinFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRoomLeft:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRoomUpdated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPlayerListUpdated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRoomSearchResults:
+    m_PersistentCalls:
+      m_Calls: []
+  OnFriendListPulled:
+    m_PersistentCalls:
+      m_Calls: []
+  OnAllReady:
+    m_PersistentCalls:
+      m_Calls: []
+  OnError:
+    m_PersistentCalls:
+      m_Calls: []
+  onInitialized:
+    m_PersistentCalls:
+      m_Calls: []
+  onShutdown:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &7030115308746548594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759384017718486560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15156e7f57bff964485891eba8344bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lobbyType: 2
+  maxLobbiesToFind: 10
+  handleSteamInit: 0
+--- !u!114 &273419111398279239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759384017718486560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bffc99f43c7c4224b8dccb9831f662a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lobbyManager: {fileID: 4904852804001733159}
+  nextScene: NetworkedScene

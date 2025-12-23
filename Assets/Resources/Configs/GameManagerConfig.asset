@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c73d308329c19ae4d809ec61b086fa3f, type: 3}
+  m_Name: GameManagerConfig
+  m_EditorClassIdentifier: 
+  _steamManagerConfig: {fileID: 11400000, guid: 5a139f4ff3668fc478420ab83abd5969, type: 2}
+  _networkManagerConfig: {fileID: 11400000, guid: f145da72aeb15a343a07d43296a05eb4, type: 2}
+  _cameraManagerConfig: {fileID: 11400000, guid: 0bf333f339521044782df1cde448b947, type: 2}
+  _levelManagerConfig: {fileID: 11400000, guid: cc1b3668619f4e5479e567a1e73f0926, type: 2}
+  _stateManagerConfig: {fileID: 11400000, guid: 2354c12001e2e10468f04f3ce416132c, type: 2}
+  _uiManagerConfig: {fileID: 11400000, guid: daa9a11ac22697944aa3c0e00cd5258b, type: 2}
