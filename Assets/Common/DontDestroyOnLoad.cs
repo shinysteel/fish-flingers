@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ShinyOwl
+namespace ShinyOwl.Common
 {
     public class DontDestroyOnLoad : MonoBehaviour
     {

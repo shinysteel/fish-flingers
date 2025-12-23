@@ -1,4 +1,5 @@
 using FishFlingers.Networking;
+using FishFlingers.States;
 using PurrLobby;
 using System;
 using System.Collections;
@@ -15,7 +16,6 @@ namespace FishFlingers.UI
         [SerializeField] private Button _quitButton;
 
         private NetworkManager _networkManager;
-        private UIManager _uiManager;
 
         private BrowseGamesScreen _browseGamesScreen;
 
@@ -27,24 +27,23 @@ namespace FishFlingers.UI
         public override void Load()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
-            _uiManager = GameManager.Instance.Get<UIManager>();
 
-            _browseGamesButton.onClick.AddListener(HandleBrowseGamesButtonClicked);
-            _hostGameButton.onClick.AddListener(HandleHostGameButtonClicked);
-            _quitButton.onClick.AddListener(HandleQuitButtonClicked);
+            _browseGamesButton.onClick.AddListener(BrowseGamesClicked);
+            _hostGameButton.onClick.AddListener(HostGameClicked);
+            _quitButton.onClick.AddListener(QuitClicked);
         }
 
-        private void HandleBrowseGamesButtonClicked()
+        private void BrowseGamesClicked()
         {
             _browseGamesScreen.Show();
         }
 
-        private void HandleHostGameButtonClicked()
+        private void HostGameClicked()
         {
             _networkManager.CreateLobby();
         }
 
-        private void HandleQuitButtonClicked()
+        private void QuitClicked()
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;

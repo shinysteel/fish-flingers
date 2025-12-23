@@ -5,7 +5,7 @@ using System;
 using System.Reflection;
 using System.Linq;
 
-namespace ShinyOwl.Utils
+namespace ShinyOwl.Common.Utils
 {
     public static partial class Utils
     {

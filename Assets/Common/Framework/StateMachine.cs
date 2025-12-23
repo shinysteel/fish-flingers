@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-namespace ShinyOwl.Framework
+
+namespace ShinyOwl.Common.Framework
 {
     /// <summary>
     /// Goals:
@@ -20,60 +21,62 @@ namespace ShinyOwl.Framework
         void Exit();
     }
 
-    public class State<TParent, TSub> : IState
-        where TParent : Enum
-        where TSub    : Enum
+    public class State<TParentStateEnum, TSubStateEnum> : IState
+        where TParentStateEnum : Enum
+        where TSubStateEnum    : Enum
     {
-        protected StateMachine<TParent> _parent;
-        protected StateMachine<TSub> _sub;
+        protected StateMachine<TParentStateEnum> _parentStateMachine;
+        protected StateMachine<TSubStateEnum> _subStateMachine;
 
-        public State(StateMachine<TParent> parent)
+        public State(StateMachine<TParentStateEnum> parent)
         {
-            _parent = parent;
+            _parentStateMachine = parent;
         }
 
         public virtual void Enter()
         {
-            _sub?.Enter();
+            _subStateMachine?.Enter();
         }
 
         public virtual void Update()
         {
-            _sub?.Update();
+            _subStateMachine?.Update();
         }
 
         public virtual void Exit()
         {
-            _sub?.Exit();
+            _subStateMachine?.Exit();
         }
 
-        protected void ChangeState(TSub newStateEnum)
+        protected void ChangeState(TSubStateEnum stateEnum)
         {
-            _sub?.ChangeState(newStateEnum);   
+            _subStateMachine?.ChangeState(stateEnum);   
         }
     }
 
-    public class StateMachine<TState> 
-        where TState : Enum
+    public class StateMachine<TStateEnum> 
+        where TStateEnum : Enum
     {
-        private Dictionary<TState, IState> _enumStateMap = new();
+        private Dictionary<TStateEnum, IState> _enumStateMap = new();
         private IState _currentState;
+
+        public IState CurrentState => _currentState;
 
         public StateMachine()
         {
             // Start off every enum with null. Allows us to skip assigning null to Enum.None
-            foreach (TState stateEnum in Enum.GetValues(typeof(TState)).Cast<TState>())
+            foreach (TStateEnum stateEnum in Enum.GetValues(typeof(TStateEnum)).Cast<TStateEnum>())
             {
                 _enumStateMap.Add(stateEnum, null);
             }
         }
 
-        public void AddState(TState stateEnum, IState state)
+        public void AddState(TStateEnum stateEnum, IState state)
         {
             _enumStateMap[stateEnum] = state;
         }
 
-        public void ChangeState(TState stateEnum)
+        public void ChangeState(TStateEnum stateEnum)
         {
             if (!_enumStateMap.TryGetValue(stateEnum, out IState state))
             {

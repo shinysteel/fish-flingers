@@ -1,0 +1,40 @@
+using UnityEngine;
+
+namespace FishFlingers.Cameras
+{
+    public class OrbitCameraMode : ICameraMode
+    {
+        private Vector3 _center;
+        private float _radius;
+        private float _yOffset;
+        private float _speed;
+        private float _timer;
+
+        public OrbitCameraMode(Vector3 center, float radius, float yOffset, float speed)
+        {
+            _center = center;
+            _radius = radius;
+            _yOffset = yOffset;
+            _speed = speed;
+        }
+
+        public void Enter(Camera camera) 
+        {
+            _timer = 0f;
+        }
+
+        public void LateUpdate(Camera camera)
+        {
+            _timer += Time.deltaTime;
+
+            float x = _center.x + _radius * Mathf.Cos(_speed * _timer);
+            float z = _center.z + _radius * Mathf.Sin(_speed * _timer);
+
+            camera.transform.position = new Vector3(x, _center.y + _yOffset, z);
+
+            camera.transform.LookAt(_center);
+        }
+
+        public void Exit(Camera camera) { }
+    }
+}

@@ -4,6 +4,13 @@ using UnityEngine;
 
 namespace FishFlingers.Cameras
 {
+    public interface ICameraMode
+    {
+        void Enter(Camera camera);
+        void LateUpdate(Camera camera);
+        void Exit(Camera camera);
+    }
+
     public interface ICameraManagerListener
     { }
 
@@ -12,6 +19,7 @@ namespace FishFlingers.Cameras
         private CameraManagerConfig _config;
 
         private Camera _camera;
+        private ICameraMode _mode;
 
         public override void Initialise(GameManagerConfig gameManagerConfig)
         {
@@ -27,8 +35,21 @@ namespace FishFlingers.Cameras
         public override void Shutdown()
         {
             _camera = null;
+            _mode = null;
 
             base.Shutdown();
+        }
+
+        public override void Update()
+        {
+            _mode?.LateUpdate(_camera);
+        }
+
+        public void SetMode(ICameraMode mode)
+        {
+            _mode?.Exit(_camera);
+            _mode = mode;
+            _mode?.Enter(_camera);
         }
     }
 }

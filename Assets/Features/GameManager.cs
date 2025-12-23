@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using ShinyOwl.Utils;
+using ShinyOwl.Common.Utils;
+using NUnit.Framework;
+using ShinyOwl.Common;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,7 +17,7 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get; private set; }
 
-    private const string ConfigPath = "Configs/GameManagerConfig";
+    private const string ConfigPath = "Configs/Managers/GameManagerConfig";
 
     /// <summary>
     /// Needs to be in order of initialisation. Values need to be 1:1 with script names
@@ -25,9 +27,9 @@ public class GameManager : MonoBehaviour
         SteamManager   ,
         NetworkManager ,
         CameraManager  ,
-        LevelManager   ,
         UIManager      ,
         StateManager   ,
+        PoolManager    ,
     }
 
     public TManager Get<TManager>() where TManager : IGameSystem
@@ -68,6 +70,11 @@ public class GameManager : MonoBehaviour
         }
 
         _config = Resources.Load<GameManagerConfig>(ConfigPath);
+        if (_config == null)
+        {
+            Debugger.LogWarning(this, "Unable to locate the GameManagerConfig at the specified path");
+            return;
+        }
 
         // Initialise them
         foreach (IGameSystem manager in _managers)

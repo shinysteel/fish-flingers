@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ShinyOwl.Framework;
+using ShinyOwl.Common.Framework;
 using UnityEngine.SceneManagement;
 
 namespace FishFlingers.States
@@ -10,7 +10,7 @@ namespace FishFlingers.States
     public interface IStateManagerListener
     { }
 
-    public enum EMainState
+    public enum MainState
     {
         None,
         Menus,
@@ -21,7 +21,7 @@ namespace FishFlingers.States
     {
         private StateManagerConfig _config;
 
-        private StateMachine<EMainState> _stateMachine;
+        private StateMachine<MainState> _stateMachine;
         private MenusState _menusState;
         private GameplayState _gameplayState;
 
@@ -33,8 +33,8 @@ namespace FishFlingers.States
             _menusState = new MenusState(_stateMachine);
             _gameplayState = new GameplayState(_stateMachine);
 
-            _stateMachine.AddState(EMainState.Menus, _menusState);
-            _stateMachine.AddState(EMainState.Gameplay, _gameplayState);
+            _stateMachine.AddState(MainState.Menus, _menusState);
+            _stateMachine.AddState(MainState.Gameplay, _gameplayState);
 
             base.Initialise(gameManagerConfig);
 
@@ -46,7 +46,7 @@ namespace FishFlingers.States
                     return;
                 }
 
-                _stateMachine.ChangeState(EMainState.Menus);
+                _stateMachine.ChangeState(MainState.Menus);
                 SceneManager.sceneUnloaded -= HandleSceneUnloaded;
             }
         }
@@ -54,6 +54,11 @@ namespace FishFlingers.States
         public override void Update()
         {
             _stateMachine.Update();
+        }
+
+        public void ChangeState(MainState state)
+        {
+            _stateMachine.ChangeState(state);
         }
     }
 }

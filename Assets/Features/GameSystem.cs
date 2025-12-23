@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ShinyOwl.Framework;
+using ShinyOwl.Common.Framework;
 
 public interface IGameSystem
 {
