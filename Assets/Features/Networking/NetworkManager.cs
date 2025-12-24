@@ -67,7 +67,7 @@ namespace FishFlingers.Networking
 
         public async Task<SteamLobby[]> SearchLobbies()
         {
-            SteamLobby[] lobbies = await _steamLobbyService.SearchLobbies();
+            SteamLobby[] lobbies = await _steamLobbyService.SearchLobbiesAsync();
             return lobbies;
         }
 

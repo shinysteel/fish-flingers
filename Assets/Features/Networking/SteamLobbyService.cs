@@ -58,7 +58,7 @@ namespace FishFlingers.Networking
         public event Action OnLobbyGameServerSet;
 
         // Replace these once the player can specify what lobby they want to create
-        private const ELobbyType DefaultLobbyType = ELobbyType.k_ELobbyTypeFriendsOnly;
+        private const ELobbyType DefaultLobbyType = ELobbyType.k_ELobbyTypePublic;
         private const int DefaultMemberLimit = 4;
 
         private const string NameKey = "name";
@@ -84,7 +84,7 @@ namespace FishFlingers.Networking
             }
         }
 
-        public async Task<SteamLobby[]> SearchLobbies()
+        public async Task<SteamLobby[]> SearchLobbiesAsync()
         {
             if (!IsAvailable())
             {

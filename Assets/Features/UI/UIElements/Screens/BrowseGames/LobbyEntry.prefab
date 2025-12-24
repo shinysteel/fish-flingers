@@ -54,6 +54,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9412d8719cc42ef4fbe6a301a314901d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.UI.LobbyEntry
+  _button: {fileID: 1376436237268072245}
   _nameText: {fileID: 5880478328624274087}
   _playerCountText: {fileID: 7794252877615149004}
 --- !u!222 &572326613701817962

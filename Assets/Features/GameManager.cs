@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using ShinyOwl.Common.Utils;
 using NUnit.Framework;
 using ShinyOwl.Common;
+using Steam;
 
 public class GameManager : MonoBehaviour
 {
