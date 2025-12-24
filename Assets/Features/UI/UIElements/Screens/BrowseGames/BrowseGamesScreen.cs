@@ -1,6 +1,7 @@
 using FishFlingers.Networking;
 using PurrLobby;
 using ShinyOwl.Common;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,9 +29,9 @@ namespace FishFlingers.UI
             _closeButton.onClick.AddListener(CloseClicked);
         }
 
-        public override void Show()
+        public override void Show(Action onComplete)
         {
-            base.Show();
+            base.Show(onComplete);
 
             Search();
         }
@@ -69,7 +70,7 @@ namespace FishFlingers.UI
 
         private void CloseClicked()
         {
-            Hide();
+            Hide(null);
         }
 
         // Use pooling once we allow the scroll rect to display only what is on screen

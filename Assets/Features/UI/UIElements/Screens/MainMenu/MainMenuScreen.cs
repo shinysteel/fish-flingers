@@ -35,7 +35,7 @@ namespace FishFlingers.UI
 
         private void BrowseGamesClicked()
         {
-            _browseGamesScreen.Show();
+            _browseGamesScreen.Show(null);
         }
 
         private void HostGameClicked()

@@ -1,3 +1,4 @@
+using FishFlingers.UI.Transitions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,11 +16,16 @@ namespace FishFlingers.UI
         public Canvas GameCanvasPrefab => _gameCanvasPrefab;
         public EventSystem EventSystemPrefab => _eventSystemPrefab;
 
-        [Header("UI Elements")]
+        [Header("Screens")]
         [SerializeField] private MainMenuScreen _mainMenuScreen;
         [SerializeField] private BrowseGamesScreen _browseGamesScreen;
 
         public MainMenuScreen MainMenuScreen => _mainMenuScreen;
         public BrowseGamesScreen BrowseGamesScreen => _browseGamesScreen;
+
+        [Header("Overlays")]
+        [SerializeField] private FadeOverlay _fadeOverlay;
+
+        public FadeOverlay FadeOverlay => _fadeOverlay;
     }
 }

@@ -15,7 +15,7 @@ MonoBehaviour:
   _steamManagerConfig: {fileID: 11400000, guid: 5a139f4ff3668fc478420ab83abd5969, type: 2}
   _networkManagerConfig: {fileID: 11400000, guid: f145da72aeb15a343a07d43296a05eb4, type: 2}
   _cameraManagerConfig: {fileID: 11400000, guid: 0bf333f339521044782df1cde448b947, type: 2}
-  _levelManagerConfig: {fileID: 11400000, guid: cc1b3668619f4e5479e567a1e73f0926, type: 2}
   _stateManagerConfig: {fileID: 11400000, guid: 2354c12001e2e10468f04f3ce416132c, type: 2}
   _uiManagerConfig: {fileID: 11400000, guid: daa9a11ac22697944aa3c0e00cd5258b, type: 2}
   _poolManagerConfig: {fileID: 11400000, guid: 795fa2137580ffe4aa41acac8240970a, type: 2}
+  _transitionManagerConfig: {fileID: 11400000, guid: 8602e473d3e751b4496939b6153579ff, type: 2}

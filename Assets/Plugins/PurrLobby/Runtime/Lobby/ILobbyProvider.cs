@@ -31,6 +31,7 @@ namespace PurrLobby {
         // Events
         event UnityAction<string> OnLobbyJoinFailed;
         event UnityAction OnLobbyLeft;
+        event UnityAction<Lobby> OnLobbyJoined;
         event UnityAction<Lobby> OnLobbyUpdated;
         event UnityAction<List<LobbyUser>> OnLobbyPlayerListUpdated;
         event UnityAction<List<FriendUser>> OnFriendListPulled;

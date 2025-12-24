@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,16 +12,18 @@ namespace FishFlingers.UI
         public virtual void Load()
         { }
 
-        public virtual void Show()
+        public virtual void Show(Action onComplete)
         {
             _isVisible = true;
             gameObject.SetActive(true);
+            onComplete?.Invoke();
         }
 
-        public virtual void Hide()
+        public virtual void Hide(Action onComplete)
         {
             _isVisible = false;
             gameObject.SetActive(false);
+            onComplete?.Invoke();
         }
 
         public virtual void Unload()

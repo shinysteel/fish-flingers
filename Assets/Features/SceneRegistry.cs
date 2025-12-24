@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Couldn't figure out how to serialise scenes in inspector. This is as good
@@ -40,8 +41,13 @@ public static class SceneRegistry
         }
     }
 
-    public static string GetSceneName(EScene scene)
+    public static string GetSceneName(EScene sceneEnum)
     {
-        return _registry[scene];
+        return _registry[sceneEnum];
+    }
+
+    public static Scene GetScene(EScene sceneEnum)
+    {
+        return SceneManager.GetSceneByName(GetSceneName(sceneEnum));
     }
 }

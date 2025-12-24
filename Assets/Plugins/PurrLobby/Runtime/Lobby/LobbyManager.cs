@@ -20,16 +20,15 @@ namespace PurrLobby
         public SerializableDictionary<string, string> searchRoomArgs = new();
 
         // Events exposed by the manager
-        public UnityEvent<Lobby> OnRoomJoined = new UnityEvent<Lobby>();
         public UnityEvent<string> OnRoomJoinFailed = new UnityEvent<string>();
         public UnityEvent OnRoomLeft = new UnityEvent();
+        public UnityEvent<Lobby> OnRoomJoined = new UnityEvent<Lobby>();
         public UnityEvent<Lobby> OnRoomUpdated = new UnityEvent<Lobby>();
         public UnityEvent<List<LobbyUser>> OnPlayerListUpdated = new UnityEvent<List<LobbyUser>>();
         public UnityEvent<List<Lobby>> OnRoomSearchResults = new UnityEvent<List<Lobby>>();
         public UnityEvent<List<FriendUser>> OnFriendListPulled = new UnityEvent<List<FriendUser>>();
         public UnityEvent OnAllReady = new UnityEvent();
         public UnityEvent<string> OnError = new UnityEvent<string>();
-
         public UnityEvent onInitialized = new UnityEvent();
         public UnityEvent onShutdown = new UnityEvent();
 
@@ -159,7 +158,7 @@ namespace PurrLobby
             _currentProvider.OnLobbyPlayerListUpdated += players => InvokeDelayed(() => OnPlayerListUpdated.Invoke(players));
             _currentProvider.OnError += error => InvokeDelayed(() => OnError.Invoke(error));
             
-            _currentProvider.OnLobbyUpdated += room =>
+            _currentProvider.OnLobbyJoined += room =>
             {
                 if (room.IsValid)
                 {
@@ -178,7 +177,7 @@ namespace PurrLobby
             _currentProvider.OnError -= error => InvokeDelayed(() => OnError.Invoke(error));
 
             // ReSharper disable once EventUnsubscriptionViaAnonymousDelegate
-            _currentProvider.OnLobbyUpdated -= room =>
+            _currentProvider.OnLobbyJoined -= room =>
             {
                 if (room.IsValid)
                 {
@@ -241,7 +240,7 @@ namespace PurrLobby
                 EnsureProviderSet();
                 var room = await _currentProvider.CreateLobbyAsync(maxPlayers, roomProperties);
                 _currentLobby = room;
-                OnRoomUpdated?.Invoke(room);
+                OnRoomJoined?.Invoke(room);
             });
         }
 
@@ -277,6 +276,8 @@ namespace PurrLobby
         /// <param name="roomId">ID of the lobby to join</param>
         public void JoinLobby(string roomId)
         {
+            Debug.Log("join lobby");
+
             if (string.IsNullOrEmpty(roomId))
             {
                 OnRoomJoinFailed?.Invoke("Null or empty room ID.");
@@ -286,6 +287,7 @@ namespace PurrLobby
             RunTask(async () =>
             {
                 EnsureProviderSet();
+                Debug.Log("wait async");
                 var room = await _currentProvider.JoinLobbyAsync(roomId);
                 if (room.IsValid)
                 {

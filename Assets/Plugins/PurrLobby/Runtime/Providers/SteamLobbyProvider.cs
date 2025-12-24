@@ -36,6 +36,7 @@ namespace PurrLobby.Providers
 
         public event UnityAction<string> OnLobbyJoinFailed;
         public event UnityAction OnLobbyLeft;
+        public event UnityAction<Lobby> OnLobbyJoined;
         public event UnityAction<Lobby> OnLobbyUpdated;
         public event UnityAction<List<LobbyUser>> OnLobbyPlayerListUpdated;
         public event UnityAction<List<FriendUser>> OnFriendListPulled;
@@ -258,7 +259,7 @@ namespace PurrLobby.Providers
                 GetLobbyProperties(_currentLobby)
             );
 
-            OnLobbyUpdated?.Invoke(lobby);
+            OnLobbyJoined?.Invoke(lobby);
             return lobby;
         }
 

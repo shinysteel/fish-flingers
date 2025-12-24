@@ -24,12 +24,13 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private enum Manager
     {
-        SteamManager   ,
-        NetworkManager ,
-        CameraManager  ,
-        UIManager      ,
-        StateManager   ,
-        PoolManager    ,
+        SteamManager      ,
+        NetworkManager    ,
+        CameraManager     ,
+        UIManager         ,
+        StateManager      ,
+        PoolManager       ,
+        TransitionManager , 
     }
 
     public TManager Get<TManager>() where TManager : IGameSystem
@@ -50,7 +51,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         InitialiseManagers();
-        
+
         SceneManager.LoadSceneAsync(SceneRegistry.GetSceneName(EScene.Game));
     }
 
