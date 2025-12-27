@@ -61,7 +61,7 @@ namespace FishFlingers.UI
         private async Task SearchAsync()
         {
             _searchTimer = 0f;
-            SteamLobby[] lobbies = await _networkManager.SearchLobbies();
+            Lobby[] lobbies = await _networkManager.SearchLobbies();
 
             if (!_isVisible)
             {

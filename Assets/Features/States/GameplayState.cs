@@ -44,7 +44,7 @@ namespace FishFlingers.States
 
         public override void Enter()
         {
-            if (_networkManager.CurrentLobby.OwnerId == SteamUser.GetSteamID())
+            if (_networkManager.CurrentLobby.OwnerId == SteamUser.GetSteamID().ToString())
             {
                 _networkManager.StartServer();
             }
@@ -83,7 +83,7 @@ namespace FishFlingers.States
             _sceneManager.SetActiveScene(EScene.Default);
         }
 
-        public void OnLobbyEnter(SteamLobby lobby)
+        public void OnLobbyEnter(Lobby lobby)
         {
             // This can happen from any state besides itself. Currently we 
             // assume you are 'ready' straight away and move to the GameplayState
@@ -92,7 +92,7 @@ namespace FishFlingers.States
                 return;
             }
 
-            if (lobby.OwnerId == SteamUser.GetSteamID())
+            if (lobby.OwnerId == SteamUser.GetSteamID().ToString())
             {
                 _networkManager.StartLobby();
             }
@@ -131,7 +131,7 @@ namespace FishFlingers.States
         }
 
         public void OnLobbyLeave()  { }
-        public void OnLobbyCreated(SteamLobby lobby) { }
+        public void OnLobbyCreated(Lobby lobby) { }
         public void OnPlayerJoined(PurrNet.PlayerID id, bool isReconnect) { }
         public void OnPlayerLeft(PurrNet.PlayerID id) { }
         public void OnClientConnectionState(ConnectionState state) { }

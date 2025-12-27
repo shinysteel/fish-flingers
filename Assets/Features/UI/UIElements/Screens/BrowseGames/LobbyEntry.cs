@@ -15,7 +15,7 @@ namespace FishFlingers.UI
 
         private NetworkManager _networkManager;
 
-        private CSteamID _lobbyId;
+        private string _lobbyId;
 
         private void Start()
         {
@@ -24,17 +24,17 @@ namespace FishFlingers.UI
             _button.onClick.AddListener(Pressed);
         }
 
-        public void Setup(SteamLobby lobby)
+        public void Setup(Lobby lobby)
         {
             _lobbyId = lobby.LobbyId;
 
             _nameText.text = lobby.Name;
-            _playerCountText.text = $"{lobby.Members.Length} / {lobby.MemberLimit}";
+            _playerCountText.text = $"{lobby.Members.Count} / {lobby.MemberLimit}";
         }
 
         private void Pressed()
         {
-            _networkManager.JoinLobbyAsync(_lobbyId);
+            _ = _networkManager.JoinLobbyAsync(_lobbyId);
         }
     }
 }

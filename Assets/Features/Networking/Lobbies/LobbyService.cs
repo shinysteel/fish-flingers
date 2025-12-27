@@ -1,6 +1,7 @@
-using UnityEngine;
-using System.Threading.Tasks;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace FishFlingers.Networking
 {
@@ -38,12 +39,28 @@ namespace FishFlingers.Networking
         }
     }
 
-    public interface ILobbyService
+    public abstract class LobbyService
     {
-        Task<Lobby[]> SearchLobbiesAsync();
-        Task<Lobby> CreateLobbyAsync();
-        Task<Lobby> JoinLobbyAsync(string lobbyId);
-        void StartLobby();
-        void LeaveLobby();
+        protected Lobby _currentLobby;
+        public Lobby CurrentLobby => _currentLobby;
+
+        protected const int DefaultMemberLimit = 4;
+
+        public event Action<Lobby> OnLobbyCreated;
+        public event Action<Lobby> OnLobbyEnter;
+        public event Action OnLobbyLeave;
+        public event Action OnLobbyGameServerSet;
+
+        public abstract void Shutdown();
+        public abstract Task<Lobby[]> SearchLobbiesAsync();
+        public abstract Task<Lobby> CreateLobbyAsync();
+        public abstract Task<Lobby> JoinLobbyAsync(string lobbyId);
+        public abstract void StartLobby();
+        public abstract void LeaveLobby();
+
+        protected void RaiseOnLobbyCreated(Lobby lobby) => OnLobbyCreated?.Invoke(lobby);
+        protected void RaiseOnLobbyEnter(Lobby lobby) => OnLobbyEnter?.Invoke(lobby);
+        protected void RaiseOnLobbyLeave() => OnLobbyLeave?.Invoke();
+        protected void RaiseOnLobbyGameServerSet() => OnLobbyGameServerSet?.Invoke();
     }
 }

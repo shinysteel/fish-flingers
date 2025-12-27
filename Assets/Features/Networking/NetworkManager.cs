@@ -16,8 +16,8 @@ namespace FishFlingers.Networking
 {
     public interface INetworkManagerListener
     {
-        void OnLobbyCreated(SteamLobby lobby);
-        void OnLobbyEnter(SteamLobby lobby);
+        void OnLobbyCreated(Lobby lobby);
+        void OnLobbyEnter(Lobby lobby);
         void OnLobbyLeave();
         void OnLobbyGameServerSet();
         void OnNetworkStarted(bool asServer);
@@ -33,7 +33,7 @@ namespace FishFlingers.Networking
         private PurrNet.NetworkManager _purrnetNetworkManager;
         private SteamLobbyService _steamLobbyService;
 
-        public SteamLobby CurrentLobby => _steamLobbyService.CurrentLobby;
+        public Lobby CurrentLobby => _steamLobbyService.CurrentLobby; 
 
         public UDPTransport Transport => (UDPTransport)_purrnetNetworkManager.transport;
         public PlayerID LocalPlayer => _purrnetNetworkManager.localPlayer;
@@ -106,21 +106,21 @@ namespace FishFlingers.Networking
             _purrnetNetworkManager.playerModule.KickPlayer(id);
         }
 
-        public async Task<SteamLobby[]> SearchLobbies()
+        public async Task<Lobby[]> SearchLobbies()
         {
-            SteamLobby[] lobbies = await _steamLobbyService.SearchLobbiesAsync();
+            Lobby[] lobbies = await _steamLobbyService.SearchLobbiesAsync();
             return lobbies;
         }
 
-        public async Task<SteamLobby> CreateLobbyAsync()
+        public async Task<Lobby> CreateLobbyAsync()
         {
-            SteamLobby lobby = await _steamLobbyService.CreateLobbyAsync();
+            Lobby lobby = await _steamLobbyService.CreateLobbyAsync();
             return lobby;
         }
 
-        public async Task<SteamLobby> JoinLobbyAsync(CSteamID lobbyId)
+        public async Task<Lobby> JoinLobbyAsync(string lobbyId)
         {
-            SteamLobby lobby = await _steamLobbyService.JoinLobbyAsync(lobbyId);
+            Lobby lobby = await _steamLobbyService.JoinLobbyAsync(lobbyId);
             return lobby;
         }
 
@@ -154,8 +154,8 @@ namespace FishFlingers.Networking
             _purrnetNetworkManager.StopClient();
         }
 
-        private void HandleLobbyCreated(SteamLobby lobby) => Listeners.Dispatch(NotifyOnLobbyCreated, lobby);
-        private void HandleLobbyEnter(SteamLobby lobby) => Listeners.Dispatch(NotifyOnLobbyEnter, lobby);
+        private void HandleLobbyCreated(Lobby lobby) => Listeners.Dispatch(NotifyOnLobbyCreated, lobby);
+        private void HandleLobbyEnter(Lobby lobby) => Listeners.Dispatch(NotifyOnLobbyEnter, lobby);
         private void HandleLobbyLeave() => Listeners.Dispatch(NotifyOnLobbyLeave);
         private void HandleLobbyGameServerSet() => Listeners.Dispatch(NotifyOnLobbyGameServerSet);
         private void HandleNetworkStarted(PurrNet.NetworkManager manager, bool asServer) => Listeners.Dispatch(NotifyOnNetworkStarted, asServer);
@@ -164,8 +164,8 @@ namespace FishFlingers.Networking
         private void HandlePlayerJoined(PlayerID id, bool isReconnect, bool asServer) => Listeners.Dispatch(NotifyOnPlayerJoined, id, isReconnect, asServer);
         private void HandlePlayerLeft(PlayerID id, bool asServer) => Listeners.Dispatch(NotifyOnPlayerLeft, id, asServer);
 
-        private static void NotifyOnLobbyCreated(INetworkManagerListener listener, SteamLobby lobby) => listener.OnLobbyCreated(lobby);
-        private static void NotifyOnLobbyEnter(INetworkManagerListener listener, SteamLobby lobby) => listener.OnLobbyEnter(lobby);
+        private static void NotifyOnLobbyCreated(INetworkManagerListener listener, Lobby lobby) => listener.OnLobbyCreated(lobby);
+        private static void NotifyOnLobbyEnter(INetworkManagerListener listener, Lobby lobby) => listener.OnLobbyEnter(lobby);
         private static void NotifyOnLobbyLeave(INetworkManagerListener listener) => listener.OnLobbyLeave();
         private static void NotifyOnLobbyGameServerSet(INetworkManagerListener listener) => listener.OnLobbyGameServerSet();
         private static void NotifyOnNetworkStarted(INetworkManagerListener listener, bool asServer) => listener.OnNetworkStarted(asServer);

@@ -1,20 +1,21 @@
+using PurrNet;
+using PurrNet.Packing;
+using PurrNet.Transports;
 using ShinyOwl.Common;
+using ShinyOwl.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
-using System.Net;
-using PurrNet.Transports;
-using ShinyOwl.Common.Utils;
-using PurrNet.Packing;
-using PurrNet;
 
 namespace FishFlingers.Networking
 {
-    public class LocalLobbyService : ILobbyService, INetworkManagerListener
+    public class LocalLobbyService : LobbyService, INetworkManagerListener
     {
         private NetworkManager _networkManager;
 
@@ -51,7 +52,7 @@ namespace FishFlingers.Networking
             StartListening();
         }
 
-        public void Shutdown()
+        public override void Shutdown()
         {
             StopBroadcasting();
             StopListening();
@@ -63,12 +64,12 @@ namespace FishFlingers.Networking
             _listenerClient?.Dispose();
         }
 
-        public Task<Lobby[]> SearchLobbiesAsync()
+        public override Task<Lobby[]> SearchLobbiesAsync()
         {
             return Task.FromResult(_knownLobbies.Values.ToArray());
         }
 
-        public Task<Lobby> CreateLobbyAsync()
+        public override Task<Lobby> CreateLobbyAsync()
         {
             string ownerId = _networkManager.LocalPlayer.ToString();
             string name = $"{ownerId}'s Lobby";
@@ -83,7 +84,7 @@ namespace FishFlingers.Networking
             return Task.FromResult(_currentLobby);
         }
 
-        public Task<Lobby> JoinLobbyAsync(string lobbyId)
+        public override Task<Lobby> JoinLobbyAsync(string lobbyId)
         {
             if (_knownLobbies.TryGetValue(lobbyId, out Lobby lobby))
             {
@@ -104,12 +105,12 @@ namespace FishFlingers.Networking
             return null;
         }
 
-        public void StartLobby()
+        public override void StartLobby()
         {
 
         }
 
-        public void LeaveLobby()
+        public override void LeaveLobby()
         {
             StopBroadcasting();
         }
@@ -217,8 +218,8 @@ namespace FishFlingers.Networking
             Debugger.Log(this, $"Received join accept message. Id: {id}, message.lobbyyId: {message.lobbyId}, asServer: {asServer}");
         }
 
-        public void OnLobbyCreated(SteamLobby lobby) { }
-        public void OnLobbyEnter(SteamLobby lobby) { }
+        public void OnLobbyCreated(Lobby lobby) { }
+        public void OnLobbyEnter(Lobby lobby) { }
         public void OnLobbyLeave() { }
         public void OnLobbyGameServerSet() { }
         public void OnClientConnectionState(ConnectionState state) { }

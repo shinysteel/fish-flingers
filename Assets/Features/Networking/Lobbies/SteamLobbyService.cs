@@ -8,61 +8,18 @@ using UnityEngine;
 
 namespace FishFlingers.Networking
 {
-    public class SteamLobbyMember
-    {
-        public CSteamID Id { get; private set; }
-        public string DisplayName { get; private set; }
-
-        // public Texture2D Avatar { get; private set; }
-
-        public SteamLobbyMember(CSteamID id, string displayName)
-        {
-            Id = id;
-            DisplayName = displayName;
-        }
-    }
-
-    public class SteamLobby
-    {
-        public string Name { get; private set; }
-        public CSteamID LobbyId { get; private set; } = CSteamID.Nil;
-        public CSteamID OwnerId { get; private set; } = CSteamID.Nil;
-        public int MemberLimit { get; private set; }
-        public SteamLobbyMember[] Members { get; private set; }
-        public Dictionary<string, string> Properties { get; private set; }
-
-        public SteamLobby(string name, CSteamID lobbyId, CSteamID ownerId, int memberLimit, SteamLobbyMember[] members, Dictionary<string, string> properties)
-        {
-            Name = name;
-            LobbyId = lobbyId;
-            OwnerId = ownerId;
-            MemberLimit = memberLimit;
-            Members = members;
-            Properties = properties;
-        } 
-    }
-
-    public class SteamLobbyService
+    public class SteamLobbyService : LobbyService
     {
         private CallResult<LobbyMatchList_t> _lobbyMatchListListener;
         private CallResult<LobbyCreated_t> _lobbyCreatedListener;
         private CallResult<LobbyEnter_t> _lobbyEnterListener;
 
-        private SteamLobby _currentLobby;
-        public SteamLobby CurrentLobby => _currentLobby;
-
-        public event Action<SteamLobby> OnLobbyCreated;
-        public event Action<SteamLobby> OnLobbyEnter;
-        public event Action OnLobbyLeave;
-        public event Action OnLobbyGameServerSet;
-
-        // Replace these once the player can specify what lobby they want to create
+        // Replace this once the player can specify what lobby they want to create
         private const ELobbyType DefaultLobbyType = ELobbyType.k_ELobbyTypePublic;
-        private const int DefaultMemberLimit = 4;
 
         private const string NameKey = "name";
 
-        public void Shutdown()
+        public override void Shutdown()
         {
             _lobbyCreatedListener?.Dispose();
             _lobbyEnterListener?.Dispose();
@@ -81,9 +38,16 @@ namespace FishFlingers.Networking
             {
                 return false;
             }
+        } 
+
+        // It's no good storing the same thing in two places, so instead of storing the lobby id both here
+        // and in _currentLobby.LobbyId, let's just point to it. The tradeoff is we need to create it for each request
+        private CSteamID GetLobbyId()
+        {
+            return new CSteamID(ulong.Parse(_currentLobby.LobbyId));
         }
 
-        public async Task<SteamLobby[]> SearchLobbiesAsync()
+        public override async Task<Lobby[]> SearchLobbiesAsync()
         {
             if (!IsAvailable())
             {
@@ -94,11 +58,11 @@ namespace FishFlingers.Networking
             SteamAPICall_t call = SteamMatchmaking.RequestLobbyList();
 
             // Listen for the result
-            TaskCompletionSource<SteamLobby[]> tcs = new();
+            TaskCompletionSource<Lobby[]> tcs = new();
             _lobbyMatchListListener ??= CallResult<LobbyMatchList_t>.Create();
             _lobbyMatchListListener.Set(call, (LobbyMatchList_t lobbyMatchList, bool ioFailure) =>
             {
-                SteamLobby[] lobbies = new SteamLobby[lobbyMatchList.m_nLobbiesMatching];
+                Lobby[] lobbies = new Lobby[lobbyMatchList.m_nLobbiesMatching];
 
                 for (int i = 0; i < lobbies.Length; i++)
                 {
@@ -106,10 +70,10 @@ namespace FishFlingers.Networking
                     string name = SteamMatchmaking.GetLobbyData(lobbyId, NameKey);
                     CSteamID ownerId = SteamMatchmaking.GetLobbyOwner(lobbyId);
                     int memberLimit = SteamMatchmaking.GetLobbyMemberLimit(lobbyId);
-                    SteamLobbyMember[] members = GetLobbyMembers(lobbyId);
+                    List<LobbyMember> members = GetLobbyMembers(lobbyId);
                     Dictionary<string, string> properties = GetLobbyProperties(lobbyId);
 
-                    lobbies[i] = new SteamLobby(name, lobbyId, ownerId, memberLimit, members, properties);
+                    lobbies[i] = new Lobby(name, lobbyId.ToString(), ownerId.ToString(), memberLimit, members, properties);
                 }
 
                 tcs.SetResult(lobbies);
@@ -118,7 +82,7 @@ namespace FishFlingers.Networking
             return await tcs.Task;
         }
 
-        public async Task<SteamLobby> CreateLobbyAsync()
+        public override async Task<Lobby> CreateLobbyAsync()
         {
             if (!IsAvailable())
             {
@@ -153,25 +117,27 @@ namespace FishFlingers.Networking
             SteamMatchmaking.SetLobbyData(lobbyId, NameKey, lobbyName);
 
             CSteamID ownerId = SteamMatchmaking.GetLobbyOwner(lobbyId);
-            SteamLobbyMember[] members = GetLobbyMembers(lobbyId);
+            List<LobbyMember> members = GetLobbyMembers(lobbyId);
             Dictionary<string, string> properties = GetLobbyProperties(lobbyId);
 
-            _currentLobby = new SteamLobby(lobbyName, lobbyId, ownerId, DefaultMemberLimit, members, properties);
+            _currentLobby = new Lobby(lobbyName, lobbyId.ToString(), ownerId.ToString(), DefaultMemberLimit, members, properties);
 
-            OnLobbyCreated?.Invoke(_currentLobby);
-            OnLobbyEnter?.Invoke(_currentLobby);
+            RaiseOnLobbyCreated(_currentLobby);
+            RaiseOnLobbyEnter(_currentLobby);
             return _currentLobby;
         }
 
-        public async Task<SteamLobby> JoinLobbyAsync(CSteamID lobbyId)
+        public override async Task<Lobby> JoinLobbyAsync(string lobbyId)
         {
             if (!IsAvailable())
             {
                 return null;
             }
 
+            CSteamID cLobbyId = new CSteamID(ulong.Parse(lobbyId));
+
             // Tell steam to join a lobby
-            SteamAPICall_t call = SteamMatchmaking.JoinLobby(lobbyId);
+            SteamAPICall_t call = SteamMatchmaking.JoinLobby(cLobbyId);
 
             // Listen for the result
             TaskCompletionSource<bool> tcs = new();
@@ -187,19 +153,19 @@ namespace FishFlingers.Networking
                 return null;
             }
 
-            string lobbyName = SteamMatchmaking.GetLobbyData(lobbyId, NameKey);
-            CSteamID ownerId = SteamMatchmaking.GetLobbyOwner(lobbyId);
-            int memberLimit = SteamMatchmaking.GetLobbyMemberLimit(lobbyId);
-            SteamLobbyMember[] members = GetLobbyMembers(lobbyId);
-            Dictionary<string, string> properties = GetLobbyProperties(lobbyId);
+            string lobbyName = SteamMatchmaking.GetLobbyData(cLobbyId, NameKey);
+            CSteamID ownerId = SteamMatchmaking.GetLobbyOwner(cLobbyId);
+            int memberLimit = SteamMatchmaking.GetLobbyMemberLimit(cLobbyId);
+            List<LobbyMember> members = GetLobbyMembers(cLobbyId);
+            Dictionary<string, string> properties = GetLobbyProperties(cLobbyId);
 
-            _currentLobby = new SteamLobby(lobbyName, lobbyId, ownerId, memberLimit, members, properties);
+            _currentLobby = new Lobby(lobbyName, lobbyId, ownerId.ToString(), memberLimit, members, properties);
 
-            OnLobbyEnter?.Invoke(_currentLobby);
+            RaiseOnLobbyEnter(_currentLobby);
             return _currentLobby;
         }
 
-        public void StartLobby()
+        public override void StartLobby()
         {
             if (!IsAvailable())
             {
@@ -211,11 +177,12 @@ namespace FishFlingers.Networking
                 return;
             }
 
-            SteamMatchmaking.SetLobbyGameServer(_currentLobby.LobbyId, 0, 0, SteamUser.GetSteamID());
-            OnLobbyGameServerSet?.Invoke();
+            SteamMatchmaking.SetLobbyGameServer(GetLobbyId(), 0, 0, SteamUser.GetSteamID());
+
+            RaiseOnLobbyGameServerSet();
         }
 
-        public void LeaveLobby()
+        public override void LeaveLobby()
         {
             if (!IsAvailable())
             {
@@ -227,21 +194,22 @@ namespace FishFlingers.Networking
                 return;
             }
 
-            SteamMatchmaking.LeaveLobby(_currentLobby.LobbyId);
+            SteamMatchmaking.LeaveLobby(GetLobbyId());
             _currentLobby = null;
-            OnLobbyLeave?.Invoke();
+
+            RaiseOnLobbyLeave();
         }
 
-        private SteamLobbyMember[] GetLobbyMembers(CSteamID lobbyId)
+        private List<LobbyMember> GetLobbyMembers(CSteamID lobbyId)
         {
-            SteamLobbyMember[] members = new SteamLobbyMember[SteamMatchmaking.GetNumLobbyMembers(lobbyId)];
+            List<LobbyMember> members = new(); 
 
-            for (int i = 0; i < members.Length; i++)
+            for (int i = 0; i < SteamMatchmaking.GetNumLobbyMembers(lobbyId); i++)
             {
                 CSteamID memberId = SteamMatchmaking.GetLobbyMemberByIndex(lobbyId, i);
                 string displayName = SteamFriends.GetFriendPersonaName(memberId);
 
-                members[i] = new SteamLobbyMember(memberId, displayName);
+                members.Add(new LobbyMember(memberId.ToString(), displayName));
             }
 
             return members;
