@@ -12,13 +12,13 @@ namespace FishFlingers.UI
 
         // Generally will only have one callback that is invoked once Show or Hide ends. Is cumulative
         // to allow repeated calls without losing the previous callbacks
-        private List<Action> _pending = new();
+        private List<Action> _onCompleteActions = new();
 
         public override void Show(Action onComplete)
         {
             if (_showSequence.isAlive)
             {
-                _pending.Add(onComplete);
+                _onCompleteActions.Add(onComplete);
                 return;
             }
 
@@ -30,7 +30,7 @@ namespace FishFlingers.UI
 
             _isVisible = true;
             gameObject.SetActive(true);
-            _pending.Add(onComplete);
+            _onCompleteActions.Add(onComplete);
 
             _showSequence = CreateShowSequence();
             _showSequence.OnComplete(ExecutePending);
@@ -40,7 +40,7 @@ namespace FishFlingers.UI
         {
             if (_hideSequence.isAlive)
             {
-                _pending.Add(onComplete);
+                _onCompleteActions.Add(onComplete);
                 return;
             }
 
@@ -50,7 +50,7 @@ namespace FishFlingers.UI
                 _showSequence.Stop();
             }
 
-            _pending.Add(onComplete);
+            _onCompleteActions.Add(onComplete);
 
             _hideSequence = CreateHideSequence();
             _hideSequence.OnComplete(() =>
@@ -72,12 +72,13 @@ namespace FishFlingers.UI
 
         private void ExecutePending()
         {
-            foreach (Action pending in _pending)
-            {
-                pending?.Invoke();
-            }
+            Action[] actions = _onCompleteActions.ToArray();
+            _onCompleteActions.Clear();
 
-            _pending.Clear();
+            foreach (Action action in actions)
+            {
+                action?.Invoke();
+            }
         }
     }
 }

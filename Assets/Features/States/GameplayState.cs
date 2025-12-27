@@ -54,10 +54,18 @@ namespace FishFlingers.States
 
         public override async Task EnterAsync()
         {
-            // Use the network manager to load the game scene so that it can be networked
             if (_networkManager.IsServer)
             {
+                // Use the network manager to load the game scene so that it can be networked
                 await _sceneManager.LoadSceneAsync(EScene.Game, LoadSceneMode.Additive, LoadSceneContext.Networked);
+            }
+            else
+            {
+                // Scenes are structs, so we need to keep requesting while awaiting
+                while (!_sceneManager.GetScene(EScene.Game).isLoaded)
+                {
+                    await Task.Yield();
+                }
             }
 
             _sceneManager.SetActiveScene(EScene.Game);

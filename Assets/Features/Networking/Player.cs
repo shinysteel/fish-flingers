@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishFlingers.Entities;
 using FishFlingers.Cameras;
+using ShinyOwl.Common;
+using FishFlingers.Scenes;
 
 namespace FishFlingers.Networking
 {

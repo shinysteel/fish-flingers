@@ -43,7 +43,7 @@ namespace FishFlingers.States
             await _sceneManager.LoadSceneAsync(EScene.EnvironmentMainMenu, LoadSceneMode.Additive);
 
             _browseGamesScreen = (BrowseGamesScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.BrowseGamesScreen, UILayer.Screens);
-            _mainMenuScreen = (MainMenuScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.MainMenuScreen, UILayer.Screens);
+            _mainMenuScreen = (MainMenuScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.MainMenuScreen, UILayer.Screens, UILayerInsertMode.FirstSibling);
 
             _mainMenuScreen.Configure(_browseGamesScreen);
             _mainMenuScreen.Show(null);

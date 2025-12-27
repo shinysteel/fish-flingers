@@ -178,7 +178,7 @@ namespace FishFlingers.Networking
             }
 
             SteamMatchmaking.SetLobbyGameServer(GetLobbyId(), 0, 0, SteamUser.GetSteamID());
-
+            
             RaiseOnLobbyGameServerSet();
         }
 

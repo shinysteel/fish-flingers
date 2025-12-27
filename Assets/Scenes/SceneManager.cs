@@ -1,7 +1,9 @@
 using FishFlingers.Networking;
+using ShinyOwl.Common;
 using ShinyOwl.Common.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -75,14 +77,14 @@ namespace FishFlingers.Scenes
         }
 
         // We use 'sceneEnum' here so that it is not to be confused with unity's Scene struct
-        private Scene GetScene(EScene sceneEnum)
+        public Scene GetScene(EScene sceneEnum)
         {
             return UnityEngine.SceneManagement.SceneManager.GetSceneByName(GetSceneName(sceneEnum));
         }
 
-        private EScene GetScene(Scene scene)
+        private EScene GetSceneEnum(Scene scene)
         {
-            return default;
+            return _sceneNameMap.FirstOrDefault(kvp => kvp.Value == scene.name).Key;
         }
 
         public void LoadScene(EScene scene, LoadSceneMode mode = LoadSceneMode.Single)
@@ -135,8 +137,8 @@ namespace FishFlingers.Scenes
             UnityEngine.SceneManagement.SceneManager.SetActiveScene(GetScene(scene));
         }
 
-        private void HandleSceneLoaded(Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) => Listeners.Dispatch(NotifyOnSceneLoaded, GetScene(scene), (LoadSceneMode)mode);
-        private void HandleSceneUnloaded(Scene scene) => Listeners.Dispatch(NotifyOnSceneUnloaded, GetScene(scene));
+        private void HandleSceneLoaded(Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) => Listeners.Dispatch(NotifyOnSceneLoaded, GetSceneEnum(scene), (LoadSceneMode)mode);
+        private void HandleSceneUnloaded(Scene scene) => Listeners.Dispatch(NotifyOnSceneUnloaded, GetSceneEnum(scene));
 
         private void NotifyOnSceneLoaded(ISceneManagerListener listener, EScene scene, LoadSceneMode mode) => listener.OnSceneLoaded(scene, mode);
         private void NotifyOnSceneUnloaded(ISceneManagerListener listener, EScene scene) => listener.OnSceneUnloaded(scene);
