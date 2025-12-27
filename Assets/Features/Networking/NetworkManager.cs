@@ -114,43 +114,51 @@ namespace FishFlingers.Networking
 
         public async Task<Lobby> CreateLobbyAsync()
         {
+            Debugger.Log(this, "create lobby");
             Lobby lobby = await _steamLobbyService.CreateLobbyAsync();
             return lobby;
         }
 
         public async Task<Lobby> JoinLobbyAsync(string lobbyId)
         {
+            Debugger.Log(this, "join lobby");
             Lobby lobby = await _steamLobbyService.JoinLobbyAsync(lobbyId);
             return lobby;
         }
 
         public void StartLobby()
         {
+            Debugger.Log(this, "start lobby");
             _steamLobbyService.StartLobby();
         }
 
         public void LeaveLobby()
         {
+            Debugger.Log(this, "leave lobby");
             _steamLobbyService.LeaveLobby();
         }
 
         public void StartServer()
         {
+            Debugger.Log(this, "start server");
             _purrnetNetworkManager.StartServer();
         }
 
         public void StartClient()
         {
+            Debugger.Log(this, "start client");
             _purrnetNetworkManager.StartClient();
         }
 
         public void StopServer()
         {
+            Debugger.Log(this, "stop server");
             _purrnetNetworkManager.StopServer();
         }
 
         public void StopClient()
         {
+            Debugger.Log(this, "stop client");
             _purrnetNetworkManager.StopClient();
         }
 
