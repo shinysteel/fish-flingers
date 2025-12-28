@@ -92,8 +92,6 @@ namespace FishFlingers.Networking
             RaiseOnLobbyCreated(_currentLobby);
             RaiseOnLobbyEnter(_currentLobby);
 
-            StartLobby();
-
             return Task.FromResult(_currentLobby);
         }
 
@@ -136,6 +134,11 @@ namespace FishFlingers.Networking
             StopBroadcasting();
 
             RaiseOnLobbyLeave();
+        }
+
+        public override bool IsLobbyOwner(Lobby lobby)
+        {
+            return lobby.OwnerId == _networkManager.LocalPlayer.ToString();
         }
 
         private void StartBroadcasting()
@@ -185,28 +188,37 @@ namespace FishFlingers.Networking
                         UdpReceiveResult result = await _listenerClient.ReceiveAsync();
                         string json = Encoding.UTF8.GetString(result.Buffer);
                         Lobby lobby = JsonConvert.DeserializeObject<Lobby>(json);
-                        
-                        // Ignore our own broadcasts
-                        if (_currentLobby != null && _currentLobby.OwnerId == _networkManager.LocalPlayer.ToString())
-                        {
-                            continue;
-                        }
-
-                        // Detects when the 'started' property goes from false to true and relays it. Can eventually
-                        // be moved into a method that raises events for anything we are interested in
-                        if (_currentLobby != null && _currentLobby.LobbyId == lobby.LobbyId)
-                        {
-                            if (bool.Parse(_currentLobby.Properties[StartedKey]) == false && bool.Parse(lobby.Properties[StartedKey]) == true)
-                            {
-                                RaiseOnLobbyStart();
-                            }
-                        }
-
+                        RaiseLobbyEvents(lobby);
                         _knownLobbies[lobby.LobbyId] = lobby;
                     }
                     catch { } // Preserve the loop and ignore
                 }
             });
+        }
+
+        // Since this is LAN, we have to manually relay changes to lobby properties that
+        // would normally raise events for all clients, such as OnLobbyStart
+        private void RaiseLobbyEvents(Lobby lobby)
+        {
+            if (_currentLobby == null)
+            {
+                return;
+            }
+
+            // Ignore our own broadcasts, since we as the host raise them locally
+            if (_currentLobby.OwnerId == _networkManager.LocalPlayer.ToString())
+            {
+                return;
+            }
+
+            // Detects when the 'started' property goes from false to true and relays it
+            if (_currentLobby.LobbyId == lobby.LobbyId)
+            {
+                if (bool.Parse(_currentLobby.Properties[StartedKey]) == false && bool.Parse(lobby.Properties[StartedKey]) == true)
+                {
+                    RaiseOnLobbyStart();
+                }
+            }
         }
 
         private void StopBroadcasting()

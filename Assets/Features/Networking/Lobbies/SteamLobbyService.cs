@@ -200,6 +200,11 @@ namespace FishFlingers.Networking
             RaiseOnLobbyLeave();
         }
 
+        public override bool IsLobbyOwner(Lobby lobby)
+        {
+            return lobby.LobbyId == SteamUser.GetSteamID().ToString();
+        }
+
         private List<LobbyMember> GetLobbyMembers(CSteamID lobbyId)
         {
             List<LobbyMember> members = new(); 

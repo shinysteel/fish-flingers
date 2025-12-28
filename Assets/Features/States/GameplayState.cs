@@ -42,16 +42,6 @@ namespace FishFlingers.States
             _networkManager?.RemoveListener(this);
         }
 
-        public override void Enter()
-        {
-            //if (_networkManager.CurrentLobby.OwnerId == SteamUser.GetSteamID().ToString())
-            //{
-            //    _networkManager.StartServer();
-            //}
-            
-            //_networkManager.StartClient();
-        }
-
         public override async Task EnterAsync()
         {
             if (_networkManager.IsServer)
@@ -103,14 +93,10 @@ namespace FishFlingers.States
                 return;
             }
 
-            if (lobby.OwnerId == SteamUser.GetSteamID().ToString())
+            // Currently we have no lobby flow, and just start the lobby as soon as we create it
+            if (_networkManager.IsLobbyOwner(lobby))
             {
                 _networkManager.StartLobby();
-            }
-            else
-            {
-                // For now, let's skip the check for the lobby being active
-                OnLobbyStart();
             }
         }
 

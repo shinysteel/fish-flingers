@@ -46,7 +46,7 @@ namespace FishFlingers.Networking
 
         protected const int DefaultMemberLimit = 4;
 
-        protected const string StartedKey = "started";
+        public const string StartedKey = "started";
 
         public event Action<Lobby> OnLobbyCreated;
         public event Action<Lobby> OnLobbyEnter;
@@ -59,6 +59,7 @@ namespace FishFlingers.Networking
         public abstract Task<Lobby> JoinLobbyAsync(string lobbyId);
         public abstract void StartLobby();
         public abstract void LeaveLobby();
+        public abstract bool IsLobbyOwner(Lobby lobby);
 
         protected void RaiseOnLobbyCreated(Lobby lobby) => OnLobbyCreated?.Invoke(lobby);
         protected void RaiseOnLobbyEnter(Lobby lobby) => OnLobbyEnter?.Invoke(lobby);

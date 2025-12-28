@@ -55,6 +55,7 @@ namespace FishFlingers.Networking
 
         private Dictionary<eLobbyService, LobbyService> _lobbyServices = new();
         private LobbyService _currentLobbyService;
+
         public Lobby CurrentLobby => _currentLobbyService.CurrentLobby;
         public PlayerID LocalPlayer => _purrnetNetworkManager.localPlayer;
 
@@ -224,6 +225,11 @@ namespace FishFlingers.Networking
         {
             Debugger.Log(this, "leave lobby");
             _currentLobbyService.LeaveLobby();
+        }
+
+        public bool IsLobbyOwner(Lobby lobby)
+        {
+            return _currentLobbyService.IsLobbyOwner(lobby);
         }
 
         public void StartServer()

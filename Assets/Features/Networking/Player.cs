@@ -1,12 +1,14 @@
+using FishFlingers.Cameras;
+using FishFlingers.Entities;
+using FishFlingers.Scenes;
+using PurrLobby;
 using PurrNet;
+using PurrNet.Transports;
+using ShinyOwl.Common;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
-using FishFlingers.Entities;
-using FishFlingers.Cameras;
-using ShinyOwl.Common;
-using FishFlingers.Scenes;
-using PurrNet.Transports;
 
 namespace FishFlingers.Networking
 {
@@ -16,6 +18,7 @@ namespace FishFlingers.Networking
 
         private CameraManager _cameraManager;
         private NetworkManager _networkManager;
+        private SceneManager _sceneManager;
 
         private Character _human;
 
@@ -23,6 +26,15 @@ namespace FishFlingers.Networking
         {
             _cameraManager = GameManager.Instance.Get<CameraManager>();
             _networkManager = GameManager.Instance.Get<NetworkManager>();
+            _sceneManager = GameManager.Instance.Get<SceneManager>();
+        }
+
+        protected override void OnSpawned()
+        {
+            if (_networkManager.CurrentLobby.Properties[LobbyService.StartedKey] == true.ToString())
+            {
+                OnLobbyStart();
+            }
 
             _networkManager.AddListener(this);
         }
@@ -38,10 +50,20 @@ namespace FishFlingers.Networking
         }
 
         public void OnLobbyStart()
-        { 
+        {
             if (!isOwner)
             {
                 return;
+            }
+
+            _ = SpawnHuman();
+        }
+
+        private async Task SpawnHuman()
+        {
+            while (!_sceneManager.GetScene(EScene.Game).isLoaded)
+            {
+                await Task.Yield();
             }
 
             _human = Instantiate(_humanPrefab);
@@ -49,8 +71,8 @@ namespace FishFlingers.Networking
             _cameraManager.SetMode(new FollowCameraMode(_human.transform, new Vector3(0f, 3f, -5f)));
         }
 
-        public void OnLobbyCreated(Lobby lobby) { }
         public void OnLobbyEnter(Lobby lobby) { }
+        public void OnLobbyCreated(Lobby lobby) { }
         public void OnLobbyLeave() { }
         public void OnNetworkStarted(bool asServer) { }
         public void OnNetworkShutdown(bool asServer) { }
