@@ -24,6 +24,7 @@ namespace FishFlingers.Networking
 
     public enum eLobbyService
     {
+        None  ,
         LAN   ,
         Steam , 
     }
@@ -65,6 +66,7 @@ namespace FishFlingers.Networking
             _lanLobbyService = new();
             _steamLobbyService = new();
 
+            _lobbyServices.Add(eLobbyService.None, null);
             _lobbyServices.Add(eLobbyService.LAN, _lanLobbyService);
             _lobbyServices.Add(eLobbyService.Steam, _steamLobbyService);
 
@@ -87,11 +89,8 @@ namespace FishFlingers.Networking
 
         public override void Shutdown()
         {
-            _steamLobbyService.OnLobbyCreated -= HandleLobbyCreated;
-            _steamLobbyService.OnLobbyEnter -= HandleLobbyEnter;
-            _steamLobbyService.OnLobbyLeave -= HandleLobbyLeave;
-            _steamLobbyService.OnLobbyStart -= HandleLobbyStart;
-            _steamLobbyService.Shutdown();
+            _currentLobbyService.Shutdown();
+            SetLobbyService(eLobbyService.None);   
 
             _purrnetNetworkManager.onNetworkStarted -= HandleNetworkStarted;
             _purrnetNetworkManager.onNetworkShutdown -= HandleNetworkShutdown;
@@ -142,10 +141,13 @@ namespace FishFlingers.Networking
             }
 
             // Lobby service should never be null after the first time it's set 
-            _currentLobbyService.OnLobbyCreated += HandleLobbyCreated;
-            _currentLobbyService.OnLobbyEnter += HandleLobbyEnter;
-            _currentLobbyService.OnLobbyLeave += HandleLobbyLeave;
-            _currentLobbyService.OnLobbyStart += HandleLobbyStart;
+            if (_currentLobbyService != null)
+            {
+                _currentLobbyService.OnLobbyCreated += HandleLobbyCreated;
+                _currentLobbyService.OnLobbyEnter += HandleLobbyEnter;
+                _currentLobbyService.OnLobbyLeave += HandleLobbyLeave;
+                _currentLobbyService.OnLobbyStart += HandleLobbyStart;
+            }
         }
 
         public AsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode mode)

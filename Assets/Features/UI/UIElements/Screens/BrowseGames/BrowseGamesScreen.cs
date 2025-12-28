@@ -104,6 +104,8 @@ namespace FishFlingers.UI
             {
                 container.Entries.RemoveAt(i);
             }
+
+            container.Container.gameObject.SetActive(container.Entries.Count > 0);
         }
 
         private void CloseClicked()

@@ -695,8 +695,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _closeButton: {fileID: 6935395506054637927}
-  _lobbyEntryContainer: {fileID: 2447013058591116557}
   _lobbyEntryPrefab: {fileID: 8512815255200125647, guid: ae7bee239c1680545b93027a708d8f0e, type: 3}
+  _lanContainer: {fileID: 8149547492262294683}
+  _steamContainer: {fileID: 6859522585070029772}
 --- !u!1 &4109941576059205032
 GameObject:
   m_ObjectHideFlags: 0
