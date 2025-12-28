@@ -13,6 +13,7 @@ using UnityEngine.SceneManagement;
 using System.Net.Sockets;
 using PurrNet.Steam;
 using System.Linq;
+using System;
 
 namespace FishFlingers.Networking
 {
@@ -54,9 +55,9 @@ namespace FishFlingers.Networking
 
         private Dictionary<eLobbyService, LobbyService> _lobbyServices = new();
         private LobbyService _currentLobbyService;
-        public Lobby CurrentLobby => _currentLobbyService.CurrentLobby; 
-
+        public Lobby CurrentLobby => _currentLobbyService.CurrentLobby;
         public PlayerID LocalPlayer => _purrnetNetworkManager.localPlayer;
+
         public bool IsServer => _purrnetNetworkManager.isServer;
 
         public override void Initialise(GameManagerConfig gameManagerConfig)
@@ -70,7 +71,7 @@ namespace FishFlingers.Networking
             _lobbyServices.Add(eLobbyService.LAN, _lanLobbyService);
             _lobbyServices.Add(eLobbyService.Steam, _steamLobbyService);
 
-            _purrnetNetworkManager = Object.Instantiate(_config.PurrnetNetworkManagerPrefab);
+            _purrnetNetworkManager = UnityEngine.Object.Instantiate(_config.PurrnetNetworkManagerPrefab);
             _purrnetNetworkManager.onNetworkStarted += HandleNetworkStarted;
             _purrnetNetworkManager.onNetworkShutdown += HandleNetworkShutdown;
             _purrnetNetworkManager.onClientConnectionState += HandleClientConnectionState;
@@ -182,9 +183,17 @@ namespace FishFlingers.Networking
 
         public async Task<Dictionary<eLobbyService, Lobby[]>> SearchLobbies()
         {
-            Task<KeyValuePair<eLobbyService, Lobby[]>>[] tasks = _lobbyServices
-                .Select(async kvp => new KeyValuePair<eLobbyService, Lobby[]>(kvp.Key, await kvp.Value.SearchLobbiesAsync()))
-                .ToArray();
+            var tasks = new List<Task<KeyValuePair<eLobbyService, Lobby[]>>>();
+
+            foreach (var kvp in _lobbyServices)
+            {
+                if (kvp.Key == eLobbyService.None)
+                {
+                    continue;
+                }
+
+                tasks.Add(Task.Run(async () => new KeyValuePair<eLobbyService, Lobby[]>(kvp.Key, await kvp.Value.SearchLobbiesAsync())));
+            }
 
             KeyValuePair<eLobbyService, Lobby[]>[] kvps = await Task.WhenAll(tasks);
 

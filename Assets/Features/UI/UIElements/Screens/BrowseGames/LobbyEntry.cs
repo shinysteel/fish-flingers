@@ -1,5 +1,6 @@
 using FishFlingers.Networking;
 using FishFlingers.Pools;
+using ShinyOwl.Common;
 using Steamworks;
 using TMPro;
 using UnityEngine;
@@ -27,7 +28,6 @@ namespace FishFlingers.UI
         public void Setup(Lobby lobby)
         {
             _lobbyId = lobby.LobbyId;
-
             _nameText.text = lobby.Name;
             _playerCountText.text = $"{lobby.Members.Count} / {lobby.MemberLimit}";
         }

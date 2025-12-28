@@ -75,19 +75,19 @@ namespace FishFlingers.UI
             _ = SearchAsync();
         }
 
-        // Use pooling once we allow the scroll rect to display only what is on screen
         private async Task SearchAsync()
         {
             _searchTimer = 0f;
 
             Dictionary<eLobbyService, Lobby[]> lobbies = await _networkManager.SearchLobbies();
 
-            foreach (eLobbyService service in Enum.GetValues(typeof(eLobbyService)))
+            foreach (eLobbyService service in lobbies.Keys)
             {
                 SyncLobbyEntries(_entryContainers[service], lobbies[service]);
             }
         }
 
+        // Use pooling once we allow the scroll rect to display only what is on screen
         private void SyncLobbyEntries(LobbyEntryContainer container, Lobby[] lobbies)
         {
             for (int i = container.Entries.Count; i < lobbies.Length; i++)

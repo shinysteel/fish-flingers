@@ -40,6 +40,7 @@ namespace FishFlingers.Networking
         public LANLobbyService()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
+            _networkManager.AddListener(this);
 
             _broadcastClient = new();
             _broadcastClient.EnableBroadcast = true;
@@ -51,6 +52,8 @@ namespace FishFlingers.Networking
 
         public override void Shutdown()
         {
+            _networkManager?.RemoveListener(this);
+
             StopBroadcasting();
             StopListening();
 
@@ -73,7 +76,7 @@ namespace FishFlingers.Networking
             string lobbyId = Guid.NewGuid().ToString();
             List<LobbyMember> members = new() { new LobbyMember(ownerId, ownerId) };
             string address = Utils.Network.GetLocalIpAddress();
-            Dictionary<string, string> properties = new() { { AddressKey, address } };
+            Dictionary<string, string> properties = new() { { AddressKey, address }, { StartedKey, false.ToString() } };
 
             _currentLobby = new Lobby(name, lobbyId, ownerId, DefaultMemberLimit, members, properties);
 
@@ -89,17 +92,19 @@ namespace FishFlingers.Networking
             RaiseOnLobbyCreated(_currentLobby);
             RaiseOnLobbyEnter(_currentLobby);
 
+            StartLobby();
+
             return Task.FromResult(_currentLobby);
         }
 
         public override Task<Lobby> JoinLobbyAsync(string lobbyId)
         {
-            if (_knownLobbies.TryGetValue(lobbyId, out Lobby lobby))
+            if (!_knownLobbies.TryGetValue(lobbyId, out Lobby lobby))
             {
                 return Task.FromException<Lobby>(new Exception("Could not find a lobby with matching id"));
             }
 
-            if (lobby.Properties.TryGetValue(AddressKey, out string address))
+            if (!lobby.Properties.TryGetValue(AddressKey, out string address))
             {
                 return Task.FromException<Lobby>(new Exception("This lobby is not providing an address to join to"));
             }
@@ -119,6 +124,8 @@ namespace FishFlingers.Networking
 
         public override void StartLobby()
         {
+            _currentLobby.Properties[StartedKey] = true.ToString();
+
             RaiseOnLobbyStart();
         }
 
@@ -178,6 +185,23 @@ namespace FishFlingers.Networking
                         UdpReceiveResult result = await _listenerClient.ReceiveAsync();
                         string json = Encoding.UTF8.GetString(result.Buffer);
                         Lobby lobby = JsonConvert.DeserializeObject<Lobby>(json);
+                        
+                        // Ignore our own broadcasts
+                        if (_currentLobby != null && _currentLobby.OwnerId == _networkManager.LocalPlayer.ToString())
+                        {
+                            continue;
+                        }
+
+                        // Detects when the 'started' property goes from false to true and relays it. Can eventually
+                        // be moved into a method that raises events for anything we are interested in
+                        if (_currentLobby != null && _currentLobby.LobbyId == lobby.LobbyId)
+                        {
+                            if (bool.Parse(_currentLobby.Properties[StartedKey]) == false && bool.Parse(lobby.Properties[StartedKey]) == true)
+                            {
+                                RaiseOnLobbyStart();
+                            }
+                        }
+
                         _knownLobbies[lobby.LobbyId] = lobby;
                     }
                     catch { } // Preserve the loop and ignore
@@ -222,11 +246,21 @@ namespace FishFlingers.Networking
 
         public void OnPlayerLeft(PlayerID id) 
         {
+            if (_networkManager.LocalPlayer == id)
+            {
+                return;
+            }
+
             _currentLobby.Members.RemoveAll(member => member.Id == id.ToString());
         }
 
         public void OnPlayerJoined(PlayerID id, bool isReconnect) 
         { 
+            if (_networkManager.LocalPlayer == id)
+            {
+                return;
+            }
+
             if (_currentLobby.Members.Count >= _currentLobby.MemberLimit)
             {
                 _networkManager.KickPlayer(id);

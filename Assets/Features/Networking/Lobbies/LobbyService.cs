@@ -46,6 +46,8 @@ namespace FishFlingers.Networking
 
         protected const int DefaultMemberLimit = 4;
 
+        protected const string StartedKey = "started";
+
         public event Action<Lobby> OnLobbyCreated;
         public event Action<Lobby> OnLobbyEnter;
         public event Action OnLobbyLeave;
