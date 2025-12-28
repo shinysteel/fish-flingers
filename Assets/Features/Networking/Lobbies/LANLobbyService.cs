@@ -16,11 +16,21 @@ using Newtonsoft.Json;
 
 namespace FishFlingers.Networking
 {
+    public class LANLobby : Lobby
+    {
+        public float TimeCreated { get; private set; }
+
+        public LANLobby(LobbyParams parameters) : base(parameters)
+        {
+            TimeCreated = Time.time;
+        }
+    }
+
     public class LANLobbyService : LobbyService, INetworkManagerListener
     {
         private NetworkManager _networkManager;
 
-        private Dictionary<string, Lobby> _knownLobbies = new();
+        private Dictionary<string, LANLobby> _knownLobbies = new();
 
         private UdpClient _broadcastClient;
         private bool _isBroadcasting;
@@ -29,6 +39,8 @@ namespace FishFlingers.Networking
         private bool _isListening;
 
         private const int BroadcastInterval = 2500; // ms
+
+        private const float LobbyTimeout = 10f;
 
         private const string AddressKey = "address";
 
@@ -66,19 +78,33 @@ namespace FishFlingers.Networking
 
         public override Task<Lobby[]> SearchLobbiesAsync()
         {
-            return Task.FromResult(_knownLobbies.Values.ToArray());
+            List<string> expiredLobbies = _knownLobbies
+                .Where(kvp => Time.time - kvp.Value.TimeCreated >= LobbyTimeout)
+                .Select(kvp => kvp.Key)
+                .ToList();
+
+            foreach (string key in expiredLobbies)
+            {
+                _knownLobbies.Remove(key);
+            }
+
+            return Task.FromResult(_knownLobbies.Values.Cast<Lobby>().ToArray());
         }
 
         public override Task<Lobby> CreateLobbyAsync()
         {
             string ownerId = _networkManager.LocalPlayer.ToString();
-            string name = $"{ownerId}'s Lobby";
-            string lobbyId = Guid.NewGuid().ToString();
-            List<LobbyMember> members = new() { new LobbyMember(ownerId, ownerId) };
             string address = Utils.Network.GetLocalIpAddress();
-            Dictionary<string, string> properties = new() { { AddressKey, address }, { StartedKey, false.ToString() } };
 
-            _currentLobby = new Lobby(name, lobbyId, ownerId, DefaultMemberLimit, members, properties);
+            _currentLobby = new LANLobby(new LobbyParams() 
+            { 
+                Name = $"{ownerId}'s Lobby",
+                LobbyId = Guid.NewGuid().ToString(),
+                OwnerId = _networkManager.LocalPlayer.ToString(),
+                MemberLimit = DefaultMemberLimit,
+                Members = new List<LobbyMember>() { new LobbyMember(ownerId, ownerId) },
+                Properties = new Dictionary<string, string>() { { AddressKey, address }, { StartedKey, false.ToString() } }
+            });
 
             StartBroadcasting();
 
@@ -97,7 +123,7 @@ namespace FishFlingers.Networking
 
         public override Task<Lobby> JoinLobbyAsync(string lobbyId)
         {
-            if (!_knownLobbies.TryGetValue(lobbyId, out Lobby lobby))
+            if (!_knownLobbies.TryGetValue(lobbyId, out LANLobby lobby))
             {
                 return Task.FromException<Lobby>(new Exception("Could not find a lobby with matching id"));
             }
@@ -117,7 +143,7 @@ namespace FishFlingers.Networking
 
             RaiseOnLobbyEnter(lobby);
 
-            return Task.FromResult(lobby);
+            return Task.FromResult((Lobby)lobby);
         }
 
         public override void StartLobby()
@@ -187,7 +213,7 @@ namespace FishFlingers.Networking
                     {
                         UdpReceiveResult result = await _listenerClient.ReceiveAsync();
                         string json = Encoding.UTF8.GetString(result.Buffer);
-                        Lobby lobby = JsonConvert.DeserializeObject<Lobby>(json);
+                        LANLobby lobby = JsonConvert.DeserializeObject<LANLobby>(json);
                         RaiseLobbyEvents(lobby);
                         _knownLobbies[lobby.LobbyId] = lobby;
                     }

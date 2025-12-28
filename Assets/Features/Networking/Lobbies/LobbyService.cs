@@ -19,6 +19,17 @@ namespace FishFlingers.Networking
         }
     }
 
+    // DTO (Data Transfer Object)
+    public class LobbyParams
+    {
+        public string Name { get; set; } = "Lobby";
+        public string LobbyId { get; set; } = string.Empty;
+        public string OwnerId { get; set; } = "Owner";
+        public int MemberLimit { get; set; } = LobbyService.DefaultMemberLimit;
+        public List<LobbyMember> Members { get; set; } = new();
+        public Dictionary<string, string> Properties { get; set; } = new();
+    }
+
     public class Lobby
     {
         public string Name { get; private set; }
@@ -28,14 +39,16 @@ namespace FishFlingers.Networking
         public List<LobbyMember> Members { get; private set; }
         public Dictionary<string, string> Properties { get; private set; }
 
-        public Lobby(string name, string lobbyId, string ownerId, int memberLimit, List<LobbyMember> members, Dictionary<string, string> properties)
+        public Lobby(LobbyParams parameters)
         {
-            Name = name;
-            LobbyId = lobbyId;
-            OwnerId = ownerId;
-            MemberLimit = memberLimit;
-            Members = members;
-            Properties = properties;
+            Name = parameters.Name;
+            LobbyId = parameters.LobbyId;
+            OwnerId = parameters.OwnerId;
+            MemberLimit = parameters.MemberLimit;
+
+            // DTO best practice involves copying collections to ensure ownership
+            Members = new List<LobbyMember>(parameters.Members);
+            Properties = new Dictionary<string, string>(parameters.Properties);
         }
     }
 
@@ -44,7 +57,7 @@ namespace FishFlingers.Networking
         protected Lobby _currentLobby;
         public Lobby CurrentLobby => _currentLobby;
 
-        protected const int DefaultMemberLimit = 4;
+        public const int DefaultMemberLimit = 4;
 
         public const string StartedKey = "started";
 

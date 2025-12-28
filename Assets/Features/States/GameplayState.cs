@@ -100,7 +100,6 @@ namespace FishFlingers.States
             }
         }
 
-        // This fires once the lobby has 'started'
         public void OnLobbyStart() 
         {
             if (_parentStateMachine.CurrentState == this)
