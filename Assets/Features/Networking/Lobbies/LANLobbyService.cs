@@ -27,7 +27,6 @@ namespace FishFlingers.Networking
         private UdpClient _listenerClient;
         private bool _isListening;
 
-        private const int BroadcastPort = 5000;
         private const int BroadcastInterval = 2500; // ms
 
         private const string AddressKey = "address";
@@ -44,7 +43,7 @@ namespace FishFlingers.Networking
             _broadcastClient = new();
             _broadcastClient.EnableBroadcast = true;
 
-            _listenerClient = new();
+            _listenerClient = new UdpClient(_networkManager.Config.BroadcastPort);
 
             StartListening();
         }
@@ -151,10 +150,12 @@ namespace FishFlingers.Networking
             {
                 while (_isBroadcasting)
                 {
+                    Debugger.Log(this, "broadcast start");
                     string json = JsonUtility.ToJson(_currentLobby);
                     byte[] bytes = Encoding.UTF8.GetBytes(json);
-                    await _broadcastClient.SendAsync(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, BroadcastPort));
+                    await _broadcastClient.SendAsync(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, _networkManager.Config.BroadcastPort));
                     await Task.Delay(BroadcastInterval);
+                    Debugger.Log(this, "broadcast end");
                 }
             });
         }
@@ -173,7 +174,9 @@ namespace FishFlingers.Networking
             {
                 while (_isListening)
                 {
+                    Debugger.Log(this, "listen start");
                     UdpReceiveResult result = await _listenerClient.ReceiveAsync();
+                    Debugger.Log(this, "listen result");
                     string json = Encoding.UTF8.GetString(result.Buffer);
                     Lobby lobby = JsonUtility.FromJson<Lobby>(json);
                     _knownLobbies[lobby.LobbyId] = lobby;

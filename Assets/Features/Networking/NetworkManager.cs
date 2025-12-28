@@ -44,6 +44,8 @@ namespace FishFlingers.Networking
     public class NetworkManager : GameSystem<INetworkManagerListener>
     {
         private NetworkManagerConfig _config;
+        public NetworkManagerConfig Config => _config;
+
         private PurrNet.NetworkManager _purrnetNetworkManager;
 
         private LANLobbyService _lanLobbyService;
