@@ -11,15 +11,29 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Net.Sockets;
+using PurrNet.Steam;
+using System.Linq;
 
 namespace FishFlingers.Networking
 {
+    public enum eTransport
+    {
+        UDP   ,
+        Steam ,
+    }
+
+    public enum eLobbyService
+    {
+        LAN   ,
+        Steam , 
+    }
+
     public interface INetworkManagerListener
     {
         void OnLobbyCreated(Lobby lobby);
         void OnLobbyEnter(Lobby lobby);
         void OnLobbyLeave();
-        void OnLobbyGameServerSet();
+        void OnLobbyStart();
         void OnNetworkStarted(bool asServer);
         void OnNetworkShutdown(bool asServer);
         void OnClientConnectionState(ConnectionState state);
@@ -31,11 +45,14 @@ namespace FishFlingers.Networking
     {
         private NetworkManagerConfig _config;
         private PurrNet.NetworkManager _purrnetNetworkManager;
+
+        private LANLobbyService _lanLobbyService;
         private SteamLobbyService _steamLobbyService;
 
-        public Lobby CurrentLobby => _steamLobbyService.CurrentLobby; 
+        private Dictionary<eLobbyService, LobbyService> _lobbyServices = new();
+        private LobbyService _currentLobbyService;
+        public Lobby CurrentLobby => _currentLobbyService.CurrentLobby; 
 
-        public UDPTransport Transport => (UDPTransport)_purrnetNetworkManager.transport;
         public PlayerID LocalPlayer => _purrnetNetworkManager.localPlayer;
         public bool IsServer => _purrnetNetworkManager.isServer;
 
@@ -43,11 +60,11 @@ namespace FishFlingers.Networking
         {
             _config = gameManagerConfig.NetworkManagerConfig;
 
+            _lanLobbyService = new();
             _steamLobbyService = new();
-            _steamLobbyService.OnLobbyCreated += HandleLobbyCreated;
-            _steamLobbyService.OnLobbyEnter += HandleLobbyEnter;
-            _steamLobbyService.OnLobbyLeave += HandleLobbyLeave;
-            _steamLobbyService.OnLobbyGameServerSet += HandleLobbyGameServerSet;
+
+            _lobbyServices.Add(eLobbyService.LAN, _lanLobbyService);
+            _lobbyServices.Add(eLobbyService.Steam, _steamLobbyService);
 
             _purrnetNetworkManager = Object.Instantiate(_config.PurrnetNetworkManagerPrefab);
             _purrnetNetworkManager.onNetworkStarted += HandleNetworkStarted;
@@ -55,6 +72,13 @@ namespace FishFlingers.Networking
             _purrnetNetworkManager.onClientConnectionState += HandleClientConnectionState;
             _purrnetNetworkManager.onPlayerJoined += HandlePlayerJoined;
             _purrnetNetworkManager.onPlayerLeft += HandlePlayerLeft;
+
+            GetTransport<UDPTransport>().serverPort = _config.UDPServerPort;
+            GetTransport<SteamTransport>().serverPort = _config.SteamServerPort;
+
+            // Remove this and let other scripts request
+            SetClientTransport<UDPTransport>();
+            SetLobbyService(eLobbyService.LAN);
 
             base.Initialise(gameManagerConfig);
         }
@@ -64,7 +88,7 @@ namespace FishFlingers.Networking
             _steamLobbyService.OnLobbyCreated -= HandleLobbyCreated;
             _steamLobbyService.OnLobbyEnter -= HandleLobbyEnter;
             _steamLobbyService.OnLobbyLeave -= HandleLobbyLeave;
-            _steamLobbyService.OnLobbyGameServerSet -= HandleLobbyGameServerSet;
+            _steamLobbyService.OnLobbyStart -= HandleLobbyStart;
             _steamLobbyService.Shutdown();
 
             _purrnetNetworkManager.onNetworkStarted -= HandleNetworkStarted;
@@ -74,6 +98,52 @@ namespace FishFlingers.Networking
             _purrnetNetworkManager.onPlayerLeft -= HandlePlayerLeft;
 
             base.Shutdown();
+        }
+
+        // Our transport will always be composite, so it is a safe cast
+        private CompositeTransport GetCompositeTransport()
+        {
+            return (CompositeTransport)_purrnetNetworkManager.currentTransport;
+        }
+
+        private T GetTransport<T>() where T : GenericTransport
+        {
+            GetCompositeTransport().TryGetTransport(out T transport);
+            return (T)transport;
+        }
+
+        // We use a try here since the requested transport could potentially not be what the client is using
+        public bool TryGetClientTransport<T>(out T transport) where T : GenericTransport
+        {
+            transport = GetCompositeTransport().clientTransport as T;
+            return transport != null;
+        }
+
+        public void SetClientTransport<T>() where T : GenericTransport
+        {
+            GetCompositeTransport().SetClientTransport<T>();
+        }
+
+        public void SetLobbyService(eLobbyService service)
+        {
+            if (_currentLobbyService != null)
+            {
+                _currentLobbyService.OnLobbyCreated -= HandleLobbyCreated;
+                _currentLobbyService.OnLobbyEnter -= HandleLobbyEnter;
+                _currentLobbyService.OnLobbyLeave -= HandleLobbyLeave;
+                _currentLobbyService.OnLobbyStart -= HandleLobbyStart;
+            }
+
+            if (!_lobbyServices.TryGetValue(service, out _currentLobbyService))
+            {
+                Debugger.LogError(this, "Trying to set a lobby service that is not defined");
+            }
+
+            // Lobby service should never be null after the first time it's set 
+            _currentLobbyService.OnLobbyCreated += HandleLobbyCreated;
+            _currentLobbyService.OnLobbyEnter += HandleLobbyEnter;
+            _currentLobbyService.OnLobbyLeave += HandleLobbyLeave;
+            _currentLobbyService.OnLobbyStart += HandleLobbyStart;
         }
 
         public AsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode mode)
@@ -106,36 +176,41 @@ namespace FishFlingers.Networking
             _purrnetNetworkManager.playerModule.KickPlayer(id);
         }
 
-        public async Task<Lobby[]> SearchLobbies()
+        public async Task<Dictionary<eLobbyService, Lobby[]>> SearchLobbies()
         {
-            Lobby[] lobbies = await _steamLobbyService.SearchLobbiesAsync();
-            return lobbies;
+            Task<KeyValuePair<eLobbyService, Lobby[]>>[] tasks = _lobbyServices
+                .Select(async kvp => new KeyValuePair<eLobbyService, Lobby[]>(kvp.Key, await kvp.Value.SearchLobbiesAsync()))
+                .ToArray();
+
+            KeyValuePair<eLobbyService, Lobby[]>[] kvps = await Task.WhenAll(tasks);
+
+            return kvps.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
         public async Task<Lobby> CreateLobbyAsync()
         {
             Debugger.Log(this, "create lobby");
-            Lobby lobby = await _steamLobbyService.CreateLobbyAsync();
+            Lobby lobby = await _currentLobbyService.CreateLobbyAsync();
             return lobby;
         }
 
         public async Task<Lobby> JoinLobbyAsync(string lobbyId)
         {
             Debugger.Log(this, "join lobby");
-            Lobby lobby = await _steamLobbyService.JoinLobbyAsync(lobbyId);
+            Lobby lobby = await _currentLobbyService.JoinLobbyAsync(lobbyId);
             return lobby;
         }
 
         public void StartLobby()
         {
             Debugger.Log(this, "start lobby");
-            _steamLobbyService.StartLobby();
+            _currentLobbyService.StartLobby();
         }
 
         public void LeaveLobby()
         {
             Debugger.Log(this, "leave lobby");
-            _steamLobbyService.LeaveLobby();
+            _currentLobbyService.LeaveLobby();
         }
 
         public void StartServer()
@@ -165,7 +240,7 @@ namespace FishFlingers.Networking
         private void HandleLobbyCreated(Lobby lobby) => Listeners.Dispatch(NotifyOnLobbyCreated, lobby);
         private void HandleLobbyEnter(Lobby lobby) => Listeners.Dispatch(NotifyOnLobbyEnter, lobby);
         private void HandleLobbyLeave() => Listeners.Dispatch(NotifyOnLobbyLeave);
-        private void HandleLobbyGameServerSet() => Listeners.Dispatch(NotifyOnLobbyGameServerSet);
+        private void HandleLobbyStart() => Listeners.Dispatch(NotifyOnLobbyStart);
         private void HandleNetworkStarted(PurrNet.NetworkManager manager, bool asServer) => Listeners.Dispatch(NotifyOnNetworkStarted, asServer);
         private void HandleNetworkShutdown(PurrNet.NetworkManager manager, bool asServer) => Listeners.Dispatch(NotifyOnNetworkShutdown, asServer);
         private void HandleClientConnectionState(ConnectionState state) => Listeners.Dispatch(NotifyOnClientConnectionState, state);
@@ -175,7 +250,7 @@ namespace FishFlingers.Networking
         private static void NotifyOnLobbyCreated(INetworkManagerListener listener, Lobby lobby) => listener.OnLobbyCreated(lobby);
         private static void NotifyOnLobbyEnter(INetworkManagerListener listener, Lobby lobby) => listener.OnLobbyEnter(lobby);
         private static void NotifyOnLobbyLeave(INetworkManagerListener listener) => listener.OnLobbyLeave();
-        private static void NotifyOnLobbyGameServerSet(INetworkManagerListener listener) => listener.OnLobbyGameServerSet();
+        private static void NotifyOnLobbyStart(INetworkManagerListener listener) => listener.OnLobbyStart();
         private static void NotifyOnNetworkStarted(INetworkManagerListener listener, bool asServer) => listener.OnNetworkStarted(asServer);
         private static void NotifyOnNetworkShutdown(INetworkManagerListener listener, bool asServer) => listener.OnNetworkShutdown(asServer);
         private static void NotifyOnClientConnectionState(INetworkManagerListener listener, ConnectionState state) => listener.OnClientConnectionState(state);

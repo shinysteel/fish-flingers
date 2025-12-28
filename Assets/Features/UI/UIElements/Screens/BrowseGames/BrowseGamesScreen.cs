@@ -12,19 +12,37 @@ namespace FishFlingers.UI
     public class BrowseGamesScreen : UIElement
     {
         [SerializeField] private Button _closeButton;
-        [SerializeField] private Transform _lobbyEntryContainer;
         [SerializeField] private LobbyEntry _lobbyEntryPrefab;
+
+        [SerializeField] private Transform _lanContainer;
+        [SerializeField] private Transform _steamContainer;
 
         private NetworkManager _networkManager;
 
-        private List<LobbyEntry> _lobbyEntries = new();
+        private Dictionary<eLobbyService, LobbyEntryContainer> _entryContainers = new();
+
         private float _searchTimer;
 
         private const float SearchInterval = 2.5f;
 
+        private class LobbyEntryContainer
+        {
+            public Transform Container { get; private set; }
+            public List<LobbyEntry> Entries { get; private set; }
+
+            public LobbyEntryContainer(Transform container)
+            {
+                Container = container;
+                Entries = new();
+            }
+        }
+
         public override void Load()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
+
+            _entryContainers.Add(eLobbyService.LAN, new LobbyEntryContainer(_lanContainer));
+            _entryContainers.Add(eLobbyService.Steam, new LobbyEntryContainer(_steamContainer));
 
             _closeButton.onClick.AddListener(CloseClicked);
         }
@@ -61,26 +79,30 @@ namespace FishFlingers.UI
         private async Task SearchAsync()
         {
             _searchTimer = 0f;
-            Lobby[] lobbies = await _networkManager.SearchLobbies();
 
-            if (!_isVisible)
+            Dictionary<eLobbyService, Lobby[]> lobbies = await _networkManager.SearchLobbies();
+
+            foreach (eLobbyService service in Enum.GetValues(typeof(eLobbyService)))
             {
-                return;
+                SyncLobbyEntries(_entryContainers[service], lobbies[service]);
             }
+        }
 
-            for (int i = _lobbyEntries.Count; i < lobbies.Length; i++)
+        private void SyncLobbyEntries(LobbyEntryContainer container, Lobby[] lobbies)
+        {
+            for (int i = container.Entries.Count; i < lobbies.Length; i++)
             {
-                _lobbyEntries.Add(Instantiate(_lobbyEntryPrefab, _lobbyEntryContainer));
+                container.Entries.Add(Instantiate(_lobbyEntryPrefab, container.Container));
             }
 
             for (int i = 0; i < lobbies.Length; i++)
             {
-                _lobbyEntries[i].Setup(lobbies[i]);
+                container.Entries[i].Setup(lobbies[i]);
             }
 
-            for (int i = _lobbyEntries.Count - 1; i >= lobbies.Length; i--)
+            for (int i = container.Entries.Count - 1; i >= lobbies.Length; i--)
             {
-                _lobbyEntries.RemoveAt(i);
+                container.Entries.RemoveAt(i);
             }
         }
 

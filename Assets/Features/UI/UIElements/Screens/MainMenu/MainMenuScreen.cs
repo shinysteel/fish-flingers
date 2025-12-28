@@ -19,7 +19,7 @@ namespace FishFlingers.UI
 
         private BrowseGamesScreen _browseGamesScreen;
 
-        public void Configure(BrowseGamesScreen browseGamesScreen)
+        public void Setup(BrowseGamesScreen browseGamesScreen)
         {
             _browseGamesScreen = browseGamesScreen;
         }

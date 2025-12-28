@@ -49,7 +49,7 @@ namespace FishFlingers.Networking
         public event Action<Lobby> OnLobbyCreated;
         public event Action<Lobby> OnLobbyEnter;
         public event Action OnLobbyLeave;
-        public event Action OnLobbyGameServerSet;
+        public event Action OnLobbyStart;
 
         public abstract void Shutdown();
         public abstract Task<Lobby[]> SearchLobbiesAsync();
@@ -61,6 +61,6 @@ namespace FishFlingers.Networking
         protected void RaiseOnLobbyCreated(Lobby lobby) => OnLobbyCreated?.Invoke(lobby);
         protected void RaiseOnLobbyEnter(Lobby lobby) => OnLobbyEnter?.Invoke(lobby);
         protected void RaiseOnLobbyLeave() => OnLobbyLeave?.Invoke();
-        protected void RaiseOnLobbyGameServerSet() => OnLobbyGameServerSet?.Invoke();
+        protected void RaiseOnLobbyStart() => OnLobbyStart?.Invoke();
     }
 }

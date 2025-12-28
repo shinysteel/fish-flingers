@@ -27,6 +27,14 @@ MonoBehaviour:
     m_Key: menus.hostGame
     m_Metadata:
       m_Items: []
+  - m_Id: 2041489228730368
+    m_Key: menus.lan
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2041534929866752
+    m_Key: menus.steam
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

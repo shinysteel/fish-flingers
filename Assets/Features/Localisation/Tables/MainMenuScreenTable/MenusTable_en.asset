@@ -30,6 +30,14 @@ MonoBehaviour:
     m_Localized: Fish Flingers
     m_Metadata:
       m_Items: []
+  - m_Id: 2041489228730368
+    m_Localized: LAN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2041534929866752
+    m_Localized: Steam
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

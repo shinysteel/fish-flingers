@@ -15,12 +15,11 @@ using UnityEngine;
 
 namespace FishFlingers.Networking
 {
-    public class LocalLobbyService : LobbyService, INetworkManagerListener
+    public class LANLobbyService : LobbyService, INetworkManagerListener
     {
         private NetworkManager _networkManager;
 
         private Dictionary<string, Lobby> _knownLobbies = new();
-        private Lobby _currentLobby;
 
         private UdpClient _broadcastClient;
         private bool _isBroadcasting;
@@ -31,8 +30,6 @@ namespace FishFlingers.Networking
         private const int BroadcastPort = 5000;
         private const int BroadcastInterval = 2500; // ms
 
-        private const int DefaultMemberLimit = 4;
-
         private const string AddressKey = "address";
 
         private struct JoinAcceptMessage : IPackedAuto
@@ -40,7 +37,7 @@ namespace FishFlingers.Networking
             public string lobbyId;
         }
 
-        public LocalLobbyService()
+        public LANLobbyService()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
 
@@ -75,11 +72,22 @@ namespace FishFlingers.Networking
             string name = $"{ownerId}'s Lobby";
             string lobbyId = Guid.NewGuid().ToString();
             List<LobbyMember> members = new() { new LobbyMember(ownerId, ownerId) };
-            Dictionary<string, string> properties = new() { { AddressKey, Utils.Network.GetLocalIpAddress() } };
+            string address = Utils.Network.GetLocalIpAddress();
+            Dictionary<string, string> properties = new() { { AddressKey, address } };
 
             _currentLobby = new Lobby(name, lobbyId, ownerId, DefaultMemberLimit, members, properties);
 
             StartBroadcasting();
+
+            _networkManager.SetClientTransport<UDPTransport>();
+            _networkManager.TryGetClientTransport(out UDPTransport transport);
+            transport.address = address;
+
+            _networkManager.StartServer();
+            _networkManager.StartClient();
+
+            RaiseOnLobbyCreated(_currentLobby);
+            RaiseOnLobbyEnter(_currentLobby);
 
             return Task.FromResult(_currentLobby);
         }
@@ -96,23 +104,31 @@ namespace FishFlingers.Networking
                 return Task.FromException<Lobby>(new Exception("This lobby is not providing an address to join to"));
             }
 
-            _networkManager.Transport.address = address;
+            _currentLobby = lobby;
+
+            _networkManager.SetClientTransport<UDPTransport>();
+            _networkManager.TryGetClientTransport(out UDPTransport transport);
+            transport.address = address;
+
             _networkManager.StartClient();
 
-            // await connection
-            // await accept while listening for kick event (reject)
+            RaiseOnLobbyEnter(lobby);
 
-            return null;
+            return Task.FromResult(lobby);
         }
 
         public override void StartLobby()
         {
-
+            RaiseOnLobbyStart();
         }
 
         public override void LeaveLobby()
         {
+            _currentLobby = null;
+
             StopBroadcasting();
+
+            RaiseOnLobbyLeave();
         }
 
         private void StartBroadcasting()
@@ -195,6 +211,11 @@ namespace FishFlingers.Networking
             _networkManager.Unsubscribe<JoinAcceptMessage>(HandleJoinAcceptMessage);
         }
 
+        private void HandleJoinAcceptMessage(PlayerID id, JoinAcceptMessage message, bool asServer)
+        {
+            Debugger.Log(this, $"Received join accept message. Id: {id}, message.lobbyyId: {message.lobbyId}, asServer: {asServer}");
+        }
+
         public void OnPlayerLeft(PlayerID id) 
         {
             _currentLobby.Members.RemoveAll(member => member.Id == id.ToString());
@@ -213,15 +234,10 @@ namespace FishFlingers.Networking
             _networkManager.Send(id, new JoinAcceptMessage() { lobbyId = _currentLobby.LobbyId });
         }
 
-        private void HandleJoinAcceptMessage(PlayerID id, JoinAcceptMessage message, bool asServer)
-        {
-            Debugger.Log(this, $"Received join accept message. Id: {id}, message.lobbyyId: {message.lobbyId}, asServer: {asServer}");
-        }
-
         public void OnLobbyCreated(Lobby lobby) { }
         public void OnLobbyEnter(Lobby lobby) { }
         public void OnLobbyLeave() { }
-        public void OnLobbyGameServerSet() { }
+        public void OnLobbyStart() { }
         public void OnClientConnectionState(ConnectionState state) { }
     }
 }

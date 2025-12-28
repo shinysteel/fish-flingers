@@ -1,13 +1,15 @@
+using FishFlingers.Scenes;
+using NUnit.Framework;
+using ShinyOwl.Common;
+using ShinyOwl.Common.Utils;
+using Steam;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using UnityEngine;
-using ShinyOwl.Common.Utils;
-using NUnit.Framework;
-using ShinyOwl.Common;
-using Steam;
-using FishFlingers.Scenes;
 
 public class GameManager : MonoBehaviour
 {
@@ -89,6 +91,19 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         ManagerUpdate();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            using var udp = new UdpClient(5000);
+            var endpoint = new IPEndPoint(IPAddress.Any, 0);
+
+            Debugger.Log(this, $"udp.available: {udp.Available}");
+
+            while (udp.Available > 0)
+            {
+                udp.Receive(ref endpoint);
+            }
+        }
     }
 
     private void ManagerUpdate()

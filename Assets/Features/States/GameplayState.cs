@@ -44,12 +44,12 @@ namespace FishFlingers.States
 
         public override void Enter()
         {
-            if (_networkManager.CurrentLobby.OwnerId == SteamUser.GetSteamID().ToString())
-            {
-                _networkManager.StartServer();
-            }
+            //if (_networkManager.CurrentLobby.OwnerId == SteamUser.GetSteamID().ToString())
+            //{
+            //    _networkManager.StartServer();
+            //}
             
-            _networkManager.StartClient();
+            //_networkManager.StartClient();
         }
 
         public override async Task EnterAsync()
@@ -110,12 +110,12 @@ namespace FishFlingers.States
             else
             {
                 // For now, let's skip the check for the lobby being active
-                OnLobbyGameServerSet();
+                OnLobbyStart();
             }
         }
 
         // This fires once the lobby has 'started'
-        public void OnLobbyGameServerSet() 
+        public void OnLobbyStart() 
         {
             if (_parentStateMachine.CurrentState == this)
             {
