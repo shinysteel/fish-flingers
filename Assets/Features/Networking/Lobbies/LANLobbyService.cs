@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
+using Newtonsoft.Json;
 
 namespace FishFlingers.Networking
 {
@@ -150,12 +151,10 @@ namespace FishFlingers.Networking
             {
                 while (_isBroadcasting)
                 {
-                    Debugger.Log(this, "broadcast start");
-                    string json = JsonUtility.ToJson(_currentLobby);
+                    string json = JsonConvert.SerializeObject(_currentLobby);
                     byte[] bytes = Encoding.UTF8.GetBytes(json);
                     await _broadcastClient.SendAsync(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, _networkManager.Config.BroadcastPort));
                     await Task.Delay(BroadcastInterval);
-                    Debugger.Log(this, "broadcast end");
                 }
             });
         }
@@ -174,12 +173,14 @@ namespace FishFlingers.Networking
             {
                 while (_isListening)
                 {
-                    Debugger.Log(this, "listen start");
-                    UdpReceiveResult result = await _listenerClient.ReceiveAsync();
-                    Debugger.Log(this, "listen result");
-                    string json = Encoding.UTF8.GetString(result.Buffer);
-                    Lobby lobby = JsonUtility.FromJson<Lobby>(json);
-                    _knownLobbies[lobby.LobbyId] = lobby;
+                    try
+                    {
+                        UdpReceiveResult result = await _listenerClient.ReceiveAsync();
+                        string json = Encoding.UTF8.GetString(result.Buffer);
+                        Lobby lobby = JsonConvert.DeserializeObject<Lobby>(json);
+                        _knownLobbies[lobby.LobbyId] = lobby;
+                    }
+                    catch { } // Preserve the loop and ignore
                 }
             });
         }
