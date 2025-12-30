@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5974387422217482915}
   - component: {fileID: 513846142963452170}
   m_Layer: 0
-  m_Name: Player
+  m_Name: PurrnetPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

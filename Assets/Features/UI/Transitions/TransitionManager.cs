@@ -17,9 +17,9 @@ namespace FishFlingers.UI.Transitions
 
         private FadeOverlay _fadeOverlay;
 
-        public override void Initialise(GameManagerConfig gameManagerConfig)
+        public override void Initialise(GameManagerConfig config)
         {
-            _config = gameManagerConfig.TransitionManagerConfig;
+            _config = config.TransitionManagerConfig;
 
             _uiManager = GameManager.Instance.Get<UIManager>();
 
@@ -28,7 +28,7 @@ namespace FishFlingers.UI.Transitions
                 _fadeOverlay = (FadeOverlay)uiElement;
             };
 
-            base.Initialise(gameManagerConfig);
+            base.Initialise(config);
         }
 
         public override void Shutdown()

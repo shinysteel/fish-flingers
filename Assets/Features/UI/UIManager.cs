@@ -40,14 +40,14 @@ namespace FishFlingers.UI
 
         private RectTransform[] _layers;
 
-        public override void Initialise(GameManagerConfig gameManagerConfig)
+        public override void Initialise(GameManagerConfig config)
         {
-            _config = gameManagerConfig.UIManagerConfig;
+            _config = config.UIManagerConfig;
 
             CreateCanvasAndEventSystem();
             CreateLayers();            
 
-            base.Initialise(gameManagerConfig);
+            base.Initialise(config);
         }
 
         public override void Shutdown()

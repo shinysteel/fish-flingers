@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using FishFlingers.UI;
 using ShinyOwl.Common;
+using FishFlingers.Environments;
 
 namespace FishFlingers.Pools
 {
@@ -82,25 +83,26 @@ namespace FishFlingers.Pools
             }
         }
 
-        public override void Initialise(GameManagerConfig gameManagerConfig)
+        public override void Initialise(GameManagerConfig config)
         {
-            _config = gameManagerConfig.PoolManagerConfig;
+            _config = config.PoolManagerConfig;
 
             _container = new GameObject(ContainerName).transform;
             UnityEngine.Object.DontDestroyOnLoad(_container.gameObject);
 
             // Register config prefabs here
+            Register(_config.TilePrefab);
 
-            base.Initialise(gameManagerConfig);
+            base.Initialise(config);
         }
 
-        private void Register<T>(T obj) where T : Component, IPoolable
+        private void Register<T>(T prefab) where T : Component, IPoolable
         {
             Type type = typeof(T);
 
             Debugger.AssertIsFalse(_prefabRegistry.ContainsKey(type), this, "The same type was registered more than once");
 
-            _prefabRegistry[type] = obj;
+            _prefabRegistry[type] = prefab;
         }
         
         public T Get<T>(Transform parent) where T : Component, IPoolable

@@ -49,7 +49,7 @@ namespace Steam
             Debug.LogWarning(pchDebugText);
         }
 
-        public override void Initialise(GameManagerConfig gameManagerConfig)
+        public override void Initialise(GameManagerConfig config)
         {
             if (!Packsize.Test())
             {
@@ -100,7 +100,7 @@ namespace Steam
                 return;
             }
 
-            _config = gameManagerConfig.SteamManagerConfig;
+            _config = config.SteamManagerConfig;
 
             if (m_SteamAPIWarningMessageHook == null)
             {
@@ -110,7 +110,7 @@ namespace Steam
                 SteamClient.SetWarningMessageHook(m_SteamAPIWarningMessageHook);
             }
 
-            base.Initialise(gameManagerConfig);
+            base.Initialise(config);
         }
 
         // OnApplicationQuit gets called too early to shutdown the SteamAPI.

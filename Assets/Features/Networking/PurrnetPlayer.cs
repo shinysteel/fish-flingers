@@ -9,39 +9,35 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using FishFlingers.Networking.Predictions;
+using System.Threading;
 
 namespace FishFlingers.Networking
 {
-    public class Player : NetworkBehaviour, INetworkManagerListener
+    public class PurrnetPlayer : NetworkBehaviour, INetworkManagerListener
     {
-        [SerializeField] private Character _humanPrefab;
-
-        private CameraManager _cameraManager;
         private NetworkManager _networkManager;
-        private SceneManager _sceneManager;
 
-        private Character _human;
-
-        protected override void OnEarlySpawn()
+        protected override void OnInitializeModules()
         {
-            _cameraManager = GameManager.Instance.Get<CameraManager>();
             _networkManager = GameManager.Instance.Get<NetworkManager>();
-            _sceneManager = GameManager.Instance.Get<SceneManager>();
         }
 
         protected override void OnSpawned()
         {
+            // If we've missed the OnLobbyStart event, let's invoke it here
             if (_networkManager.CurrentLobby.Properties[LobbyService.StartedKey] == true.ToString())
             {
                 OnLobbyStart(_networkManager.CurrentLobby);
             }
 
+            // We deliberately subscribe after invoking missed events
             _networkManager.AddListener(this);
         }
 
         protected override void OnDespawned()
         {
-            _networkManager.RemoveListener(this);
+            _networkManager?.RemoveListener(this);
         }
 
         protected override void OnOwnerDisconnected(PlayerID ownerId)
@@ -51,24 +47,10 @@ namespace FishFlingers.Networking
 
         public void OnLobbyStart(Lobby lobby)
         {
-            if (!isOwner)
-            {
-                return;
-            }
-
-            _ = SpawnHuman();
-        }
-
-        private async Task SpawnHuman()
-        {
-            while (!_sceneManager.IsSceneActive(EScene.Game))
-            {
-                await Task.Yield();
-            }
-
-            _human = Instantiate(_humanPrefab);
-
-            _cameraManager.SetMode(new FollowCameraMode(_human.transform, new Vector3(0f, 3f, -5f)));
+            // There used to be code for spawning a 'human' to control here.
+            // Since we moved to Purrdiction, that's handled separately from
+            // Purrnet. I'm leaving the implementation here since it's a nice
+            // reference to look back on
         }
 
         public void OnLobbyEnter(Lobby lobby) { }

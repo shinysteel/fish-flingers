@@ -9,6 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec33684425b2a1947a330d8675519eb7, type: 3}
-  m_Name: StateManagerConfig
-  m_EditorClassIdentifier: 
+  m_Script: {fileID: 11500000, guid: b92fcc9f637a49e4ba74d2ea68aac151, type: 3}
+  m_Name: GameplayStateConfig
+  m_EditorClassIdentifier: Assembly-CSharp::GameplayStateConfig
+  _raftPrefab: {fileID: 6221065453191734945, guid: 8e771b24d3280c34ca31d8e8f161fad4, type: 3}

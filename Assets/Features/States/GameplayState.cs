@@ -16,13 +16,15 @@ namespace FishFlingers.States
 {
     public enum EGameplayState { }
 
-    public class GameplayState : State<MainState, EGameplayState>, INetworkManagerListener
+    public class GameplayState : FishFlingersState<MainState, EGameplayState>, INetworkManagerListener
     {
         private TransitionManager _transitionManager;
         private UIManager _uiManager;
         private StateManager _stateManager;
         private NetworkManager _networkManager;
         private SceneManager _sceneManager;
+
+        private GameplayStateConfig _config;
 
         private GameplayScreen _gameplayScreen;
 
@@ -42,30 +44,49 @@ namespace FishFlingers.States
             _networkManager?.RemoveListener(this);
         }
 
+        public override void Initialise(StateManagerConfig config)
+        {
+            _config = config.GameplayStateConfig;
+        }
+
         public override async Task EnterAsync()
         {
-            if (_networkManager.IsServer)
+            try
             {
-                // Use the network manager to load the game scene so that it can be networked
-                await _sceneManager.LoadSceneAsync(EScene.Game, LoadSceneMode.Additive, LoadSceneContext.Networked);
-            }
-            else
-            {
-                // Scenes are structs, so we need to keep requesting while awaiting
-                while (!_sceneManager.IsSceneLoaded(EScene.Game))
+                if (_networkManager.IsServer)
                 {
-                    await Task.Yield();
+                    // Use the network manager to load the game scene so that it can be networked
+                    await _sceneManager.LoadSceneAsync(EScene.Game, LoadSceneMode.Additive, LoadSceneContext.Networked);
                 }
+                else
+                {
+                    // Scenes are structs, so we need to keep requesting while awaiting
+                    while (!_sceneManager.IsSceneLoaded(EScene.Game))
+                    {
+                        await Task.Yield();
+                    }
+                }
+
+                // Clients need to manually set the active scene, despite networked scenes being loaded in automatically
+                _sceneManager.SetActiveScene(EScene.Game);
+
+                await _sceneManager.LoadSceneAsync(EScene.EnvironmentGameplay, LoadSceneMode.Additive, LoadSceneContext.Local);
+
+                // Only the server creates the raft
+                if (_networkManager.IsServer)
+                {
+                    UnityEngine.Object.Instantiate(_config.RaftPrefab);
+                }
+
+                _gameplayScreen = (GameplayScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.GameplayScreen, UILayer.Screens);
+                _gameplayScreen.Show(null);
+
+                _transitionManager.UncoverScreen(null);
             }
-
-            _sceneManager.SetActiveScene(EScene.Game);
-
-            await _sceneManager.LoadSceneAsync(EScene.EnvironmentGameplay, LoadSceneMode.Additive, LoadSceneContext.Local);
-
-            _gameplayScreen = (GameplayScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.GameplayScreen, UILayer.Screens);
-            _gameplayScreen.Show(null);
-
-            _transitionManager.UncoverScreen(null);
+            catch (Exception ex)
+            {
+                Debugger.Log(this, ex);
+            }
         }
 
         public override void Exit()
@@ -88,7 +109,7 @@ namespace FishFlingers.States
         {
             // This can happen from any state besides itself. Currently we 
             // assume you are 'ready' straight away and move to the GameplayState
-            if (_parentStateMachine.CurrentState == this)
+            if (_parentStateMachine.CurrentEnum == MainState.Gameplay)
             {
                 return;
             }
@@ -102,7 +123,7 @@ namespace FishFlingers.States
 
         public void OnLobbyStart(Lobby lobby) 
         {
-            if (_parentStateMachine.CurrentState == this)
+            if (_parentStateMachine.CurrentEnum == MainState.Gameplay)
             {
                 return;
             }
@@ -112,7 +133,7 @@ namespace FishFlingers.States
 
         public void OnNetworkShutdown(bool asServer)
         {
-            if (_parentStateMachine.CurrentState != this)
+            if (_parentStateMachine.CurrentEnum != MainState.Gameplay)
             {
                 return;
             }

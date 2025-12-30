@@ -61,9 +61,9 @@ namespace FishFlingers.Networking
 
         public bool IsServer => _purrnetNetworkManager.isServer;
 
-        public override void Initialise(GameManagerConfig gameManagerConfig)
+        public override void Initialise(GameManagerConfig config)
         {
-            _config = gameManagerConfig.NetworkManagerConfig;
+            _config = config.NetworkManagerConfig;
 
             _lanLobbyService = new();
             _steamLobbyService = new();
@@ -86,7 +86,7 @@ namespace FishFlingers.Networking
             SetClientTransport<UDPTransport>();
             SetLobbyService(eLobbyService.LAN);
 
-            base.Initialise(gameManagerConfig);
+            base.Initialise(config);
         }
 
         public override void Shutdown()

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -34,7 +35,8 @@ public class GameManager : MonoBehaviour
         UIManager         ,
         StateManager      ,
         PoolManager       ,
-        TransitionManager , 
+        TransitionManager ,
+        PredictionManager ,
     }
 
     public TManager Get<TManager>() where TManager : IGameSystem
@@ -90,27 +92,17 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        ManagerUpdate();
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            using var udp = new UdpClient(5000);
-            var endpoint = new IPEndPoint(IPAddress.Any, 0);
-
-            Debugger.Log(this, $"udp.available: {udp.Available}");
-
-            while (udp.Available > 0)
-            {
-                udp.Receive(ref endpoint);
-            }
-        }
-    }
-
-    private void ManagerUpdate()
-    {
         foreach (IGameSystem manager in _managers)
         {
             manager.Update();
+        }
+    }
+
+    private void LateUpdate()
+    {
+        foreach (IGameSystem manager in _managers)
+        {
+            manager.LateUpdate();
         }
     }
 

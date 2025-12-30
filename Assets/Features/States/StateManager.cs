@@ -9,7 +9,9 @@ using FishFlingers.Scenes;
 namespace FishFlingers.States
 {
     public interface IStateManagerListener
-    { }
+    {
+        void OnStateChanged(MainState previous, MainState current);
+    }
 
     public enum MainState
     {
@@ -28,9 +30,9 @@ namespace FishFlingers.States
         private MenusState _menusState;
         private GameplayState _gameplayState;
 
-        public override void Initialise(GameManagerConfig gameManagerConfig)
+        public override void Initialise(GameManagerConfig config)
         {
-            _config = gameManagerConfig.StateManagerConfig;
+            _config = config.StateManagerConfig;
 
             _sceneManager = GameManager.Instance.Get<SceneManager>();
 
@@ -40,10 +42,16 @@ namespace FishFlingers.States
             _menusState = new MenusState(_stateMachine);
             _gameplayState = new GameplayState(_stateMachine);
 
+            List<IFishFlingersState> states = new() { _menusState, _gameplayState };
+            foreach (IFishFlingersState state in states)
+            {
+                state.Initialise(_config);
+            }
+
             _stateMachine.AddState(MainState.Menus, _menusState);
             _stateMachine.AddState(MainState.Gameplay, _gameplayState);
 
-            base.Initialise(gameManagerConfig);
+            base.Initialise(config);
         }
 
         public override void Shutdown()
@@ -60,7 +68,14 @@ namespace FishFlingers.States
 
         public void ChangeState(MainState state)
         {
+            MainState previous = _stateMachine.CurrentEnum;
             _stateMachine.ChangeState(state);
+            Listeners.Dispatch(NotifyOnStateChanged, previous, state);
+        }
+
+        private void NotifyOnStateChanged(IStateManagerListener listener, MainState previous, MainState current)
+        {
+            listener.OnStateChanged(previous, current);
         }
 
         public void OnSceneUnloaded(EScene scene)
@@ -74,5 +89,6 @@ namespace FishFlingers.States
         }
 
         public void OnSceneLoaded(EScene scene, LoadSceneMode mode) { }
+        public void OnSceneSetActive(EScene previous, EScene current) { }
     }
 }

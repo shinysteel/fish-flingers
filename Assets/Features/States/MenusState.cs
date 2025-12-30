@@ -10,17 +10,20 @@ using FishFlingers.Cameras;
 using FishFlingers.UI.Transitions;
 using FishFlingers.Scenes;
 using System.Threading.Tasks;
+using System;
 
 namespace FishFlingers.States
 {
     public enum EMenusState { }
 
-    public class MenusState : State<MainState, EMenusState>
+    public class MenusState : FishFlingersState<MainState, EMenusState>
     {
         private UIManager _uiManager;
         private CameraManager _cameraManager;
         private TransitionManager _transitionManager;
         private SceneManager _sceneManager;
+
+        private MenusStateConfig _config;
 
         private MainMenuScreen _mainMenuScreen;
         private BrowseGamesScreen _browseGamesScreen;
@@ -33,6 +36,11 @@ namespace FishFlingers.States
             _sceneManager = GameManager.Instance.Get<SceneManager>();
         }
 
+        public override void Initialise(StateManagerConfig config)
+        {
+            _config = config.MenusStateConfig;
+        }
+
         public override void Enter()
         {
             _cameraManager.SetMode(new OrbitCameraMode(Vector3.zero, 5f, 3f, 0.1f));
@@ -40,15 +48,22 @@ namespace FishFlingers.States
 
         public override async Task EnterAsync()
         {
-            await _sceneManager.LoadSceneAsync(EScene.EnvironmentMainMenu, LoadSceneMode.Additive);
+            try
+            {
+                await _sceneManager.LoadSceneAsync(EScene.EnvironmentMainMenu, LoadSceneMode.Additive);
 
-            _browseGamesScreen = (BrowseGamesScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.BrowseGamesScreen, UILayer.Screens);
-            _mainMenuScreen = (MainMenuScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.MainMenuScreen, UILayer.Screens, UILayerInsertMode.FirstSibling);
+                _browseGamesScreen = (BrowseGamesScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.BrowseGamesScreen, UILayer.Screens);
+                _mainMenuScreen = (MainMenuScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.MainMenuScreen, UILayer.Screens, UILayerInsertMode.FirstSibling);
 
-            _mainMenuScreen.Setup(_browseGamesScreen);
-            _mainMenuScreen.Show(null);
+                _mainMenuScreen.Setup(_browseGamesScreen);
+                _mainMenuScreen.Show(null);
 
-            _transitionManager.UncoverScreen(null);
+                _transitionManager.UncoverScreen(null);
+            }
+            catch (Exception ex)
+            {
+                Debugger.Log(this, ex);
+            }
         }
 
         public override void Exit()

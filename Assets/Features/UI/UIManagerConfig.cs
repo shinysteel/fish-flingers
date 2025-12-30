@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace FishFlingers.UI
 {
-    [CreateAssetMenu(fileName = "UIManagerConfig", menuName = "Configs/Managers/UIManagerConfig")]
+    [CreateAssetMenu(fileName = "UIManagerConfig", menuName = "Configs/Managers/UI/UIManagerConfig")]
     public class UIManagerConfig : ScriptableObject
     {
         [Header("Canvas & Event System")]

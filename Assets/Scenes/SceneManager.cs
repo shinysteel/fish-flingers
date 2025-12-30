@@ -35,6 +35,7 @@ namespace FishFlingers.Scenes
     {
         void OnSceneLoaded(EScene scene, LoadSceneMode mode);
         void OnSceneUnloaded(EScene scene);
+        void OnSceneSetActive(EScene previous, EScene current);
     }
 
     public class SceneManager : GameSystem<ISceneManagerListener>
@@ -45,9 +46,9 @@ namespace FishFlingers.Scenes
 
         private Dictionary<EScene, string> _sceneNameMap;
 
-        public override void Initialise(GameManagerConfig gameManagerConfig)
+        public override void Initialise(GameManagerConfig config)
         {
-            _config = gameManagerConfig.SceneManagerConfig;
+            _config = config.SceneManagerConfig;
 
             _networkManager = GameManager.Instance.Get<NetworkManager>();
 
@@ -60,7 +61,7 @@ namespace FishFlingers.Scenes
                 _sceneNameMap.Add(mapping.Enum, mapping.Name);
             }
 
-            base.Initialise(gameManagerConfig);
+            base.Initialise(config);
         }
 
         public override void Shutdown()
@@ -76,14 +77,19 @@ namespace FishFlingers.Scenes
             return _sceneNameMap.FirstOrDefault(kvp => kvp.Value == scene.name).Key;
         }
 
+        public Scene GetScene(EScene scene)
+        {
+            return UnityEngine.SceneManagement.SceneManager.GetSceneByName(GetSceneName(scene));
+        }
+
         public string GetSceneName(EScene scene)
         {
             return _sceneNameMap[scene];
         }
 
-        public Scene GetScene(EScene scene)
+        private EScene GetActiveSceneEnum()
         {
-            return UnityEngine.SceneManagement.SceneManager.GetSceneByName(GetSceneName(scene));
+            return GetSceneEnum(GetActiveScene());
         }
 
         private Scene GetActiveScene()
@@ -91,14 +97,26 @@ namespace FishFlingers.Scenes
             return UnityEngine.SceneManagement.SceneManager.GetActiveScene();
         }
 
-        public bool IsSceneLoaded(EScene scene)
+        public void SetActiveScene(EScene scene)
         {
-            return GetScene(scene).isLoaded;
+            EScene previous = GetActiveSceneEnum();
+            UnityEngine.SceneManagement.SceneManager.SetActiveScene(GetScene(scene));
+            Listeners.Dispatch(NotifyOnSceneSetActive, previous, scene);
+        }
+
+        public void MoveGameObjectToScene(GameObject obj, EScene scene)
+        {
+            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(obj, GetScene(scene));
         }
 
         public bool IsSceneActive(EScene scene)
         {
             return GetActiveScene().name == GetSceneName(scene);
+        }
+
+        public bool IsSceneLoaded(EScene scene)
+        {
+            return GetScene(scene).isLoaded;
         }
 
         public void LoadScene(EScene scene, LoadSceneMode mode = LoadSceneMode.Single)
@@ -146,15 +164,11 @@ namespace FishFlingers.Scenes
             return new AsyncOperationBridge(op);
         }
 
-        public void SetActiveScene(EScene scene)
-        {
-            UnityEngine.SceneManagement.SceneManager.SetActiveScene(GetScene(scene));
-        }
-
         private void HandleSceneLoaded(Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) => Listeners.Dispatch(NotifyOnSceneLoaded, GetSceneEnum(scene), (LoadSceneMode)mode);
         private void HandleSceneUnloaded(Scene scene) => Listeners.Dispatch(NotifyOnSceneUnloaded, GetSceneEnum(scene));
 
         private void NotifyOnSceneLoaded(ISceneManagerListener listener, EScene scene, LoadSceneMode mode) => listener.OnSceneLoaded(scene, mode);
         private void NotifyOnSceneUnloaded(ISceneManagerListener listener, EScene scene) => listener.OnSceneUnloaded(scene);
+        private void NotifyOnSceneSetActive(ISceneManagerListener listener, EScene previous, EScene current) => listener.OnSceneSetActive(previous, current);
     }
 }

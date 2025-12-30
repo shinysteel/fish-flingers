@@ -59,7 +59,7 @@ MonoBehaviour:
   _networkRules: {fileID: 11400000, guid: 4e7bdc72c0c0186479c8a5a27555d515, type: 2}
   _visibilityRules: {fileID: 11400000, guid: 8f014a5bd8dc68646a2a3c0b18c5bbd8, type: 2}
   _authenticator: {fileID: 0}
-  _tickRate: 20
+  _tickRate: 64
   _patchLingeringProcessBug: 0
 --- !u!114 &3018283976890895539
 MonoBehaviour:

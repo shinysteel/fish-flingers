@@ -24,7 +24,7 @@ namespace ShinyOwl.Common.Framework
         Task ExitAsync();
     }
 
-    public class State<TParentStateEnum, TSubStateEnum> : IState
+    public abstract class State<TParentStateEnum, TSubStateEnum> : IState
         where TParentStateEnum : Enum
         where TSubStateEnum    : Enum
     {
@@ -71,9 +71,10 @@ namespace ShinyOwl.Common.Framework
         where TStateEnum : Enum
     {
         private Dictionary<TStateEnum, IState> _enumStateMap = new();
-        private IState _currentState;
 
-        public IState CurrentState => _currentState;
+        private TStateEnum _currentEnum;
+
+        public TStateEnum CurrentEnum => _currentEnum;
 
         public StateMachine()
         {
@@ -84,6 +85,11 @@ namespace ShinyOwl.Common.Framework
             }
         }
 
+        private IState GetCurrentState()
+        {
+            return _enumStateMap[_currentEnum];
+        }
+
         public void AddState(TStateEnum stateEnum, IState state)
         {
             _enumStateMap[stateEnum] = state;
@@ -91,48 +97,51 @@ namespace ShinyOwl.Common.Framework
 
         public void ChangeState(TStateEnum stateEnum)
         {
-            if (!_enumStateMap.TryGetValue(stateEnum, out IState state))
+            if (!_enumStateMap.ContainsKey(stateEnum))
             {
                 Debugger.LogError(this, "Tried to change to a state that has not been mapped");
                 return;
             }
 
-            if (_currentState == state)
+            if (Equals(_currentEnum, stateEnum))
             {
                 Debugger.LogError(this, "Tried to change to a state we are already in");
                 return;
             }
 
-            _currentState?.Exit();
-            _ = _currentState?.ExitAsync();
-            _currentState = state;
-            _currentState?.Enter();
-            _ = _currentState?.EnterAsync();
+            // GetCurrentState will return the new state once we assign the enum, so we can't just cache the output
+            GetCurrentState()?.Exit();
+            _ = GetCurrentState()?.ExitAsync();
+
+            _currentEnum = stateEnum;
+
+            GetCurrentState()?.Enter();
+            _ = GetCurrentState()?.EnterAsync();
         }
 
         public void Enter()
         {
-            _currentState?.Enter();
+            GetCurrentState()?.Enter();
         }
 
         public async Task EnterAsync()
         {
-            await (_currentState?.EnterAsync() ?? Task.CompletedTask);
+            await (GetCurrentState()?.EnterAsync() ?? Task.CompletedTask);
         }
 
         public void Update()
         {
-            _currentState?.Update();
+            GetCurrentState()?.Update();
         }
 
         public void Exit()
         {
-            _currentState?.Exit();
+            GetCurrentState()?.Exit();
         }
 
         public async Task ExitAsync()
         {
-            await (_currentState?.ExitAsync() ?? Task.CompletedTask);
+            await (GetCurrentState()?.ExitAsync() ?? Task.CompletedTask);
         }
     }
 }

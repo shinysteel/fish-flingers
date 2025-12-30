@@ -7,6 +7,7 @@ public interface IGameSystem
 {
     void Initialise(GameManagerConfig config);
     void Update();
+    void LateUpdate();
     void Shutdown();
 }
 
@@ -28,12 +29,15 @@ public abstract class GameSystem<TListener> : IGameSystem
     private ListenerHandler<TListener> _listeners = new();
     protected ListenerHandler<TListener> Listeners => _listeners;
 
-    public virtual void Initialise(GameManagerConfig gameManagerConfig)
+    public virtual void Initialise(GameManagerConfig config)
     {
         State = ManagerState.Ready;
     }
 
     public virtual void Update()
+    { }
+
+    public virtual void LateUpdate()
     { }
 
     public virtual void Shutdown()
