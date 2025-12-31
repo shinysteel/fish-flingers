@@ -121,9 +121,9 @@ namespace FishFlingers.Networking
             if (!ClonesManager.IsClone())
             {
                 _listenerClient = new UdpClient(_networkManager.Config.BroadcastPort);
-            }
 
-            StartListening();
+                StartListening();
+            }
         }
 
         public override void Shutdown()

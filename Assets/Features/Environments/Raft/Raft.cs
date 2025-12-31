@@ -21,7 +21,7 @@ namespace FishFlingers.Environments
         public struct State : IPredictedData<State>
         {
             public DisposableDictionary<Vector2Int, PredictedObjectID> TileIds;
-
+            
             public void Dispose() 
             {
                 TileIds.Dispose();
@@ -32,23 +32,25 @@ namespace FishFlingers.Environments
         {
             return new State()
             {
-                TileIds = DisposableDictionary<Vector2Int, PredictedObjectID>.Create()
+                TileIds = DisposableDictionary<Vector2Int, PredictedObjectID>.Create(),
             };
         }
 
         protected override void SimulationStart()
         {
-            for (int i = -1; i <= 1; i++)
+            System.Random random = new(0);
+
+            for (int i = -2; i <= 2; i++)
             {
-                for (int j = -1; j <= 1; j++)
+                for (int j = -2; j <= 2; j++)
                 {
-                    AddTile(new Vector2Int(i, j));
+                    AddTile(new Vector2Int(i, j), random.Next(1, Tile.DefaultHealth + 1));
                 }
             }
         }
         
         [SimulationOnly]
-        public void AddTile(Vector2Int cell)
+        public void AddTile(Vector2Int cell, int health)
         {
             if (currentState.TileIds.ContainsKey(cell))
             {
@@ -59,7 +61,7 @@ namespace FishFlingers.Environments
 
             Tile tile = tileId.GetComponent<Tile>(predictionManager);
             tile.SetCell(cell);
-            tile.SetHealth(Tile.DefaultHealth);
+            tile.SetHealth(health);
 
             currentState.TileIds.Add(cell, tileId);
         }
@@ -78,6 +80,7 @@ namespace FishFlingers.Environments
             if (tile.currentState.Health <= 0)
             {
                 hierarchy.Delete(tileId);
+
                 currentState.TileIds.Remove(cell);
             }
         }

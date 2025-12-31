@@ -6,10 +6,10 @@ namespace FishFlingers.Networking.Predictions
     [CreateAssetMenu(fileName = "PredictionManagerConfig", menuName = "Configs/Managers/Networking/PredictionManagerConfig")]
     public class PredictionManagerConfig : ScriptableObject
     {
-        [SerializeField] private PurrNet.Prediction.PredictionManager _purrdictionPredictionManagerPrefab;
+        [SerializeField] private PurrdictionPredictionManager _purrdictionPredictionManagerPrefab;
         [SerializeField] private PredictedPlayerSpawner _playerSpawnerPrefab;
 
-        public PurrNet.Prediction.PredictionManager PurrdictionPredictionManagerPrefab => _purrdictionPredictionManagerPrefab;
+        public PurrdictionPredictionManager PurrdictionPredictionManagerPrefab => _purrdictionPredictionManagerPrefab;
         public PredictedPlayerSpawner PlayerSpawnerPrefab => _playerSpawnerPrefab;
     }
 }

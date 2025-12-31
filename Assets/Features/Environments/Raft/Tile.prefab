@@ -51,6 +51,10 @@ MonoBehaviour:
     _amplitude: 0.125
     _noiseScale: 0.5
     _timeScale: 0.25
+  _sinkSettings:
+    _radius: 1.333
+    _speed: 0.25
+  _renderer: {fileID: 6714399944451497696}
 --- !u!33 &4983968289510203535
 MeshFilter:
   m_ObjectHideFlags: 0

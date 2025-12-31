@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: GameplayStateConfig
   m_EditorClassIdentifier: Assembly-CSharp::GameplayStateConfig
   _raftPrefab: {fileID: 6221065453191734945, guid: 8e771b24d3280c34ca31d8e8f161fad4, type: 3}
+  _waveSpawnerPrefab: {fileID: 6021264650511489451, guid: e59782811f70e184b97633ac1595d6ec, type: 3}

@@ -5,6 +5,8 @@ using UnityEngine;
 public class GameplayStateConfig : ScriptableObject
 {
     [SerializeField] private Raft _raftPrefab;
+    [SerializeField] private WaveSpawner _waveSpawnerPrefab;
 
     public Raft RaftPrefab => _raftPrefab;
+    public WaveSpawner WaveSpawnerPrefab => _waveSpawnerPrefab;
 }

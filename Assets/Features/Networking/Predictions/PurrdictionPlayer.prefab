@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 842441042232873106}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 555160578948304221}
   - component: {fileID: 349122209084209975}
   - component: {fileID: 190352793586686135}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 3323203410023107332}
   - component: {fileID: 4778677063623772926}
   - component: {fileID: 6072639463593192333}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PurrdictionPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

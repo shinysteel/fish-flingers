@@ -12,13 +12,13 @@ namespace FishFlingers.Networking.Predictions
 
         public struct State : IPredictedData<State>
         {
-            public DisposableDictionary<PlayerID, PredictedObjectID> PlayerLookup;
+            public DisposableDictionary<PlayerID, PredictedObjectID> PlayerMap;
             public DisposableList<PlayerID> ToAdd;
             public DisposableList<PlayerID> ToRemove;
 
             public void Dispose()
             {
-                PlayerLookup.Dispose();
+                PlayerMap.Dispose();
                 ToAdd.Dispose();
                 ToRemove.Dispose();
             }
@@ -30,7 +30,7 @@ namespace FishFlingers.Networking.Predictions
 
             return new State()
             {
-                PlayerLookup = DisposableDictionary<PlayerID, PredictedObjectID>.Create(),
+                PlayerMap = DisposableDictionary<PlayerID, PredictedObjectID>.Create(),
                 ToAdd = DisposableList<PlayerID>.Create(),
                 ToRemove = DisposableList<PlayerID>.Create()
             };
@@ -84,25 +84,25 @@ namespace FishFlingers.Networking.Predictions
 
         private void AddPlayer(PlayerID playerId)
         {
-            if (currentState.PlayerLookup.ContainsKey(playerId))
+            if (currentState.PlayerMap.ContainsKey(playerId))
             {
                 Debugger.LogError(this, "This player is already assigned a predicted object");
                 return;
             }
 
             PredictedObjectID objectId = hierarchy.Create(_playerPrefab.gameObject, playerId).Value;
-            currentState.PlayerLookup[playerId] = objectId;
+            currentState.PlayerMap[playerId] = objectId;
         }
 
         private void RemovePlayer(PlayerID playerId)
         {
-            if (!currentState.PlayerLookup.TryGetValue(playerId, out PredictedObjectID objectId))
+            if (!currentState.PlayerMap.TryGetValue(playerId, out PredictedObjectID objectId))
             {
                 return;
             }
 
             hierarchy.Delete(objectId);
-            currentState.PlayerLookup.Remove(playerId);
+            currentState.PlayerMap.Remove(playerId);
         }
 
         protected override State Interpolate(State from, State to, float t)

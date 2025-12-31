@@ -18,13 +18,12 @@ namespace FishFlingers.Networking.Predictions
         [SerializeField] private PredictedRigidbody _rigidbody;
 
         [SerializeField] private float _moveSpeed = 2f;
-        [SerializeField] private float _accelerationSpeed = 10f;
-        [SerializeField] private float _decelerationSpeed = 7.5f;
+        [SerializeField] private float _moveAcceleration = 10f;
+        [SerializeField] private float _moveDeceleration = 7.5f;
 
         [SerializeField] private float _jumpForce = 3f;
         
         private CameraManager _cameraManager;
-        private SceneManager _sceneManager;
 
         public struct Input : IPredictedData<Input>
         {
@@ -43,31 +42,13 @@ namespace FishFlingers.Networking.Predictions
         protected override void LateAwake()
         {
             _cameraManager = GameManager.Instance.Get<CameraManager>();
-            _sceneManager = GameManager.Instance.Get<SceneManager>();
 
             if (isOwner)
             {
                 _cameraManager.SetMode(new FollowCameraMode(_visuals, new Vector3(0f, 3f, -5f)));
             }
-
-            // Prediction manager is very annoying and doesn't allow us to wait
-            // for the Game scene to load. Exclusively happens for non - hosts
-            //if (gameObject.scene.name != _sceneManager.GetSceneName(EScene.Game))
-            //{
-            //    _ = MoveToGameSceneAsync();
-            //}
         }
 
-        private async Task MoveToGameSceneAsync()
-        {
-            while (!_sceneManager.IsSceneLoaded(EScene.Game))
-            {
-                await Task.Yield();
-            }
-
-            _sceneManager.MoveGameObjectToScene(gameObject, EScene.Game);
-        }
-        
         // Runs every tick, and afterwards resets the values
         protected override void GetFinalInput(ref Input input)
         {
@@ -105,7 +86,7 @@ namespace FishFlingers.Networking.Predictions
             Vector3 moveDirection = new Vector3(input.Horizontal, 0f, input.Vertical);
             Vector3 targetVelocity = moveDirection * _moveSpeed;
             targetVelocity.y = _rigidbody.linearVelocity.y;
-            float speed = moveDirection != Vector3.zero ? _accelerationSpeed : _decelerationSpeed;
+            float speed = moveDirection != Vector3.zero ? _moveAcceleration : _moveDeceleration;
             _rigidbody.linearVelocity = Vector3.MoveTowards(_rigidbody.linearVelocity, targetVelocity, speed * Time.fixedDeltaTime);
 
             // Jump

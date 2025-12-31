@@ -88,7 +88,7 @@ namespace FishFlingers.Scenes
             return GetSceneEnum(GetActiveScene());
         }
 
-        private Scene GetActiveScene()
+        public Scene GetActiveScene()
         {
             return UnityEngine.SceneManagement.SceneManager.GetActiveScene();
         }

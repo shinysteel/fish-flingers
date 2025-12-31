@@ -12,6 +12,9 @@ using FishFlingers.Scenes;
 using System.Threading.Tasks;
 using PurrNet.Transports;
 using FishFlingers.Networking.Predictions;
+using PurrNet;
+
+using NetworkManager = FishFlingers.Networking.NetworkManager;
 
 namespace FishFlingers.States
 {
@@ -75,7 +78,8 @@ namespace FishFlingers.States
                 // Only the server creates the raft
                 if (_networkManager.IsServer)
                 {
-                    _predictionManager.Spawn(_config.RaftPrefab.gameObject, _networkManager.LocalPlayerId);
+                    _predictionManager.Spawn(_config.RaftPrefab.gameObject, PlayerID.Server);
+                    _predictionManager.Spawn(_config.WaveSpawnerPrefab.gameObject, PlayerID.Server);
                 }
 
                 _gameplayScreen = (GameplayScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.GameplayScreen, UILayer.Screens);
@@ -143,8 +147,8 @@ namespace FishFlingers.States
 
         public void OnLobbyLeave()  { }
         public void OnLobbyCreated(Lobby lobby) { }
-        public void OnPlayerJoined(PurrNet.PlayerID id, bool isReconnect, bool asServer) { }
-        public void OnPlayerLeft(PurrNet.PlayerID id, bool asServer) { }
+        public void OnPlayerJoined(PlayerID id, bool isReconnect, bool asServer) { }
+        public void OnPlayerLeft(PlayerID id, bool asServer) { }
         public void OnClientConnectionState(ConnectionState state) { }
         public void OnNetworkStarted(bool asServer) { }
         public void OnNetworkSceneLoaded(EScene scene, bool asServer) { }
