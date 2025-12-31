@@ -9,11 +9,11 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Net.Sockets;
 using PurrNet.Steam;
 using System.Linq;
 using System;
+using FishFlingers.Scenes;
 
 namespace FishFlingers.Networking
 {
@@ -41,12 +41,16 @@ namespace FishFlingers.Networking
         void OnClientConnectionState(ConnectionState state);
         void OnPlayerJoined(PlayerID id, bool isReconnect, bool asServer);
         void OnPlayerLeft(PlayerID id, bool asServer);
+        void OnNetworkSceneLoaded(EScene scene, bool asServer);
+        void OnNetworkSceneUnloaded(EScene scene, bool asServer);
     }
 
     public class NetworkManager : GameSystem<INetworkManagerListener>
     {
         private NetworkManagerConfig _config;
         public NetworkManagerConfig Config => _config;
+
+        private SceneManager _sceneManager;
 
         private PurrNet.NetworkManager _purrnetNetworkManager;
 
@@ -57,13 +61,16 @@ namespace FishFlingers.Networking
         private LobbyService _currentLobbyService;
 
         public Lobby CurrentLobby => _currentLobbyService.CurrentLobby;
-        public PlayerID LocalPlayer => _purrnetNetworkManager.localPlayer;
+        public PlayerID LocalPlayerId => _purrnetNetworkManager.localPlayer;
+        public IReadOnlyList<PlayerID> PlayersIds => _purrnetNetworkManager.players;
 
         public bool IsServer => _purrnetNetworkManager.isServer;
 
         public override void Initialise(GameManagerConfig config)
         {
             _config = config.NetworkManagerConfig;
+
+            _sceneManager = GameManager.Instance.Get<SceneManager>();
 
             _lanLobbyService = new();
             _steamLobbyService = new();
@@ -152,14 +159,20 @@ namespace FishFlingers.Networking
             }
         }
 
-        public AsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode mode)
+        public AsyncOperation LoadSceneAsync(EScene scene, LoadSceneMode mode)
         {
-            return _purrnetNetworkManager.sceneModule.LoadSceneAsync(sceneName, mode);
+            return _purrnetNetworkManager.sceneModule.LoadSceneAsync(_sceneManager.GetSceneName(scene), (UnityEngine.SceneManagement.LoadSceneMode)mode);
         }
 
-        public AsyncOperation UnloadSceneAsync(string sceneName)
+        public AsyncOperation UnloadSceneAsync(EScene scene)
         {
-            return _purrnetNetworkManager.sceneModule.UnloadSceneAsync(sceneName);
+            return _purrnetNetworkManager.sceneModule.UnloadSceneAsync(_sceneManager.GetSceneName(scene));
+        }
+
+        private EScene GetScene(SceneID id)
+        {
+            _purrnetNetworkManager.sceneModule.TryGetSceneState(id, out SceneState state);
+            return _sceneManager.GetSceneEnum(state.scene);
         }
 
         public void Send<T>(PlayerID id, T data, Channel method = Channel.ReliableUnordered)
@@ -248,15 +261,37 @@ namespace FishFlingers.Networking
             _purrnetNetworkManager.StopClient();
         }
 
+        private void HandleNetworkStarted(PurrNet.NetworkManager manager, bool asServer)
+        {
+            if (!asServer)
+            {
+                _purrnetNetworkManager.sceneModule.onSceneLoaded += HandleNetworkSceneLoaded;
+                _purrnetNetworkManager.sceneModule.onSceneUnloaded += HandleNetworkSceneUnloaded;
+            }
+
+            Listeners.Dispatch(NotifyOnNetworkStarted, asServer);
+        }
+
+        private void HandleNetworkShutdown(PurrNet.NetworkManager manager, bool asServer)
+        {
+            if (!asServer)
+            {
+                _purrnetNetworkManager.sceneModule.onSceneLoaded -= HandleNetworkSceneLoaded;
+                _purrnetNetworkManager.sceneModule.onSceneUnloaded -= HandleNetworkSceneUnloaded;
+            }
+
+            Listeners.Dispatch(NotifyOnNetworkShutdown, asServer);
+        }
+
         private void HandleLobbyCreated(Lobby lobby) => Listeners.Dispatch(NotifyOnLobbyCreated, lobby);
         private void HandleLobbyEnter(Lobby lobby) => Listeners.Dispatch(NotifyOnLobbyEnter, lobby);
         private void HandleLobbyStart(Lobby lobby) => Listeners.Dispatch(NotifyOnLobbyStart, lobby);
         private void HandleLobbyLeave() => Listeners.Dispatch(NotifyOnLobbyLeave);
-        private void HandleNetworkStarted(PurrNet.NetworkManager manager, bool asServer) => Listeners.Dispatch(NotifyOnNetworkStarted, asServer);
-        private void HandleNetworkShutdown(PurrNet.NetworkManager manager, bool asServer) => Listeners.Dispatch(NotifyOnNetworkShutdown, asServer);
         private void HandleClientConnectionState(ConnectionState state) => Listeners.Dispatch(NotifyOnClientConnectionState, state);
         private void HandlePlayerJoined(PlayerID id, bool isReconnect, bool asServer) => Listeners.Dispatch(NotifyOnPlayerJoined, id, isReconnect, asServer);
         private void HandlePlayerLeft(PlayerID id, bool asServer) => Listeners.Dispatch(NotifyOnPlayerLeft, id, asServer);
+        private void HandleNetworkSceneLoaded(SceneID id, bool asServer) => Listeners.Dispatch(NotifyOnNetworkSceneLoaded, GetScene(id), asServer);
+        private void HandleNetworkSceneUnloaded(SceneID id, bool asServer) => Listeners.Dispatch(NotifyOnNetworkSceneUnloaded, GetScene(id), asServer);
 
         private static void NotifyOnLobbyCreated(INetworkManagerListener listener, Lobby lobby) => listener.OnLobbyCreated(lobby);
         private static void NotifyOnLobbyEnter(INetworkManagerListener listener, Lobby lobby) => listener.OnLobbyEnter(lobby);
@@ -267,5 +302,7 @@ namespace FishFlingers.Networking
         private static void NotifyOnClientConnectionState(INetworkManagerListener listener, ConnectionState state) => listener.OnClientConnectionState(state);
         private static void NotifyOnPlayerJoined(INetworkManagerListener listener, PlayerID id, bool isReconnect, bool asServer) => listener.OnPlayerJoined(id, isReconnect, asServer);
         private static void NotifyOnPlayerLeft(INetworkManagerListener listener, PlayerID id, bool asServer) => listener.OnPlayerLeft(id, asServer);
+        private static void NotifyOnNetworkSceneLoaded(INetworkManagerListener listener, EScene scene, bool asServer) => listener.OnNetworkSceneLoaded(scene, asServer);
+        private static void NotifyOnNetworkSceneUnloaded(INetworkManagerListener listener, EScene scene, bool asServer) => listener.OnNetworkSceneUnloaded(scene, asServer);
     }
 }

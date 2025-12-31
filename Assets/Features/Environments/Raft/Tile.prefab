@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8893844424148854519}
-  - component: {fileID: 9167174063153225009}
+  - component: {fileID: 8127564742549498130}
   - component: {fileID: 4983968289510203535}
   - component: {fileID: 6714399944451497696}
   - component: {fileID: 4697910413988331856}
@@ -35,7 +35,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9167174063153225009
+--- !u!114 &8127564742549498130
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,6 +47,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3fc49879ec296149bab8254b2a720c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Environments.Tile
+  _bobSettings:
+    _amplitude: 0.125
+    _noiseScale: 0.5
+    _timeScale: 0.25
 --- !u!33 &4983968289510203535
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -80,7 +84,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b375f67bb1b70ca4885120e3bb0a3b37, type: 2}
+  - {fileID: 2100000, guid: ee632ebfa1b57df4c9f7bbe1be89b47f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

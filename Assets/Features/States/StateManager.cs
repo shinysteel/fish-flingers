@@ -89,6 +89,6 @@ namespace FishFlingers.States
         }
 
         public void OnSceneLoaded(EScene scene, LoadSceneMode mode) { }
-        public void OnSceneSetActive(EScene previous, EScene current) { }
+        public void OnActiveSceneChanged(EScene previous, EScene current) { }
     }
 }

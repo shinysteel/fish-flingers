@@ -25,17 +25,11 @@ namespace FishFlingers.Scenes
         Additive , 
     }
 
-    public enum LoadSceneContext
-    {
-        Local     ,
-        Networked ,
-    }
-
     public interface ISceneManagerListener
     {
         void OnSceneLoaded(EScene scene, LoadSceneMode mode);
         void OnSceneUnloaded(EScene scene);
-        void OnSceneSetActive(EScene previous, EScene current);
+        void OnActiveSceneChanged(EScene previous, EScene current);
     }
 
     public class SceneManager : GameSystem<ISceneManagerListener>
@@ -54,6 +48,7 @@ namespace FishFlingers.Scenes
 
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += HandleSceneLoaded;
             UnityEngine.SceneManagement.SceneManager.sceneUnloaded += HandleSceneUnloaded;
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += HandleActiveSceneChanged;
 
             _sceneNameMap = new();
             foreach (SceneMapping mapping in _config.SceneMappings)
@@ -68,11 +63,12 @@ namespace FishFlingers.Scenes
         {
             UnityEngine.SceneManagement.SceneManager.sceneLoaded -= HandleSceneLoaded;
             UnityEngine.SceneManagement.SceneManager.sceneUnloaded -= HandleSceneUnloaded;
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= HandleActiveSceneChanged;
 
             base.Shutdown();
         }
 
-        private EScene GetSceneEnum(Scene scene)
+        public EScene GetSceneEnum(Scene scene)
         {
             return _sceneNameMap.FirstOrDefault(kvp => kvp.Value == scene.name).Key;
         }
@@ -99,9 +95,7 @@ namespace FishFlingers.Scenes
 
         public void SetActiveScene(EScene scene)
         {
-            EScene previous = GetActiveSceneEnum();
             UnityEngine.SceneManagement.SceneManager.SetActiveScene(GetScene(scene));
-            Listeners.Dispatch(NotifyOnSceneSetActive, previous, scene);
         }
 
         public void MoveGameObjectToScene(GameObject obj, EScene scene)
@@ -124,51 +118,22 @@ namespace FishFlingers.Scenes
             UnityEngine.SceneManagement.SceneManager.LoadScene(GetSceneName(scene), (UnityEngine.SceneManagement.LoadSceneMode)mode);
         }
 
-        public AsyncOperationBridge LoadSceneAsync(EScene scene, LoadSceneMode mode = LoadSceneMode.Single, LoadSceneContext context = LoadSceneContext.Local)
+        public AsyncOperationBridge LoadSceneAsync(EScene scene, LoadSceneMode mode = LoadSceneMode.Single)
         {
-            string name = GetSceneName(scene);
-            AsyncOperation op;
-
-            switch (context)
-            {
-                default:
-                case LoadSceneContext.Local:
-                    op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(name, (UnityEngine.SceneManagement.LoadSceneMode)mode);
-                    break;
-
-                case LoadSceneContext.Networked:
-                    op = _networkManager.LoadSceneAsync(name, (UnityEngine.SceneManagement.LoadSceneMode)mode);
-                    break;
-            }
-
-            return new AsyncOperationBridge(op);
+            return new AsyncOperationBridge(UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(GetSceneName(scene), (UnityEngine.SceneManagement.LoadSceneMode)mode));
         }
 
-        public AsyncOperationBridge UnloadSceneAsync(EScene scene, LoadSceneContext context = LoadSceneContext.Local)
+        public AsyncOperationBridge UnloadSceneAsync(EScene scene)
         {
-            string name = GetSceneName(scene);
-            AsyncOperation op;
-
-            switch (context)
-            {
-                default:
-                case LoadSceneContext.Local:
-                    op = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(name);
-                    break;
-
-                case LoadSceneContext.Networked:
-                    op = _networkManager.UnloadSceneAsync(name);
-                    break;
-            }
-
-            return new AsyncOperationBridge(op);
+            return new AsyncOperationBridge(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(GetSceneName(scene)));
         }
 
         private void HandleSceneLoaded(Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) => Listeners.Dispatch(NotifyOnSceneLoaded, GetSceneEnum(scene), (LoadSceneMode)mode);
         private void HandleSceneUnloaded(Scene scene) => Listeners.Dispatch(NotifyOnSceneUnloaded, GetSceneEnum(scene));
+        private void HandleActiveSceneChanged(Scene previous, Scene current) => Listeners.Dispatch(NotifyOnActiveSceneChanged, GetSceneEnum(previous), GetSceneEnum(current));
 
         private void NotifyOnSceneLoaded(ISceneManagerListener listener, EScene scene, LoadSceneMode mode) => listener.OnSceneLoaded(scene, mode);
         private void NotifyOnSceneUnloaded(ISceneManagerListener listener, EScene scene) => listener.OnSceneUnloaded(scene);
-        private void NotifyOnSceneSetActive(ISceneManagerListener listener, EScene previous, EScene current) => listener.OnSceneSetActive(previous, current);
+        private void NotifyOnActiveSceneChanged(ISceneManagerListener listener, EScene previous, EScene current) => listener.OnActiveSceneChanged(previous, current);
     }
 }

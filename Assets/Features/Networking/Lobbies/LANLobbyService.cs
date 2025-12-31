@@ -14,6 +14,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using Newtonsoft.Json;
 using ParrelSync;
+using FishFlingers.Scenes;
 
 namespace FishFlingers.Networking
 {
@@ -367,7 +368,7 @@ namespace FishFlingers.Networking
                 return;
             }
 
-            if (_networkManager.IsServer == false || _networkManager.LocalPlayer == id)
+            if (_networkManager.IsServer == false || _networkManager.LocalPlayerId == id)
             {
                 return;
             }
@@ -382,7 +383,7 @@ namespace FishFlingers.Networking
                 return;
             }
 
-            if (_networkManager.IsServer == false || _networkManager.LocalPlayer == id)
+            if (_networkManager.IsServer == false || _networkManager.LocalPlayerId == id)
             {
                 return;
             }
@@ -404,5 +405,7 @@ namespace FishFlingers.Networking
         public void OnClientConnectionState(ConnectionState state) { }
         public void OnNetworkStarted(bool asServer) { }
         public void OnNetworkShutdown(bool asServer) { }
+        public void OnNetworkSceneLoaded(EScene scene, bool asServer) { }
+        public void OnNetworkSceneUnloaded(EScene scene, bool asServer) { }
     }
 }

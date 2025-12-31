@@ -91,7 +91,6 @@ namespace FishFlingers.Pools
             UnityEngine.Object.DontDestroyOnLoad(_container.gameObject);
 
             // Register config prefabs here
-            Register(_config.TilePrefab);
 
             base.Initialise(config);
         }

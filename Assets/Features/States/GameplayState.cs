@@ -11,6 +11,7 @@ using ShinyOwl.Common;
 using FishFlingers.Scenes;
 using System.Threading.Tasks;
 using PurrNet.Transports;
+using FishFlingers.Networking.Predictions;
 
 namespace FishFlingers.States
 {
@@ -23,6 +24,7 @@ namespace FishFlingers.States
         private StateManager _stateManager;
         private NetworkManager _networkManager;
         private SceneManager _sceneManager;
+        private PredictionManager _predictionManager;
 
         private GameplayStateConfig _config;
 
@@ -35,6 +37,7 @@ namespace FishFlingers.States
             _stateManager = GameManager.Instance.Get<StateManager>();
             _networkManager = GameManager.Instance.Get<NetworkManager>();
             _sceneManager = GameManager.Instance.Get<SceneManager>();
+            _predictionManager = GameManager.Instance.Get<PredictionManager>();
 
             _networkManager.AddListener(this);
         }
@@ -56,26 +59,23 @@ namespace FishFlingers.States
                 if (_networkManager.IsServer)
                 {
                     // Use the network manager to load the game scene so that it can be networked
-                    await _sceneManager.LoadSceneAsync(EScene.Game, LoadSceneMode.Additive, LoadSceneContext.Networked);
+                    await _networkManager.LoadSceneAsync(EScene.Game, LoadSceneMode.Single);
                 }
                 else
                 {
                     // Scenes are structs, so we need to keep requesting while awaiting
-                    while (!_sceneManager.IsSceneLoaded(EScene.Game))
+                    while (!_sceneManager.IsSceneActive(EScene.Game))
                     {
                         await Task.Yield();
                     }
                 }
 
-                // Clients need to manually set the active scene, despite networked scenes being loaded in automatically
-                _sceneManager.SetActiveScene(EScene.Game);
-
-                await _sceneManager.LoadSceneAsync(EScene.EnvironmentGameplay, LoadSceneMode.Additive, LoadSceneContext.Local);
+                await _sceneManager.LoadSceneAsync(EScene.EnvironmentGameplay, LoadSceneMode.Additive);
 
                 // Only the server creates the raft
                 if (_networkManager.IsServer)
                 {
-                    UnityEngine.Object.Instantiate(_config.RaftPrefab);
+                    _predictionManager.Spawn(_config.RaftPrefab.gameObject, _networkManager.LocalPlayerId);
                 }
 
                 _gameplayScreen = (GameplayScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.GameplayScreen, UILayer.Screens);
@@ -95,14 +95,8 @@ namespace FishFlingers.States
             _gameplayScreen = null;
 
             _networkManager.LeaveLobby();
-        }
 
-        public override async Task ExitAsync()
-        {
-            await _sceneManager.UnloadSceneAsync(EScene.Game);
-            await _sceneManager.UnloadSceneAsync(EScene.EnvironmentGameplay);
-
-            _sceneManager.SetActiveScene(EScene.Default);
+            _sceneManager.LoadSceneAsync(EScene.Default, LoadSceneMode.Single);
         }
 
         public void OnLobbyEnter(Lobby lobby)
@@ -153,5 +147,7 @@ namespace FishFlingers.States
         public void OnPlayerLeft(PurrNet.PlayerID id, bool asServer) { }
         public void OnClientConnectionState(ConnectionState state) { }
         public void OnNetworkStarted(bool asServer) { }
+        public void OnNetworkSceneLoaded(EScene scene, bool asServer) { }
+        public void OnNetworkSceneUnloaded(EScene scene, bool asServer) { }
     }
 }

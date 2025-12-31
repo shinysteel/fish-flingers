@@ -1,5 +1,4 @@
 using FishFlingers.Cameras;
-using FishFlingers.Entities;
 using FishFlingers.Scenes;
 using PurrLobby;
 using PurrNet;
@@ -16,17 +15,11 @@ namespace FishFlingers.Networking
 {
     public class PurrnetPlayer : NetworkBehaviour, INetworkManagerListener
     {
-        [SerializeField] private GameObject _purrdictionPlayerPrefab;
-
         private NetworkManager _networkManager;
-        private PredictionManager _predictionManager;
-        private SceneManager _sceneManager;
 
         protected override void OnInitializeModules()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
-            _predictionManager = GameManager.Instance.Get<PredictionManager>();
-            _sceneManager = GameManager.Instance.Get<SceneManager>();
         }
 
         protected override void OnSpawned()
@@ -57,21 +50,6 @@ namespace FishFlingers.Networking
             // Since we moved to Purrdiction, that's handled separately from
             // Purrnet. I'm leaving the implementation here since it's a nice
             // reference to look back on
-
-            if (isServer)
-            {
-                _ = SpawnPlayerAsync();
-            }
-        }
-
-        private async Task SpawnPlayerAsync()
-        {
-            while (!_sceneManager.IsSceneActive(EScene.Game))
-            {
-                await Task.Yield();
-            }
-
-            _predictionManager.Spawn(_purrdictionPlayerPrefab, owner);
         }
 
         public void OnLobbyEnter(Lobby lobby) { }
@@ -82,5 +60,7 @@ namespace FishFlingers.Networking
         public void OnClientConnectionState(ConnectionState state) { }
         public void OnPlayerJoined(PlayerID id, bool isReconnect, bool asServer) { }
         public void OnPlayerLeft(PlayerID id, bool asServer) { }
+        public void OnNetworkSceneLoaded(EScene scene, bool asServer) { }
+        public void OnNetworkSceneUnloaded(EScene scene, bool asServer) { }
     }
 }

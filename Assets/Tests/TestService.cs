@@ -1,4 +1,3 @@
-using FishFlingers.Entities;
 using FishFlingers.Networking.Predictions;
 using PurrNet;
 using UnityEngine;

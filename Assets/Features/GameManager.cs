@@ -29,8 +29,8 @@ public class GameManager : MonoBehaviour
     private enum Manager
     {
         SteamManager      ,
-        NetworkManager    ,
         SceneManager      ,
+        NetworkManager    ,
         CameraManager     ,
         UIManager         ,
         StateManager      ,

@@ -74,7 +74,13 @@ namespace FishFlingers.States
             _uiManager.DestroyUIElement(_browseGamesScreen, UILayer.Screens);
             _browseGamesScreen = null;
 
-            _sceneManager.UnloadSceneAsync(EScene.EnvironmentMainMenu, LoadSceneContext.Local);
+            // Purrnet is unloading all the scenes as soon as we connect since Game
+            // scene was loaded as single. This is just a dirty fix. The real solution is
+            // covering the screen, unloading the environment, and only then connecting
+            if (_sceneManager.IsSceneLoaded(EScene.EnvironmentMainMenu))
+            {
+                _sceneManager.UnloadSceneAsync(EScene.EnvironmentMainMenu);
+            }
         }
     }
 }

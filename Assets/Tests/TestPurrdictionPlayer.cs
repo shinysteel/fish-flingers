@@ -1,4 +1,4 @@
-using FishFlingers.Entities;
+using FishFlingers.Networking.Predictions;
 using PurrNet.Packing;
 using PurrNet.Prediction;
 using UnityEngine;

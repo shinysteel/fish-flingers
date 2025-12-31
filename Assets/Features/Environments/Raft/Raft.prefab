@@ -76,13 +76,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70ea95f033feb3841b2a5c11be691991, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Environments.Raft
-  _isSetup: 0
-  _prefabId: -2147483648
-  _componentIndex: -2147483648
-  _shouldBePooled: 0
-  _parent: {fileID: 0}
-  _invertedPathToNearestParent: 
-  _directChildren: []
-  _networkRules: {fileID: 0}
-  _visitiblityRules: {fileID: 0}
+  _repeatInputFactor: 0.8
+  _extrapolateInput: 1
   _tilesContainer: {fileID: 1555074239481125596}
+  _tilePrefab: {fileID: 306983958439356140, guid: 72d695ec81811d244a31903d59c3b391, type: 3}
