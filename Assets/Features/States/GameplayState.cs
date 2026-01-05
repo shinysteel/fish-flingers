@@ -12,14 +12,14 @@ using FishFlingers.Scenes;
 using System.Threading.Tasks;
 using PurrNet.Transports;
 using PurrNet;
+using FishFlingers.Environments;
+using FishFlingers.Items;
 
 using NetworkManager = FishFlingers.Networking.NetworkManager;
 
 namespace FishFlingers.States
 {
-    public enum EGameplayState { }
-
-    public class GameplayState : FishFlingersState<MainState, EGameplayState>, INetworkManagerListener
+    public class GameplayState : MainState<EMainState, ENone>, INetworkManagerListener
     {
         private TransitionManager _transitionManager;
         private UIManager _uiManager;
@@ -31,7 +31,7 @@ namespace FishFlingers.States
 
         private GameplayScreen _gameplayScreen;
 
-        public GameplayState(StateMachine<MainState> parent) : base(parent)
+        public GameplayState(StateMachine<EMainState> parent) : base(parent)
         {
             _transitionManager = GameManager.Instance.Get<TransitionManager>();
             _uiManager = GameManager.Instance.Get<UIManager>();
@@ -75,8 +75,12 @@ namespace FishFlingers.States
                 // Only the server creates the raft
                 if (_networkManager.IsServer)
                 {
-                    UnityEngine.Object.Instantiate(_config.RaftPrefab.gameObject);
-                    // _predictionManager.Spawn(_config.WaveSpawnerPrefab.gameObject, PlayerID.Server);
+                    Raft raft = _networkManager.Spawn(_config.RaftPrefab, Vector3.zero);
+                    WaveSpawner waveSpawner = _networkManager.Spawn(_config.WaveSpawnerPrefab, Vector3.zero);
+                    SalvageSpawner salvageSpawner = _networkManager.Spawn(_config.SalvageSpawnerPrefab, Vector3.zero);
+
+                    waveSpawner.Initialise(raft);
+                    salvageSpawner.Initialise(raft);
                 }
 
                 _gameplayScreen = (GameplayScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.GameplayScreen, UILayer.Screens);
@@ -104,7 +108,7 @@ namespace FishFlingers.States
         {
             // This can happen from any state besides itself. Currently we 
             // assume you are 'ready' straight away and move to the GameplayState
-            if (_parentStateMachine.CurrentEnum == MainState.Gameplay)
+            if (_parentStateMachine.CurrentEnum == EMainState.Gameplay)
             {
                 return;
             }
@@ -118,17 +122,17 @@ namespace FishFlingers.States
 
         public void OnLobbyStart(Lobby lobby) 
         {
-            if (_parentStateMachine.CurrentEnum == MainState.Gameplay)
+            if (_parentStateMachine.CurrentEnum == EMainState.Gameplay)
             {
                 return;
             }
 
-            _transitionManager.CoverScreen(() => _stateManager.ChangeState(MainState.Gameplay));
+            _transitionManager.CoverScreen(() => _stateManager.ChangeState(EMainState.Gameplay));
         }
 
         public void OnNetworkShutdown(bool asServer)
         {
-            if (_parentStateMachine.CurrentEnum != MainState.Gameplay)
+            if (_parentStateMachine.CurrentEnum != EMainState.Gameplay)
             {
                 return;
             }
@@ -139,7 +143,7 @@ namespace FishFlingers.States
                 return;
             }
 
-            _transitionManager.CoverScreen(() => _stateManager.ChangeState(MainState.Menus));
+            _transitionManager.CoverScreen(() => _stateManager.ChangeState(EMainState.Menus));
         }
 
         public void OnLobbyLeave()  { }

@@ -1,3 +1,4 @@
+using FishFlingers.Entities;
 using FishFlingers.Pools;
 using PurrNet;
 using PurrNet.Modules;
@@ -10,11 +11,13 @@ using UnityEngine;
 
 namespace FishFlingers.Environments
 {
-    public class Tile : MonoBehaviour, IPoolable
+    public class Tile : Entity
     {
+        [SerializeField] private Transform _visualsContainer;
+        [SerializeField] private MeshRenderer _meshRenderer;
+
         [SerializeField] private BobSettings _bobSettings;
         [SerializeField] private SinkSettings _sinkSettings;
-        [SerializeField] private MeshRenderer _renderer;
 
         [Serializable]
         private class BobSettings
@@ -38,34 +41,32 @@ namespace FishFlingers.Environments
             public float Speed => _speed;
         }
 
-        private Vector2Int _cell;
-        private int _health;
-
         private Material _material;
-
-        private const float YCoord = 0f;
 
         private const string DamagedBlendName = "_DamagedBlend";
 
-        public const int DefaultHealth = 3;
+        private Vector2Int _cell;
+        public Vector2Int Cell => _cell;
 
-        private void Awake()
+        protected override void Awake()
         {
-            _material = _renderer.material;
+            base.Awake();
+
+            _material = _meshRenderer.material;
+        }
+
+        public override void SetHealth(int health)
+        {
+            base.SetHealth(health);
+
+            _material.SetFloat(DamagedBlendName, 1f - ((float)_currentHealth / _maxHealth));
         }
 
         public void SetCell(Vector2Int cell)
         {
             _cell = cell;
 
-            transform.position = new Vector3(cell.x, YCoord, cell.y);
-        }
-
-        public void SetHealth(int health)
-        {
-            _health = health;
-
-            _material.SetFloat(DamagedBlendName, 1f - ((float)_health / DefaultHealth));
+            transform.position = _raft.CellToWorldPosition(cell);
         }
 
         private void Update()
@@ -73,34 +74,30 @@ namespace FishFlingers.Environments
             PositionUpdate();
         }
 
+        public const float YCoord = 0f;
+
         private void PositionUpdate()
         {
-            LayerMask mask = LayerMask.GetMask("Player");
-            bool sink = Physics.CheckSphere(new Vector3(_cell.x, YCoord, _cell.y), _sinkSettings.Radius, mask);
+            LayerMask mask = LayerMask.GetMask(LayerNames.Player);
+            bool sink = Physics.CheckSphere(transform.position, _sinkSettings.Radius, mask);
 
             float targetY;
 
             if (sink)
             {
                 // Sit just above the water
-                targetY = YCoord;
+                targetY = 0f;
             }
             else
             {
                 // Bob up and down
-                targetY = YCoord + _bobSettings.Amplitude * Mathf.PerlinNoise(
+                targetY = _bobSettings.Amplitude * Mathf.PerlinNoise(
                     _cell.x * _bobSettings.NoiseScale + Time.time * _bobSettings.TimeScale,
                     _cell.y * _bobSettings.NoiseScale + Time.time * _bobSettings.TimeScale);
             }
 
-            Vector3 targetPosition = new Vector3(_cell.x, targetY, _cell.y);
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, _sinkSettings.Speed * Time.deltaTime);
+            Vector3 targetPosition = new Vector3(0f, targetY, 0f);
+            _visualsContainer.localPosition = Vector3.MoveTowards(_visualsContainer.localPosition, targetPosition, _sinkSettings.Speed * Time.deltaTime);
         }
-
-        public void OnTakenFromPool()
-        { }
-
-        public void OnReturnedToPool()
-        { }
     }
 }

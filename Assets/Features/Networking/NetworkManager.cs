@@ -15,6 +15,8 @@ using System.Linq;
 using System;
 using FishFlingers.Scenes;
 
+using Object = UnityEngine.Object;
+
 namespace FishFlingers.Networking
 {
     public enum eTransport
@@ -66,6 +68,8 @@ namespace FishFlingers.Networking
 
         public bool IsServer => _purrnetNetworkManager.isServer;
 
+        public static readonly Vector3 HiddenSpawnPosition = new Vector3(0f, -10f, 0f);
+
         public override void Initialise(GameManagerConfig config)
         {
             _config = config.NetworkManagerConfig;
@@ -79,7 +83,7 @@ namespace FishFlingers.Networking
             _lobbyServices.Add(eLobbyService.LAN, _lanLobbyService);
             _lobbyServices.Add(eLobbyService.Steam, _steamLobbyService);
 
-            _purrnetNetworkManager = UnityEngine.Object.Instantiate(_config.PurrnetNetworkManagerPrefab);
+            _purrnetNetworkManager = Object.Instantiate(_config.PurrnetNetworkManagerPrefab);
             _purrnetNetworkManager.onNetworkStarted += HandleNetworkStarted;
             _purrnetNetworkManager.onNetworkShutdown += HandleNetworkShutdown;
             _purrnetNetworkManager.onClientConnectionState += HandleClientConnectionState;
@@ -108,6 +112,11 @@ namespace FishFlingers.Networking
             _purrnetNetworkManager.onPlayerLeft -= HandlePlayerLeft;
 
             base.Shutdown();
+        }
+
+        public T Spawn<T>(T prefab, Vector3 position) where T : Object
+        {
+            return Object.Instantiate(prefab, position, Quaternion.identity);
         }
 
         // Our transport will always be composite, so it is a safe cast

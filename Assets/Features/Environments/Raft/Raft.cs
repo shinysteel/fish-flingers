@@ -4,21 +4,12 @@ using System.Collections.Generic;
 using ShinyOwl.Common;
 using PurrNet;
 using FishFlingers.Pools;
+using System.Linq;
 
 namespace FishFlingers.Environments
 {
-    public class Raft : NetworkBehaviour
+    public partial class Raft : NetworkBehaviour
     {
-        public class NetTile
-        {
-            public int Health { get; private set; }
-
-            public NetTile(int health)
-            {
-                Health = health;
-            }
-        }
-
         [SerializeField] private Transform _tilesContainer;
 
         private PoolManager _poolManager;
@@ -26,6 +17,32 @@ namespace FishFlingers.Environments
         private SyncDictionary<Vector2Int, NetTile> _netTiles = new();
 
         private Dictionary<Vector2Int, Tile> _tiles = new();
+
+        // Every column will have x rows, and every row will have x columns
+        private Dictionary<int, SortedSet<int>> _columnToRowsMap = new();
+        private Dictionary<int, SortedSet<int>> _rowToColumnsMap = new();
+
+        private int _forwardmostY;
+        private int _backmostY;
+        private int _leftmostX;
+        private int _rightmostX;
+
+        public class NetTile
+        {
+            public int Health { get; private set; }
+
+            public const int MaxHealth = 3;
+
+            public NetTile(int health)
+            {
+                SetHealth(health);
+            }
+
+            public void SetHealth(int health)
+            {
+                Health = Mathf.Clamp(health, 0, MaxHealth);
+            }
+        }
 
         protected override void OnInitializeModules()
         {
@@ -38,7 +55,7 @@ namespace FishFlingers.Environments
             {
                 for (int y = -1; y <= 1; y++)
                 {
-                    _netTiles.Add(new Vector2Int(x, y), new NetTile(Tile.DefaultHealth));
+                    _netTiles.Add(new Vector2Int(x, y), new NetTile(NetTile.MaxHealth));
                 }
             }
         }
@@ -58,33 +75,140 @@ namespace FishFlingers.Environments
             }
         }
 
-        private void HandleNetTilesChanged(SyncDictionaryChange<Vector2Int, NetTile> change)
+        // No tile param is good here, since it lets callers request to damage a cell without having to worry
+        // if it exists anymore
+        public void ChangeNetTileHealth(Vector2Int cell, int change)
         {
-            _tiles.TryGetValue(change.key, out Tile tile);
-
-            // Tile no longer exists
-            if (change.value == null || change.value.Health <= 0)
+            if (!isOwner)
             {
-                if (tile != null)
-                {
-                    _poolManager.Return(tile);
-                    _tiles.Remove(change.key);
-                }
-
                 return;
             }
 
-            // Tile exists
-            if (tile == null)
+            if (!_netTiles.TryGetValue(cell, out NetTile netTile))
             {
-                tile = _poolManager.Get<Tile>(_tilesContainer);
+                return;
             }
 
-            // Update the tile's values using change.value
-            tile.SetCell(new Vector2Int(change.key.x, change.key.y));
-            tile.SetHealth(change.value.Health);
+            netTile.SetHealth(netTile.Health + change);
 
-            _tiles[change.key] = tile;
+            if (netTile.Health > 0)
+            {
+                _netTiles.SetDirty(cell);
+            }
+            else
+            {
+                _netTiles.Remove(cell);
+            }
+        }
+
+        private void HandleNetTilesChanged(SyncDictionaryChange<Vector2Int, NetTile> change)
+        {
+            // Tile no longer exists
+            if (change.value == null || change.value.Health <= 0)
+            {
+                RemoveTile(change.key);
+            }
+            // Tile exists
+            else
+            {
+                SetTile(change.key, change.value);
+            }
+        }
+
+        private void RemoveTile(Vector2Int cell)
+        {
+            // Return to pool
+            if (_tiles.TryGetValue(cell, out Tile tile))
+            {
+                _poolManager.Return(tile);
+            }
+
+            _tiles.Remove(tile.Cell);
+
+            RemoveTileUpdateMaps(cell);
+            RemoveTileUpdateBoundaries(cell);
+        }
+
+        // Adds a new tile, or updates an existing one
+        private void SetTile(Vector2Int cell, NetTile netTile)
+        {
+            // Retrieve from pool
+            if (!_tiles.ContainsKey(cell))
+            {
+                _tiles[cell] = _poolManager.Get<Tile>(_tilesContainer);
+                _tiles[cell].Initialise(this);
+            }
+
+            Tile tile = _tiles[cell];
+
+            tile.SetCell(new Vector2Int(cell.x, cell.y));
+            tile.SetHealth(netTile.Health);
+
+            SetTileUpdateMaps(cell);
+            SetTileUpdateBoundaries(cell);
+        }
+
+        private void RemoveTileUpdateMaps(Vector2Int cell)
+        {
+            _columnToRowsMap[cell.x].Remove(cell.y);
+            _rowToColumnsMap[cell.y].Remove(cell.x);
+
+            if (_columnToRowsMap[cell.x].Count == 0)
+            {
+                _columnToRowsMap.Remove(cell.x);
+            }
+
+            if (_rowToColumnsMap[cell.y].Count == 0)
+            {
+                _rowToColumnsMap.Remove(cell.y);
+            }
+        }
+
+        private void SetTileUpdateMaps(Vector2Int cell)
+        {
+            if (!_columnToRowsMap.ContainsKey(cell.x))
+            {
+                _columnToRowsMap.Add(cell.x, new());
+            }
+
+            if (!_rowToColumnsMap.ContainsKey(cell.y))
+            {
+                _rowToColumnsMap.Add(cell.y, new());
+            }
+
+            _columnToRowsMap[cell.x].Add(cell.y);
+            _rowToColumnsMap[cell.y].Add(cell.x);
+        }
+
+        private void RemoveTileUpdateBoundaries(Vector2Int cell)
+        {
+            if (_forwardmostY == cell.y && !_rowToColumnsMap.ContainsKey(cell.y))
+            {
+                _forwardmostY = _rowToColumnsMap.Count > 0 ? _rowToColumnsMap.Keys.Max() : 0;
+            }
+
+            if (_backmostY == cell.y && !_rowToColumnsMap.ContainsKey(cell.y))
+            {
+                _backmostY = _rowToColumnsMap.Count > 0 ? _rowToColumnsMap.Keys.Min() : 0;
+            }
+
+            if (_rightmostX == cell.x && !_columnToRowsMap.ContainsKey(cell.x))
+            {
+                _rightmostX = _columnToRowsMap.Count > 0 ? _columnToRowsMap.Keys.Max() : 0;
+            }
+
+            if (_leftmostX == cell.x && !_columnToRowsMap.ContainsKey(cell.x))
+            {
+                _leftmostX = _columnToRowsMap.Count > 0 ? _columnToRowsMap.Keys.Min() : 0;
+            }
+        }
+
+        private void SetTileUpdateBoundaries(Vector2Int cell)
+        {
+            _forwardmostY = Mathf.Max(_forwardmostY, cell.y);
+            _backmostY = Mathf.Min(_backmostY, cell.y);
+            _rightmostX = Mathf.Max(_rightmostX, cell.x);
+            _leftmostX = Mathf.Min(_leftmostX, cell.x);
         }
     }
 }

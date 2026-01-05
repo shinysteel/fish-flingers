@@ -14,7 +14,7 @@ namespace FishFlingers.Networking
 {
     public class PurrnetPlayer : NetworkBehaviour, INetworkManagerListener
     {
-        [SerializeField] private Player _playerPrefab;
+        [SerializeField] private RaftPlayer _playerPrefab;
 
         private NetworkManager _networkManager;
         private SceneManager _sceneManager;
@@ -69,7 +69,7 @@ namespace FishFlingers.Networking
                 await Task.Yield();
             }
 
-            Player player = Instantiate(_playerPrefab);
+            RaftPlayer player = _networkManager.Spawn(_playerPrefab, NetworkManager.HiddenSpawnPosition);
             player.GiveOwnership(owner);
         }
 

@@ -6,6 +6,8 @@ using FishFlingers.UI;
 using ShinyOwl.Common;
 using FishFlingers.Environments;
 
+using Object = UnityEngine.Object;
+
 namespace FishFlingers.Pools
 {
     public interface IPoolable
@@ -51,7 +53,7 @@ namespace FishFlingers.Pools
             {
                 T obj = _available.Count > 0
                     ? _available.Pop()
-                    : UnityEngine.Object.Instantiate(_prefab, _container);
+                    : Object.Instantiate(_prefab, _container);
 
                 _inUse.Add(obj);
 
@@ -88,7 +90,7 @@ namespace FishFlingers.Pools
             _config = config.PoolManagerConfig;
 
             _container = new GameObject(ContainerName).transform;
-            UnityEngine.Object.DontDestroyOnLoad(_container.gameObject);
+            Object.DontDestroyOnLoad(_container.gameObject);
 
             // Register config prefabs here
             Register(_config.TilePrefab);

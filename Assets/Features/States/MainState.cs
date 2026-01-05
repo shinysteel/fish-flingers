@@ -4,16 +4,16 @@ using UnityEngine;
 
 namespace FishFlingers.States
 {
-    public interface IFishFlingersState
+    public interface IMainState
     {
         void Initialise(StateManagerConfig config);
     }
 
-    public abstract class FishFlingersState<TParentStateEnum, TSubStateEnum> : State<TParentStateEnum, TSubStateEnum>, IFishFlingersState
+    public abstract class MainState<TParentStateEnum, TSubStateEnum> : State<TParentStateEnum, TSubStateEnum>, IMainState
         where TParentStateEnum : Enum
         where TSubStateEnum : Enum
     {
-        public FishFlingersState(StateMachine<TParentStateEnum> parent) : base(parent) 
+        public MainState(StateMachine<TParentStateEnum> parent) : base(parent) 
         { }
 
         public virtual void Initialise(StateManagerConfig config)

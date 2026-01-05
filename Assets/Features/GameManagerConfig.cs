@@ -20,6 +20,7 @@ public class GameManagerConfig : ScriptableObject
     [SerializeField] private PoolManagerConfig _poolManagerConfig;
     [SerializeField] private TransitionManagerConfig _transitionManagerConfig;
     [SerializeField] private SceneManagerConfig _sceneManagerConfig;
+    [SerializeField] private DebugManagerConfig _debugManagerConfig;
 
     public SteamManagerConfig SteamManagerConfig => _steamManagerConfig;
     public NetworkManagerConfig NetworkManagerConfig => _networkManagerConfig;
@@ -29,4 +30,5 @@ public class GameManagerConfig : ScriptableObject
     public PoolManagerConfig PoolManagerConfig => _poolManagerConfig;
     public TransitionManagerConfig TransitionManagerConfig => _transitionManagerConfig;
     public SceneManagerConfig SceneManagerConfig => _sceneManagerConfig;
+    public DebugManagerConfig DebugManagerConfig => _debugManagerConfig;
 }

@@ -6,12 +6,12 @@ using PurrNet;
 using PurrNet.Prediction;
 using FishFlingers.Scenes;
 using System.Threading.Tasks;
-using System;
 using PurrNet.Packing;
+using FishFlingers.Environments;
 
 namespace FishFlingers.Networking
 {
-    public class Player : NetworkBehaviour
+    public class RaftPlayer : NetworkBehaviour
     {
         [SerializeField] private Rigidbody _rigidbody;
 
@@ -23,6 +23,8 @@ namespace FishFlingers.Networking
         
         private CameraManager _cameraManager;
 
+        private Raft _raft;
+
         private Vector2 _directionInput;
         private bool _jumpInput;
 
@@ -33,11 +35,17 @@ namespace FishFlingers.Networking
 
         protected override void OnSpawned()
         {
-            _cameraManager = GameManager.Instance.Get<CameraManager>();
-
             if (isOwner)
             {
                 _cameraManager.SetMode(new FollowCameraMode(transform, new Vector3(0f, 3f, -5f)));
+
+                // Figure out a better method for players getting a reference to the raft
+                // _raft = FindFirstObjectByType<Raft>();
+
+                // Spawn on a random starting tile
+                // transform.position = _raft.TryGetRandomTile(out Tile tile) ? _raft.CellToWorldPosition(tile.Cell) : Vector3.zero;
+
+                transform.position = new Vector3(Random.Range(-1, 2), 0f, Random.Range(-1, 2));
             }
         }
 

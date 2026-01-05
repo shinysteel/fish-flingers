@@ -10,10 +10,10 @@ namespace FishFlingers.States
 {
     public interface IStateManagerListener
     {
-        void OnStateChanged(MainState previous, MainState current);
+        void OnStateChanged(EMainState previous, EMainState current);
     }
 
-    public enum MainState
+    public enum EMainState
     {
         None,
         Menus,
@@ -26,9 +26,7 @@ namespace FishFlingers.States
 
         private SceneManager _sceneManager;
 
-        private StateMachine<MainState> _stateMachine;
-        private MenusState _menusState;
-        private GameplayState _gameplayState;
+        private StateMachine<EMainState> _stateMachine;
 
         public override void Initialise(GameManagerConfig config)
         {
@@ -39,17 +37,17 @@ namespace FishFlingers.States
             _sceneManager.AddListener(this);
 
             _stateMachine = new();
-            _menusState = new MenusState(_stateMachine);
-            _gameplayState = new GameplayState(_stateMachine);
+            MenusState menusState = new MenusState(_stateMachine);
+            GameplayState gameplayState = new GameplayState(_stateMachine);
 
-            List<IFishFlingersState> states = new() { _menusState, _gameplayState };
-            foreach (IFishFlingersState state in states)
+            List<IMainState> states = new() { menusState, gameplayState };
+            foreach (IMainState state in states)
             {
                 state.Initialise(_config);
             }
 
-            _stateMachine.AddState(MainState.Menus, _menusState);
-            _stateMachine.AddState(MainState.Gameplay, _gameplayState);
+            _stateMachine.AddState(EMainState.Menus, menusState);
+            _stateMachine.AddState(EMainState.Gameplay, gameplayState);
 
             base.Initialise(config);
         }
@@ -66,14 +64,14 @@ namespace FishFlingers.States
             _stateMachine.Update();
         }
 
-        public void ChangeState(MainState state)
+        public void ChangeState(EMainState state)
         {
-            MainState previous = _stateMachine.CurrentEnum;
+            EMainState previous = _stateMachine.CurrentEnum;
             _stateMachine.ChangeState(state);
             Listeners.Dispatch(NotifyOnStateChanged, previous, state);
         }
 
-        private void NotifyOnStateChanged(IStateManagerListener listener, MainState previous, MainState current)
+        private void NotifyOnStateChanged(IStateManagerListener listener, EMainState previous, EMainState current)
         {
             listener.OnStateChanged(previous, current);
         }
@@ -84,7 +82,7 @@ namespace FishFlingers.States
             if (scene == EScene.Startup)
             {
                 _sceneManager.RemoveListener(this);
-                _stateMachine.ChangeState(MainState.Menus);
+                _stateMachine.ChangeState(EMainState.Menus);
             }
         }
 

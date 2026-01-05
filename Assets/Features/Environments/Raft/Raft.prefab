@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1292189403439442857}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.125, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 302576524792525629}
-  - component: {fileID: 6221065453191734945}
+  - component: {fileID: 7063333984185181477}
   m_Layer: 0
   m_Name: Raft
   m_TagString: Untagged
@@ -64,7 +64,7 @@ Transform:
   - {fileID: 1555074239481125596}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6221065453191734945
+--- !u!114 &7063333984185181477
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -76,7 +76,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70ea95f033feb3841b2a5c11be691991, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Environments.Raft
-  _repeatInputFactor: 0.8
-  _extrapolateInput: 1
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
   _tilesContainer: {fileID: 1555074239481125596}
-  _tilePrefab: {fileID: 306983958439356140, guid: 72d695ec81811d244a31903d59c3b391, type: 3}

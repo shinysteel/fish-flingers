@@ -16,7 +16,7 @@ namespace FishFlingers.States
 {
     public enum EMenusState { }
 
-    public class MenusState : FishFlingersState<MainState, EMenusState>
+    public class MenusState : MainState<EMainState, ENone>
     {
         private UIManager _uiManager;
         private CameraManager _cameraManager;
@@ -28,7 +28,7 @@ namespace FishFlingers.States
         private MainMenuScreen _mainMenuScreen;
         private BrowseGamesScreen _browseGamesScreen;
 
-        public MenusState(StateMachine<MainState> parent) : base(parent)
+        public MenusState(StateMachine<EMainState> parent) : base(parent)
         {
             _uiManager = GameManager.Instance.Get<UIManager>();
             _cameraManager = GameManager.Instance.Get<CameraManager>();

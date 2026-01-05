@@ -7,13 +7,8 @@ using UnityEngine;
 
 namespace ShinyOwl.Common.Framework
 {
-    /// <summary>
-    /// Goals:
-    /// 1. We achieve a HFSM where states can implement sub state machines
-    /// 2. States are aware of their 'parent', and can request to change to their related sub states
-    /// 3. The state machine is generic and does not require extra top-level 'state' classes
-    /// 4. The systems needs to be safe and not allow state machines change to states outside their scope
-    /// </summary>
+    // When wanting to declare a state that has no SubState, you can use this enum type
+    public enum ENone { None }
 
     public interface IState
     {
