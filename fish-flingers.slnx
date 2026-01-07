@@ -4,7 +4,6 @@
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="PurrNetLobbySetup.csproj" />
   <Project Path="PurrNetLobby_Editor.csproj" />
-  <Project Path="Assembly-CSharp-firstpass.csproj" />
   <Project Path="PrimeTween.Debug.csproj" />
   <Project Path="PrimeTween.Installer.csproj" />
 </Solution>

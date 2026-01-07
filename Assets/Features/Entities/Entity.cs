@@ -47,17 +47,15 @@ namespace FishFlingers.Entities
 
         public virtual void OnTakenFromPool()
         {
-            if (!_networkManager.IsServer)
-            {
-                return;
-            }
-
             _healthModule = new HealthModule(_maxHealth,
                 getter: () => _currentHealth,
                 setter: (int health) => _currentHealth = health,
                 onChanged: OnHealthChanged);
 
-            SetHealth(_maxHealth);
+            if (_networkManager.IsServer)
+            {
+                SetHealth(_maxHealth);
+            }
         }
 
         public virtual void OnReturnedToPool() 

@@ -154,5 +154,7 @@ namespace FishFlingers.States
         public void OnNetworkStarted(bool asServer) { }
         public void OnNetworkSceneLoaded(EScene scene, bool asServer) { }
         public void OnNetworkSceneUnloaded(EScene scene, bool asServer) { }
+        public void OnNetworkSpawn() { }
+        public void OnNetworkDespawn() { }
     }
 }

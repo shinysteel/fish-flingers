@@ -44,7 +44,7 @@ namespace FishFlingers.Entities
                 // Choose a tile to target
                 if (!_flyingFish._raft.TryGetRandomTile(out _flyingFish._targetTile))
                 {
-                    _flyingFish.Despawn();
+                    _flyingFish._networkManager.Despawn(_flyingFish);
                     return;
                 }
 
@@ -52,7 +52,7 @@ namespace FishFlingers.Entities
                 int scoutOffset = 3;
                 if (!_flyingFish._raft.TryGetClosestEdge(_flyingFish._targetTile.Cell, out RaftEdge edge))
                 {
-                    _flyingFish.Despawn();
+                    _flyingFish._networkManager.Despawn(_flyingFish);
                     return;
                 }
 
@@ -147,7 +147,8 @@ namespace FishFlingers.Entities
                 if (_flyTimer > FlyDuration)
                 {
                     _flyingFish._raft.ChangeNetTileHealth(_flyingFish._targetTile.Cell, -1);
-                    _flyingFish.Despawn();
+
+                    _flyingFish._networkManager.Despawn(_flyingFish);
                 }
             }
         }
@@ -186,7 +187,10 @@ namespace FishFlingers.Entities
 
             _targetTile = null;
 
-            _stateMachine.ChangeState(EState.None);
+            if (_stateMachine.CurrentEnum != EState.None)
+            {
+                _stateMachine.ChangeState(EState.None);
+            }
         }
 
         private void Update()

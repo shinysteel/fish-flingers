@@ -19,6 +19,7 @@ namespace FishFlingers.UI
         Backing    ,
         Screens    ,
         Foreground ,
+        Panels     ,
         Popups     ,
         Notices    ,
         Overlay    ,

@@ -26,7 +26,6 @@ namespace FishFlingers.States
         private MenusStateConfig _config;
 
         private MainMenuScreen _mainMenuScreen;
-        private BrowseGamesScreen _browseGamesScreen;
 
         public MenusState(StateMachine<EMainState> parent) : base(parent)
         {
@@ -52,10 +51,7 @@ namespace FishFlingers.States
             {
                 await _sceneManager.LoadSceneAsync(EScene.EnvironmentMainMenu, LoadSceneMode.Additive);
 
-                _browseGamesScreen = (BrowseGamesScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.BrowseGamesScreen, UILayer.Screens);
-                _mainMenuScreen = (MainMenuScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.MainMenuScreen, UILayer.Screens, UILayerInsertMode.FirstSibling);
-
-                _mainMenuScreen.Setup(_browseGamesScreen);
+                _mainMenuScreen = (MainMenuScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.MainMenuScreen, UILayer.Screens);
                 _mainMenuScreen.Show(null);
 
                 _transitionManager.UncoverScreen(null);
@@ -70,9 +66,6 @@ namespace FishFlingers.States
         {
             _uiManager.DestroyUIElement(_mainMenuScreen, UILayer.Screens);
             _mainMenuScreen = null;
-
-            _uiManager.DestroyUIElement(_browseGamesScreen, UILayer.Screens);
-            _browseGamesScreen = null;
 
             // Purrnet is unloading all the scenes as soon as we connect since Game
             // scene was loaded as single. This is just a dirty fix. The real solution is

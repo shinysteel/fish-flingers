@@ -18,12 +18,15 @@ namespace FishFlingers.UI
 
         [Header("Screens")]
         [SerializeField] private MainMenuScreen _mainMenuScreen;
-        [SerializeField] private BrowseGamesScreen _browseGamesScreen;
         [SerializeField] private GameplayScreen _gameplayScreen;
 
         public MainMenuScreen MainMenuScreen => _mainMenuScreen;
-        public BrowseGamesScreen BrowseGamesScreen => _browseGamesScreen;
         public GameplayScreen GameplayScreen => _gameplayScreen;
+
+        [Header("Panels")]
+        [SerializeField] private BrowseGamesPanel _browseGamesPanel;
+
+        public BrowseGamesPanel BrowseGamesPanel => _browseGamesPanel;
 
         [Header("Overlays")]
         [SerializeField] private FadeOverlay _fadeOverlay;

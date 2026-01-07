@@ -1,5 +1,4 @@
 using FishFlingers.Entities;
-using ShinyOwl.Common;
 using UnityEngine;
 
 namespace FishFlingers.Environments
@@ -18,15 +17,24 @@ namespace FishFlingers.Environments
             {
                 return;
             }
+            
+            BuoyancyOnTriggerStay(other, entity);
+            CurrentOnTriggerStay(entity);
+        }
 
+        private void BuoyancyOnTriggerStay(Collider other, IEntity entity)
+        {
             float surfaceY = _boxCollider.bounds.max.y;
             float depth = surfaceY - other.bounds.min.y;
-            Vector3 buoyancyForce = Vector3.up * _buoyancyStrength * depth;
+            Vector3 force = Vector3.up * _buoyancyStrength * depth;
 
             // Push the entity upwards to simulate floating
-            entity.Rigidbody.AddForce(buoyancyForce);
+            entity.Rigidbody.AddForce(force);
+        }
 
-            // Push the entity back to fake that the raft is moving forward
+        // Current is refering to motion in water
+        private void CurrentOnTriggerStay(IEntity entity)
+        {
             if (!entity.Rigidbody.isKinematic)
             {
                 entity.Rigidbody.MovePosition(entity.Rigidbody.position + Vector3.back * _currentSpeed * Time.fixedDeltaTime);

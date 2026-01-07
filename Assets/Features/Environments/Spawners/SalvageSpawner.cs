@@ -1,12 +1,16 @@
 using PurrNet;
 using UnityEngine;
 using FishFlingers.Entities;
+using FishFlingers.Networking;
+using PurrNet.Transports;
+using FishFlingers.Scenes;
+using System.Collections.Generic;
 
 using NetworkManager = FishFlingers.Networking.NetworkManager;
 
 namespace FishFlingers.Environments
 {
-    public class SalvageSpawner : NetworkBehaviour
+    public class SalvageSpawner : NetworkBehaviour, INetworkManagerListener
     {
         [SerializeField] private Item _driftwoodPrefab;
 
@@ -18,6 +22,10 @@ namespace FishFlingers.Environments
 
         private float _spawnTimer;
 
+        private List<Item> _salvages = new();
+
+        private const int MaxSalvage = 10;
+
         public void Initialise(Raft raft)   
         {
             _raft = raft;
@@ -26,6 +34,8 @@ namespace FishFlingers.Environments
         protected override void OnInitializeModules()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
+
+            _networkManager.AddListener(this);
         }
 
         private void Update()
@@ -40,9 +50,13 @@ namespace FishFlingers.Environments
                 return;
             }
 
-            _spawnTimer += Time.deltaTime;
-
             if (_spawnTimer < _spawnInterval)
+            {
+                _spawnTimer += Time.deltaTime;
+                return;
+            }
+
+            if (_salvages.Count >= MaxSalvage)
             {
                 return;
             }
@@ -62,6 +76,26 @@ namespace FishFlingers.Environments
 
             Item item = _networkManager.Spawn(_driftwoodPrefab, position);
             item.Initialise(_raft);
+
+            _salvages.Add(item);
         }
+
+        public void OnNetworkDespawn() 
+        {
+            _salvages.RemoveAll(salvage => salvage == null);
+        }
+
+        public void OnNetworkSpawn() { }
+        public void OnLobbyCreated(Lobby lobby) { }
+        public void OnLobbyEnter(Lobby lobby) { }
+        public void OnLobbyStart(Lobby lobby) { }
+        public void OnLobbyLeave() { }
+        public void OnNetworkStarted(bool asServer) { }
+        public void OnNetworkShutdown(bool asServer) { }
+        public void OnClientConnectionState(ConnectionState state) { }
+        public void OnPlayerJoined(PlayerID id, bool isReconnect, bool asServer) { }
+        public void OnPlayerLeft(PlayerID id, bool asServer) { }
+        public void OnNetworkSceneLoaded(EScene scene, bool asServer) { }
+        public void OnNetworkSceneUnloaded(EScene scene, bool asServer) { }
     }
 }

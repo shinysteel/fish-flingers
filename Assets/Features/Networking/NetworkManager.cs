@@ -34,6 +34,8 @@ namespace FishFlingers.Networking
 
     public interface INetworkManagerListener
     {
+        void OnNetworkSpawn();
+        void OnNetworkDespawn();
         void OnLobbyCreated(Lobby lobby);
         void OnLobbyEnter(Lobby lobby);
         void OnLobbyStart(Lobby lobby);
@@ -68,7 +70,7 @@ namespace FishFlingers.Networking
 
         public bool IsServer => _purrnetNetworkManager.isServer;
 
-        public static readonly Vector3 HiddenSpawnPosition = new Vector3(0f, -10f, 0f);
+        public static readonly Vector3 HiddenSpawnPosition = new Vector3(0f, -15f, 0f);
 
         public override void Initialise(GameManagerConfig config)
         {
@@ -114,9 +116,17 @@ namespace FishFlingers.Networking
             base.Shutdown();
         }
 
-        public T Spawn<T>(T prefab, Vector3 position) where T : Object
+        public T Spawn<T>(T prefab, Vector3 position) where T : NetworkBehaviour
         {
-            return Object.Instantiate(prefab, position, Quaternion.identity);
+            T obj = Object.Instantiate(prefab, position, Quaternion.identity);
+            Listeners.Dispatch(NotifyOnNetworkSpawn);
+            return obj;
+        }
+
+        public void Despawn(NetworkBehaviour behaviour)
+        {
+            behaviour.Despawn();
+            Listeners.Dispatch(NotifyOnNetworkDespawn);
         }
 
         // Our transport will always be composite, so it is a safe cast
@@ -302,6 +312,8 @@ namespace FishFlingers.Networking
         private void HandleNetworkSceneLoaded(SceneID id, bool asServer) => Listeners.Dispatch(NotifyOnNetworkSceneLoaded, GetScene(id), asServer);
         private void HandleNetworkSceneUnloaded(SceneID id, bool asServer) => Listeners.Dispatch(NotifyOnNetworkSceneUnloaded, GetScene(id), asServer);
 
+        private static void NotifyOnNetworkSpawn(INetworkManagerListener listener) => listener.OnNetworkSpawn();
+        private static void NotifyOnNetworkDespawn(INetworkManagerListener listener) => listener.OnNetworkDespawn();
         private static void NotifyOnLobbyCreated(INetworkManagerListener listener, Lobby lobby) => listener.OnLobbyCreated(lobby);
         private static void NotifyOnLobbyEnter(INetworkManagerListener listener, Lobby lobby) => listener.OnLobbyEnter(lobby);
         private static void NotifyOnLobbyStart(INetworkManagerListener listener, Lobby lobby) => listener.OnLobbyStart(lobby);

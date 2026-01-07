@@ -13,10 +13,14 @@ MonoBehaviour:
   m_Name: Localization-String-Tables-Spanish (es)
   m_EditorClassIdentifier: 
   m_GroupName: Localization-String-Tables-Spanish (es)
-  m_Data:
-    m_SerializedData: []
   m_GUID: c551216a94230374db5bd999660b763e
   m_SerializeEntries:
+  - m_GUID: 8039a09e5f89573499743190952b81c6
+    m_Address: BrowseGamesPanelTable_es
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-es
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 85b80419ce44a6b41ad64f434dff0af5
     m_Address: CommonTable_es
     m_ReadOnly: 1
@@ -24,7 +28,7 @@ MonoBehaviour:
     - Locale-es
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c7926a8e5c4bda34da02b4c05ca587f5
-    m_Address: MenusTable_es
+    m_Address: MainMenuScreenTable_es
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-es

@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 namespace FishFlingers.UI
 {
@@ -16,17 +17,12 @@ namespace FishFlingers.UI
         [SerializeField] private Button _quitButton;
 
         private NetworkManager _networkManager;
-
-        private BrowseGamesScreen _browseGamesScreen;
-
-        public void Setup(BrowseGamesScreen browseGamesScreen)
-        {
-            _browseGamesScreen = browseGamesScreen;
-        }
+        private UIManager _uiManager;
 
         public override void Load()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
+            _uiManager = GameManager.Instance.Get<UIManager>();
 
             _browseGamesButton.onClick.AddListener(BrowseGamesPressed);
             _hostGameButton.onClick.AddListener(HostGamePressed);
@@ -35,7 +31,13 @@ namespace FishFlingers.UI
 
         private void BrowseGamesPressed()
         {
-            _browseGamesScreen.Show(null);
+            _ = BrowseGamesPressedAsync();
+        }
+
+        private async Task BrowseGamesPressedAsync()
+        {
+            BrowseGamesPanel browseGamesPanel = (BrowseGamesPanel)await _uiManager.CreateUIElementAsync(_uiManager.Config.BrowseGamesPanel, UILayer.Panels);
+            browseGamesPanel.Show(null);
         }
 
         private void HostGamePressed()

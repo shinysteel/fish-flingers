@@ -90,6 +90,11 @@ namespace FishFlingers.Environments
                 return;
             }
 
+            if (change == 0)
+            {
+                return;
+            }
+
             if (!_netTiles.TryGetValue(cell, out NetTile netTile))
             {
                 return;
@@ -110,7 +115,7 @@ namespace FishFlingers.Environments
         private void HandleNetTilesChanged(SyncDictionaryChange<Vector2Int, NetTile> change)
         {
             // Tile no longer exists
-            if (change.value == null || change.value.Health <= 0)
+            if (change.operation == SyncDictionaryOperation.Removed || change.value == null)
             {
                 RemoveTile(change.key);
             }
@@ -123,11 +128,13 @@ namespace FishFlingers.Environments
 
         private void RemoveTile(Vector2Int cell)
         {
-            // Return to pool
-            if (_tiles.TryGetValue(cell, out Tile tile))
+            if (!_tiles.TryGetValue(cell, out Tile tile))
             {
-                _poolManager.Return(tile);
+                return;
             }
+
+            // Return to pool
+            _poolManager.Return(tile);
 
             _tiles.Remove(tile.Cell);
 

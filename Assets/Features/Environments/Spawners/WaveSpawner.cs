@@ -40,10 +40,9 @@ namespace FishFlingers.Environments
                 return;
             }
 
-            _spawnTimer += Time.deltaTime;
-
             if (_spawnTimer < _spawnInterval)
             {
+                _spawnTimer += Time.deltaTime;
                 return;
             }
 

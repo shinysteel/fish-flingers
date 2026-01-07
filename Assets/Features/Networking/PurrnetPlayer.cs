@@ -84,5 +84,7 @@ namespace FishFlingers.Networking
         public void OnPlayerLeft(PlayerID id, bool asServer) { }
         public void OnNetworkSceneLoaded(EScene scene, bool asServer) { }
         public void OnNetworkSceneUnloaded(EScene scene, bool asServer) { }
+        public void OnNetworkSpawn() { }
+        public void OnNetworkDespawn() { }
     }
 }

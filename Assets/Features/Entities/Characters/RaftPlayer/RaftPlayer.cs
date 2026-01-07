@@ -1,19 +1,76 @@
 using FishFlingers.Cameras;
 using ShinyOwl.Common;
+using System;
 using UnityEngine;
+
+using Random = UnityEngine.Random;
 
 namespace FishFlingers.Entities
 {
     public class RaftPlayer : NetEntity
     {
-        [SerializeField] private float _moveSpeed = 2f;
-        [SerializeField] private float _moveAcceleration = 10f;
-        [SerializeField] private float _moveDeceleration = 7.5f;
+        [Serializable]
+        private class MoveSettings
+        {
+            [SerializeField] private float _speed = 2f;
+            [SerializeField] private float _acceleration = 10f;
+            [SerializeField] private float _deceleration = 7.5f;
 
-        [SerializeField] private float _jumpStrength = 3f;
-        
+            public float Speed => _speed;
+            public float Acceleration => _acceleration;
+            public float Deceleration => _deceleration;
+        }
+
+        [Serializable]
+        private class JumpSettings
+        {
+            [SerializeField] private float _strength = 4f;
+            [SerializeField] private float _cooldown = 0.1f;
+
+            public float Strength => _strength;
+            public float Cooldown => _cooldown;
+        }
+
+        [Serializable]
+        private class GroundDetectionSettings
+        {
+            [SerializeField] private LayerMask _mask;
+            [SerializeField] private float _castRadius = 0.125f;
+            [SerializeField] private float _castDist = 0.05f;
+
+            public LayerMask Mask => _mask;
+            public float CastRadius => _castRadius;
+            public float CastDist => _castDist;
+        }
+
+        [Serializable]
+        private class SwimSettings
+        {
+            [SerializeField] private LayerMask _mask;
+            [SerializeField] private float _ascendStrength = 30f;
+            [SerializeField] private float _ascendDepthThreshold = 0.25f;
+
+            public LayerMask Mask => _mask;
+            public float AscendStrength => _ascendStrength;
+            public float AscendDepthThreshold => _ascendDepthThreshold;
+        }
+
+        [SerializeField] private CapsuleCollider _capsuleCollider;
+
+        [SerializeField] private MoveSettings _moveSettings;
+        [SerializeField] private JumpSettings _jumpSettings;
+        [SerializeField] private GroundDetectionSettings _groundDetectionSettings;
+        [SerializeField] private SwimSettings _swimSettings;
+
         private Vector2 _directionInput;
+
         private bool _jumpInput;
+        private float _jumpTimer;
+
+        private bool _isGrounded;
+        private RaycastHit[] _groundedHitsNonAlloc = new RaycastHit[1];
+
+        private Collider[] _swimCollidersNonAlloc = new Collider[1];
 
         protected override void OnSpawned()
         {
@@ -32,7 +89,7 @@ namespace FishFlingers.Entities
             // Spawn on a random starting tile
             // transform.position = _raft.TryGetRandomTile(out Tile tile) ? _raft.CellToWorldPosition(tile.Cell) : Vector3.zero;
 
-            transform.position = new Vector3(Random.Range(-1, 2), 0f, Random.Range(-1, 2));
+            transform.position = new Vector3(Random.Range(-1, 2), 0.125f, Random.Range(-1, 2));
         }
 
         private void Update()
@@ -40,6 +97,12 @@ namespace FishFlingers.Entities
             InputUpdate();
             MovementUpdate();
             JumpUpdate();
+        }
+
+        private void FixedUpdate()
+        {
+            GroundDetectionFixedUpdate();
+            SwimFixedUpdate();
         }
 
         private void InputUpdate()
@@ -64,9 +127,9 @@ namespace FishFlingers.Entities
             }
 
             Vector3 moveDirection = new Vector3(_directionInput.x, 0f, _directionInput.y);
-            Vector3 targetVelocity = moveDirection * _moveSpeed;
+            Vector3 targetVelocity = moveDirection * _moveSettings.Speed;
             targetVelocity.y = _rigidbody.linearVelocity.y;
-            float speed = moveDirection != Vector3.zero ? _moveAcceleration : _moveDeceleration;
+            float speed = moveDirection != Vector3.zero ? _moveSettings.Acceleration : _moveSettings.Deceleration;
             _rigidbody.linearVelocity = Vector3.MoveTowards(_rigidbody.linearVelocity, targetVelocity, speed * Time.fixedDeltaTime);
         }
 
@@ -77,10 +140,64 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            if (_jumpInput)
+            _jumpTimer += Time.deltaTime;
+
+            if (!_jumpInput)
             {
-                _rigidbody.AddForce(Vector3.up * _jumpStrength, ForceMode.Impulse);
+                return;
             }
+
+            if (!_isGrounded)
+            {
+                return;
+            }
+
+            if (_jumpTimer < _jumpSettings.Cooldown)
+            {
+                return;
+            }
+
+            // Cancel out gravity
+            _rigidbody.linearVelocity = new Vector3(_rigidbody.linearVelocity.x, 0f, _rigidbody.linearVelocity.z);
+
+            _rigidbody.AddForce(Vector3.up * _jumpSettings.Strength, ForceMode.Impulse);
+
+            _jumpTimer = 0f;
+        }
+
+        private void GroundDetectionFixedUpdate()
+        {
+            if (!isOwner)
+            {
+                return;
+            }
+
+            Vector3 origin = transform.position + Vector3.up * _groundDetectionSettings.CastRadius;
+            _isGrounded = Physics.SphereCastNonAlloc(origin, _groundDetectionSettings.CastRadius, Vector3.down, _groundedHitsNonAlloc, _groundDetectionSettings.CastDist, _groundDetectionSettings.Mask) > 0;
+        }
+
+        private void SwimFixedUpdate()
+        {
+            // While swimming, the player can hold spacebar to propel themselves up
+            if (!Input.GetKey(KeyCode.Space))
+            {
+                return;
+            }
+
+            // If we are overlapping a collider on the swim mask, we are swimming
+            if (Physics.OverlapCapsuleNonAlloc(_capsuleCollider.bounds.min, _capsuleCollider.bounds.max, _capsuleCollider.radius, _swimCollidersNonAlloc, _swimSettings.Mask) == 0)
+            {
+                return;
+            }
+
+            Collider waterCollider = _swimCollidersNonAlloc[0];
+
+            Physics.ComputePenetration(_capsuleCollider, transform.position, transform.rotation, waterCollider, waterCollider.transform.position, waterCollider.transform.rotation, out _, out float depth);
+
+            float ascendFactor = Mathf.Clamp01(depth / _swimSettings.AscendDepthThreshold);
+            Vector3 ascendForce = Vector3.up * _swimSettings.AscendStrength * ascendFactor;
+
+            _rigidbody.AddForce(ascendForce, ForceMode.Force);
         }
     }
 }
