@@ -1,24 +1,38 @@
-using System;
-using UnityEngine;
+using FishFlingers.UI.Transitions;
 using PrimeTween;
+using ShinyOwl.Common;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace FishFlingers.UI
 {
     public abstract class UIElementAnimated : UIElement
     {
+        [SerializeField] protected CanvasGroup _canvasGroup;
+
         private Sequence _showSequence;
         private Sequence _hideSequence;
 
-        // Generally will only have one callback that is invoked once Show or Hide ends. Is cumulative
-        // to allow repeated calls without losing the previous callbacks
-        private List<Action> _onCompleteActions = new();
+        private Action _onComplete;
+
+        private const float DefaultDuration = 0.1f;
+
+        public virtual Sequence CreateShowSequence()
+        {
+            return Sequence.Create(Tween.Alpha(_canvasGroup, startValue: 0f, endValue: 1f, DefaultDuration, Ease.OutQuad));
+        }
+
+        public virtual Sequence CreateHideSequence()
+        {
+            return Sequence.Create(Tween.Alpha(_canvasGroup, startValue: 1f, endValue: 0f, DefaultDuration, Ease.OutQuad));
+        }
 
         public override void Show(Action onComplete)
         {
             if (_showSequence.isAlive)
             {
-                _onCompleteActions.Add(onComplete);
+                Debugger.LogError(this, "Tried to show a UI Element when it is already being animated");
                 return;
             }
 
@@ -28,19 +42,26 @@ namespace FishFlingers.UI
                 _hideSequence.Stop();
             }
 
+            _canvasGroup.interactable = false;
+
+            _onComplete = onComplete;
+
             _isVisible = true;
             gameObject.SetActive(true);
-            _onCompleteActions.Add(onComplete);
 
             _showSequence = CreateShowSequence();
-            _showSequence.OnComplete(ExecutePending);
+            _showSequence.OnComplete(() =>
+            {
+                _canvasGroup.interactable = true;
+                ExecutePending();
+            });
         }
 
         public override void Hide(Action onComplete)
         {
             if (_hideSequence.isAlive)
             {
-                _onCompleteActions.Add(onComplete);
+                Debugger.LogError(this, "Tried to hide a UI Element when it is already being animated");
                 return;
             }
 
@@ -50,7 +71,9 @@ namespace FishFlingers.UI
                 _showSequence.Stop();
             }
 
-            _onCompleteActions.Add(onComplete);
+            _canvasGroup.interactable = false;
+
+            _onComplete = onComplete;
 
             _hideSequence = CreateHideSequence();
             _hideSequence.OnComplete(() =>
@@ -67,18 +90,10 @@ namespace FishFlingers.UI
             _hideSequence.Stop();
         }
 
-        public abstract Sequence CreateShowSequence();
-        public abstract Sequence CreateHideSequence();
-
         private void ExecutePending()
         {
-            Action[] actions = _onCompleteActions.ToArray();
-            _onCompleteActions.Clear();
-
-            foreach (Action action in actions)
-            {
-                action?.Invoke();
-            }
+            _onComplete?.Invoke();
+            _onComplete = null;
         }
     }
 }

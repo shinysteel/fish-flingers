@@ -21,3 +21,4 @@ MonoBehaviour:
   _transitionManagerConfig: {fileID: 11400000, guid: 8602e473d3e751b4496939b6153579ff, type: 2}
   _sceneManagerConfig: {fileID: 11400000, guid: bd46a7b359290964f82404aba5c65526, type: 2}
   _debugManagerConfig: {fileID: 11400000, guid: f242ae149b5e7be48b9467efab05a617, type: 2}
+  _localisationManagerConfig: {fileID: 11400000, guid: 81ec33a294359174898b55a37f8035c3, type: 2}

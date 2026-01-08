@@ -9,7 +9,9 @@ namespace FishFlingers.Pools
     public class PoolManagerConfig : ScriptableObject
     {
         [SerializeField] private Tile _tilePrefab;
+        [SerializeField] private LobbyEntry _lobbyEntryPrefab;
 
         public Tile TilePrefab => _tilePrefab;
+        public LobbyEntry LobbyEntryPrefab => _lobbyEntryPrefab;
     }
 }

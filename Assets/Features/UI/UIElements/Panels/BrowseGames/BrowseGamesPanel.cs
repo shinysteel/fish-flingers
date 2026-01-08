@@ -1,36 +1,54 @@
+using FishFlingers.Localisation;
 using FishFlingers.Networking;
+using FishFlingers.Pools;
 using ShinyOwl.Common;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 namespace FishFlingers.UI
 {
     public class BrowseGamesPanel : Panel
     {
+        [SerializeField] private ScrollRect _scrollRect;
+        [SerializeField] private GameObject _loadingGameObject;
+
+        [SerializeField] private LobbyContainer _lobbyContainerPrefab;
         [SerializeField] private LobbyEntry _lobbyEntryPrefab;
 
-        [SerializeField] private Transform _lanContainer;
-        [SerializeField] private Transform _steamContainer;
+        [SerializeField] private LobbyContainerModel[] _lobbyContainerModels;
 
-        private Dictionary<eLobbyService, LobbyEntryContainer> _entryContainers = new();
+        private NetworkManager _networkManager;
+        private PoolManager _poolManager;
+
+        private Dictionary<eLobbyService, LobbyContainerModel> _serviceModelMap = new();
 
         private float _searchTimer;
 
         private const float SearchInterval = 2.5f;
 
-        private class LobbyEntryContainer
+        [Serializable]
+        private class LobbyContainerModel
         {
-            public Transform Container { get; private set; }
-            public List<LobbyEntry> Entries { get; private set; }
+            [SerializeField] private eLobbyService _lobbyService;
+            [SerializeField] private LocalisationTerm _titleTerm;
 
-            public LobbyEntryContainer(Transform container)
+            private LobbyContainer _container;
+
+            public eLobbyService LobbyService => _lobbyService;
+            public LocalisationTerm TitleTerm => _titleTerm;
+            public LobbyContainer Container => _container;
+
+            public List<LobbyEntry> Entries { get; private set; } = new();
+
+            public void SetContainer(LobbyContainer container)
             {
-                Container = container;
-                Entries = new();
+                _container = container;
             }
         }
 
@@ -38,8 +56,19 @@ namespace FishFlingers.UI
         {
             base.Load();
 
-            _entryContainers.Add(eLobbyService.LAN, new LobbyEntryContainer(_lanContainer));
-            _entryContainers.Add(eLobbyService.Steam, new LobbyEntryContainer(_steamContainer));
+            _networkManager = GameManager.Instance.Get<NetworkManager>();
+            _poolManager = GameManager.Instance.Get<PoolManager>();
+
+            foreach (LobbyContainerModel model in _lobbyContainerModels)
+            {
+                LobbyContainer container = Instantiate(_lobbyContainerPrefab, _scrollRect.content);
+                container.Setup(model.TitleTerm, 0);
+                container.gameObject.SetActive(false);
+
+                model.SetContainer(container);
+
+                _serviceModelMap.Add(model.LobbyService, model);
+            }
         }
 
         public override void Show(Action onComplete)
@@ -76,31 +105,38 @@ namespace FishFlingers.UI
 
             Dictionary<eLobbyService, Lobby[]> lobbies = await _networkManager.SearchLobbies();
 
+            _loadingGameObject.SetActive(false);
+
             foreach (eLobbyService service in lobbies.Keys)
             {
-                SyncLobbyEntries(_entryContainers[service], lobbies[service]);
+                SyncLobbyEntries(_serviceModelMap[service], lobbies[service]);
             }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_scrollRect.content);
         }
 
         // Use pooling once we allow the scroll rect to display only what is on screen
-        private void SyncLobbyEntries(LobbyEntryContainer container, Lobby[] lobbies)
+        private void SyncLobbyEntries(LobbyContainerModel model, Lobby[] lobbies)
         {
-            for (int i = container.Entries.Count; i < lobbies.Length; i++)
+            for (int i = model.Entries.Count; i < lobbies.Length; i++)
             {
-                container.Entries.Add(Instantiate(_lobbyEntryPrefab, container.Container));
+                LobbyEntry lobbyEntry = _poolManager.Get<LobbyEntry>(model.Container.transform);
+                model.Entries.Add(lobbyEntry);
             }
 
             for (int i = 0; i < lobbies.Length; i++)
             {
-                container.Entries[i].Setup(lobbies[i]);
+                model.Entries[i].Setup(lobbies[i]);
             }
 
-            for (int i = container.Entries.Count - 1; i >= lobbies.Length; i--)
+            for (int i = model.Entries.Count - 1; i >= lobbies.Length; i--)
             {
-                container.Entries.RemoveAt(i);
+                _poolManager.Return(model.Entries[i]);
+                model.Entries.RemoveAt(i);
             }
 
-            container.Container.gameObject.SetActive(container.Entries.Count > 0);
+            model.Container.gameObject.SetActive(true);
+            model.Container.Setup(model.TitleTerm, lobbies.Length);
         }
     }
 }

@@ -28,15 +28,16 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private enum Manager
     {
-        SteamManager      ,
-        SceneManager      ,
-        NetworkManager    ,
-        CameraManager     ,
-        UIManager         ,
-        StateManager      ,
-        PoolManager       ,
-        TransitionManager ,
-        DebugManager      ,
+        SteamManager        ,
+        SceneManager        ,
+        NetworkManager      ,
+        CameraManager       ,
+        UIManager           ,
+        StateManager        ,
+        PoolManager         ,
+        TransitionManager   ,
+        DebugManager        ,
+        LocalisationManager ,
     }
 
     public TManager Get<TManager>() where TManager : IGameSystem

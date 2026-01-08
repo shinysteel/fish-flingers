@@ -39,7 +39,7 @@ namespace FishFlingers.UI
         private Canvas _gameCanvas;
         private EventSystem _eventSystem;
 
-        private RectTransform[] _layers;
+        private RectTransform[] _layerContainers;
 
         public override void Initialise(GameManagerConfig config)
         {
@@ -68,10 +68,10 @@ namespace FishFlingers.UI
         private void CreateLayers()
         {
             UILayer[] enums = (UILayer[])Enum.GetValues(typeof(UILayer));
-            _layers = new RectTransform[enums.Length];
+            _layerContainers = new RectTransform[enums.Length];
             for (int i = 0; i < enums.Length; i++)
             {
-                _layers[i] = CreateLayer(enums[i].ToString(), (RectTransform)_gameCanvas.transform);
+                _layerContainers[i] = CreateLayer(enums[i].ToString(), (RectTransform)_gameCanvas.transform);
             }
         }
 
@@ -98,7 +98,7 @@ namespace FishFlingers.UI
 
             InstantiateParameters parameters = new()
             {
-                parent = _layers[(int)layer], 
+                parent = _layerContainers[(int)layer], 
                 worldSpace = false
             };
 
@@ -107,40 +107,54 @@ namespace FishFlingers.UI
             AsyncOperationBridge<UIElement> bridge = new AsyncOperationBridge<UIElement>(op, _ =>
             {
                 AsyncInstantiateOperation instantiateOp = (AsyncInstantiateOperation)op;
-                T uiElement = (T)instantiateOp.Result[0];
+                T element = (T)instantiateOp.Result[0];
 
                 if (mode == UILayerInsertMode.LastSibling)
                 {
-                    uiElement.transform.SetAsLastSibling();
+                    element.transform.SetAsLastSibling();
                 }
                 else if (mode == UILayerInsertMode.FirstSibling)
                 {
-                    uiElement.transform.SetAsFirstSibling();
+                    element.transform.SetAsFirstSibling();
                 }
 
-                uiElement.Load();
-                uiElement.gameObject.SetActive(false);
-                return uiElement;
+                element.Load();
+                element.gameObject.SetActive(false);
+                return element;
             });
 
             return bridge;
         }
 
-        public void DestroyUIElement(UIElement uiElement, UILayer layer)
+        public void DestroyUIElement(UIElement element, UILayer layer)
         {
-            if (uiElement == null)
+            if (element == null)
             {
                 Debugger.LogError(this, "Tried to destroy a ui element, but the ui element given was null");
                 return;
             }
 
-            if (!uiElement.transform.IsChildOf(_layers[(int)layer]))
+            if (!element.transform.IsChildOf(_layerContainers[(int)layer]))
             {
                 return;
             }
 
-            uiElement.Unload();
-            Object.Destroy(uiElement.gameObject);
+            element.Unload();
+            Object.Destroy(element.gameObject);
+        }
+
+        public void PopLayer(UILayer layer)
+        {
+            RectTransform container = _layerContainers[(int)layer];
+
+            if (container.childCount == 0)
+            {
+                return;
+            }
+
+            UIElement element = container.GetChild(container.childCount - 1).GetComponent<UIElement>();
+
+            element.Hide(() => DestroyUIElement(element, layer));
         }
     }
 }

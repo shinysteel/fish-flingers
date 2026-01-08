@@ -57,7 +57,7 @@ namespace FishFlingers.Pools
 
                 _inUse.Add(obj);
 
-                obj.transform.SetParent(parent);
+                obj.transform.SetParent(parent, false);
                 obj.gameObject.SetActive(true);
                 obj.OnTakenFromPool();
 
@@ -94,6 +94,7 @@ namespace FishFlingers.Pools
 
             // Register config prefabs here
             Register(_config.TilePrefab);
+            Register(_config.LobbyEntryPrefab);
 
             base.Initialise(config);
         }

@@ -34,8 +34,16 @@ namespace FishFlingers.Environments
         protected override void OnInitializeModules()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
+        }
 
+        protected override void OnSpawned()
+        {
             _networkManager.AddListener(this);
+        }
+
+        protected override void OnDespawned()
+        {
+            _networkManager?.RemoveListener(this);
         }
 
         private void Update()

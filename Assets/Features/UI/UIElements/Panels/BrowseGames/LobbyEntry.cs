@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace FishFlingers.UI
 {
-    public class LobbyEntry : MonoBehaviour
+    public class LobbyEntry : MonoBehaviour, IPoolable
     {
         [SerializeField] private Button _button;
         [SerializeField] private TMP_Text _nameText;
@@ -18,10 +18,13 @@ namespace FishFlingers.UI
 
         private string _lobbyId;
 
-        private void Start()
+        private void Awake()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
+        }
 
+        private void Start()
+        {
             _button.onClick.AddListener(Pressed);
         }
 
@@ -36,5 +39,11 @@ namespace FishFlingers.UI
         {
             _ = _networkManager.JoinLobbyAsync(_lobbyId);
         }
+
+        public void OnTakenFromPool() 
+        { }
+
+        public void OnReturnedToPool()
+        { }
     }
 }

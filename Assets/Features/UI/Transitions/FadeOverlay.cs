@@ -8,8 +8,6 @@ namespace FishFlingers.UI.Transitions
 {
     public class FadeOverlay : UIElementAnimated
     {
-        [SerializeField] private Image _image;
-
         private TransitionManager _transitionManager;
 
         public override void Load()
@@ -19,12 +17,12 @@ namespace FishFlingers.UI.Transitions
 
         public override Sequence CreateShowSequence()
         {
-            return Sequence.Create(Tween.Alpha(_image, startValue: 0f, endValue: 1f, duration: _transitionManager.Config.Duration, ease: _transitionManager.Config.Ease));
+            return Sequence.Create(Tween.Alpha(_canvasGroup, startValue: 0f, endValue: 1f, _transitionManager.Config.Duration, _transitionManager.Config.Ease));
         }
 
         public override Sequence CreateHideSequence()
         {
-            return Sequence.Create(Tween.Alpha(_image, startValue: 1f, endValue: 0f, duration: _transitionManager.Config.Duration, ease: _transitionManager.Config.Ease));
+            return Sequence.Create(Tween.Alpha(_canvasGroup, startValue: 1f, endValue: 0f, _transitionManager.Config.Duration, _transitionManager.Config.Ease));
         }
     }
 }
