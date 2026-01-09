@@ -18,7 +18,7 @@ namespace FishFlingers.Items
 
     public class Inventory : NetworkBehaviour, IEnumerable<KeyValuePair<Vector2Int, InventorySlot>>
     {
-        private SyncDictionary<Vector2Int, InventorySlot> _cellSlotMap = new();
+        private SyncDictionary<Vector2Int, InventorySlot> _cellSlotMap = new(ownerAuth: true);
 
         public void Initialise(BoolGrid grid)
         {

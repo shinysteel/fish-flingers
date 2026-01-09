@@ -72,7 +72,7 @@ namespace FishFlingers.Networking
                 await Task.Yield();
             }
 
-            RaftPlayer player = _networkManager.Spawn(_playerPrefab, NetworkManager.HiddenSpawnPosition);
+            RaftPlayer player = _networkManager.Spawn(_playerPrefab, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
             player.GiveOwnership(owner);
         }
 

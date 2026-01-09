@@ -15,13 +15,14 @@ using NetworkManager = FishFlingers.Networking.NetworkManager;
 namespace FishFlingers.Scenes
 {
     // Try to keep these 1:1 with scene names for clarity
+    // If changing the order, don't forget to update SceneManagerConfig
     public enum EScene
     {
-        Startup,
-        Default,
-        Game,
-        EnvironmentMainMenu,
-        EnvironmentGameplay,
+        Startup             ,
+        Default             ,
+        Game                ,
+        EnvironmentMainMenu ,
+        EnvironmentGameplay ,
     }
 
     // A duplicate of UnityEngine.SceneManagement.LoadSceneMode to stop the namespace being added
@@ -100,6 +101,12 @@ namespace FishFlingers.Scenes
         public EScene GetSceneEnum(Scene scene)
         {
             return _sceneNameMap.FirstOrDefault(kvp => kvp.Value == scene.name).Key;
+        }
+
+        // GetSceneByName is not able to find the DontDestroyOnLoad scene, so this seems to be the solution for now
+        public Scene GetDontDestroyOnLoadScene()
+        {
+            return GameManager.Instance.gameObject.scene;
         }
 
         public Scene GetScene(EScene scene)
@@ -212,8 +219,8 @@ namespace FishFlingers.Scenes
                 return;
             }
 
-            _scenesModule = _networkManager.GetModule<ScenesModule>(true);
-            _scenePlayersModule = _networkManager.GetModule<ScenePlayersModule>(true);
+            _scenesModule = _networkManager.GetModule<ScenesModule>(_networkManager.IsServer);
+            _scenePlayersModule = _networkManager.GetModule<ScenePlayersModule>(_networkManager.IsServer);
 
             _scenesModule.onSceneLoaded += HandleNetworkedSceneLoaded;
             _scenesModule.onSceneUnloaded += HandleNetworkedSceneUnloaded;

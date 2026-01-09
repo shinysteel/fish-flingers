@@ -12,10 +12,12 @@ namespace FishFlingers.Networking
         [SerializeField] private ushort _udpServerPort;
         [SerializeField] private ushort _steamServerPort;
         [SerializeField] private ushort _broadcastPort;
+        [SerializeField] private PurrnetPlayer _purrnetPlayerPrefab;
 
         public PurrNet.NetworkManager PurrnetNetworkManagerPrefab => _purrnetNetworkManagerPrefab;
         public ushort UDPServerPort => _udpServerPort;
         public ushort SteamServerPort => _steamServerPort;
         public ushort BroadcastPort => _broadcastPort;
+        public PurrnetPlayer PurrnetPlayerPrefab => _purrnetPlayerPrefab;
     }
 }

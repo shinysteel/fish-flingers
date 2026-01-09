@@ -82,7 +82,7 @@ namespace FishFlingers.Environments
             int y = _raft.ForwardmostRow + forwardDist;
             Vector3 position = _raft.CellToWorldPosition(new Vector2(x, y));
 
-            DroppedItem item = _networkManager.Spawn(_driftwoodPrefab, position);
+            DroppedItem item = _networkManager.Spawn(_driftwoodPrefab, new SpawnParams() { Position = position });
             item.Initialise(_raft);
 
             _salvages.Add(item);

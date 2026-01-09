@@ -1,6 +1,7 @@
 using FishFlingers.Entities;
 using PurrNet;
 using UnityEngine;
+using FishFlingers.Networking;
 
 using NetworkManager = FishFlingers.Networking.NetworkManager;
 
@@ -53,7 +54,7 @@ namespace FishFlingers.Environments
 
         private void Spawn()
         {
-            IEntity entity = _networkManager.Spawn(_flyingFishPrefab, NetworkManager.HiddenSpawnPosition);
+            IEntity entity = _networkManager.Spawn(_flyingFishPrefab, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
             entity.Initialise(_raft);
         }
     }

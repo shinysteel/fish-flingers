@@ -26,7 +26,7 @@ namespace FishFlingers.UI
         private PoolManager _poolManager;
         private LobbyManager _lobbyManager;
 
-        private Dictionary<eLobbyService, LobbyContainerModel> _serviceModelMap = new();
+        private Dictionary<ELobbyService, LobbyContainerModel> _serviceModelMap = new();
 
         private float _searchTimer;
 
@@ -35,12 +35,12 @@ namespace FishFlingers.UI
         [Serializable]
         private class LobbyContainerModel
         {
-            [SerializeField] private eLobbyService _lobbyService;
+            [SerializeField] private ELobbyService _lobbyService;
             [SerializeField] private LocalisationTerm _titleTerm;
 
             private LobbyContainer _container;
 
-            public eLobbyService LobbyService => _lobbyService;
+            public ELobbyService LobbyService => _lobbyService;
             public LocalisationTerm TitleTerm => _titleTerm;
             public LobbyContainer Container => _container;
 
@@ -103,11 +103,11 @@ namespace FishFlingers.UI
         {
             _searchTimer = 0f;
 
-            Dictionary<eLobbyService, Lobby[]> lobbies = await _lobbyManager.SearchLobbies();
+            Dictionary<ELobbyService, Lobby[]> lobbies = await _lobbyManager.SearchLobbies();
 
             _loadingGameObject.SetActive(false);
 
-            foreach (eLobbyService service in lobbies.Keys)
+            foreach (ELobbyService service in lobbies.Keys)
             {
                 SyncLobbyEntries(_serviceModelMap[service], lobbies[service]);
             }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: NetworkManagerConfig
   m_EditorClassIdentifier: 
   _purrnetNetworkManagerPrefab: {fileID: 1875833553374500677, guid: c6ef04abe13b157459c62e6849fbc6b1, type: 3}
-  _purrnetLobbyManagerPrefab: {fileID: 4904852804001733159, guid: 9949be910b982474dba8b03973e379b4, type: 3}
   _udpServerPort: 5001
   _steamServerPort: 5003
   _broadcastPort: 5962
+  _purrnetPlayerPrefab: {fileID: 513846142963452170, guid: 9384cf7b2a068214aa35e5db66339891, type: 3}

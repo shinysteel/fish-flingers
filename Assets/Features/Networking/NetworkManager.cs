@@ -19,10 +19,54 @@ using Object = UnityEngine.Object;
 
 namespace FishFlingers.Networking
 {
-    public enum eTransport
+    public enum ETransport
     {
         UDP   ,
         Steam ,
+    }
+
+    public class SpawnParams
+    {
+        public Vector3 Position { get; set; } = Vector3.zero;
+        public Quaternion Rotation { get; set; } = Quaternion.identity;
+        public SpawnScene SpawnScene { get; set; } = SpawnScene.ActiveScene();
+    }
+
+    // EScene.DontDestroyOnLoad existing doesn't make sense, given it wouldn't interact
+    // with most of SceneManager's functionality. That being said, it's still an option
+    // to consider for instantiating something, and that's why this exists
+    public struct SpawnScene
+    {
+        private EScene? _scene;
+        private bool _dontDestroyOnLoad;
+
+        public static SpawnScene ActiveScene() => new SpawnScene(null, false);
+        public static SpawnScene Scene(EScene scene) => new SpawnScene(scene, false);
+        public static SpawnScene DontDestroyOnLoad() => new SpawnScene(null, true);
+
+        private SpawnScene(EScene? scene, bool dontDestroyOnLoad)
+        {
+            _scene = scene;
+            _dontDestroyOnLoad = dontDestroyOnLoad;
+        }
+
+        public UnityEngine.SceneManagement.Scene Get()
+        {
+            SceneManager sceneManager = GameManager.Instance.Get<SceneManager>();
+
+            if (_dontDestroyOnLoad)
+            {
+                return sceneManager.GetDontDestroyOnLoadScene();
+            }
+            else if (_scene.HasValue)
+            {
+                return sceneManager.GetScene(_scene.Value);
+            }
+            else
+            {
+                return sceneManager.GetActiveScene();
+            }
+        }
     }
 
     public interface INetworkManagerListener
@@ -36,10 +80,12 @@ namespace FishFlingers.Networking
         void OnPlayerLeft(PlayerID id, bool asServer);
     }
 
-    public class NetworkManager : GameSystem<INetworkManagerListener>
+    public class NetworkManager : GameSystem<INetworkManagerListener>, ISceneManagerListener
     {
         private NetworkManagerConfig _config;
         public NetworkManagerConfig Config => _config;
+
+        private SceneManager _sceneManager;
 
         private PurrNet.NetworkManager _purrnetNetworkManager;
 
@@ -52,6 +98,9 @@ namespace FishFlingers.Networking
         public override void Initialise(GameManagerConfig config)
         {
             _config = config.NetworkManagerConfig;
+
+            _sceneManager = GameManager.Instance.Get<SceneManager>();
+            _sceneManager.AddListener(this);
 
             _purrnetNetworkManager = Object.Instantiate(_config.PurrnetNetworkManagerPrefab);
             _purrnetNetworkManager.onNetworkStarted += HandleNetworkStarted;
@@ -71,6 +120,8 @@ namespace FishFlingers.Networking
 
         public override void Shutdown()
         {
+            _sceneManager?.RemoveListener(this);
+
             _purrnetNetworkManager.onNetworkStarted -= HandleNetworkStarted;
             _purrnetNetworkManager.onNetworkShutdown -= HandleNetworkShutdown;
             _purrnetNetworkManager.onClientConnectionState -= HandleClientConnectionState;
@@ -82,12 +133,12 @@ namespace FishFlingers.Networking
 
         public T Spawn<T>(T prefab) where T : NetworkBehaviour
         {
-            return Spawn(prefab, Vector3.zero);
+            return Spawn(prefab, new SpawnParams());
         }
 
-        public T Spawn<T>(T prefab, Vector3 position) where T : NetworkBehaviour
+        public T Spawn<T>(T prefab, SpawnParams parameters) where T : NetworkBehaviour
         {
-            T obj = Object.Instantiate(prefab, position, Quaternion.identity);
+            T obj = UnityProxy.Instantiate(prefab, parameters.Position, parameters.Rotation, parameters.SpawnScene.Get());
             Listeners.Dispatch(NotifyOnNetworkSpawn);
             return obj;
         }
@@ -182,5 +233,28 @@ namespace FishFlingers.Networking
         private static void NotifyOnClientConnectionState(INetworkManagerListener listener, ConnectionState state) => listener.OnClientConnectionState(state);
         private static void NotifyOnPlayerJoined(INetworkManagerListener listener, PlayerID id, bool isReconnect, bool asServer) => listener.OnPlayerJoined(id, isReconnect, asServer);
         private static void NotifyOnPlayerLeft(INetworkManagerListener listener, PlayerID id, bool asServer) => listener.OnPlayerLeft(id, asServer);
+
+        public void OnPlayerLoadedScene(PlayerID playerId, EScene scene, bool asServer) 
+        { 
+            if (!asServer)
+            {
+                return;
+            }
+
+            if (GetModule<GlobalOwnershipModule>(true).PlayerOwnsSomething(playerId))
+            {
+                return;
+            }
+
+            PurrnetPlayer player = Spawn(_config.PurrnetPlayerPrefab, new SpawnParams() { SpawnScene = SpawnScene.DontDestroyOnLoad() });
+            player.GiveOwnership(playerId);
+        }
+
+        public void OnSceneLoaded(EScene scene, LoadSceneMode mode) { }
+        public void OnSceneUnloaded(EScene scene) { }
+        public void OnNetworkedSceneLoaded(EScene scene, bool asServer) { }
+        public void OnNetworkedSceneUnloaded(EScene scene, bool asServer) { }
+        public void OnPlayerUnloadedScene(PlayerID playerId, EScene scene, bool asServer) { }
+        public void OnActiveSceneChanged(EScene previous, EScene current) { }
     }
 }

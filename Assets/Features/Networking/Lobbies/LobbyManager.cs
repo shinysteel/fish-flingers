@@ -6,7 +6,7 @@ using ShinyOwl.Common;
 
 namespace FishFlingers.Networking
 {
-    public enum eLobbyService
+    public enum ELobbyService
     {
         None,
         LAN,
@@ -28,7 +28,7 @@ namespace FishFlingers.Networking
         private LANLobbyService _lanLobbyService;
         private SteamLobbyService _steamLobbyService;
 
-        private Dictionary<eLobbyService, LobbyService> _lobbyServices = new();
+        private Dictionary<ELobbyService, LobbyService> _lobbyServices = new();
         private LobbyService _currentLobbyService;
 
         public Lobby CurrentLobby => _currentLobbyService.CurrentLobby;
@@ -40,11 +40,11 @@ namespace FishFlingers.Networking
             _lanLobbyService = new();
             _steamLobbyService = new();
 
-            _lobbyServices.Add(eLobbyService.None, null);
-            _lobbyServices.Add(eLobbyService.LAN, _lanLobbyService);
-            _lobbyServices.Add(eLobbyService.Steam, _steamLobbyService);
+            _lobbyServices.Add(ELobbyService.None, null);
+            _lobbyServices.Add(ELobbyService.LAN, _lanLobbyService);
+            _lobbyServices.Add(ELobbyService.Steam, _steamLobbyService);
 
-            SetLobbyService(eLobbyService.LAN);
+            SetLobbyService(ELobbyService.LAN);
 
             base.Initialise(config);
         }
@@ -52,12 +52,12 @@ namespace FishFlingers.Networking
         public override void Shutdown()
         {
             _currentLobbyService.Shutdown();
-            SetLobbyService(eLobbyService.None);
+            SetLobbyService(ELobbyService.None);
 
             base.Shutdown();
         }
 
-        public void SetLobbyService(eLobbyService service)
+        public void SetLobbyService(ELobbyService service)
         {
             if (_currentLobbyService != null)
             {
@@ -82,21 +82,21 @@ namespace FishFlingers.Networking
             }
         }
 
-        public async Task<Dictionary<eLobbyService, Lobby[]>> SearchLobbies()
+        public async Task<Dictionary<ELobbyService, Lobby[]>> SearchLobbies()
         {
-            var tasks = new List<Task<KeyValuePair<eLobbyService, Lobby[]>>>();
+            var tasks = new List<Task<KeyValuePair<ELobbyService, Lobby[]>>>();
 
             foreach (var kvp in _lobbyServices)
             {
-                if (kvp.Key == eLobbyService.None)
+                if (kvp.Key == ELobbyService.None)
                 {
                     continue;
                 }
 
-                tasks.Add(Task.Run(async () => new KeyValuePair<eLobbyService, Lobby[]>(kvp.Key, await kvp.Value.SearchLobbiesAsync())));
+                tasks.Add(Task.Run(async () => new KeyValuePair<ELobbyService, Lobby[]>(kvp.Key, await kvp.Value.SearchLobbiesAsync())));
             }
 
-            KeyValuePair<eLobbyService, Lobby[]>[] kvps = await Task.WhenAll(tasks);
+            KeyValuePair<ELobbyService, Lobby[]>[] kvps = await Task.WhenAll(tasks);
 
             return kvps.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
