@@ -1,4 +1,5 @@
 using FishFlingers.Cameras;
+using FishFlingers.Environments;
 using FishFlingers.Items;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Structures;
@@ -78,7 +79,7 @@ namespace FishFlingers.Entities
         private RaycastHit[] _groundedHitsNonAlloc = new RaycastHit[1];
 
         private Collider[] _swimCollidersNonAlloc = new Collider[1];
-
+        
         protected override void OnSpawned()
         {
             base.OnSpawned();
@@ -93,13 +94,8 @@ namespace FishFlingers.Entities
 
             _cameraManager.SetMode(new FollowCameraMode(transform, new Vector3(0f, 3f, -5f)));
 
-            // Figure out a better method for players getting a reference to the raft
-            // _raft = FindFirstObjectByType<Raft>();
-
             // Spawn on a random starting tile
-            // transform.position = _raft.TryGetRandomTile(out Tile tile) ? _raft.CellToWorldPosition(tile.Cell) : Vector3.zero;
-
-            transform.position = new Vector3(Random.Range(-1, 2), 0.125f, Random.Range(-1, 2));
+            transform.position = _raft.TryGetRandomTile(out Tile tile) ? _raft.CellToWorldPosition(tile.Cell) : Vector3.zero;
         }
 
         protected override void OnDespawned()

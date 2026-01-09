@@ -15,16 +15,10 @@ namespace FishFlingers.Networking
 {
     public class PurrnetPlayer : NetworkBehaviour, ILobbyManagerListener
     {
-        [SerializeField] private RaftPlayer _playerPrefab;
-
-        private NetworkManager _networkManager;
-        private SceneManager _sceneManager;
         private LobbyManager _lobbyManager;
 
         protected override void OnInitializeModules()
         {
-            _networkManager = GameManager.Instance.Get<NetworkManager>();
-            _sceneManager = GameManager.Instance.Get<SceneManager>();
             _lobbyManager = GameManager.Instance.Get<LobbyManager>();
         }
 
@@ -56,24 +50,6 @@ namespace FishFlingers.Networking
             // Since we moved to Purrdiction, that's handled separately from
             // Purrnet. I'm leaving the implementation here since it's a nice
             // reference to look back on
-
-            if (!isServer)
-            {
-                return;
-            }
-
-            _ = SpawnPlayerAsync();
-        }
-
-        private async Task SpawnPlayerAsync()
-        {
-            while (!_sceneManager.IsSceneActive(EScene.Game))
-            {
-                await Task.Yield();
-            }
-
-            RaftPlayer player = _networkManager.Spawn(_playerPrefab, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
-            player.GiveOwnership(owner);
         }
 
         public void OnLobbyEnter(Lobby lobby) { }

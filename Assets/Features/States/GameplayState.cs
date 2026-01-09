@@ -16,6 +16,7 @@ using FishFlingers.Environments;
 using FishFlingers.Entities;
 
 using NetworkManager = FishFlingers.Networking.NetworkManager;
+using Object = UnityEngine.Object;
 
 namespace FishFlingers.States
 {
@@ -76,16 +77,31 @@ namespace FishFlingers.States
 
                 await _sceneManager.LoadSceneAsync(EScene.EnvironmentGameplay, LoadSceneMode.Additive, LoadSceneContext.Local);
 
-                // Only the server creates the raft
+                Raft raft = null;
+
                 if (_networkManager.IsServer)
                 {
-                    Raft raft = _networkManager.Spawn(_config.RaftPrefab);
+                    // Only the server creates the raft
+                    raft = _networkManager.Spawn(_config.RaftPrefab);
                     WaveSpawner waveSpawner = _networkManager.Spawn(_config.WaveSpawnerPrefab);
                     SalvageSpawner salvageSpawner = _networkManager.Spawn(_config.SalvageSpawnerPrefab);
 
                     waveSpawner.Initialise(raft);
                     salvageSpawner.Initialise(raft);
                 }
+                else
+                {
+                    // Clients need to wait until the raft is ready on their end
+                    while (raft == null)
+                    {
+                        raft = Object.FindFirstObjectByType<Raft>();
+                        await Task.Yield();
+                    }
+                }
+
+                // Create the local player
+                RaftPlayer player = _networkManager.Spawn(_config.RaftPlayerPrefab, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
+                player.Initialise(raft);
 
                 _gameplayScreen = (GameplayScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.GameplayScreen, UILayer.Screens);
                 _gameplayScreen.Show(null);
