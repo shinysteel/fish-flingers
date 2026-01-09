@@ -1,4 +1,5 @@
 using FishFlingers.Items;
+using FishFlingers.Networking;
 using System;
 using UnityEngine;
 
@@ -8,32 +9,13 @@ namespace FishFlingers.UI
     {
         [SerializeField] private InventoryWidget _inventoryWidget;
 
+        private NetworkManager _networkManager;
+
         public override void Load()
         {
             base.Load();
-
-            _inventoryWidget.Load();
-        }
-
-        public override void Show(Action onComplete)
-        {
-            base.Show(onComplete);
-
-            _inventoryWidget.Show(null);
-        }
-
-        public override void Hide(Action onComplete)
-        {
-            base.Hide(onComplete);
-
-            _inventoryWidget.Hide(null);
-        }
-
-        public override void Unload()
-        {
-            _inventoryWidget.Unload();
-
-            base.Unload();
+            
+            // _inventoryWidget.Setup(null);
         }
     }
 }

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f69c49f6666a2a54f83f4283444d5de4, type: 3}
+  m_Name: NetworkManagerConfig
+  m_EditorClassIdentifier: 
+  _purrnetNetworkManagerPrefab: {fileID: 1875833553374500677, guid: c6ef04abe13b157459c62e6849fbc6b1, type: 3}
+  _purrnetLobbyManagerPrefab: {fileID: 4904852804001733159, guid: 9949be910b982474dba8b03973e379b4, type: 3}
+  _udpServerPort: 5001
+  _steamServerPort: 5003
+  _broadcastPort: 5962

@@ -361,23 +361,8 @@ namespace FishFlingers.Networking
             _isListening = false;
         }
 
-        public void OnPlayerLeft(PlayerID id, bool asServer) 
+        public void OnPlayerJoined(PlayerID id, bool isReconnect, bool asServer)
         {
-            if (asServer)
-            {
-                return;
-            }
-
-            if (_networkManager.IsServer == false || _networkManager.LocalPlayerId == id)
-            {
-                return;
-            }
-
-            CurrentLobby.Members.RemoveAll(member => member.Id == id.ToString());
-        }
-
-        public void OnPlayerJoined(PlayerID id, bool isReconnect, bool asServer) 
-        { 
             if (asServer)
             {
                 return;
@@ -398,15 +383,24 @@ namespace FishFlingers.Networking
             CurrentLobby.Members.Add(member);
         }
 
-        public void OnLobbyCreated(Lobby lobby) { }
-        public void OnLobbyEnter(Lobby lobby) { }
-        public void OnLobbyStart(Lobby lobby) { }
-        public void OnLobbyLeave() { }
+        public void OnPlayerLeft(PlayerID id, bool asServer) 
+        {
+            if (asServer)
+            {
+                return;
+            }
+
+            if (_networkManager.IsServer == false || _networkManager.LocalPlayerId == id)
+            {
+                return;
+            }
+
+            CurrentLobby.Members.RemoveAll(member => member.Id == id.ToString());
+        }
+
         public void OnClientConnectionState(ConnectionState state) { }
         public void OnNetworkStarted(bool asServer) { }
         public void OnNetworkShutdown(bool asServer) { }
-        public void OnNetworkSceneLoaded(EScene scene, bool asServer) { }
-        public void OnNetworkSceneUnloaded(EScene scene, bool asServer) { }
         public void OnNetworkSpawn() { }
         public void OnNetworkDespawn() { }
     }

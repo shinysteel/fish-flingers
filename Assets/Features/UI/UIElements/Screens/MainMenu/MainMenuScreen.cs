@@ -1,6 +1,5 @@
 using FishFlingers.Networking;
 using FishFlingers.States;
-using PurrLobby;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,12 +15,12 @@ namespace FishFlingers.UI
         [SerializeField] private Button _hostGameButton;
         [SerializeField] private Button _quitButton;
 
-        private NetworkManager _networkManager;
+        private LobbyManager _lobbyManager;
         private UIManager _uiManager;
 
         public override void Load()
         {
-            _networkManager = GameManager.Instance.Get<NetworkManager>();
+            _lobbyManager = GameManager.Instance.Get<LobbyManager>();
             _uiManager = GameManager.Instance.Get<UIManager>();
 
             _browseGamesButton.onClick.AddListener(BrowseGamesPressed);
@@ -39,7 +38,7 @@ namespace FishFlingers.UI
 
         private void HostGamePressed()
         {
-            _ = _networkManager.CreateLobbyAsync();
+            _ = _lobbyManager.CreateLobbyAsync();
         }
 
         private void QuitPressed()

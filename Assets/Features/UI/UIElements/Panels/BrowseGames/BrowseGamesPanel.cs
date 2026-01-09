@@ -23,8 +23,8 @@ namespace FishFlingers.UI
 
         [SerializeField] private LobbyContainerModel[] _lobbyContainerModels;
 
-        private NetworkManager _networkManager;
         private PoolManager _poolManager;
+        private LobbyManager _lobbyManager;
 
         private Dictionary<eLobbyService, LobbyContainerModel> _serviceModelMap = new();
 
@@ -56,8 +56,8 @@ namespace FishFlingers.UI
         {
             base.Load();
 
-            _networkManager = GameManager.Instance.Get<NetworkManager>();
             _poolManager = GameManager.Instance.Get<PoolManager>();
+            _lobbyManager = GameManager.Instance.Get<LobbyManager>();
 
             foreach (LobbyContainerModel model in _lobbyContainerModels)
             {
@@ -103,7 +103,7 @@ namespace FishFlingers.UI
         {
             _searchTimer = 0f;
 
-            Dictionary<eLobbyService, Lobby[]> lobbies = await _networkManager.SearchLobbies();
+            Dictionary<eLobbyService, Lobby[]> lobbies = await _lobbyManager.SearchLobbies();
 
             _loadingGameObject.SetActive(false);
 

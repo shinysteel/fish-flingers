@@ -29,8 +29,8 @@ public class GameManager : MonoBehaviour
     private enum Manager
     {
         SteamManager        ,
-        SceneManager        ,
         NetworkManager      ,
+        SceneManager        ,
         CameraManager       ,
         UIManager           ,
         StateManager        ,
@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
         TransitionManager   ,
         DebugManager        ,
         LocalisationManager ,
+        LobbyManager        ,
     }
 
     public TManager Get<TManager>() where TManager : IGameSystem
@@ -85,9 +86,16 @@ public class GameManager : MonoBehaviour
         }
 
         // Initialise them
-        foreach (IGameSystem manager in _managers)
+        try
         {
-            manager.Initialise(_config);
+            foreach (IGameSystem manager in _managers)
+            {
+                manager.Initialise(_config);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debugger.LogError(this, ex);
         }
     }
 

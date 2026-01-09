@@ -1,0 +1,141 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using UnityEngine;
+using ShinyOwl.Common;
+
+namespace FishFlingers.Networking
+{
+    public enum eLobbyService
+    {
+        None,
+        LAN,
+        Steam,
+    }
+
+    public interface ILobbyManagerListener
+    {
+        void OnLobbyCreated(Lobby lobby);
+        void OnLobbyEnter(Lobby lobby);
+        void OnLobbyStart(Lobby lobby);
+        void OnLobbyLeave();
+    }
+
+    public class LobbyManager : GameSystem<ILobbyManagerListener>
+    {
+        private LobbyManagerConfig _config;
+
+        private LANLobbyService _lanLobbyService;
+        private SteamLobbyService _steamLobbyService;
+
+        private Dictionary<eLobbyService, LobbyService> _lobbyServices = new();
+        private LobbyService _currentLobbyService;
+
+        public Lobby CurrentLobby => _currentLobbyService.CurrentLobby;
+
+        public override void Initialise(GameManagerConfig config)
+        {
+            _config = config.LobbyManagerConfig;
+
+            _lanLobbyService = new();
+            _steamLobbyService = new();
+
+            _lobbyServices.Add(eLobbyService.None, null);
+            _lobbyServices.Add(eLobbyService.LAN, _lanLobbyService);
+            _lobbyServices.Add(eLobbyService.Steam, _steamLobbyService);
+
+            SetLobbyService(eLobbyService.LAN);
+
+            base.Initialise(config);
+        }
+
+        public override void Shutdown()
+        {
+            _currentLobbyService.Shutdown();
+            SetLobbyService(eLobbyService.None);
+
+            base.Shutdown();
+        }
+
+        public void SetLobbyService(eLobbyService service)
+        {
+            if (_currentLobbyService != null)
+            {
+                _currentLobbyService.OnLobbyCreated -= HandleLobbyCreated;
+                _currentLobbyService.OnLobbyEnter -= HandleLobbyEnter;
+                _currentLobbyService.OnLobbyStart -= HandleLobbyStart;
+                _currentLobbyService.OnLobbyLeave -= HandleLobbyLeave;
+            }
+
+            if (!_lobbyServices.TryGetValue(service, out _currentLobbyService))
+            {
+                Debugger.LogError(this, "Trying to set a lobby service that is not defined");
+            }
+
+            // Lobby service should never be null after the first time it's set 
+            if (_currentLobbyService != null)
+            {
+                _currentLobbyService.OnLobbyCreated += HandleLobbyCreated;
+                _currentLobbyService.OnLobbyEnter += HandleLobbyEnter;
+                _currentLobbyService.OnLobbyStart += HandleLobbyStart;
+                _currentLobbyService.OnLobbyLeave += HandleLobbyLeave;
+            }
+        }
+
+        public async Task<Dictionary<eLobbyService, Lobby[]>> SearchLobbies()
+        {
+            var tasks = new List<Task<KeyValuePair<eLobbyService, Lobby[]>>>();
+
+            foreach (var kvp in _lobbyServices)
+            {
+                if (kvp.Key == eLobbyService.None)
+                {
+                    continue;
+                }
+
+                tasks.Add(Task.Run(async () => new KeyValuePair<eLobbyService, Lobby[]>(kvp.Key, await kvp.Value.SearchLobbiesAsync())));
+            }
+
+            KeyValuePair<eLobbyService, Lobby[]>[] kvps = await Task.WhenAll(tasks);
+
+            return kvps.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        }
+
+        public async Task<Lobby> CreateLobbyAsync()
+        {
+            Lobby lobby = await _currentLobbyService.CreateLobbyAsync();
+            return lobby;
+        }
+
+        public async Task<Lobby> JoinLobbyAsync(string lobbyId)
+        {
+            Lobby lobby = await _currentLobbyService.JoinLobbyAsync(lobbyId);
+            return lobby;
+        }
+
+        public void StartLobby()
+        {
+            _currentLobbyService.StartLobby();
+        }
+
+        public void LeaveLobby()
+        {
+            _currentLobbyService.LeaveLobby();
+        }
+
+        public bool IsLobbyOwner(Lobby lobby)
+        {
+            return _currentLobbyService.IsLobbyOwner(lobby);
+        }
+
+        private void HandleLobbyCreated(Lobby lobby) => Listeners.Dispatch(NotifyOnLobbyCreated, lobby);
+        private void HandleLobbyEnter(Lobby lobby) => Listeners.Dispatch(NotifyOnLobbyEnter, lobby);
+        private void HandleLobbyStart(Lobby lobby) => Listeners.Dispatch(NotifyOnLobbyStart, lobby);
+        private void HandleLobbyLeave() => Listeners.Dispatch(NotifyOnLobbyLeave);
+
+        private static void NotifyOnLobbyCreated(ILobbyManagerListener listener, Lobby lobby) => listener.OnLobbyCreated(lobby);
+        private static void NotifyOnLobbyEnter(ILobbyManagerListener listener, Lobby lobby) => listener.OnLobbyEnter(lobby);
+        private static void NotifyOnLobbyStart(ILobbyManagerListener listener, Lobby lobby) => listener.OnLobbyStart(lobby);
+        private static void NotifyOnLobbyLeave(ILobbyManagerListener listener) => listener.OnLobbyLeave();
+    }
+}

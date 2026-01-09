@@ -5,6 +5,7 @@ using UnityEngine;
 using ShinyOwl.Common.Framework;
 using ShinyOwl.Common;
 using FishFlingers.Scenes;
+using PurrNet;
 
 namespace FishFlingers.States
 {
@@ -88,5 +89,9 @@ namespace FishFlingers.States
 
         public void OnSceneLoaded(EScene scene, LoadSceneMode mode) { }
         public void OnActiveSceneChanged(EScene previous, EScene current) { }
+        public void OnNetworkedSceneLoaded(EScene scene, bool asServer) { }
+        public void OnNetworkedSceneUnloaded(EScene scene, bool asServer) { }
+        public void OnPlayerLoadedScene(PlayerID playerId, EScene scene, bool asServer) { }
+        public void OnPlayerUnloadedScene(PlayerID playerId, EScene scene, bool asServer) { }
     }
 }

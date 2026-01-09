@@ -1,5 +1,7 @@
 using FishFlingers.Cameras;
+using FishFlingers.Items;
 using ShinyOwl.Common;
+using ShinyOwl.Common.Structures;
 using System;
 using UnityEngine;
 
@@ -57,10 +59,15 @@ namespace FishFlingers.Entities
 
         [SerializeField] private CapsuleCollider _capsuleCollider;
 
+        [SerializeField] private Inventory _inventoryPrefab;
+        [SerializeField] private BoolGrid _inventoryGrid;
+
         [SerializeField] private MoveSettings _moveSettings;
         [SerializeField] private JumpSettings _jumpSettings;
         [SerializeField] private GroundDetectionSettings _groundDetectionSettings;
         [SerializeField] private SwimSettings _swimSettings;
+
+        private Inventory _inventory;
 
         private Vector2 _directionInput;
 
@@ -81,6 +88,9 @@ namespace FishFlingers.Entities
                 return;
             }
 
+            _inventory = _networkManager.Spawn(_inventoryPrefab);
+            _inventory.Initialise(_inventoryGrid);
+
             _cameraManager.SetMode(new FollowCameraMode(transform, new Vector3(0f, 3f, -5f)));
 
             // Figure out a better method for players getting a reference to the raft
@@ -90,6 +100,16 @@ namespace FishFlingers.Entities
             // transform.position = _raft.TryGetRandomTile(out Tile tile) ? _raft.CellToWorldPosition(tile.Cell) : Vector3.zero;
 
             transform.position = new Vector3(Random.Range(-1, 2), 0.125f, Random.Range(-1, 2));
+        }
+
+        protected override void OnDespawned()
+        {
+            base.OnDespawned();
+
+            if (!isOwner)
+            {
+                return;
+            }
         }
 
         private void Update()

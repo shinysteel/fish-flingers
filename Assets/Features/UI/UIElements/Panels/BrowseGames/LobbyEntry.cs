@@ -14,13 +14,13 @@ namespace FishFlingers.UI
         [SerializeField] private TMP_Text _nameText;
         [SerializeField] private TMP_Text _playerCountText;
 
-        private NetworkManager _networkManager;
+        private LobbyManager _lobbyManager;
 
         private string _lobbyId;
 
         private void Awake()
         {
-            _networkManager = GameManager.Instance.Get<NetworkManager>();
+            _lobbyManager = GameManager.Instance.Get<LobbyManager>();
         }
 
         private void Start()
@@ -37,7 +37,7 @@ namespace FishFlingers.UI
 
         private void Pressed()
         {
-            _ = _networkManager.JoinLobbyAsync(_lobbyId);
+            _ = _lobbyManager.JoinLobbyAsync(_lobbyId);
         }
 
         public void OnTakenFromPool() 

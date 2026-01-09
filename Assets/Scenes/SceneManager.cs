@@ -1,4 +1,7 @@
 using FishFlingers.Networking;
+using PurrNet;
+using PurrNet.Modules;
+using PurrNet.Transports;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Framework;
 using System;
@@ -6,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+using NetworkManager = FishFlingers.Networking.NetworkManager;
 
 namespace FishFlingers.Scenes
 {
@@ -19,24 +24,39 @@ namespace FishFlingers.Scenes
         EnvironmentGameplay,
     }
 
+    // A duplicate of UnityEngine.SceneManagement.LoadSceneMode to stop the namespace being added
+    // and causing conflicts when using our custom SceneManager
     public enum LoadSceneMode
     {
         Single   ,
         Additive , 
     }
 
+    public enum LoadSceneContext
+    {
+        Local     ,
+        Networked ,
+    }
+
     public interface ISceneManagerListener
     {
         void OnSceneLoaded(EScene scene, LoadSceneMode mode);
         void OnSceneUnloaded(EScene scene);
+        void OnNetworkedSceneLoaded(EScene scene, bool asServer);
+        void OnNetworkedSceneUnloaded(EScene scene, bool asServer);
+        void OnPlayerLoadedScene(PlayerID playerId, EScene scene, bool asServer);
+        void OnPlayerUnloadedScene(PlayerID playerId, EScene scene, bool asServer);
         void OnActiveSceneChanged(EScene previous, EScene current);
     }
 
-    public class SceneManager : GameSystem<ISceneManagerListener>
+    public class SceneManager : GameSystem<ISceneManagerListener>, INetworkManagerListener
     {
         private SceneManagerConfig _config;
 
         private NetworkManager _networkManager;
+
+        private ScenesModule _scenesModule;
+        private ScenePlayersModule _scenePlayersModule;
 
         private Dictionary<EScene, string> _sceneNameMap;
 
@@ -45,6 +65,7 @@ namespace FishFlingers.Scenes
             _config = config.SceneManagerConfig;
 
             _networkManager = GameManager.Instance.Get<NetworkManager>();
+            _networkManager.AddListener(this);
 
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += HandleSceneLoaded;
             UnityEngine.SceneManagement.SceneManager.sceneUnloaded += HandleSceneUnloaded;
@@ -61,11 +82,19 @@ namespace FishFlingers.Scenes
 
         public override void Shutdown()
         {
+            _networkManager?.RemoveListener(this);
+
             UnityEngine.SceneManagement.SceneManager.sceneLoaded -= HandleSceneLoaded;
             UnityEngine.SceneManagement.SceneManager.sceneUnloaded -= HandleSceneUnloaded;
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= HandleActiveSceneChanged;
 
             base.Shutdown();
+        }
+
+        private EScene GetSceneEnum(SceneID id)
+        {
+            _scenesModule.TryGetSceneState(id, out SceneState state);
+            return GetSceneEnum(state.scene);
         }
 
         public EScene GetSceneEnum(Scene scene)
@@ -113,27 +142,112 @@ namespace FishFlingers.Scenes
             return GetScene(scene).isLoaded;
         }
 
+        // Purrnet doesn't implement non async scene loading, so LoadScene can only be done locally
         public void LoadScene(EScene scene, LoadSceneMode mode = LoadSceneMode.Single)
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(GetSceneName(scene), (UnityEngine.SceneManagement.LoadSceneMode)mode);
         }
 
-        public AsyncOperationBridge LoadSceneAsync(EScene scene, LoadSceneMode mode = LoadSceneMode.Single)
+        public AsyncOperationBridge LoadSceneAsync(EScene scene, LoadSceneMode mode, LoadSceneContext context)
         {
-            return new AsyncOperationBridge(UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(GetSceneName(scene), (UnityEngine.SceneManagement.LoadSceneMode)mode));
+            string name = GetSceneName(scene);
+            AsyncOperation op;
+
+            switch (context)
+            {
+                default:
+                case LoadSceneContext.Local:
+                    op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(name, (UnityEngine.SceneManagement.LoadSceneMode)mode);
+                    break;
+
+                case LoadSceneContext.Networked:
+                    op = _scenesModule.LoadSceneAsync(GetSceneName(scene), (UnityEngine.SceneManagement.LoadSceneMode)mode);
+                    break;
+            }
+
+            return new AsyncOperationBridge(op);
         }
 
-        public AsyncOperationBridge UnloadSceneAsync(EScene scene)
+        public AsyncOperationBridge UnloadSceneAsync(EScene scene, LoadSceneContext context)
         {
-            return new AsyncOperationBridge(UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(GetSceneName(scene)));
+            string name = GetSceneName(scene);
+            AsyncOperation op;
+
+            switch (context)
+            {
+                default:
+                case LoadSceneContext.Local:
+                    op = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(GetSceneName(scene));
+                    break;
+
+                case LoadSceneContext.Networked:
+                    op = _scenesModule.UnloadSceneAsync(GetSceneName(scene));
+                    break;
+            }
+
+            return new AsyncOperationBridge(op);
         }
 
         private void HandleSceneLoaded(Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) => Listeners.Dispatch(NotifyOnSceneLoaded, GetSceneEnum(scene), (LoadSceneMode)mode);
         private void HandleSceneUnloaded(Scene scene) => Listeners.Dispatch(NotifyOnSceneUnloaded, GetSceneEnum(scene));
+        private void HandleNetworkedSceneLoaded(SceneID id, bool asServer) => Listeners.Dispatch(NotifyOnNetworkedSceneLoaded, GetSceneEnum(id), asServer);
+        private void HandleNetworkedSceneUnloaded(SceneID id, bool asServer) => Listeners.Dispatch(NotifyOnNetworkedSceneUnloaded, GetSceneEnum(id), asServer);
+        private void HandlePlayerLoadedScene(PlayerID playerId, SceneID sceneId, bool asServer) => Listeners.Dispatch(NotifyOnPlayerLoadedScene, playerId, GetSceneEnum(sceneId), asServer);
+        private void HandlePlayerUnloadedScene(PlayerID playerId, SceneID sceneId, bool asServer) => Listeners.Dispatch(NotifyOnPlayerUnloadedScene, playerId, GetSceneEnum(sceneId), asServer);
         private void HandleActiveSceneChanged(Scene previous, Scene current) => Listeners.Dispatch(NotifyOnActiveSceneChanged, GetSceneEnum(previous), GetSceneEnum(current));
 
         private void NotifyOnSceneLoaded(ISceneManagerListener listener, EScene scene, LoadSceneMode mode) => listener.OnSceneLoaded(scene, mode);
         private void NotifyOnSceneUnloaded(ISceneManagerListener listener, EScene scene) => listener.OnSceneUnloaded(scene);
+        private void NotifyOnNetworkedSceneLoaded(ISceneManagerListener listener, EScene scene, bool asServer) => listener.OnNetworkedSceneLoaded(scene, asServer);
+        private void NotifyOnNetworkedSceneUnloaded(ISceneManagerListener listener, EScene scene, bool asServer) => listener.OnNetworkedSceneUnloaded(scene, asServer);
+        private void NotifyOnPlayerLoadedScene(ISceneManagerListener listener, PlayerID playerId, EScene scene, bool asServer) => listener.OnPlayerLoadedScene(playerId, scene, asServer);
+        private void NotifyOnPlayerUnloadedScene(ISceneManagerListener listener, PlayerID playerId, EScene scene, bool asServer) => listener.OnPlayerUnloadedScene(playerId, scene, asServer);
         private void NotifyOnActiveSceneChanged(ISceneManagerListener listener, EScene previous, EScene current) => listener.OnActiveSceneChanged(previous, current);
+
+        public void OnNetworkStarted(bool asServer)
+        {
+            // Since the host is also the server, we need to stop them subscribing twice
+            if (asServer)
+            {
+                return;
+            }
+
+            _scenesModule = _networkManager.GetModule<ScenesModule>(true);
+            _scenePlayersModule = _networkManager.GetModule<ScenePlayersModule>(true);
+
+            _scenesModule.onSceneLoaded += HandleNetworkedSceneLoaded;
+            _scenesModule.onSceneUnloaded += HandleNetworkedSceneUnloaded;
+
+            _scenePlayersModule.onPlayerLoadedScene += HandlePlayerLoadedScene;
+            _scenePlayersModule.onPlayerUnloadedScene += HandlePlayerUnloadedScene;
+        }
+
+        public void OnNetworkShutdown(bool asServer) 
+        {
+            if (asServer)
+            {
+                return;
+            }
+
+            if (_scenesModule != null)
+            {
+                _scenesModule.onSceneLoaded -= HandleNetworkedSceneLoaded;
+                _scenesModule.onSceneUnloaded -= HandleNetworkedSceneUnloaded;
+                _scenesModule = null;
+            }
+
+            if (_scenePlayersModule != null)
+            {
+                _scenePlayersModule.onPlayerLoadedScene -= HandlePlayerLoadedScene;
+                _scenePlayersModule.onPlayerUnloadedScene -= HandlePlayerUnloadedScene;
+                _scenePlayersModule = null;
+            }
+        }
+
+        public void OnNetworkSpawn() { }
+        public void OnNetworkDespawn() { }
+        public void OnClientConnectionState(ConnectionState state) { }
+        public void OnPlayerJoined(PlayerID id, bool isReconnect, bool asServer) { }
+        public void OnPlayerLeft(PlayerID id, bool asServer) { }
     }
 }

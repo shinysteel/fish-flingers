@@ -49,7 +49,7 @@ namespace FishFlingers.States
         {
             try
             {
-                await _sceneManager.LoadSceneAsync(EScene.EnvironmentMainMenu, LoadSceneMode.Additive);
+                await _sceneManager.LoadSceneAsync(EScene.EnvironmentMainMenu, LoadSceneMode.Additive, LoadSceneContext.Local);
 
                 _mainMenuScreen = (MainMenuScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.MainMenuScreen, UILayer.Screens);
                 _mainMenuScreen.Show(null);
@@ -72,7 +72,7 @@ namespace FishFlingers.States
             // covering the screen, unloading the environment, and only then connecting
             if (_sceneManager.IsSceneLoaded(EScene.EnvironmentMainMenu))
             {
-                _sceneManager.UnloadSceneAsync(EScene.EnvironmentMainMenu);
+                _sceneManager.UnloadSceneAsync(EScene.EnvironmentMainMenu, LoadSceneContext.Local);
             }
         }
     }

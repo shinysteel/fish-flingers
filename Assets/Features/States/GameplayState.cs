@@ -19,13 +19,14 @@ using NetworkManager = FishFlingers.Networking.NetworkManager;
 
 namespace FishFlingers.States
 {
-    public class GameplayState : MainState<EMainState, ENone>, INetworkManagerListener
+    public class GameplayState : MainState<EMainState, ENone>, ILobbyManagerListener, INetworkManagerListener
     {
         private TransitionManager _transitionManager;
         private UIManager _uiManager;
         private StateManager _stateManager;
         private NetworkManager _networkManager;
         private SceneManager _sceneManager;
+        private LobbyManager _lobbyManager;
 
         private GameplayStateConfig _config;
 
@@ -38,13 +39,16 @@ namespace FishFlingers.States
             _stateManager = GameManager.Instance.Get<StateManager>();
             _networkManager = GameManager.Instance.Get<NetworkManager>();
             _sceneManager = GameManager.Instance.Get<SceneManager>();
+            _lobbyManager = GameManager.Instance.Get<LobbyManager>();
 
             _networkManager.AddListener(this);
+            _lobbyManager.AddListener(this);
         }
 
         ~GameplayState()
         {
             _networkManager?.RemoveListener(this);
+            _lobbyManager?.RemoveListener(this);
         }
 
         public override void Initialise(StateManagerConfig config)
@@ -58,8 +62,8 @@ namespace FishFlingers.States
             {
                 if (_networkManager.IsServer)
                 {
-                    // Use the network manager to load the game scene so that it can be networked
-                    await _networkManager.LoadSceneAsync(EScene.Game, LoadSceneMode.Single);
+                    // Network the game scene
+                    await _sceneManager.LoadSceneAsync(EScene.Game, LoadSceneMode.Single, LoadSceneContext.Networked);
                 }
                 else
                 {
@@ -70,14 +74,14 @@ namespace FishFlingers.States
                     }
                 }
 
-                await _sceneManager.LoadSceneAsync(EScene.EnvironmentGameplay, LoadSceneMode.Additive);
+                await _sceneManager.LoadSceneAsync(EScene.EnvironmentGameplay, LoadSceneMode.Additive, LoadSceneContext.Local);
 
                 // Only the server creates the raft
                 if (_networkManager.IsServer)
                 {
-                    Raft raft = _networkManager.Spawn(_config.RaftPrefab, Vector3.zero);
-                    WaveSpawner waveSpawner = _networkManager.Spawn(_config.WaveSpawnerPrefab, Vector3.zero);
-                    SalvageSpawner salvageSpawner = _networkManager.Spawn(_config.SalvageSpawnerPrefab, Vector3.zero);
+                    Raft raft = _networkManager.Spawn(_config.RaftPrefab);
+                    WaveSpawner waveSpawner = _networkManager.Spawn(_config.WaveSpawnerPrefab);
+                    SalvageSpawner salvageSpawner = _networkManager.Spawn(_config.SalvageSpawnerPrefab);
 
                     waveSpawner.Initialise(raft);
                     salvageSpawner.Initialise(raft);
@@ -99,9 +103,9 @@ namespace FishFlingers.States
             _uiManager.DestroyUIElement(_gameplayScreen, UILayer.Screens);
             _gameplayScreen = null;
 
-            _networkManager.LeaveLobby();
+            _lobbyManager.LeaveLobby();
 
-            _sceneManager.LoadSceneAsync(EScene.Default, LoadSceneMode.Single);
+            _sceneManager.LoadSceneAsync(EScene.Default, LoadSceneMode.Single, LoadSceneContext.Local);
         }
 
         public void OnLobbyEnter(Lobby lobby)
@@ -114,9 +118,9 @@ namespace FishFlingers.States
             }
 
             // Currently we have no lobby flow, and just start the lobby as soon as we create it
-            if (_networkManager.IsLobbyOwner(lobby))
+            if (_lobbyManager.IsLobbyOwner(lobby))
             {
-                _networkManager.StartLobby();
+                _lobbyManager.StartLobby();
             }
         }
 
@@ -152,8 +156,6 @@ namespace FishFlingers.States
         public void OnPlayerLeft(PlayerID id, bool asServer) { }
         public void OnClientConnectionState(ConnectionState state) { }
         public void OnNetworkStarted(bool asServer) { }
-        public void OnNetworkSceneLoaded(EScene scene, bool asServer) { }
-        public void OnNetworkSceneUnloaded(EScene scene, bool asServer) { }
         public void OnNetworkSpawn() { }
         public void OnNetworkDespawn() { }
     }

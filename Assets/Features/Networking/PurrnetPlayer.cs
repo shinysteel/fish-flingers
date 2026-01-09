@@ -13,34 +13,36 @@ using FishFlingers.Entities;
 
 namespace FishFlingers.Networking
 {
-    public class PurrnetPlayer : NetworkBehaviour, INetworkManagerListener
+    public class PurrnetPlayer : NetworkBehaviour, ILobbyManagerListener
     {
         [SerializeField] private RaftPlayer _playerPrefab;
 
         private NetworkManager _networkManager;
         private SceneManager _sceneManager;
+        private LobbyManager _lobbyManager;
 
         protected override void OnInitializeModules()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
             _sceneManager = GameManager.Instance.Get<SceneManager>();
+            _lobbyManager = GameManager.Instance.Get<LobbyManager>();
         }
 
         protected override void OnSpawned()
         {
             // If we've missed the OnLobbyStart event, let's invoke it here
-            if (_networkManager.CurrentLobby.Properties[LobbyService.StartedKey] == true.ToString())
+            if (_lobbyManager.CurrentLobby.Properties[LobbyService.StartedKey] == true.ToString())
             {
-                OnLobbyStart(_networkManager.CurrentLobby);
+                OnLobbyStart(_lobbyManager.CurrentLobby);
             }
 
             // We deliberately subscribe after invoking missed events
-            _networkManager.AddListener(this);
+            _lobbyManager.AddListener(this);
         }
 
         protected override void OnDespawned()
         {
-            _networkManager?.RemoveListener(this);
+            _lobbyManager?.RemoveListener(this);
         }
 
         protected override void OnOwnerDisconnected(PlayerID ownerId)
@@ -77,14 +79,5 @@ namespace FishFlingers.Networking
         public void OnLobbyEnter(Lobby lobby) { }
         public void OnLobbyCreated(Lobby lobby) { }
         public void OnLobbyLeave() { }
-        public void OnNetworkStarted(bool asServer) { }
-        public void OnNetworkShutdown(bool asServer) { }
-        public void OnClientConnectionState(ConnectionState state) { }
-        public void OnPlayerJoined(PlayerID id, bool isReconnect, bool asServer) { }
-        public void OnPlayerLeft(PlayerID id, bool asServer) { }
-        public void OnNetworkSceneLoaded(EScene scene, bool asServer) { }
-        public void OnNetworkSceneUnloaded(EScene scene, bool asServer) { }
-        public void OnNetworkSpawn() { }
-        public void OnNetworkDespawn() { }
     }
 }

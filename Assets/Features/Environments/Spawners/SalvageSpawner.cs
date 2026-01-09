@@ -94,16 +94,10 @@ namespace FishFlingers.Environments
         }
 
         public void OnNetworkSpawn() { }
-        public void OnLobbyCreated(Lobby lobby) { }
-        public void OnLobbyEnter(Lobby lobby) { }
-        public void OnLobbyStart(Lobby lobby) { }
-        public void OnLobbyLeave() { }
         public void OnNetworkStarted(bool asServer) { }
         public void OnNetworkShutdown(bool asServer) { }
         public void OnClientConnectionState(ConnectionState state) { }
         public void OnPlayerJoined(PlayerID id, bool isReconnect, bool asServer) { }
         public void OnPlayerLeft(PlayerID id, bool asServer) { }
-        public void OnNetworkSceneLoaded(EScene scene, bool asServer) { }
-        public void OnNetworkSceneUnloaded(EScene scene, bool asServer) { }
     }
 }
