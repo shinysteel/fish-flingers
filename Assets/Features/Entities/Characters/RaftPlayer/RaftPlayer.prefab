@@ -183,7 +183,7 @@ MonoBehaviour:
   _rigidbody: {fileID: 7366413579655585675}
   _capsuleCollider: {fileID: 6072639463593192333}
   _inventoryPrefab: {fileID: 5201967617663925489, guid: 7df1dd8683ac7e043a6644b6830bd373, type: 3}
-  _inventoryGrid: {fileID: 11400000, guid: cfd8c0c5e490b4a47aa4e9b24205efd8, type: 2}
+  _inventoryLayout: {fileID: 11400000, guid: cfd8c0c5e490b4a47aa4e9b24205efd8, type: 2}
   _moveSettings:
     _speed: 2
     _acceleration: 10

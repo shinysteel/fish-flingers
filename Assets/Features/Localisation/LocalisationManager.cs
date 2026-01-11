@@ -9,13 +9,13 @@ namespace FishFlingers.Localisation
 {
     public enum LocalisationTerm
     {
-        BrowseGamesPanelTitle,
-        BrowseGamesPanelLAN,
-        BrowseGamesPanelSteam,
-        CommonQuit,
-        MainMenuScreenGameTitle,
-        MainMenuScreenBrowseGames,
-        MainMenuScreenHostGame
+        BrowseGamesPanelTitle     = 1,
+        BrowseGamesPanelLAN       = 2,
+        BrowseGamesPanelSteam     = 3,
+        CommonQuit                = 4,
+        MainMenuScreenGameTitle   = 5,
+        MainMenuScreenBrowseGames = 6,
+        MainMenuScreenHostGame    = 7,
     }
 
     [Serializable]

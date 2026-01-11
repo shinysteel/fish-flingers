@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
         DebugManager        ,
         LocalisationManager ,
         LobbyManager        ,
+        ItemManager         ,
     }
 
     public TManager Get<TManager>() where TManager : IGameSystem

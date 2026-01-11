@@ -23,3 +23,4 @@ MonoBehaviour:
   _debugManagerConfig: {fileID: 11400000, guid: f242ae149b5e7be48b9467efab05a617, type: 2}
   _localisationManagerConfig: {fileID: 11400000, guid: 81ec33a294359174898b55a37f8035c3, type: 2}
   _lobbyManagerConfig: {fileID: 11400000, guid: 57a7c6b0f27b0704fb67cf69809c45a9, type: 2}
+  _itemManagerConfig: {fileID: 11400000, guid: 009b80f3b90ca544fb56f42325a4ebf9, type: 2}

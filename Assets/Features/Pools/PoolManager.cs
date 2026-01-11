@@ -102,9 +102,12 @@ namespace FishFlingers.Pools
             _container = new GameObject(ContainerName).transform;
             Object.DontDestroyOnLoad(_container.gameObject);
 
-            // Register config prefabs here
+            // Register config prefabs here. We could potentially use reflection to iterate all 
+            // fields rather than manually entering them here
             Register(_config.TilePrefab);
             Register(_config.LobbyEntryPrefab);
+            Register(_config.InventorySlotView);
+            Register(_config.InventoryItemView);
 
             base.Initialise(config);
         }

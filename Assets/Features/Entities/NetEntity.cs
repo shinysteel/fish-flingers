@@ -15,7 +15,7 @@ namespace FishFlingers.Entities
         protected bool _isInitialised;
         protected GameplayContext _context;
 
-        public void Initialise(GameplayContext context)
+        public virtual void Initialise(GameplayContext context)
         {
             _isInitialised = true;
             _context = context;

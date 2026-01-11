@@ -9,6 +9,7 @@ using FishFlingers.Pools;
 using FishFlingers.UI.Transitions;
 using FishFlingers.Scenes;
 using FishFlingers.Localisation;
+using FishFlingers.Items;
 
 [CreateAssetMenu(fileName = "GameManagerConfig", menuName = "Configs/Managers/GameManagerConfig")]
 public class GameManagerConfig : ScriptableObject
@@ -24,6 +25,7 @@ public class GameManagerConfig : ScriptableObject
     [SerializeField] private DebugManagerConfig _debugManagerConfig;
     [SerializeField] private LocalisationManagerConfig _localisationManagerConfig;
     [SerializeField] private LobbyManagerConfig _lobbyManagerConfig;
+    [SerializeField] private ItemManagerConfig _itemManagerConfig;
 
     public SteamManagerConfig SteamManagerConfig => _steamManagerConfig;
     public NetworkManagerConfig NetworkManagerConfig => _networkManagerConfig;
@@ -36,4 +38,5 @@ public class GameManagerConfig : ScriptableObject
     public DebugManagerConfig DebugManagerConfig => _debugManagerConfig;
     public LocalisationManagerConfig LocalisationManagerConfig => _localisationManagerConfig;
     public LobbyManagerConfig LobbyManagerConfig => _lobbyManagerConfig;
+    public ItemManagerConfig ItemManagerConfig => _itemManagerConfig;
 }

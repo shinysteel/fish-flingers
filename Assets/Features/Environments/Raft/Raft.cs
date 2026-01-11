@@ -18,7 +18,6 @@ namespace FishFlingers.Environments
 
         private PoolManager _poolManager;
 
-        private bool _isInitialised;
         private GameplayContext _context;
 
         private SyncDictionary<Vector2Int, NetTile> _netTiles = new();
@@ -67,8 +66,6 @@ namespace FishFlingers.Environments
         {
             base.OnSpawned();
 
-            _ = OnSpawnedAsync();
-
             if (!isOwner)
             {
                 return;
@@ -84,32 +81,23 @@ namespace FishFlingers.Environments
             }            
         }
 
-        private async Task OnSpawnedAsync()
+        public void Initialise(GameplayContext context)
         {
+            _context = context;
+
+            _netTiles.onChanged += HandleNetTilesChanged;
+
             if (isOwner)
             {
                 return;
             }
 
-            while (!_isInitialised)
-            {
-                await Task.Yield();
-            }
-
-            // We need to manually handles changes that have happened before we joined
+            // Clients need to manually handles changes that have happened before we joined
             foreach (KeyValuePair<Vector2Int, NetTile> kvp in _netTiles)
             {
                 SyncDictionaryChange<Vector2Int, NetTile> change = new(SyncDictionaryOperation.Set, kvp.Key, kvp.Value);
                 HandleNetTilesChanged(change);
             }
-        }
-
-        public void Initialise(GameplayContext context)
-        {
-            _isInitialised = true;
-            _context = context;
-
-            _netTiles.onChanged += HandleNetTilesChanged;
         }
 
         // No tile param is good here, since it lets callers request to damage a cell without having to worry
@@ -145,32 +133,16 @@ namespace FishFlingers.Environments
 
         private void HandleNetTilesChanged(SyncDictionaryChange<Vector2Int, NetTile> change)
         {
-            // Tile no longer exists
-            if (change.operation == SyncDictionaryOperation.Removed || change.value == null)
-            {
-                RemoveTile(change.key);
-            }
             // Tile exists
-            else
+            if (change.operation != SyncDictionaryOperation.Removed && change.value != null)
             {
                 SetTile(change.key, change.value);
             }
-        }
-
-        private void RemoveTile(Vector2Int cell)
-        {
-            if (!_tiles.TryGetValue(cell, out Tile tile))
+            // Tile no longer exists
+            else
             {
-                return;
+                RemoveTile(change.key);
             }
-
-            // Return to pool
-            _poolManager.Return(tile);
-
-            _tiles.Remove(tile.Cell);
-
-            RemoveTileUpdateMaps(cell);
-            RemoveTileUpdateBoundaries(cell);
         }
 
         // Adds a new tile, or updates an existing one
@@ -192,6 +164,39 @@ namespace FishFlingers.Environments
             SetTileUpdateBoundaries(cell);
         }
 
+        private void RemoveTile(Vector2Int cell)
+        {
+            if (!_tiles.TryGetValue(cell, out Tile tile))
+            {
+                return;
+            }
+
+            // Return to pool
+            _poolManager.Return(tile);
+
+            _tiles.Remove(tile.Cell);
+
+            RemoveTileUpdateMaps(cell);
+            RemoveTileUpdateBoundaries(cell);
+        }
+
+        // Maintains positional maps when SetTile is called
+        private void SetTileUpdateMaps(Vector2Int cell)
+        {
+            if (!_columnToRowsMap.ContainsKey(cell.x))
+            {
+                _columnToRowsMap.Add(cell.x, new());
+            }
+
+            if (!_rowToColumnsMap.ContainsKey(cell.y))
+            {
+                _rowToColumnsMap.Add(cell.y, new());
+            }
+
+            _columnToRowsMap[cell.x].Add(cell.y);
+            _rowToColumnsMap[cell.y].Add(cell.x);
+        }
+
         private void RemoveTileUpdateMaps(Vector2Int cell)
         {
             _columnToRowsMap[cell.x].Remove(cell.y);
@@ -208,20 +213,13 @@ namespace FishFlingers.Environments
             }
         }
 
-        private void SetTileUpdateMaps(Vector2Int cell)
+        // Recalculates boundaries when SetTile is called
+        private void SetTileUpdateBoundaries(Vector2Int cell)
         {
-            if (!_columnToRowsMap.ContainsKey(cell.x))
-            {
-                _columnToRowsMap.Add(cell.x, new());
-            }
-
-            if (!_rowToColumnsMap.ContainsKey(cell.y))
-            {
-                _rowToColumnsMap.Add(cell.y, new());
-            }
-
-            _columnToRowsMap[cell.x].Add(cell.y);
-            _rowToColumnsMap[cell.y].Add(cell.x);
+            _forwardmostRow = Mathf.Max(_forwardmostRow, cell.y);
+            _backmostRow = Mathf.Min(_backmostRow, cell.y);
+            _rightmostColumn = Mathf.Max(_rightmostColumn, cell.x);
+            _leftmostColumn = Mathf.Min(_leftmostColumn, cell.x);
         }
 
         private void RemoveTileUpdateBoundaries(Vector2Int cell)
@@ -245,14 +243,6 @@ namespace FishFlingers.Environments
             {
                 _leftmostColumn = _columnToRowsMap.Count > 0 ? _columnToRowsMap.Keys.Min() : 0;
             }
-        }
-
-        private void SetTileUpdateBoundaries(Vector2Int cell)
-        {
-            _forwardmostRow = Mathf.Max(_forwardmostRow, cell.y);
-            _backmostRow = Mathf.Min(_backmostRow, cell.y);
-            _rightmostColumn = Mathf.Max(_rightmostColumn, cell.x);
-            _leftmostColumn = Mathf.Min(_leftmostColumn, cell.x);
         }
     }
 }

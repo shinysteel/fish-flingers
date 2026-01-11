@@ -10,8 +10,12 @@ namespace FishFlingers.Pools
     {
         [SerializeField] private Tile _tilePrefab;
         [SerializeField] private LobbyEntry _lobbyEntryPrefab;
+        [SerializeField] private InventorySlotView _inventorySlotViewPrefab;
+        [SerializeField] private InventoryItemView _inventoryItemViewPrefab;
 
         public Tile TilePrefab => _tilePrefab;
         public LobbyEntry LobbyEntryPrefab => _lobbyEntryPrefab;
+        public InventorySlotView InventorySlotView => _inventorySlotViewPrefab;
+        public InventoryItemView InventoryItemView => _inventoryItemViewPrefab;
     }
 }

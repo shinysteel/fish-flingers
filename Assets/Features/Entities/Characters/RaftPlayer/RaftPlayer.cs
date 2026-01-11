@@ -1,6 +1,7 @@
 using FishFlingers.Cameras;
 using FishFlingers.Environments;
 using FishFlingers.Items;
+using FishFlingers.Inventories;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Structures;
 using System;
@@ -8,6 +9,8 @@ using UnityEngine;
 using System.Threading.Tasks;
 
 using Random = UnityEngine.Random;
+using PurrNet;
+using FishFlingers.States;
 
 namespace FishFlingers.Entities
 {
@@ -62,7 +65,7 @@ namespace FishFlingers.Entities
         [SerializeField] private CapsuleCollider _capsuleCollider;
 
         [SerializeField] private Inventory _inventoryPrefab;
-        [SerializeField] private BoolGrid _inventoryGrid;
+        [SerializeField] private BoolGrid _inventoryLayout;
 
         [SerializeField] private MoveSettings _moveSettings;
         [SerializeField] private JumpSettings _jumpSettings;
@@ -87,25 +90,20 @@ namespace FishFlingers.Entities
         {
             base.OnSpawned();
 
-            _ = OnSpawnedAsync();
-
             if (!isOwner)
             {
                 return;
             }
 
             _inventory = _networkManager.Spawn(_inventoryPrefab);
-            _inventory.Initialise(_inventoryGrid);
+            _inventory.Initialise(_inventoryLayout);
 
             _cameraManager.SetMode(new FollowCameraMode(transform, new Vector3(0f, 3f, -5f)));
         }
 
-        private async Task OnSpawnedAsync()
+        public override void Initialise(GameplayContext context)
         {
-            while (!_isInitialised)
-            {
-                await Task.Yield();
-            }
+            base.Initialise(context);
 
             // Spawn on a random starting tile
             transform.position = _context.Raft.TryGetRandomTile(out Tile tile) ? _context.Raft.CellToWorldPosition(tile.Cell) : Vector3.zero;

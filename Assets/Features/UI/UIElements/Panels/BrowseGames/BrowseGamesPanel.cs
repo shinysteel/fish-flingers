@@ -19,7 +19,6 @@ namespace FishFlingers.UI
         [SerializeField] private GameObject _loadingGameObject;
 
         [SerializeField] private LobbyContainer _lobbyContainerPrefab;
-        [SerializeField] private LobbyEntry _lobbyEntryPrefab;
 
         [SerializeField] private LobbyContainerModel[] _lobbyContainerModels;
 
@@ -120,8 +119,8 @@ namespace FishFlingers.UI
         {
             for (int i = model.Entries.Count; i < lobbies.Length; i++)
             {
-                LobbyEntry lobbyEntry = _poolManager.Get<LobbyEntry>(model.Container.transform);
-                model.Entries.Add(lobbyEntry);
+                LobbyEntry entry = _poolManager.Get<LobbyEntry>(model.Container.transform);
+                model.Entries.Add(entry);
             }
 
             for (int i = 0; i < lobbies.Length; i++)
