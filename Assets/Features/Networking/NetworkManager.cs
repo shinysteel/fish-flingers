@@ -96,8 +96,9 @@ namespace FishFlingers.Networking
 
         public T Spawn<T>(T prefab, SpawnParams parameters) where T : NetBehaviour
         {
-            T obj = UnityProxy.Instantiate(prefab, parameters.Position, parameters.Rotation, parameters.SpawnScene.Get());
-            return obj;
+            return parameters.Parent != null
+                ? UnityProxy.Instantiate(prefab, parameters.Position, parameters.Rotation, parameters.Parent)
+                : UnityProxy.Instantiate(prefab, parameters.Position, parameters.Rotation, parameters.SpawnScene.Get());
         }
 
         public void Despawn(NetBehaviour behaviour)

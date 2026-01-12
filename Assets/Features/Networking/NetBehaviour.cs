@@ -1,15 +1,23 @@
 using UnityEngine;
 using PurrNet;
+using FishFlingers.Entities;
+using FishFlingers.Items;
 
 namespace FishFlingers.Networking
 {
     public abstract class NetBehaviour : NetworkBehaviour
     {
         protected NetworkManager _networkManager;
+        protected EntityManager _entityManager;
+        protected LobbyManager _lobbyManager;
+        protected ItemManager _itemManager;
 
         protected override void OnInitializeModules()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
+            _entityManager = GameManager.Instance.Get<EntityManager>();
+            _lobbyManager = GameManager.Instance.Get<LobbyManager>();
+            _itemManager = GameManager.Instance.Get<ItemManager>();
         }
 
         protected override void OnSpawned()

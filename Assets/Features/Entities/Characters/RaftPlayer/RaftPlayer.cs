@@ -73,6 +73,7 @@ namespace FishFlingers.Entities
         [SerializeField] private SwimSettings _swimSettings;
 
         private Inventory _inventory;
+        public Inventory Inventory => _inventory;
 
         private Vector2 _directionInput;
 
@@ -83,8 +84,6 @@ namespace FishFlingers.Entities
         private RaycastHit[] _groundedHitsNonAlloc = new RaycastHit[1];
 
         private Collider[] _swimCollidersNonAlloc = new Collider[1];
-
-        public Inventory Inventory => _inventory;
 
         protected override void OnSpawned()
         {

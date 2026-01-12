@@ -131,8 +131,6 @@ namespace FishFlingers.Inventories
 
     public class Inventory : NetBehaviour, IEnumerable<KeyValuePair<Vector2Int, NetInventorySlot>>
     {
-        private ItemManager _itemManager;
-
         private SyncDictionary<Vector2Int, NetInventorySlot> _netInventorySlots = new(ownerAuth: true);
         private SyncDictionary<string, NetInventoryItem> _netInventoryItems = new(ownerAuth: true);
 
@@ -155,8 +153,6 @@ namespace FishFlingers.Inventories
 
         public void Initialise(BoolGrid layout)
         {
-            _itemManager = GameManager.Instance.Get<ItemManager>();
-
             _layout = layout;
 
             _netInventorySlots.onChanged += HandleNetInventorySlotsChanged;
@@ -280,13 +276,13 @@ namespace FishFlingers.Inventories
 
             if (!isOwner)
             {
-                Debugger.Log(this, "Tried to add items without being the owner");
+                Debugger.LogError(this, "Tried to add items without being the owner");
                 return false;
             }
 
             if (data == null || amount <= 0)
             {
-                Debugger.Log(this, "Tried to add invalid items");
+                Debugger.LogError(this, "Tried to add invalid items");
                 return false;
             }
 
@@ -351,13 +347,13 @@ namespace FishFlingers.Inventories
 
             if (!isOwner)
             {
-                Debugger.Log(this, "Tried to place items without being the owner");
+                Debugger.LogError(this, "Tried to place items without being the owner");
                 return false;
             }
 
             if (data == null || amount <= 0)
             {
-                Debugger.Log(this, "Tried to place invalid items");
+                Debugger.LogError(this, "Tried to place invalid items");
                 return false;
             }
 
@@ -446,7 +442,7 @@ namespace FishFlingers.Inventories
 
             //if (data == null || amount <= 0)
             //{
-            //    Debugger.Log(this, "Tried to remove invalid items");
+            //    Debugger.LogError(this, "Tried to remove invalid items");
             //    return;
             //}
         }

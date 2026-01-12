@@ -71,7 +71,7 @@ namespace FishFlingers.UI
 
             foreach (KeyValuePair<Vector2Int, NetInventorySlot> kvp in _inventory)
             {
-                InventorySlotView view = _poolManager.Get<InventorySlotView>(_inventorySlotViewsContainer);
+                InventorySlotView view = _poolManager.Get<InventorySlotView>(new SpawnParams() { Parent = _inventorySlotViewsContainer });
 
                 Vector2Int cell = kvp.Key;
 
@@ -107,7 +107,7 @@ namespace FishFlingers.UI
         {
             if (!_inventoryItemViews.ContainsKey(key))
             {
-                _inventoryItemViews[key] = _poolManager.Get<InventoryItemView>(_inventoryItemViewsContainer);   
+                _inventoryItemViews[key] = _poolManager.Get<InventoryItemView>(new SpawnParams() { Parent = _inventoryItemViewsContainer });   
             }
 
             InventoryItemView view = _inventoryItemViews[key];
@@ -118,7 +118,7 @@ namespace FishFlingers.UI
         {
             if (!_inventoryItemViews.ContainsKey(key))
             {
-                Debugger.Log(this, "Tried to remove a view that does not exist");
+                Debugger.LogError(this, "Tried to remove a view that does not exist");
                 return;
             }
 

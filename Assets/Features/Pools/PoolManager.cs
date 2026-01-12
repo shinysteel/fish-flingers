@@ -7,6 +7,7 @@ using ShinyOwl.Common;
 using FishFlingers.Environments;
 
 using Object = UnityEngine.Object;
+using FishFlingers.Scenes;
 
 namespace FishFlingers.Pools
 {
@@ -31,12 +32,14 @@ namespace FishFlingers.Pools
 
         private interface IPool
         {
-            IPoolable Get(Transform parent);
+            IPoolable Get(SpawnParams parameters);
             void Return(IPoolable poolable);
         }
 
         private class Pool<T> : IPool where T : Component, IPoolable
         {
+            private SceneManager _sceneManager;
+
             private T _prefab;
             private Transform _container;
             private Vector3 _prefabScale;
@@ -46,12 +49,14 @@ namespace FishFlingers.Pools
 
             public Pool(T prefab, Transform container)
             {
+                _sceneManager = GameManager.Instance.Get<SceneManager>();
+
                 _prefab = prefab;
                 _container = container;
                 _prefabScale = prefab.transform.localScale;
             }
 
-            public IPoolable Get(Transform parent)
+            public IPoolable Get(SpawnParams parameters)
             {
                 T obj = _available.Count > 0
                     ? _available.Pop()
@@ -64,9 +69,17 @@ namespace FishFlingers.Pools
                 // don't want to touch the rect transform. A side effect from this is that the child's 
                 // scale is now derived from parent's scale * child's local scale, which will compound
                 // whenever the parent's scale is not 1
-                
-                obj.transform.SetParent(parent, false);
+
+                obj.transform.SetParent(parameters.Parent, false);
                 obj.transform.localScale = _prefabScale;
+
+                obj.transform.localPosition = parameters.Position;
+                obj.transform.localRotation = parameters.Rotation;
+
+                if (parameters.Parent == null)
+                {
+                    _sceneManager.MoveGameObjectToScene(obj.gameObject, parameters.SpawnScene.Get());
+                }
 
                 obj.gameObject.SetActive(true);
                 obj.OnTakenFromPool();
@@ -121,10 +134,9 @@ namespace FishFlingers.Pools
             _prefabRegistry[type] = prefab;
         }
         
-        public T Get<T>(Transform parent) where T : Component, IPoolable
+        // Allows requesting runtime-known types
+        public Component Get(Type type, SpawnParams parameters)
         {
-            Type type = typeof(T);
-
             if (!_prefabRegistry.TryGetValue(type, out IPoolable prefab))
             {
                 Debugger.LogError(this, "Tried to retrieve a poolable object with a type that is not registered");
@@ -135,11 +147,17 @@ namespace FishFlingers.Pools
             {
                 Transform container = new GameObject($"{type.Name}s").transform;
                 container.SetParent(_container);
-                _pools[type] = new Pool<T>((T)prefab, container);
+
+                Type poolType = typeof(Pool<>).MakeGenericType(type);
+                _pools[type] = (IPool)Activator.CreateInstance(poolType, prefab, container);
             }
 
-            T obj = (T)_pools[type].Get(parent);
-            return obj;
+            return (Component)_pools[type].Get(parameters);
+        }
+
+        public T Get<T>(SpawnParams parameters) where T : Component, IPoolable
+        {
+            return (T)Get(typeof(T), parameters);
         }
 
         public void Return<T>(T obj) where T : Component, IPoolable

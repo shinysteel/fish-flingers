@@ -9,14 +9,13 @@ using FishFlingers.Entities;
 using FishFlingers.States;
 using System.Threading.Tasks;
 using FishFlingers.Networking;
+using FishFlingers.Scenes;
 
 namespace FishFlingers.Environments
 {
     public partial class Raft : NetBehaviour
     {
         [SerializeField] private Transform _tilesContainer;
-
-        private PoolManager _poolManager;
 
         private GameplayContext _context;
 
@@ -53,13 +52,6 @@ namespace FishFlingers.Environments
             {
                 Health = Mathf.Clamp(health, 0, MaxHealth);
             }
-        }
-
-        protected override void OnInitializeModules()
-        {
-            base.OnInitializeModules();
-
-            _poolManager = GameManager.Instance.Get<PoolManager>();
         }
 
         protected override void OnSpawned()
@@ -151,7 +143,7 @@ namespace FishFlingers.Environments
             // Retrieve from pool
             if (!_tiles.ContainsKey(cell))
             {
-                _tiles[cell] = _poolManager.Get<RaftTile>(_tilesContainer);
+                _tiles[cell] = (RaftTile)_entityManager.Spawn(EEntity.RaftTile, new SpawnParams() { Parent = _tilesContainer });
                 _tiles[cell].Initialise(_context);
             }
 
@@ -172,7 +164,7 @@ namespace FishFlingers.Environments
             }
 
             // Return to pool
-            _poolManager.Return(tile);
+            _entityManager.Despawn(tile);
 
             _tiles.Remove(tile.Cell);
 

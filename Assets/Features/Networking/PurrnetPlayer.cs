@@ -15,13 +15,9 @@ namespace FishFlingers.Networking
 {
     public class PurrnetPlayer : NetBehaviour, ILobbyManagerListener
     {
-        private LobbyManager _lobbyManager;
-
         protected override void OnInitializeModules()
         {
             base.OnInitializeModules();
-
-            _lobbyManager = GameManager.Instance.Get<LobbyManager>();
         }
 
         protected override void OnSpawned()

@@ -11,8 +11,6 @@ namespace FishFlingers.Environments
 {
     public class SalvageSpawner : NetBehaviour, INetworkManagerListener
     {
-        [SerializeField] private DroppedItem _driftwoodPrefab;
-
         [SerializeField] private float _spawnInterval = 5f;
 
         private GameplayContext _context;
@@ -80,7 +78,7 @@ namespace FishFlingers.Environments
             int y = raft.ForwardmostRow + forwardDist;
             Vector3 position = raft.CellToWorldPosition(new Vector2(x, y));
 
-            DroppedItem item = _networkManager.Spawn(_driftwoodPrefab, new SpawnParams() { Position = position });
+            DroppedItem item = (DroppedItem)_entityManager.Spawn(EEntity.DroppedItem, new SpawnParams() { Position = position });
             item.Initialise(_context);
 
             _salvages.Add(item);

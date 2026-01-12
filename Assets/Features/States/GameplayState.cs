@@ -139,7 +139,7 @@ namespace FishFlingers.States
             }
             catch (Exception ex)
             {
-                Debugger.Log(this, ex);
+                Debugger.LogError(this, ex);
             }
         }
 

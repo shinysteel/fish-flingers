@@ -13,8 +13,6 @@ namespace FishFlingers.Environments
     {
         [SerializeField] private float _spawnInterval = 2.5f;
 
-        [SerializeField] private FlyingFish _flyingFishPrefab;
-
         private GameplayContext _context;
 
         private float _spawnTimer;
@@ -49,7 +47,7 @@ namespace FishFlingers.Environments
 
         private void Spawn()
         {
-            IEntity entity = _networkManager.Spawn(_flyingFishPrefab, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
+            IEntity entity = _entityManager.Spawn(EEntity.FlyingFish, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
             entity.Initialise(_context);
         }
     }

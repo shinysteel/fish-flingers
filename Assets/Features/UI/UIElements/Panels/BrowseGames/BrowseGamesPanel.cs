@@ -119,7 +119,7 @@ namespace FishFlingers.UI
         {
             for (int i = model.Entries.Count; i < lobbies.Length; i++)
             {
-                LobbyEntry entry = _poolManager.Get<LobbyEntry>(model.Container.transform);
+                LobbyEntry entry = _poolManager.Get<LobbyEntry>(new SpawnParams() { Parent = model.Container.transform });
                 model.Entries.Add(entry);
             }
 

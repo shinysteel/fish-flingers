@@ -39,13 +39,6 @@ namespace FishFlingers.Scenes
         Networked ,
     }
 
-    public class SpawnParams
-    {
-        public Vector3 Position { get; set; } = Vector3.zero;
-        public Quaternion Rotation { get; set; } = Quaternion.identity;
-        public SpawnScene SpawnScene { get; set; } = SpawnScene.ActiveScene();
-    }
-
     // EScene.DontDestroyOnLoad existing doesn't make sense, given it wouldn't interact
     // with most of SceneManager's functionality. That being said, it's still an option
     // to consider for instantiating something, and that's why this exists
@@ -178,9 +171,10 @@ namespace FishFlingers.Scenes
             UnityEngine.SceneManagement.SceneManager.SetActiveScene(GetScene(scene));
         }
 
-        public void MoveGameObjectToScene(GameObject obj, EScene scene)
+        // We use the scene struct, since the DontDestroyOnLoad scene can't be referenced via enum
+        public void MoveGameObjectToScene(GameObject obj, Scene scene)
         {
-            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(obj, GetScene(scene));
+            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(obj, scene);
         }
 
         public bool IsSceneActive(EScene scene)

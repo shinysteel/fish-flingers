@@ -10,6 +10,7 @@ using FishFlingers.UI.Transitions;
 using FishFlingers.Scenes;
 using FishFlingers.Localisation;
 using FishFlingers.Items;
+using FishFlingers.Entities;
 
 [CreateAssetMenu(fileName = "GameManagerConfig", menuName = "Configs/Managers/GameManagerConfig")]
 public class GameManagerConfig : ScriptableObject
