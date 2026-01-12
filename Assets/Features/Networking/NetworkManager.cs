@@ -39,7 +39,6 @@ namespace FishFlingers.Networking
     public class NetworkManager : GameSystem<INetworkManagerListener>, ISceneManagerListener
     {
         private NetworkManagerConfig _config;
-        public NetworkManagerConfig Config => _config;
 
         private SceneManager _sceneManager;
 

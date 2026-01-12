@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf9ab2be80e9f4640b0478f6e4042dbd, type: 3}
   m_Name: LobbyManagerConfig
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Networking.LobbyManagerConfig
+  _broadcastPort: 5962

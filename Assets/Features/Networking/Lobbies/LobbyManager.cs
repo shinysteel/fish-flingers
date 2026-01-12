@@ -24,6 +24,7 @@ namespace FishFlingers.Networking
     public class LobbyManager : GameSystem<ILobbyManagerListener>
     {
         private LobbyManagerConfig _config;
+        public LobbyManagerConfig Config => _config;
 
         private LANLobbyService _lanLobbyService;
         private SteamLobbyService _steamLobbyService;

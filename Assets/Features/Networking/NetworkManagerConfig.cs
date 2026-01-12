@@ -9,15 +9,13 @@ namespace FishFlingers.Networking
     public class NetworkManagerConfig : ScriptableObject
     {
         [SerializeField] private PurrNet.NetworkManager _purrnetNetworkManagerPrefab;
-        [SerializeField] private ushort _udpServerPort;
-        [SerializeField] private ushort _steamServerPort;
-        [SerializeField] private ushort _broadcastPort;
         [SerializeField] private PurrnetPlayer _purrnetPlayerPrefab;
+        [SerializeField] private ushort _udpServerPort = 5001;
+        [SerializeField] private ushort _steamServerPort = 5003;
 
         public PurrNet.NetworkManager PurrnetNetworkManagerPrefab => _purrnetNetworkManagerPrefab;
+        public PurrnetPlayer PurrnetPlayerPrefab => _purrnetPlayerPrefab;
         public ushort UDPServerPort => _udpServerPort;
         public ushort SteamServerPort => _steamServerPort;
-        public ushort BroadcastPort => _broadcastPort;
-        public PurrnetPlayer PurrnetPlayerPrefab => _purrnetPlayerPrefab;
     }
 }

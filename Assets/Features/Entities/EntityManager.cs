@@ -44,7 +44,7 @@ namespace FishFlingers.Entities
         }
 
         /// <summary>
-        /// Centralised spawn method for entities, handling NetEntity, Entity, and Poolables all in one
+        /// Centralised spawn method for entities, handling NetEntity, Entity + Poolable and Entity all in one
         /// </summary>
         public IEntity Spawn(EEntity type, SpawnParams parameters)
         {

@@ -88,6 +88,7 @@ namespace FishFlingers.Networking
 
     public class LANLobbyService : LobbyService, INetworkManagerListener
     {
+        private LobbyManager _lobbyManager;
         private NetworkManager _networkManager;
 
         private Dictionary<string, LANLobby> _knownLobbies = new();
@@ -108,7 +109,9 @@ namespace FishFlingers.Networking
 
         public LANLobbyService()
         {
+            _lobbyManager = GameManager.Instance.Get<LobbyManager>();
             _networkManager = GameManager.Instance.Get<NetworkManager>();
+
             _networkManager.AddListener(this);
 
             _lanId = $"{Environment.UserName}-{Guid.NewGuid().ToString().Substring(0, 5)}";
@@ -120,7 +123,7 @@ namespace FishFlingers.Networking
             // they will still broadcast to our main editor
             if (!ClonesManager.IsClone())
             {
-                _listenerClient = new UdpClient(_networkManager.Config.BroadcastPort);
+                _listenerClient = new UdpClient(_lobbyManager.Config.BroadcastPort);
 
                 StartListening();
             }
@@ -265,7 +268,7 @@ namespace FishFlingers.Networking
 
                     byte[] bytes = writer.buffer;
 
-                    await _broadcastClient.SendAsync(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, _networkManager.Config.BroadcastPort));
+                    await _broadcastClient.SendAsync(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, _lobbyManager.Config.BroadcastPort));
                     await Task.Delay(BroadcastInterval);
                 }
             });
