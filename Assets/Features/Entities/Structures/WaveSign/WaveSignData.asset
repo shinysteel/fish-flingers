@@ -15,3 +15,4 @@ MonoBehaviour:
   _nameTerm: 700
   _descriptionTerm: 701
   _health: 2
+  _sprite: {fileID: 21300000, guid: 2891ff8d50c7ee142acb3eef63e9baf1, type: 3}

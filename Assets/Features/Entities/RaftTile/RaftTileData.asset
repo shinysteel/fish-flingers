@@ -15,6 +15,7 @@ MonoBehaviour:
   _nameTerm: 500
   _descriptionTerm: 501
   _health: 3
+  _sprite: {fileID: 21300000, guid: 6f972666f32701e45bbe695d518d3d38, type: 3}
   _bobSettings:
     _amplitude: 0.125
     _noiseScale: 0.5

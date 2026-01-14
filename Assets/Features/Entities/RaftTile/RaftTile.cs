@@ -17,7 +17,7 @@ namespace FishFlingers.Entities
 
         private Vector2Int _cell;
         public Vector2Int Cell => _cell;
-
+        
         public RaftTileData Data => (RaftTileData)_entityData;
 
         protected override void Awake()
@@ -49,12 +49,12 @@ namespace FishFlingers.Entities
             transform.position = _context.Raft.CellToWorldPosition(cell);
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
-            PositionUpdate();
+            PositionFixedUpdate();
         }
 
-        private void PositionUpdate()
+        private void PositionFixedUpdate()
         {
             bool sink = Physics.CheckSphere(transform.position, Data.SinkSettings.Radius, Data.SinkSettings.Mask);
 
@@ -73,8 +73,8 @@ namespace FishFlingers.Entities
                     _cell.y * Data.BobSettings.NoiseScale + Time.time * Data.BobSettings.TimeScale);
             }
 
-            Vector3 targetPosition = new Vector3(0f, targetY, 0f);
-            _visualsContainer.localPosition = Vector3.MoveTowards(_visualsContainer.localPosition, targetPosition, Data.SinkSettings.Speed * Time.deltaTime);
+            Vector3 targetPosition = new Vector3(_rigidbody.position.x, targetY, _rigidbody.position.z);
+            _rigidbody.MovePosition(Vector3.MoveTowards(_rigidbody.position, targetPosition, Data.SinkSettings.Speed * Time.fixedDeltaTime));
         }
     }
 }

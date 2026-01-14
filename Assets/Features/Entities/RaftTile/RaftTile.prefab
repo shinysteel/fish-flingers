@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8893844424148854519}
   - component: {fileID: 8127564742549498130}
   - component: {fileID: 2671034648733901122}
+  - component: {fileID: 1950879371353287150}
   m_Layer: 0
   m_Name: RaftTile
   m_TagString: Untagged
@@ -77,6 +78,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &1950879371353287150
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306983958439356140}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 0.75, z: 1}
+  m_Center: {x: 0, y: -0.25, z: 0}
 --- !u!1 &5080133725532673385
 GameObject:
   m_ObjectHideFlags: 0
@@ -88,7 +110,6 @@ GameObject:
   - component: {fileID: 4774641868979785282}
   - component: {fileID: 6263983001800889587}
   - component: {fileID: 8070835439032091406}
-  - component: {fileID: 1144024252966610086}
   m_Layer: 0
   m_Name: Wood
   m_TagString: Untagged
@@ -168,27 +189,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &1144024252966610086
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5080133725532673385}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7462079686296401075
 GameObject:
   m_ObjectHideFlags: 0

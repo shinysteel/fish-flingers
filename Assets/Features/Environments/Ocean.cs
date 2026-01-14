@@ -26,7 +26,7 @@ namespace FishFlingers.Environments
         {
             float surfaceY = _boxCollider.bounds.max.y;
             float depth = surfaceY - other.bounds.min.y;
-            Vector3 force = Vector3.up * _buoyancyStrength * depth;
+            Vector3 force = Vector3.up * _buoyancyStrength * entity.EntityData.BuoyancyFactor * depth;
 
             // Push the entity upwards to simulate floating
             entity.Rigidbody.AddForce(force);
