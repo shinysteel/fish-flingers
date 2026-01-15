@@ -7,26 +7,36 @@ namespace FishFlingers.Environments
     {
         [SerializeField] private BoxCollider _boxCollider;
 
-        [SerializeField] private float _buoyancyStrength = 30f;
+        [SerializeField, Range(0f, 1f)] private float _submergePercent = 0.5f;
+        [SerializeField] private float _verticalDrag = 1f;
+        [SerializeField] private float _horizontalDrag = 20f;
+        [SerializeField] private float _currentSpeed = 0.25f;
 
-        [SerializeField] private float _currentSpeed = 0.5f;
-
-        private void OnTriggerStay(Collider other)
+        private void OnTriggerStay(Collider collider)
         {
-            if (!other.gameObject.TryGetComponent(out IEntity entity))
+            if (!collider.gameObject.TryGetComponent(out IEntity entity))
             {
                 return;
             }
             
-            BuoyancyOnTriggerStay(other, entity);
+            BuoyancyOnTriggerStay(collider, entity);
             CurrentOnTriggerStay(entity);
+            DragOnTriggerStay(collider, entity);
         }
 
-        private void BuoyancyOnTriggerStay(Collider other, IEntity entity)
+        private float GetBuoyancyFactor(Collider collider)
         {
             float surfaceY = _boxCollider.bounds.max.y;
-            float depth = surfaceY - other.bounds.min.y;
-            Vector3 force = Vector3.up * _buoyancyStrength * entity.EntityData.BuoyancyFactor * depth;
+            float depth = surfaceY - collider.bounds.min.y;
+            return Mathf.Clamp01(depth / collider.bounds.size.y);
+        }
+
+        private void BuoyancyOnTriggerStay(Collider collider, IEntity entity)
+        { 
+            // More mass = more force
+            float strength = entity.Rigidbody.mass * Physics.gravity.magnitude / _submergePercent;
+            float factor = GetBuoyancyFactor(collider);
+            Vector3 force = Vector3.up * strength * factor;
 
             // Push the entity upwards to simulate floating
             entity.Rigidbody.AddForce(force);
@@ -39,6 +49,18 @@ namespace FishFlingers.Environments
             {
                 entity.Rigidbody.MovePosition(entity.Rigidbody.position + Vector3.back * _currentSpeed * Time.fixedDeltaTime);
             }
+        }
+
+        private void DragOnTriggerStay(Collider collider, IEntity entity)
+        {
+            // Drag stops the entity being 'launched' from buoyancy, and
+            // slows it down on the XZ plane
+
+            float vertical = -entity.Rigidbody.linearVelocity.y * _verticalDrag;
+            Vector3 horizontal = -entity.Rigidbody.linearVelocity * _horizontalDrag;
+            Vector3 force = new Vector3(horizontal.x, vertical, horizontal.z);
+
+            entity.Rigidbody.AddForce(force, ForceMode.Acceleration);
         }
     }
 }

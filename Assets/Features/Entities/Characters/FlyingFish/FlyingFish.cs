@@ -136,7 +136,7 @@ namespace FishFlingers.Entities
 
                 // Interpolate from start to end
                 float time = _flyTimer / _flyingFish.Data.FlyDuration;
-                _flyingFish.transform.position = Utils.Physics.GetProjectilePosition(_anticipatePosition, _landPosition, -Physics.gravity.y, _flyingFish.Data.LaunchAngle, time);
+                _flyingFish.transform.position = Utils.Physics.GetProjectilePosition(_anticipatePosition, _landPosition, Physics.gravity.magnitude, _flyingFish.Data.LaunchAngle, time);
                 _flyingFish.transform.rotation = Quaternion.Slerp(_anticipateRotation, _landRotation, time);
 
                 if (_flyTimer > _flyingFish.Data.FlyDuration)

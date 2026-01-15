@@ -26,6 +26,7 @@ namespace FishFlingers.Localisation
 
         // Building Kit Panel
         BuildingKitPanelTitle           = 400 ,
+        BuildingKitPanelBuild           = 401 ,
 
         // Entities
         EntitiesRaftTileName            = 500 ,

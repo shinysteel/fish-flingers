@@ -50,6 +50,8 @@ MonoBehaviour:
     _mappings:
     - _term: 400
       _key: title
+    - _term: 401
+      _key: build
   _entitiesTable:
     _name: EntitiesTable
     _id: entities

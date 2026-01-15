@@ -22,6 +22,10 @@ MonoBehaviour:
     m_Localized: "Kit de construcci\xF3n"
     m_Metadata:
       m_Items: []
+  - m_Id: 1304962970324992
+    m_Localized: Construir
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

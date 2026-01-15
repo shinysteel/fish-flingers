@@ -402,6 +402,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6492249031250596441}
     m_Modifications:
+    - target: {fileID: 2383374165107805690, guid: c1d790d768281bb4eb74c419b3171766, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5604885689152244312, guid: c1d790d768281bb4eb74c419b3171766, type: 3}
       propertyPath: m_Name
       value: CloseButton
@@ -488,6 +492,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8441973474860913680, guid: c1d790d768281bb4eb74c419b3171766, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8462211965176475595, guid: c1d790d768281bb4eb74c419b3171766, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

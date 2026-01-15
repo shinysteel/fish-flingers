@@ -19,6 +19,10 @@ MonoBehaviour:
     m_Key: buildingKitPanel.title
     m_Metadata:
       m_Items: []
+  - m_Id: 1304962970324992
+    m_Key: buildingKitPanel.build
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

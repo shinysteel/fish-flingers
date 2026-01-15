@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 7680044794911021564}
   - component: {fileID: 2964048532901743774}
   - component: {fileID: 7367407456407141544}
-  - component: {fileID: 5752923268185061427}
+  - component: {fileID: 7014505914940973554}
   - component: {fileID: 4140799031426000957}
   m_Layer: 0
   m_Name: DroppedItem
@@ -191,7 +191,7 @@ Rigidbody:
   m_GameObject: {fileID: 6868536614404603871}
   serializedVersion: 5
   m_Mass: 1
-  m_LinearDamping: 3
+  m_LinearDamping: 1
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -209,8 +209,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!135 &5752923268185061427
-SphereCollider:
+--- !u!136 &7014505914940973554
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -227,9 +227,11 @@ SphereCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.25
-  m_Center: {x: 0, y: 0.25, z: 0}
+  serializedVersion: 2
+  m_Radius: 0.1
+  m_Height: 0.3
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.15, z: 0}
 --- !u!114 &4140799031426000957
 MonoBehaviour:
   m_ObjectHideFlags: 0
