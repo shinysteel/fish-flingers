@@ -11,7 +11,6 @@ namespace FishFlingers.UI.Transitions
     public class TransitionManager : GameSystem<ITransitionManagerListener>
     {
         private TransitionManagerConfig _config;
-        public TransitionManagerConfig Config => _config;
 
         private UIManager _uiManager;
 
@@ -23,9 +22,9 @@ namespace FishFlingers.UI.Transitions
 
             _uiManager = GameManager.Instance.Get<UIManager>();
 
-            _uiManager.CreateUIElementAsync(_uiManager.Config.FadeOverlay, UILayer.Overlay).completed += (UIElement element) =>
+            _uiManager.CreateScreenUIAsync(_uiManager.Config.FadeOverlay, UILayer.Overlay).completed += (FadeOverlay overlay) =>
             {
-                _fadeOverlay = (FadeOverlay)element;
+                _fadeOverlay = overlay;
             };
 
             base.Initialise(config);

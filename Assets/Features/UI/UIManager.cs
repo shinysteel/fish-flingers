@@ -93,11 +93,11 @@ namespace FishFlingers.UI
             return rect;
         }
 
-        public AsyncOperationBridge<UIElement> CreateUIElementAsync<T>(T prefab, UILayer layer, UILayerInsertMode mode = UILayerInsertMode.LastSibling) where T : UIElement
+        public AsyncOperationBridge<T> CreateScreenUIAsync<T>(T prefab, UILayer layer, UILayerInsertMode mode = UILayerInsertMode.LastSibling) where T : ScreenUI
         {
             if (prefab == null)
             {
-                Debugger.LogError(this, "Tried to create a ui element, but the prefab given was null");
+                Debugger.LogError(this, "Tried to create a ScreenUI, but the prefab given was null");
                 return null;
             }
 
@@ -109,46 +109,47 @@ namespace FishFlingers.UI
 
             AsyncOperation op = Object.InstantiateAsync(prefab, parameters);
 
-            AsyncOperationBridge<UIElement> bridge = new AsyncOperationBridge<UIElement>(op, _ =>
+            AsyncOperationBridge<T> bridge = new AsyncOperationBridge<T>(op, _ =>
             {
                 AsyncInstantiateOperation instantiateOp = (AsyncInstantiateOperation)op;
-                T element = (T)instantiateOp.Result[0];
+                T ui = (T)instantiateOp.Result[0];
 
                 // Recover the prefab's transform, since we are instantiating in local space
-                element.RectTransform.anchoredPosition = prefab.RectTransform.anchoredPosition;
+                ui.RectTransform.anchoredPosition = prefab.RectTransform.anchoredPosition;
 
                 if (mode == UILayerInsertMode.LastSibling)
                 {
-                    element.transform.SetAsLastSibling();
+                    ui.transform.SetAsLastSibling();
                 }
                 else if (mode == UILayerInsertMode.FirstSibling)
                 {
-                    element.transform.SetAsFirstSibling();
+                    ui.transform.SetAsFirstSibling();
                 }
 
-                element.Load();
-                element.gameObject.SetActive(false);
-                return element;
+                ui.Load(_screenCanvas);
+                ui.gameObject.SetActive(false);
+                return ui;
             });
 
             return bridge;
         }
 
-        public void DestroyUIElement(UIElement element, UILayer layer)
+        public void DestroyScreenUI(ScreenUI ui, UILayer layer)
         {
-            if (element == null)
+            if (ui == null)
             {
-                Debugger.LogError(this, "Tried to destroy a ui element, but the ui element given was null");
+                Debugger.LogError(this, "Tried to destroy a null ScreenUI");
                 return;
             }
 
-            if (!element.transform.IsChildOf(_layerContainers[(int)layer]))
+            if (!ui.transform.IsChildOf(_layerContainers[(int)layer]))
             {
+                Debugger.LogError(this, "The ScreenUI to destroy was not on the specified layer");
                 return;
             }
 
-            element.Unload();
-            Object.Destroy(element.gameObject);
+            ui.Unload();
+            Object.Destroy(ui.gameObject);
         }
 
         public void PopLayer(UILayer layer)
@@ -160,20 +161,35 @@ namespace FishFlingers.UI
                 return;
             }
 
-            UIElement element = container.GetChild(container.childCount - 1).GetComponent<UIElement>();
+            ScreenUI ui = container.GetChild(container.childCount - 1).GetComponent<ScreenUI>();
 
-            element.Hide(() => DestroyUIElement(element, layer));
+            ui.Hide(() => DestroyScreenUI(ui, layer));
         }
 
-        public void Test()
+        public void CreateWorldUI<T>(T prefab, Vector3 position) where T : WorldUI
         {
-            // create world element
-            // put it on world canvas
-            // position, and rotate
-            // optionally track a 'transform'
+            if (prefab == null)
+            {
+                Debugger.LogError(this, $"Can't create a null WorldUI");
+                return;
+            }
 
-            // uielement -> screenui
-            // add worldui
+            Object.Instantiate(prefab, _worldCanvas.transform);
+        }
+
+        public void DestroyWorldUI(WorldUI ui)
+        {
+            if (ui == null)
+            {
+                Debugger.LogError(this, $"Can't destroy a null WorldUI");
+                return;
+            }
+
+            if (ui.Canvas != _worldCanvas)
+            {
+                Debugger.LogError(this, $"Can't destroy WorldUI - it's not on the world canvas");
+                return;
+            }
         }
     }
 }

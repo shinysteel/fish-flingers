@@ -131,7 +131,7 @@ namespace FishFlingers.States
                 salvageSpawner.Initialise(context);
                 localPlayer.Initialise(context);
 
-                _gameplayScreen = (GameplayScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.GameplayScreen, UILayer.Screens);
+                _gameplayScreen = (GameplayScreen)await _uiManager.CreateScreenUIAsync(_uiManager.Config.GameplayScreen, UILayer.Screens);
                 _gameplayScreen.Setup(context);
                 _gameplayScreen.Show(null);
 
@@ -147,7 +147,7 @@ namespace FishFlingers.States
         {
             _players = null;
 
-            _uiManager.DestroyUIElement(_gameplayScreen, UILayer.Screens);
+            _uiManager.DestroyScreenUI(_gameplayScreen, UILayer.Screens);
             _gameplayScreen = null;
 
             _lobbyManager.LeaveLobby();

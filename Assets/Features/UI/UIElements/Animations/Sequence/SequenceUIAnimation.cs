@@ -1,0 +1,80 @@
+using PrimeTween;
+using ShinyOwl.Common;
+using System;
+using System.Security.Cryptography;
+using UnityEngine;
+
+namespace FishFlingers.UI
+{
+    public abstract class SequenceUIAnimation : UIAnimation
+    {
+        private Sequence _showSequence;
+        private Sequence _hideSequence;
+
+        private Action _onComplete;
+
+        public abstract Sequence CreateShowSequence(UIAnimationParams parameters);
+        public abstract Sequence CreateHideSequence(UIAnimationParams parameters);
+
+        public override void Show(UIAnimationParams parameters)
+        {
+            if (_showSequence.isAlive)
+            {
+                Debugger.LogError(this, "Show sequence is already active");
+                return;
+            }
+
+            if (_hideSequence.isAlive)
+            {
+                _hideSequence.Stop();
+                ExecutePending();
+            }
+
+            _onComplete = parameters.OnComplete;
+
+            parameters.CanvasGroup.interactable = false;
+            parameters.GameObject.SetActive(true);
+            parameters.SetIsVisible(true);
+
+            _showSequence = CreateShowSequence(parameters);
+            _showSequence.OnComplete(() =>
+            {
+                parameters.CanvasGroup.interactable = true;
+                ExecutePending();
+            });
+        }
+
+        public override void Hide(UIAnimationParams parameters)
+        {
+            if (_hideSequence.isAlive)
+            {
+                Debugger.LogError(this, "Hide sequence is already active");
+                return;
+            }
+
+            if (_showSequence.isAlive)
+            {
+                _showSequence.Stop();
+                ExecutePending();
+            }
+
+            _onComplete = parameters.OnComplete;
+
+            parameters.CanvasGroup.interactable = false;
+
+            _hideSequence = CreateHideSequence(parameters);
+            _hideSequence.OnComplete(() =>
+            {
+                parameters.GameObject.SetActive(false);
+                parameters.SetIsVisible(false);
+                ExecutePending();
+            });
+        }
+
+        private void ExecutePending()
+        {
+            _onComplete?.Invoke();
+            _onComplete = null;
+        }
+    }
+}

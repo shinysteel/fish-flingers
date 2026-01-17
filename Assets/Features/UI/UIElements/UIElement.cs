@@ -8,41 +8,39 @@ namespace FishFlingers.UI
 {
     public abstract class UIElement : MonoBehaviour
     {
+        [SerializeField] private UIAnimation _uiAnimation;
+        [SerializeField] protected RectTransform _rectTransform;
+        [SerializeField] protected CanvasGroup _canvasGroup;
+
+        protected Canvas _canvas;
         protected bool _isVisible;
 
-        [SerializeField] protected RectTransform _rectTransform;
         public RectTransform RectTransform => _rectTransform;
+        public Canvas Canvas => _canvas;
 
-        public virtual void Load()
-        { }
+        public virtual void Load(Canvas canvas)
+        {
+            _canvas = canvas;
+        }
 
         public virtual void Show(Action onComplete)
         {
-            if (_isVisible)
-            {
-                onComplete?.Invoke();
-                return;
-            }
-
-            _isVisible = true;
-            gameObject.SetActive(true);
-            onComplete?.Invoke();
+            _uiAnimation.Show(new UIAnimationParams(SetIsVisible, onComplete, gameObject, _canvasGroup));
         }
 
         public virtual void Hide(Action onComplete)
         {
-            if (!_isVisible)
-            {
-                onComplete?.Invoke();
-                return;
-            }
-
-            _isVisible = false;
-            gameObject.SetActive(false);
-            onComplete?.Invoke();
+            _uiAnimation.Hide(new UIAnimationParams(SetIsVisible, onComplete, gameObject, _canvasGroup));
         }
 
         public virtual void Unload()
-        { }
+        {
+            _canvas = null;
+        }
+
+        private void SetIsVisible(bool visible)
+        {
+            _isVisible = visible;
+        }
     }
 }

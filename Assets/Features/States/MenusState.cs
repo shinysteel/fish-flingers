@@ -51,7 +51,7 @@ namespace FishFlingers.States
             {
                 await _sceneManager.LoadSceneAsync(EScene.EnvironmentMainMenu, LoadSceneMode.Additive, LoadSceneContext.Local);
 
-                _mainMenuScreen = (MainMenuScreen)await _uiManager.CreateUIElementAsync(_uiManager.Config.MainMenuScreen, UILayer.Screens);
+                _mainMenuScreen = await _uiManager.CreateScreenUIAsync(_uiManager.Config.MainMenuScreen, UILayer.Screens);
                 _mainMenuScreen.Show(null);
 
                 _transitionManager.UncoverScreen(null);
@@ -64,7 +64,7 @@ namespace FishFlingers.States
 
         public override void Exit()
         {
-            _uiManager.DestroyUIElement(_mainMenuScreen, UILayer.Screens);
+            _uiManager.DestroyScreenUI(_mainMenuScreen, UILayer.Screens);
             _mainMenuScreen = null;
 
             // Purrnet is unloading all the scenes as soon as we connect since Game
