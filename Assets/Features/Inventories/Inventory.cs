@@ -76,8 +76,24 @@ namespace FishFlingers.Inventories
 
         public bool TryRemoveCount(int amount, out int remaining)
         {
-            remaining = amount;
-            return false;
+            if (amount <= 0)
+            {
+                remaining = amount;
+                return false;
+            }
+
+            if (Count > amount)
+            {
+                Count -= amount;
+                remaining = 0;
+            }
+            else
+            {
+                remaining = amount - Count;
+                Count = 0;
+            }
+
+            return true;
         }
     }
 
@@ -266,11 +282,11 @@ namespace FishFlingers.Inventories
         /// Tries to add the given count of an item to the inventory. Will first add to matches,
         /// and then place new instances
         /// </summary>
-        /// <param name="data">The item definition</param>
+        /// <param name="itemId">The item's id</param>
         /// <param name="amount">The amount to add</param>
         /// <param name="overflow">The remaining amount</param>
         /// <returns>True if any was added, false if none was added</returns>
-        public bool TryAddItems(ItemData data, int amount, out int overflow)
+        public bool TryAddItems(ItemId itemId, int amount, out int overflow)
         {
             overflow = amount;
 
@@ -279,6 +295,8 @@ namespace FishFlingers.Inventories
                 Debugger.LogError(this, "Tried to add items without being the owner");
                 return false;
             }
+
+            ItemData data = _itemManager.GetItemData(itemId);
 
             if (data == null || amount <= 0)
             {
@@ -289,29 +307,24 @@ namespace FishFlingers.Inventories
             // Add to matching instances
             if (data.MaxStack > 1)
             {
-                foreach (KeyValuePair<Vector2Int, NetInventorySlot> kvp in _netInventorySlots)
+                foreach (NetInventoryItem netInventoryItem in _netInventoryItems.Values)
                 {
-                    if (kvp.Value.ItemInstanceId == null)
+                    if (netInventoryItem.ItemId != itemId)
                     {
                         continue;
                     }
 
-                    NetInventoryItem netInventoryItem = _netInventoryItems[kvp.Value.ItemInstanceId];
-
-                    if (netInventoryItem.ItemId != data.ItemId)
+                    if (!netInventoryItem.TryAddCount(overflow, out overflow))
                     {
                         continue;
                     }
 
-                    if (netInventoryItem.TryAddCount(overflow, out overflow))
-                    {
-                        _netInventoryItems.SetDirty(kvp.Value.ItemInstanceId);
+                    _netInventoryItems.SetDirty(netInventoryItem.ItemInstanceId);
 
-                        if (overflow == 0)
-                        {
-                            return true;
-                        }
-                    }
+                    if (overflow == 0)
+                    {
+                        return true;
+                    }                    
                 }
             }
 
@@ -323,7 +336,7 @@ namespace FishFlingers.Inventories
                     continue;
                 }
 
-                if (TryPlaceItems(kvp.Key, data, overflow, out overflow) && overflow == 0)
+                if (TryPlaceItems(kvp.Key, itemId, overflow, out overflow) && overflow == 0)
                 {
                     return true;
                 }
@@ -337,11 +350,11 @@ namespace FishFlingers.Inventories
         /// add to it. If not, tries to fit by rotating around the pivot
         /// </summary>
         /// <param name="pivot">The cell to rotate around</param>
-        /// <param name="data">The item's definition</param>
+        /// <param name="itemId">The item's id</param>
         /// <param name="amount">The amount to add</param>
         /// <param name="overflow">The remaining amount</param>
         /// <returns>True if any was added, false if none was added</returns>
-        public bool TryPlaceItems(Vector2Int pivot, ItemData data, int amount, out int overflow)
+        public bool TryPlaceItems(Vector2Int pivot, ItemId itemId, int amount, out int overflow)
         {
             overflow = amount;
 
@@ -350,6 +363,8 @@ namespace FishFlingers.Inventories
                 Debugger.LogError(this, "Tried to place items without being the owner");
                 return false;
             }
+
+            ItemData data = _itemManager.GetItemData(itemId);
 
             if (data == null || amount <= 0)
             {
@@ -368,7 +383,7 @@ namespace FishFlingers.Inventories
             {
                 NetInventoryItem netInventoryItem = _netInventoryItems[pivotSlot.ItemInstanceId];
 
-                if (netInventoryItem.ItemId == data.ItemId)
+                if (netInventoryItem.ItemId == itemId)
                 {
                     bool result = netInventoryItem.TryAddCount(amount, out overflow);
                     _netInventoryItems.SetDirty(pivotSlot.ItemInstanceId);
@@ -418,7 +433,7 @@ namespace FishFlingers.Inventories
 
             // Place the items
             int count = Mathf.Min(amount, data.MaxStack);
-            NetInventoryItem newNetInventoryItem = new NetInventoryItem(_itemManager.GetNextItemInstanceId(), data.ItemId, count, pivot, rotations);
+            NetInventoryItem newNetInventoryItem = new NetInventoryItem(_itemManager.GetNextItemInstanceId(), itemId, count, pivot, rotations);
             _netInventoryItems.Add(newNetInventoryItem.ItemInstanceId, newNetInventoryItem);
 
             foreach (KeyValuePair<Vector2Int, bool> kvp in placeShape)
@@ -435,16 +450,58 @@ namespace FishFlingers.Inventories
             return true;            
         }
 
-        public bool TryRemoveItems(ItemData data, int amount, out int remaining)
+        public bool TryRemoveItems(ItemId itemId, int amount, out int remaining)
         {
-            remaining = 0;
-            return false;
+            remaining = amount;
 
-            //if (data == null || amount <= 0)
-            //{
-            //    Debugger.LogError(this, "Tried to remove invalid items");
-            //    return;
-            //}
+            ItemData data = _itemManager.GetItemData(itemId);
+
+            if (data == null || amount <= 0)
+            {
+                Debugger.LogError(this, "Tried to remove invalid items");
+                return false;
+            }
+
+            // You can't modify a collection while enumerating it - use .ToArray
+            foreach (NetInventoryItem netInventoryItem in _netInventoryItems.Values.ToArray())
+            {
+                if (netInventoryItem.ItemId != itemId)
+                {
+                    continue;
+                }
+
+                if (!netInventoryItem.TryRemoveCount(remaining, out remaining))
+                {
+                    continue;
+                }
+                
+                if (netInventoryItem.Count > 0)
+                {
+                    _netInventoryItems.SetDirty(netInventoryItem.ItemInstanceId);
+                }
+                else
+                {
+                    // Clear all inventory slots it was on
+                    foreach (KeyValuePair<Vector2Int, bool> kvp in data.Shape.GetRotated(netInventoryItem.Rotations))
+                    {
+                        if (!kvp.Value)
+                        {
+                            continue;
+                        }
+
+                        _netInventorySlots[netInventoryItem.Pivot + kvp.Key].SetItemInstanceId(null);
+                    }
+
+                    _netInventoryItems.Remove(netInventoryItem.ItemInstanceId);
+                }
+
+                if (remaining == 0)
+                {
+                    return true;
+                }
+            }
+
+            return remaining < amount;
         }
 
         public IEnumerator<KeyValuePair<Vector2Int, NetInventorySlot>> GetEnumerator()
@@ -455,24 +512,6 @@ namespace FishFlingers.Inventories
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
-        }
-
-        private void Update()
-        {
-            if (!isOwner)
-            {
-                return;
-            }
-
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                TryAddItems(_itemManager.GetItemData(ItemId.Paddle), 1, out _);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                TryAddItems(_itemManager.GetItemData(ItemId.Driftwood), 1, out _);
-            }
         }
     }
 }

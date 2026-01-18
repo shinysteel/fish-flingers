@@ -5,6 +5,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using FishFlingers.UI;
 using ShinyOwl.Common.Framework;
+using System;
+
+using Object = UnityEngine.Object;
 
 namespace FishFlingers.Entities
 {
@@ -14,7 +17,7 @@ namespace FishFlingers.Entities
 
         private RaftPlayer _player;
 
-        private StateMachine<EState> _stateMachine;
+        private StateMachine<EState> _uiStateMachine;
 
         private InteractPromptUI _interactPromptUI;
         private float _animateTimer;
@@ -23,10 +26,36 @@ namespace FishFlingers.Entities
         private IInteractable _targetInteractable;
 
         private Collider[] _collidersNonAlloc = new Collider[MaxOverlaps];
-        private List<IInteractable> _interactables = new List<IInteractable>(MaxOverlaps);
+        private List<NearbyInteractable> _nearbyInteractables = new List<NearbyInteractable>(MaxOverlaps);
 
         private const int MaxOverlaps = 10;
 
+        private class NearbyInteractable : IComparable<NearbyInteractable>
+        {
+            public IInteractable Interactable { get; private set; }
+            public float Distance { get; private set; }
+            public float Angle { get; private set; }
+
+            public NearbyInteractable(IInteractable interactable, float distance, float angle)
+            {
+                Interactable = interactable;
+                Distance = distance;
+                Angle = angle;
+            }
+
+            public int CompareTo(NearbyInteractable other)
+            {
+                int angleCompare = Angle.CompareTo(other.Angle);
+                if (angleCompare != 0)
+                {
+                    return angleCompare;
+                }
+
+                return Distance.CompareTo(other.Distance);
+            }
+        }
+
+        // Lifecycle of InteractPromptUI
         private enum EState
         {
             Idle     ,
@@ -155,22 +184,22 @@ namespace FishFlingers.Entities
 
             _player = player;
 
-            _stateMachine = new();
+            _uiStateMachine = new();
 
-            IdleState idleState = new IdleState(_stateMachine);
-            CreateState createState = new CreateState(_stateMachine);
-            RetargetState retargetState = new RetargetState(_stateMachine);
-            DestroyState destroyState = new DestroyState(_stateMachine);
+            IdleState idleState = new IdleState(_uiStateMachine);
+            CreateState createState = new CreateState(_uiStateMachine);
+            RetargetState retargetState = new RetargetState(_uiStateMachine);
+            DestroyState destroyState = new DestroyState(_uiStateMachine);
 
             idleState.Initialise(this);
             createState.Initialise(this);
             retargetState.Initialise(this);
             destroyState.Initialise(this);
 
-            _stateMachine.AddState(EState.Idle, idleState);
-            _stateMachine.AddState(EState.Create, createState);
-            _stateMachine.AddState(EState.Retarget, retargetState);
-            _stateMachine.AddState(EState.Destroy, destroyState);
+            _uiStateMachine.AddState(EState.Idle, idleState);
+            _uiStateMachine.AddState(EState.Create, createState);
+            _uiStateMachine.AddState(EState.Retarget, retargetState);
+            _uiStateMachine.AddState(EState.Destroy, destroyState);
         }
 
         public void Tick()
@@ -182,9 +211,11 @@ namespace FishFlingers.Entities
 
             _targetInteractable = FindTarget();
 
-            _stateMachine.Tick();
+            _uiStateMachine.Tick();
 
             AnimateTick();
+
+            InteractTick();
         }
 
         private IInteractable FindTarget()
@@ -197,18 +228,22 @@ namespace FishFlingers.Entities
                 return null;
             }
 
-            _interactables.Clear();
+            _nearbyInteractables.Clear();
 
             // Store any that we are able to interact with
             for (int i = 0; i < overlap; i++)
             {
                 Collider collider = _collidersNonAlloc[i];
 
+                float distance = Vector3.Distance(_player.transform.position, collider.transform.position);
+
                 Vector3 direction = (collider.transform.position - _player.transform.position);
                 direction.y = 0f;
                 direction.Normalize();
 
-                if (Vector3.Angle(_player.transform.forward, direction) > _player.Data.InteractSettings.MaxAngle)
+                float angle = Vector3.Angle(_player.transform.forward, direction);
+
+                if (distance > _player.Data.InteractSettings.MaxDistance && angle > _player.Data.InteractSettings.MaxAngle)
                 {
                     continue;
                 }
@@ -218,32 +253,18 @@ namespace FishFlingers.Entities
                     continue;
                 }
 
-                _interactables.Add(interactable);
+                _nearbyInteractables.Add(new NearbyInteractable(interactable, distance, angle));
             }
 
-            if (_interactables.Count == 0)
+            if (_nearbyInteractables.Count == 0)
             {
                 return null;
             }
 
-            // Calculate the closest
-            IInteractable closest = null;
-            float minDist = Mathf.Infinity;
+            // Sort by relevance
+            _nearbyInteractables.Sort();
 
-            foreach (IInteractable interactable in _interactables)
-            {
-                float distance = Vector3.Distance(_player.transform.position, interactable.Position);
-
-                if (distance >= minDist)
-                {
-                    continue;
-                }
-
-                closest = interactable;
-                minDist = distance;
-            }
-
-            return closest;
+            return _nearbyInteractables[0].Interactable;
         }
 
         private void SetCurrentInteractable(IInteractable interactable)
@@ -254,7 +275,7 @@ namespace FishFlingers.Entities
 
         private void AnimateTick()
         {
-            if (_currentInteractable == null)
+            if (_currentInteractable as Object == null)
             {
                 return;
             }
@@ -269,6 +290,19 @@ namespace FishFlingers.Entities
 
             // Bob up and down slightly above the interactable
             _interactPromptUI.transform.position = _currentInteractable.Position + offset;
+        }
+
+        private void InteractTick()
+        {
+            if (_targetInteractable as Object == null)
+            {
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                _targetInteractable.Interact();
+            }
         }
     }
 }

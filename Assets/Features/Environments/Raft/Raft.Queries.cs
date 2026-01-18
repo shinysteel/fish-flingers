@@ -93,53 +93,5 @@ namespace FishFlingers.Environments
             tile = _tiles.Values.ElementAt(Random.Range(0, _tiles.Count));
             return true;
         }
-
-
-        /// <summary>
-        /// Gets the furthest tile on the raft's side. Ties are resolved randomly
-        /// </summary>
-        public bool TryGetBoundaryTile(RaftSide side, out RaftTile tile)
-        {
-            tile = null;
-
-            if (_tiles.Values.Count == 0)
-            {
-                return false;
-            }
-
-            int x;
-            int y;
-
-            switch (side)
-            {
-                case RaftSide.Forward:
-                    x = _rowToColumnsMap.Keys.Max();
-                    y = _rowToColumnsMap[x].OrderBy(_ => Random.value).First();
-                    break;
-
-                case RaftSide.Back:
-                    x = _rowToColumnsMap.Keys.Min();
-                    y = _rowToColumnsMap[x].OrderBy(_ => Random.value).First();
-                    break;
-
-                case RaftSide.Right:
-                    y = _columnToRowsMap.Keys.Max();
-                    x = _columnToRowsMap[y].OrderBy(_ => Random.value).First();
-                    break;
-
-                case RaftSide.Left:
-                    y = _columnToRowsMap.Keys.Min();
-                    x = _columnToRowsMap[y].OrderBy(_ => Random.value).First();
-                    break;
-
-                default:
-                    x = 0;
-                    y = 0;
-                    break;
-            }
-
-            tile = _tiles[new Vector2Int(x, y)];
-            return true;
-        }
     }
 }

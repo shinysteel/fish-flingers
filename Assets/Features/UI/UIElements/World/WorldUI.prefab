@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3206367382060075856}
   - component: {fileID: 132160939576911845}
+  - component: {fileID: 1504544054993097478}
   - component: {fileID: 8570802759322780598}
   m_Layer: 5
   m_Name: WorldUI
@@ -50,6 +51,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.UI.FadeUIAnimation
   _settings: {fileID: 11400000, guid: 1d9a4941d6996014881d32996b8a579f, type: 2}
+--- !u!114 &1504544054993097478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6818615869069319518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7797158a67b88504f815be526c28dbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Cameras.Billboard
+  _flip: 1
 --- !u!225 &8570802759322780598
 CanvasGroup:
   m_ObjectHideFlags: 0

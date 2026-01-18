@@ -6,6 +6,7 @@ using PurrNet.Transports;
 using FishFlingers.Scenes;
 using System.Collections.Generic;
 using FishFlingers.States;
+using FishFlingers.Items;
 
 namespace FishFlingers.Environments
 {
@@ -80,6 +81,7 @@ namespace FishFlingers.Environments
 
             DroppedItem item = (DroppedItem)_entityManager.Spawn(EEntity.DroppedItem, new SpawnParams() { Position = position });
             item.Initialise(_context);
+            item.SetItem(ItemId.Driftwood, 1);
 
             _salvages.Add(item);
         }

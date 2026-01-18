@@ -78,6 +78,7 @@ namespace FishFlingers.UI
         {
             _uiManager.CreateScreenUIAsync(_uiManager.Config.BuildingKitPanel, UILayer.Panels).completed += (BuildingKitPanel panel) =>
             {
+                panel.Setup(_context);
                 panel.Show(null);
             };
         }

@@ -1,5 +1,6 @@
 using FishFlingers.Entities;
 using FishFlingers.Pools;
+using FishFlingers.States;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,10 @@ namespace FishFlingers.UI
 
             _entityManager = GameManager.Instance.Get<EntityManager>();
             _poolManager = GameManager.Instance.Get<PoolManager>();
+        }
 
+        public void Setup(GameplayContext context)
+        {
             IEnumerable<Structure> structures = _entityManager.GetEntities<Structure>();
             _blueprintEntries = new BlueprintEntry[structures.Count()];
 
@@ -32,7 +36,7 @@ namespace FishFlingers.UI
             foreach (Structure structure in structures)
             {
                 BlueprintEntry entry = _poolManager.Get<BlueprintEntry>(new SpawnParams() { Parent = _blueprintsScrollRect.content });
-                entry.Setup(structure.StructureData);
+                entry.Setup(structure.StructureData, context);
 
                 _blueprintEntries[i] = entry;
                 i++;

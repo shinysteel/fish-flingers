@@ -42,4 +42,5 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 128
     _radius: 1
-    _maxAngle: 30
+    _maxDistance: 0.5
+    _maxAngle: 45
