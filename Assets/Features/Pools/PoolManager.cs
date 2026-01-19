@@ -115,13 +115,11 @@ namespace FishFlingers.Pools
             _container = new GameObject(ContainerName).transform;
             Object.DontDestroyOnLoad(_container.gameObject);
 
-            Debugger.Log(this, $"Scanner has {_config.PoolableScanner.Assets?.Length} assets");
-
-            foreach (IPoolable poolable in _config.PoolableScanner.Assets)
+            foreach (IPoolable poolable in _config.PoolableScanner.GetAssets())
             {
                 Register(poolable);   
             }
-
+            
             base.Initialise(config);
         }
 

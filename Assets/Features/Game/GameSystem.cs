@@ -5,6 +5,7 @@ using ShinyOwl.Common.Framework;
 
 public interface IGameSystem
 {
+    ManagerState State { get; }
     void Initialise(GameManagerConfig config);
     void Tick();
     void LateTick();

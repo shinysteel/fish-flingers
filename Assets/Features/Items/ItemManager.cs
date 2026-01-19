@@ -26,7 +26,7 @@ namespace FishFlingers.Items
 
             _config = config.ItemManagerConfig;
 
-            foreach (ItemData data in _config.ItemDataScanner.Assets)
+            foreach (ItemData data in _config.ItemDataScanner.GetAssets())
             {
                 _idDataMap.Add(data.ItemId, data);
             }

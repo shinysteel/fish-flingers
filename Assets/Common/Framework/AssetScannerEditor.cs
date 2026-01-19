@@ -10,18 +10,13 @@ namespace ShinyOwl.Common.Framework
         {
             base.OnInspectorGUI();
 
-            AssetScanner scanner = (AssetScanner)target;
-
-            if (!scanner.AutoGenerate && GUILayout.Button("Generate"))
-            {
-                scanner.Scan();
-            }            
+            AssetScanner scanner = (AssetScanner)target;   
 
             EditorGUILayout.LabelField("Assets", EditorStyles.boldLabel);
 
             using (new EditorGUI.IndentLevelScope())
             {
-                foreach (object asset in scanner.Assets)
+                foreach (object asset in scanner.GetAssets())
                 {
                     if (asset is Object obj)
                     {

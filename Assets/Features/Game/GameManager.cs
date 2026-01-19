@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
 
     private GameManagerConfig _config;
 
+    private bool _managersReady;
+    private bool _loadedDefaultScene;
+
     public static GameManager Instance { get; private set; }
 
     private const string ConfigPath = "GameManagerConfig";
@@ -62,8 +65,6 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         InitialiseManagers();
-
-        Get<SceneManager>().LoadScene(EScene.Default);
     }
 
     private void InitialiseManagers()
@@ -104,6 +105,17 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (!ManagersReady())
+        {
+            return;
+        }
+
+        if (!_loadedDefaultScene)
+        {
+            Get<SceneManager>().LoadScene(EScene.Default);
+            _loadedDefaultScene = true;
+        }
+
         foreach (IGameSystem manager in _managers)
         {
             manager.Tick();
@@ -112,10 +124,40 @@ public class GameManager : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (!ManagersReady())
+        {
+            return;
+        }
+
         foreach (IGameSystem manager in _managers)
         {
             manager.LateTick();
         }
+    }
+
+    // Flags _managersReady once all managers are ready
+    private bool ManagersReady()
+    {
+        // Once flagged, no need to keep checking
+        if (_managersReady)
+        {
+            return true;
+        }
+
+        bool ready = true;
+
+        foreach (IGameSystem manager in _managers)
+        {
+            if (manager.State != ManagerState.Ready)
+            {
+                ready = false;
+                break;
+            }
+        }
+
+        _managersReady = ready;
+
+        return ready;
     }
 
     private void OnApplicationQuit()

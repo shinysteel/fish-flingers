@@ -10,11 +10,8 @@ namespace ShinyOwl.Common.Framework
     public abstract class AssetScanner : ScriptableObject
     {
         [SerializeField] protected DefaultAsset _folder;
-        [SerializeField] protected bool _autoGenerate;
 
-        public bool AutoGenerate => _autoGenerate;
-
-        public abstract Array Assets { get; }
+        public abstract Array GetAssets();
 
         public abstract void Scan();
 
@@ -41,11 +38,6 @@ namespace ShinyOwl.Common.Framework
                 return;
             }
 
-            if (!_autoGenerate)
-            {
-                return;
-            }
-
             // delayCall is a single-shot queue that automatically clears subscribers once invoked
             EditorApplication.delayCall += HandleDelayCall;
         }
@@ -58,9 +50,18 @@ namespace ShinyOwl.Common.Framework
 
     public abstract class AssetScanner<T> : AssetScanner
     {
-        private T[] _assets = new T[0];
+        // Declare as null so to allow for lazy access
+        private T[] _assets;
 
-        public override Array Assets => _assets;
+        public override Array GetAssets()
+        {
+            if (_assets == null)
+            {
+                Scan();
+            }
+
+            return _assets;
+        }
 
         private class Lookup : IComparable<Lookup>
         {
@@ -97,6 +98,9 @@ namespace ShinyOwl.Common.Framework
 
             List<Lookup> lookups = CreateLookups(guids, isPrefabAsset);
             lookups.Sort();
+
+            // After the first scan, we need to guarentee assets is not null
+            _assets ??= new T[0];
 
             if (!HaveChanges(_assets, lookups))
             {

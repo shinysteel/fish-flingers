@@ -12,6 +12,8 @@ namespace FishFlingers.Debugging
         public override void Initialise(GameManagerConfig config)
         {
             _config = config.DebugManagerConfig;
+
+            base.Initialise(config);
         }
 
         public override void Tick()
