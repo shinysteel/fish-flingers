@@ -28,7 +28,7 @@ MonoBehaviour:
   _groundDetectionSettings:
     _mask:
       serializedVersion: 2
-      m_Bits: 129
+      m_Bits: 193
     _castRadius: 0.125
     _castDist: 0.05
   _swimSettings:

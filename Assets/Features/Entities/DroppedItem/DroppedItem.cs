@@ -8,17 +8,25 @@ namespace FishFlingers.Entities
 {
     public class DroppedItem : NetEntity, IInteractable
     {
-        private ItemId _itemId;
-        private int _count;
+        private SyncVar<ItemId> _itemId;
+        private SyncVar<int> _count;
 
         public DroppedItemData Data => (DroppedItemData)_entityData;
 
         public Vector3 Position => transform.position;
 
+        protected override void OnInitializeModules()
+        {
+            base.OnInitializeModules();
+
+            _itemId = new();
+            _count = new();
+        }
+
         public void SetItem(ItemId itemId, int count)
         {
-            _itemId = itemId;
-            _count = count;
+            _itemId.value = itemId;
+            _count.value = count;
         }
 
         public void Interact()

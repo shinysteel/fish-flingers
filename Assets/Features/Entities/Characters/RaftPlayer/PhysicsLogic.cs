@@ -39,8 +39,8 @@ namespace FishFlingers.Entities
         {
             MoveFixedTick();
             LookFixedTick();
-            JumpFixedTick();
             GroundDetectionFixedTick();
+            JumpFixedTick();
             SwimFixedTick();
         }
 
@@ -49,11 +49,6 @@ namespace FishFlingers.Entities
             _jumpTimer += Time.deltaTime;
 
             if (!_inputLogic.Jump)
-            {
-                return;
-            }
-
-            if (!_isGrounded)
             {
                 return;
             }
@@ -97,6 +92,27 @@ namespace FishFlingers.Entities
             _player.Rigidbody.MoveRotation(Quaternion.Slerp(_player.Rigidbody.rotation, targetRotation, _player.Data.LookSettings.Speed * Time.fixedDeltaTime));
         }
 
+        private void GroundDetectionFixedTick()
+        {
+            Vector3 origin = _player.Rigidbody.position + Vector3.up * _player.Data.GroundDetectionSettings.CastRadius;
+
+            int hits = Physics.SphereCastNonAlloc(origin, _player.Data.GroundDetectionSettings.CastRadius, Vector3.down, _groundedHitsNonAlloc, _player.Data.GroundDetectionSettings.CastDist, _player.Data.GroundDetectionSettings.Mask);
+
+            bool grounded = false;
+
+            for (int i = 0; i < hits; i++)
+            {
+                // Since we include the player layer to jump on other player's heads, we need to ignore our own collider here
+                if (_groundedHitsNonAlloc[i].collider != _capsuleCollider)
+                {
+                    grounded = true;
+                    break;
+                }
+            }
+
+            _isGrounded = grounded;
+        }
+
         private void JumpFixedTick()
         {
             if (!_jumpRequest)
@@ -104,19 +120,18 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            // Cancel out gravity
-            _player.Rigidbody.linearVelocity = new Vector3(_player.Rigidbody.linearVelocity.x, 0f, _player.Rigidbody.linearVelocity.z);
-            _player.Rigidbody.AddForce(Vector3.up * _player.Data.JumpSettings.Strength, ForceMode.Impulse);
-
             // Consume the request
             _jumpTimer = 0f;
             _jumpRequest = false;
-        }
 
-        private void GroundDetectionFixedTick()
-        {
-            Vector3 origin = _player.Rigidbody.position + Vector3.up * _player.Data.GroundDetectionSettings.CastRadius;
-            _isGrounded = Physics.SphereCastNonAlloc(origin, _player.Data.GroundDetectionSettings.CastRadius, Vector3.down, _groundedHitsNonAlloc, _player.Data.GroundDetectionSettings.CastDist, _player.Data.GroundDetectionSettings.Mask) > 0;
+            if (!_isGrounded)
+            {
+                return;
+            }
+
+            // Cancel out gravity
+            _player.Rigidbody.linearVelocity = new Vector3(_player.Rigidbody.linearVelocity.x, 0f, _player.Rigidbody.linearVelocity.z);
+            _player.Rigidbody.AddForce(Vector3.up * _player.Data.JumpSettings.Strength, ForceMode.Impulse);
         }
 
         private void SwimFixedTick()

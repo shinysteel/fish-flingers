@@ -10,7 +10,6 @@ namespace FishFlingers.Networking
 
         public virtual void Initialise(GameplayContext context)
         {
-            Debugger.Log(this, $"{GetType()} initialised");
             _context = context;
         }
     }
