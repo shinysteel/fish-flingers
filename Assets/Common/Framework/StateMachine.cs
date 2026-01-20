@@ -71,6 +71,8 @@ namespace ShinyOwl.Common.Framework
 
         public TStateEnum CurrentEnum => _currentEnum;
 
+        public IState CurrentState => _enumStateMap[_currentEnum];
+
         public StateMachine()
         {
             // Start off every enum with null. Allows us to skip assigning null to Enum.None
@@ -78,11 +80,6 @@ namespace ShinyOwl.Common.Framework
             {
                 _enumStateMap.Add(stateEnum, null);
             }
-        }
-
-        private IState GetCurrentState()
-        {
-            return _enumStateMap[_currentEnum];
         }
 
         public void AddState(TStateEnum stateEnum, IState state)
@@ -104,39 +101,39 @@ namespace ShinyOwl.Common.Framework
                 return;
             }
 
-            // GetCurrentState will return the new state once we assign the enum, so we can't just cache the output
-            GetCurrentState()?.Exit();
-            _ = GetCurrentState()?.ExitAsync();
+            // CurrentState will return the new state once we assign the enum, so we can't just cache the output
+            CurrentState?.Exit();
+            _ = CurrentState?.ExitAsync();
 
             _currentEnum = stateEnum;
 
-            GetCurrentState()?.Enter();
-            _ = GetCurrentState()?.EnterAsync();
+            CurrentState?.Enter();
+            _ = CurrentState?.EnterAsync();
         }
 
         public void Enter()
         {
-            GetCurrentState()?.Enter();
+            CurrentState?.Enter();
         }
 
         public async Task EnterAsync()
         {
-            await (GetCurrentState()?.EnterAsync() ?? Task.CompletedTask);
+            await (CurrentState?.EnterAsync() ?? Task.CompletedTask);
         }
 
         public void Tick()
         {
-            GetCurrentState()?.Tick();
+            CurrentState?.Tick();
         }
 
         public void Exit()
         {
-            GetCurrentState()?.Exit();
+            CurrentState?.Exit();
         }
 
         public async Task ExitAsync()
         {
-            await (GetCurrentState()?.ExitAsync() ?? Task.CompletedTask);
+            await (CurrentState?.ExitAsync() ?? Task.CompletedTask);
         }
     }
 }

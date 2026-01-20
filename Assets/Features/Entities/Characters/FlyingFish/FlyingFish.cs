@@ -181,10 +181,7 @@ namespace FishFlingers.Entities
 
             _targetTile = null;
 
-            if (_stateMachine.CurrentEnum != EState.None)
-            {
-                _stateMachine.ChangeState(EState.None);
-            }
+            _stateMachine.ChangeState(EState.None);
         }
 
         private void Update()

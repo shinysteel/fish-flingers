@@ -146,7 +146,7 @@ namespace FishFlingers.Inventories
         }
     }
 
-    public class Inventory : NetBehaviour, IEnumerable<KeyValuePair<Vector2Int, NetInventorySlot>>
+    public class Inventory : GameplayBehaviour, IEnumerable<KeyValuePair<Vector2Int, NetInventorySlot>>
     {
         private SyncDictionaryWrapper<Vector2Int, NetInventorySlot> _netInventorySlots = new(ownerAuth: true);
         private SyncDictionaryWrapper<string, NetInventoryItem> _netInventoryItems = new(ownerAuth: true);
@@ -168,13 +168,15 @@ namespace FishFlingers.Inventories
         public delegate void InventoryItemChangedDelegate(string instanceId, InventoryItem inventoryItem);
         public event InventoryItemChangedDelegate OnInventoryItemChanged;
 
-        public void Initialise(BoolGrid layout)
+        public void SetLayout(BoolGrid layout)
         {
             _layout = layout;
         }
 
         protected override void OnSpawned()
         {
+            base.OnSpawned();
+            
             _netInventorySlots.onChanged += HandleNetInventorySlotsChanged;
             _netInventoryItems.onChanged += HandleNetInventoryItemsChanged;
 

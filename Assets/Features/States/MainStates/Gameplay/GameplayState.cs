@@ -23,7 +23,7 @@ namespace FishFlingers.States
 {
     public class GameplayContext
     {
-        public List<RaftPlayer> Players { get; private set; }
+        public IReadOnlyList<RaftPlayer> Players { get; private set; }
         public RaftPlayer LocalPlayer { get; private set; }
         public Raft Raft { get; private set; }
         public WaveSpawner WaveSpawner { get; private set; }
@@ -48,6 +48,7 @@ namespace FishFlingers.States
 
         private GameplayStateConfig _config;
 
+        private GameplayContext _context;
         private List<RaftPlayer> _players;
 
         private GameplayScreen _gameplayScreen;
@@ -96,6 +97,7 @@ namespace FishFlingers.States
 
                 await _sceneManager.LoadSceneAsync(EScene.EnvironmentGameplay, LoadSceneMode.Additive, LoadSceneContext.Local);
 
+                // All clients need to build a local GameplayContext class
                 Raft raft = null;
                 WaveSpawner waveSpawner = null;
                 SalvageSpawner salvageSpawner = null;
@@ -118,21 +120,27 @@ namespace FishFlingers.States
                     }
                 }
 
-                // After initially retrieving all players, OnNetworkSpawn & OnNetworkDespawn will maintain it
-                _players = Object.FindObjectsByType<RaftPlayer>(FindObjectsSortMode.None).ToList();
+                _players = new();
 
                 RaftPlayer localPlayer = _networkManager.Spawn(_config.RaftPlayerPrefab, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
 
-                GameplayContext context = new GameplayContext(_players, localPlayer, raft, waveSpawner);
+                _context = new GameplayContext(_players, localPlayer, raft, waveSpawner);
 
-                // Inject context into everything that needs it
-                raft.Initialise(context);
-                waveSpawner.Initialise(context);
-                salvageSpawner.Initialise(context);
-                localPlayer.Initialise(context);
+                // As the client, Any behaviours that spawned before we joined will need to be manually initialised
+                if (!_networkManager.IsServer)
+                {
+                    foreach (GameplayBehaviour behaviour in Object.FindObjectsByType<GameplayBehaviour>(FindObjectsSortMode.None).ToList())
+                    {
+                        // No need to initialise the localPlayer here. Spawn is async and we are listening for it
+                        if (behaviour != localPlayer)
+                        {
+                            OnNetworkSpawn(behaviour);
+                        }
+                    }
+                }
 
                 _gameplayScreen = await _uiManager.CreateScreenUIAsync(_uiManager.Config.GameplayScreen, UILayer.Screens);
-                _gameplayScreen.Setup(context);
+                _gameplayScreen.Setup(_context);
                 _gameplayScreen.Show(null);
 
                 _transitionManager.UncoverScreen(null);
@@ -145,7 +153,7 @@ namespace FishFlingers.States
 
         public override void Exit()
         {
-            _players = null;
+            _context = null;
 
             _uiManager.DestroyScreenUI(_gameplayScreen, UILayer.Screens);
             _gameplayScreen = null;
@@ -158,8 +166,8 @@ namespace FishFlingers.States
         public void OnLobbyEnter(Lobby lobby)
         {
             // This can happen from any state besides itself. Currently we 
-            // assume you are 'ready' straight away and move to the GameplayState
-            if (_parentStateMachine.CurrentEnum == EMainState.Gameplay)
+            // assume you're 'ready' straight away and move to the GameplayState
+            if (_parentStateMachine.CurrentState == this)
             {
                 return;
             }
@@ -173,7 +181,7 @@ namespace FishFlingers.States
 
         public void OnLobbyStart(Lobby lobby) 
         {
-            if (_parentStateMachine.CurrentEnum == EMainState.Gameplay)
+            if (_parentStateMachine.CurrentState == this)
             {
                 return;
             }
@@ -183,7 +191,7 @@ namespace FishFlingers.States
 
         public void OnNetworkShutdown(bool asServer)
         {
-            if (_parentStateMachine.CurrentEnum != EMainState.Gameplay)
+            if (_parentStateMachine.CurrentState != this)
             {
                 return;
             }
@@ -198,34 +206,34 @@ namespace FishFlingers.States
         }
 
         public void OnNetworkSpawn(NetBehaviour behaviour) 
-        { 
-            // Players is not null when we are in the GameplayState
-            if (_players == null)
+        {
+            if (_context == null)
             {
                 return;
             }
 
-            if (behaviour is not RaftPlayer player)
+            if (behaviour is RaftPlayer player)
             {
-                return;
+                _players.Add(player);
             }
 
-            _players.Add(player);
+            if (behaviour is GameplayBehaviour gameplayBehaviour)
+            {
+                gameplayBehaviour.Initialise(_context);
+            }
         }
 
         public void OnNetworkDespawn(NetBehaviour behaviour) 
         { 
-            if (_players == null)
+            if (_context == null)
             {
                 return;
             }
 
-            if (behaviour is not RaftPlayer player)
+            if (behaviour is RaftPlayer player)
             {
-                return;
+                _players.Remove(player);
             }
-
-            _players.Remove(player);
         }
 
         public void OnLobbyLeave() { }

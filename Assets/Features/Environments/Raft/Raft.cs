@@ -30,11 +30,9 @@ namespace FishFlingers.Environments
         }
     }
 
-    public partial class Raft : NetBehaviour
+    public partial class Raft : GameplayBehaviour
     {
         [SerializeField] private Transform _tilesContainer;
-
-        private GameplayContext _context;
 
         private SyncDictionaryWrapper<Vector2Int, NetTile> _netTiles = new();
 
@@ -73,9 +71,9 @@ namespace FishFlingers.Environments
             }            
         }
 
-        public void Initialise(GameplayContext context)
+        public override void Initialise(GameplayContext context)
         {
-            _context = context;
+            base.Initialise(context);
 
             _netTiles.onChanged += HandleNetTilesChanged;
 

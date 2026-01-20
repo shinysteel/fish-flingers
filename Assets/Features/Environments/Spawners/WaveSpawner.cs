@@ -1,26 +1,16 @@
 using FishFlingers.Entities;
-using PurrNet;
 using UnityEngine;
 using FishFlingers.Networking;
-using FishFlingers.Scenes;
 
 using NetworkManager = FishFlingers.Networking.NetworkManager;
-using FishFlingers.States;
 
 namespace FishFlingers.Environments
 {
-    public class WaveSpawner : NetBehaviour
+    public class WaveSpawner : GameplayBehaviour
     {
         [SerializeField] private float _spawnInterval = 2.5f;
 
-        private GameplayContext _context;
-
         private float _spawnTimer;
-
-        public void Initialise(GameplayContext context)
-        {
-            _context = context;
-        }
         
         private void Update()
         {
@@ -47,8 +37,7 @@ namespace FishFlingers.Environments
 
         private void Spawn()
         {
-            IEntity entity = _entityManager.Spawn(EEntity.FlyingFish, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
-            entity.Initialise(_context);
+            _entityManager.Spawn(EEntity.FlyingFish, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
         }
     }
 }

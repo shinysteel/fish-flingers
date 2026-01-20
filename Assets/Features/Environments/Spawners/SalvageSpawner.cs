@@ -10,11 +10,9 @@ using FishFlingers.Items;
 
 namespace FishFlingers.Environments
 {
-    public class SalvageSpawner : NetBehaviour, INetworkManagerListener
+    public class SalvageSpawner : GameplayBehaviour, INetworkManagerListener
     {
         [SerializeField] private float _spawnInterval = 5f;
-
-        private GameplayContext _context;
 
         private float _spawnTimer;
 
@@ -34,11 +32,6 @@ namespace FishFlingers.Environments
             base.OnDespawned();
 
             _networkManager?.RemoveListener(this);
-        }
-
-        public void Initialise(GameplayContext context)
-        {
-            _context = context;
         }
 
         private void Update()
@@ -80,7 +73,6 @@ namespace FishFlingers.Environments
             Vector3 position = raft.CellToWorldPosition(new Vector2(x, y));
 
             DroppedItem item = (DroppedItem)_entityManager.Spawn(EEntity.DroppedItem, new SpawnParams() { Position = position });
-            item.Initialise(_context);
             item.SetItem(ItemId.Driftwood, 1);
 
             _salvages.Add(item);

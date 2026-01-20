@@ -8,16 +8,11 @@ using UnityEngine;
 
 namespace FishFlingers.Entities
 {
-    public abstract class NetEntity : NetBehaviour, IEntity
+    // Maybe it's not so obvious that NetEntity is linked to the GameplayState,
+    // but for now they aren't used in any other state
+    public abstract class NetEntity : GameplayBehaviour, IEntity
     {
         // Start of IEntity
-
-        protected GameplayContext _context;
-
-        public virtual void Initialise(GameplayContext context)
-        {
-            _context = context;
-        }
 
         [SerializeField] protected EntityData _entityData;
         public EntityData EntityData => _entityData;

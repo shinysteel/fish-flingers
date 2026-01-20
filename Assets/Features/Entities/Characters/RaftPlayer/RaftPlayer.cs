@@ -43,7 +43,7 @@ namespace FishFlingers.Entities
             }
 
             _inventory = _networkManager.Spawn(_inventoryPrefab);
-            _inventory.Initialise(_inventoryLayout);
+            _inventory.SetLayout(_inventoryLayout);
 
             _cameraManager.SetMode(new FollowCameraMode(transform, new Vector3(0f, 3f, -5f)));
         }

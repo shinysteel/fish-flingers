@@ -32,7 +32,7 @@ namespace FishFlingers.Environments
         }
     }
 
-    public partial class Raft : NetBehaviour
+    public partial class Raft : GameplayBehaviour
     {
         // Uses Vector2 to allow for floating-point cells
         public Vector3 CellToWorldPosition(Vector2 cell)
