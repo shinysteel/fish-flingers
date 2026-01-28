@@ -18,7 +18,7 @@ namespace FishFlingers.UI
         {
             if (_showSequence.isAlive)
             {
-                Debugger.LogError(this, "Show sequence is already active");
+                Log.Error(this, "Show sequence is already active");
                 return;
             }
 
@@ -42,7 +42,7 @@ namespace FishFlingers.UI
         {
             if (_hideSequence.isAlive)
             {
-                Debugger.LogError(this, "Hide sequence is already active");
+                Log.Error(this, "Hide sequence is already active");
                 return;
             }
 

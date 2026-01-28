@@ -17,16 +17,15 @@ namespace FishFlingers.Entities
     {
         [SerializeField] private CapsuleCollider _capsuleCollider;
 
-        [SerializeField] private Inventory _inventoryPrefab;
+        [SerializeField] private Inventory _inventory;
+
         [SerializeField] private BoolGrid _inventoryLayout;
 
         private InputLogic _inputLogic;
         private PhysicsLogic _physicsLogic;
         private InteractLogic _interactLogic;
 
-        private Inventory _inventory;
         public Inventory Inventory => _inventory;
-
         public bool CanAct => _uiManager.IsLayerEmpty(UILayer.Panels);
 
         protected override void OnSpawned()
@@ -42,7 +41,6 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            _inventory = _networkManager.Spawn(_inventoryPrefab);
             _inventory.SetLayout(_inventoryLayout);
 
             _cameraManager.SetMode(new FollowCameraMode(transform, new Vector3(0f, 3f, -5f)));

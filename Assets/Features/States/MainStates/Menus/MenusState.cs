@@ -58,7 +58,7 @@ namespace FishFlingers.States
             }
             catch (Exception ex)
             {
-                Debugger.LogError(this, ex);
+                Log.Error(this, ex);
             }
         }
 

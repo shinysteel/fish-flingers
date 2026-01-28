@@ -132,7 +132,11 @@ namespace FishFlingers.Pools
 
             Type type = component.GetType();
 
-            Debugger.AssertIsFalse(_prefabRegistry.ContainsKey(type), this, $"The type {type} was registered more than once");
+            if (_prefabRegistry.ContainsKey(type))
+            {
+                Log.Error(this, $"The type {type} has alreaady been registered");
+                return;
+            }
 
             _prefabRegistry[type] = prefab;
         }
@@ -142,7 +146,7 @@ namespace FishFlingers.Pools
         {
             if (!_prefabRegistry.TryGetValue(type, out IPoolable prefab))
             {
-                Debugger.LogError(this, $"Tried to retrieve an unregistered poolable object with type {type}");
+                Log.Error(this, $"Tried to retrieve an unregistered poolable object with type {type}");
                 return null;
             }
 
@@ -169,7 +173,7 @@ namespace FishFlingers.Pools
             
             if (!_pools.TryGetValue(type, out IPool pool))
             {
-                Debugger.LogError(this, "No pool is defined for the poolable object being returned");
+                Log.Error(this, "No pool is defined for the poolable object being returned");
                 return;
             }
 

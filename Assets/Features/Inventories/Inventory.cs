@@ -8,11 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using UnityEditor.Localization.Plugins.XLIFF.V20;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEditor.Progress;
 
 namespace FishFlingers.Inventories
 {
@@ -28,15 +24,15 @@ namespace FishFlingers.Inventories
 
     public class NetInventoryItem
     {
-        public string ItemInstanceId { get; private set; }
+        public string InstanceId { get; private set; }
         public ItemId ItemId { get; private set; }
         public int Count { get; private set; }
         public Vector2Int Pivot { get; private set; }
         public int Rotations { get; private set; }
 
-        public NetInventoryItem(string itemInstanceId, ItemId itemId, int count, Vector2Int pivot, int rotations)
+        public NetInventoryItem(string instanceId, ItemId itemId, int count, Vector2Int pivot, int rotations)
         {
-            ItemInstanceId = itemInstanceId;
+            InstanceId = instanceId;
             ItemId = itemId;
             Count = count;
             Pivot = pivot;
@@ -78,7 +74,7 @@ namespace FishFlingers.Inventories
                 overflow = amount - remainingSpace;
             }
 
-            change = new NetInventoryItemsChange(ItemInstanceId, changeAmount);
+            change = new NetInventoryItemsChange(InstanceId, changeAmount);
 
             return true;
         }
@@ -105,7 +101,7 @@ namespace FishFlingers.Inventories
                 remaining = amount - Count;
             }
 
-            change = new NetInventoryItemsChange(ItemInstanceId, changeAmount);
+            change = new NetInventoryItemsChange(InstanceId, changeAmount);
 
             return true;
         }
@@ -198,7 +194,7 @@ namespace FishFlingers.Inventories
             _itemManager = GameManager.Instance.Get<ItemManager>();
             ItemData data = _itemManager.GetItemData(netInventoryItem.ItemId);
 
-            ItemInstance = new ItemInstance(netInventoryItem.ItemInstanceId, data, netInventoryItem.Count);
+            ItemInstance = new ItemInstance(netInventoryItem.InstanceId, data, netInventoryItem.Count);
             Pivot = netInventoryItem.Pivot;
             Rotations = netInventoryItem.Rotations;
             Shape = Rotations == 0 ? ItemInstance.Data.Shape : ItemInstance.Data.Shape.GetRotated(Rotations);
@@ -303,9 +299,9 @@ namespace FishFlingers.Inventories
                 case SyncDictionaryOperation.Added:
                 case SyncDictionaryOperation.Set:
                     InventoryItem item = new InventoryItem(change.value);
-                    _inventoryItems[change.value.ItemInstanceId] = item;
+                    _inventoryItems[change.value.InstanceId] = item;
 
-                    OnInventoryItemChanged?.Invoke(change.value.ItemInstanceId, item);
+                    OnInventoryItemChanged?.Invoke(change.value.InstanceId, item);
                     break;
 
                 case SyncDictionaryOperation.Removed:
@@ -327,6 +323,37 @@ namespace FishFlingers.Inventories
             }
         }
 
+        public void RemoveItem(string instanceId)
+        { 
+            if (!isOwner)
+            {
+                Log.Error(this, "Tried to remove items without being the owner");
+                return;
+            }
+
+            if (!_netInventoryItems.ContainsKey(instanceId))
+            {
+                Log.Error(this, $"Inventory does not contain an item instance with id: {instanceId}");
+                return;
+            }
+
+            NetInventoryItem item = _netInventoryItems[instanceId];
+            ItemData data = _itemManager.GetItemData(item.ItemId);
+
+            // Clear all inventory slots it was on
+            foreach (KeyValuePair<Vector2Int, bool> kvp in data.Shape.GetRotated(item.Rotations))
+            {
+                if (!kvp.Value)
+                {
+                    continue;
+                }
+
+                _netInventorySlots[item.Pivot + kvp.Key].SetItemInstanceId(null);
+            }
+
+            _netInventoryItems.Remove(instanceId);
+        }
+
         /// <summary>
         /// Tries to add the given count of an item to the inventory. Will first add to matches,
         /// and then place new instances
@@ -335,7 +362,7 @@ namespace FishFlingers.Inventories
         {
             if (!isOwner)
             {
-                Debugger.LogError(this, "Tried to add items without being the owner");
+                Log.Error(this, "Tried to add items without being the owner");
                 return false;
             }
 
@@ -365,7 +392,7 @@ namespace FishFlingers.Inventories
         {
             if (!isOwner)
             {
-                Debugger.LogError(this, "Tried to place items without being the owner");
+                Log.Error(this, "Tried to place items without being the owner");
                 return false;
             }
 
@@ -394,7 +421,7 @@ namespace FishFlingers.Inventories
         {
             if (!isOwner)
             {
-                Debugger.LogError(this, "Tried to remove items without being the owner");
+                Log.Error(this, "Tried to remove items without being the owner");
                 return false;
             }
 
@@ -420,7 +447,7 @@ namespace FishFlingers.Inventories
 
             if (data == null || amount <= 0)
             {
-                Debugger.LogError(this, "Checked if invalid items can be added");
+                Log.Error(this, "Checked if invalid items can be added");
                 return false;
             }
 
@@ -516,7 +543,7 @@ namespace FishFlingers.Inventories
 
             if (data == null || amount <= 0 || amount > data.MaxStack)
             {
-                Debugger.LogError(this, "Checked if invalid items can be placed");
+                Log.Error(this, "Checked if invalid items can be placed");
                 return false;
             }
 
@@ -585,7 +612,7 @@ namespace FishFlingers.Inventories
 
             if (data == null || amount <= 0)
             {
-                Debugger.LogError(this, "Checked if invalid items can be removed");
+                Log.Error(this, "Checked if invalid items can be removed");
                 return false;
             }
 
@@ -618,7 +645,7 @@ namespace FishFlingers.Inventories
         {
             if (!change.IsValid)
             {
-                Debugger.LogError(this, "Tried to process an invalid change");
+                Log.Error(this, "Tried to process an invalid change");
                 return;
             }
 
@@ -629,22 +656,11 @@ namespace FishFlingers.Inventories
 
             if (item.Count > 0)
             {
-                _netInventoryItems.SetDirty(item.ItemInstanceId);
+                _netInventoryItems.SetDirty(item.InstanceId);
             }
             else
             {
-                // Clear all inventory slots it was on
-                foreach (KeyValuePair<Vector2Int, bool> kvp in data.Shape.GetRotated(item.Rotations))
-                {
-                    if (!kvp.Value)
-                    {
-                        continue;
-                    }
-
-                    _netInventorySlots[item.Pivot + kvp.Key].SetItemInstanceId(null);
-                }
-
-                _netInventoryItems.Remove(item.ItemInstanceId);
+                RemoveItem(item.InstanceId);
             }
         }
 
@@ -652,7 +668,7 @@ namespace FishFlingers.Inventories
         {
             if (!place.IsValid)
             {
-                Debugger.LogError(this, "Tried to process an invalid place");
+                Log.Error(this, "Tried to process an invalid place");
                 return;
             }
 
@@ -660,7 +676,7 @@ namespace FishFlingers.Inventories
 
             // Place the items
             NetInventoryItem newNetInventoryItem = new NetInventoryItem(_itemManager.GetNextItemInstanceId(), place.ItemId, place.Amount, place.Pivot, place.Rotations);
-            _netInventoryItems.Add(newNetInventoryItem.ItemInstanceId, newNetInventoryItem);
+            _netInventoryItems.Add(newNetInventoryItem.InstanceId, newNetInventoryItem);
 
             foreach (KeyValuePair<Vector2Int, bool> kvp in place.Shape)
             {
@@ -669,7 +685,7 @@ namespace FishFlingers.Inventories
                     continue;
                 }
 
-                _netInventorySlots[place.Pivot + kvp.Key].SetItemInstanceId(newNetInventoryItem.ItemInstanceId);
+                _netInventorySlots[place.Pivot + kvp.Key].SetItemInstanceId(newNetInventoryItem.InstanceId);
             }
         }
 

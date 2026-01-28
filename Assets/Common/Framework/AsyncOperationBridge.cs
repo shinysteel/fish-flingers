@@ -82,7 +82,7 @@ namespace ShinyOwl.Common.Framework
             {
                 if (_isCompleted)
                 {
-                    Debugger.LogError(this, "The same async operation was completed more than once");
+                    Log.Error(this, "The same async operation was completed more than once");
                     return;
                 }
 

@@ -20,6 +20,7 @@ namespace FishFlingers.UI
         private PoolManager _poolManager;
 
         private Inventory _inventory;
+        public Inventory Inventory => _inventory;
 
         private Dictionary<Vector2Int, InventorySlotView> _inventorySlotViews;
         private Dictionary<string, InventoryItemView> _inventoryItemViews;
@@ -118,7 +119,7 @@ namespace FishFlingers.UI
         {
             if (!_inventoryItemViews.ContainsKey(key))
             {
-                Debugger.LogError(this, "Tried to remove a view that does not exist");
+                Log.Error(this, "Tried to remove a view that does not exist");
                 return;
             }
 

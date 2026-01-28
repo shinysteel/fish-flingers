@@ -14,9 +14,20 @@ namespace FishFlingers.UI
         [SerializeField] private RectTransform _rectTransform;
         [SerializeField] private Image _itemImage;
         [SerializeField] private TMP_Text _countText;
+        [SerializeField] private Button _button;
 
         private InventoryWidget _inventoryWidget;
         private InventoryItem _inventoryItem;
+
+        private void Awake()
+        {
+            _button.onClick.AddListener(Pressed);
+        }
+
+        private void Pressed()
+        {
+            _inventoryWidget.Inventory.RemoveItem(_inventoryItem.ItemInstance.InstanceId);
+        }
 
         public void Setup(InventoryWidget inventoryWidget, InventoryItem inventoryItem)
         {
@@ -32,6 +43,7 @@ namespace FishFlingers.UI
             // Count
             _countText.text = _inventoryItem.ItemInstance.Count.ToString();
 
+            // Place at the bottom-right
             Vector2Int cell = _inventoryItem.Shape
                 .Where(kvp => kvp.Value == true)
                 .OrderBy(kvp => kvp.Key.y)

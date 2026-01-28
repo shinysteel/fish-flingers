@@ -14,7 +14,7 @@ namespace ShinyOwl.Common.Framework
         {
             if (_listeners.Contains(listener))
             {
-                Debugger.LogError(this, "A listener is trying to add itself more than once");
+                Log.Error(this, "A listener is trying to add itself more than once");
                 return;
             }
 
