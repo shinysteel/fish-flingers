@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7776678311703024203}
   - component: {fileID: 6599794831031522512}
+  - component: {fileID: 5650902380195518760}
+  - component: {fileID: 6440529475467564394}
   m_Layer: 5
   m_Name: InventoryWidget
   m_TagString: Untagged
@@ -53,6 +55,30 @@ MonoBehaviour:
   _rectTransform: {fileID: 7776678311703024203}
   _inventorySlotViewsContainer: {fileID: 37505051382827825}
   _inventoryItemViewsContainer: {fileID: 2177777284867615059}
+--- !u!222 &5650902380195518760
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 951235042280051864}
+  m_CullTransparentMesh: 1
+--- !u!114 &6440529475467564394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 951235042280051864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 767b0209b423ac14bb3bd04c5fb6e30f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShinyOwl.Common.InvisibleRaycastTarget
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &5285828378964817065
 GameObject:
   m_ObjectHideFlags: 0

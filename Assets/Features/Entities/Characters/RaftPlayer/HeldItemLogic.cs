@@ -106,7 +106,7 @@ public class HeldItemLogic
 
     private void Place(InventorySlotView slotView)
     {
-        if (slotView.InventoryWidget.Inventory.TryPlaceItems(slotView.Cell, _netHeldInventoryItem.value.ItemId, _netHeldInventoryItem.value.Count))
+        if (slotView.InventoryWidget.Inventory.TryPlaceItems(slotView.Cell, _netHeldInventoryItem.value.InstanceId, _netHeldInventoryItem.value.ItemId, _netHeldInventoryItem.value.Count))
         {
             SetHeldItem(null);
         }

@@ -383,7 +383,7 @@ namespace FishFlingers.Inventories
 
             foreach (NetInventoryItemsPlace place in places)
             {
-                ProcessNetInventoryItemsPlace(place);
+                ProcessNetInventoryItemsPlace(place, _itemManager.GetNextItemInstanceId());
             }
 
             return true;
@@ -393,7 +393,7 @@ namespace FishFlingers.Inventories
         /// Tries to add the given count of an item to a slot. If an item is already there, tries to
         /// add to it. If not, tries to fit by rotating around the pivot
         /// </summary>
-        public bool TryPlaceItems(Vector2Int pivot, ItemId itemId, int amount)
+        public bool TryPlaceItems(Vector2Int pivot, string instaceId, ItemId itemId, int amount)
         {
             if (!isOwner)
             {
@@ -408,7 +408,7 @@ namespace FishFlingers.Inventories
 
             if (place.IsValid)
             {
-                ProcessNetInventoryItemsPlace(place);
+                ProcessNetInventoryItemsPlace(place, instaceId);
             }
 
             if (change.IsValid)
@@ -669,7 +669,7 @@ namespace FishFlingers.Inventories
             }
         }
 
-        private void ProcessNetInventoryItemsPlace(NetInventoryItemsPlace place)
+        private void ProcessNetInventoryItemsPlace(NetInventoryItemsPlace place, string instanceId)
         {
             if (!place.IsValid)
             {
@@ -680,7 +680,7 @@ namespace FishFlingers.Inventories
             ItemData data = _itemManager.GetItemData(place.ItemId);
 
             // Place the items
-            NetInventoryItem newNetInventoryItem = new NetInventoryItem(_itemManager.GetNextItemInstanceId(), place.ItemId, place.Amount, place.Pivot, place.Rotations);
+            NetInventoryItem newNetInventoryItem = new NetInventoryItem(instanceId, place.ItemId, place.Amount, place.Pivot, place.Rotations);
             _netInventoryItems.Add(newNetInventoryItem.InstanceId, newNetInventoryItem);
 
             foreach (KeyValuePair<Vector2Int, bool> kvp in place.Shape)
