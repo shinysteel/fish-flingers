@@ -6,10 +6,13 @@ namespace FishFlingers.UI
 {
     public class CellOutline : MonoBehaviour, IPoolable
     {
+        [SerializeField] private RectTransform _rectTransform;
         [SerializeField] private Image _topImage;
         [SerializeField] private Image _leftImage;
         [SerializeField] private Image _bottomImage;
         [SerializeField] private Image _rightImage;
+
+        public RectTransform RectTransform => _rectTransform;
 
         private void Awake()
         {

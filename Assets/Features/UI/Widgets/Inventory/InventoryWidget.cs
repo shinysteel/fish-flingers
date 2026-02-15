@@ -112,24 +112,18 @@ namespace FishFlingers.UI
 
         private void SetInventoryItemToSlotViews(InventoryItem inventoryItem)
         {
-            foreach (KeyValuePair<Vector2Int, bool> kvp in inventoryItem.Shape)
+            inventoryItem.Shape.ForEachTrue((Vector2Int cell, bool value) =>
             {
-                if (kvp.Value)
-                {
-                    _inventorySlotViews[inventoryItem.Pivot + kvp.Key].SetInventoryItem(inventoryItem);
-                }
-            }
+                _inventorySlotViews[inventoryItem.Pivot + cell].SetInventoryItem(inventoryItem);
+            });
         }
 
         private void RemoveInventoryItemFromSlotViews(InventoryItem inventoryItem)
         {
-            foreach (KeyValuePair<Vector2Int, bool> kvp in inventoryItem.Shape)
+            inventoryItem.Shape.ForEachTrue((Vector2Int cell, bool value) =>
             {
-                if (kvp.Value)
-                {
-                    _inventorySlotViews[inventoryItem.Pivot + kvp.Key].SetInventoryItem(null);
-                }
-            }
+                _inventorySlotViews[inventoryItem.Pivot + cell].SetInventoryItem(null);
+            });
         }
 
         private void SetInventoryItemView(string key, InventoryItem inventoryItem)

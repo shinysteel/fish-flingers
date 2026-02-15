@@ -270,13 +270,10 @@ namespace FishFlingers.Inventories
 
         private void PopulateSlots()
         {
-            foreach (KeyValuePair<Vector2Int, bool> kvp in _layout)
+            _layout.ForEachTrue((Vector2Int cell, bool value) =>
             {
-                if (kvp.Value == true)
-                {
-                    _netInventorySlots.Add(kvp.Key, new());
-                }
-            }
+                _netInventorySlots.Add(cell, new());
+            });
         }
 
         private void HandleNetInventorySlotsChanged(SyncDictionaryChange<Vector2Int, NetInventorySlot> change)
@@ -359,15 +356,10 @@ namespace FishFlingers.Inventories
             ItemData data = _itemManager.GetItemData(item.ItemId);
 
             // Clear all inventory slots it was on
-            foreach (KeyValuePair<Vector2Int, bool> kvp in data.Shape.GetRotated(item.Rotations))
+            data.Shape.GetRotated(item.Rotations).ForEachTrue((Vector2Int cell, bool value) =>
             {
-                if (!kvp.Value)
-                {
-                    continue;
-                }
-
-                _netInventorySlots[item.Pivot + kvp.Key].SetItemInstanceId(null);
-            }
+                _netInventorySlots[item.Pivot + cell].SetItemInstanceId(null);
+            });
 
             _netInventoryItems.Remove(instanceId);
         }
@@ -503,33 +495,28 @@ namespace FishFlingers.Inventories
             HashSet<Vector2Int> placedCells = new();
             void AddPlacedCells(Vector2Int pivot, BoolGrid shape)
             {
-                foreach (KeyValuePair<Vector2Int, bool> shapeKvp in shape)
+                shape.ForEachTrue((Vector2Int cell, bool value) =>
                 {
-                    if (!shapeKvp.Value)
-                    {
-                        continue;
-                    }
-
-                    placedCells.Add(pivot + shapeKvp.Key);
-                }
+                    placedCells.Add(pivot + cell);
+                });
             }
 
             // Check empty slots
             if (overflow > 0)
             {
-                foreach (KeyValuePair<Vector2Int, NetInventorySlot> slotKvp in _netInventorySlots)
+                foreach (KeyValuePair<Vector2Int, NetInventorySlot> kvp in _netInventorySlots)
                 {
-                    if (slotKvp.Value.ItemInstanceId != null)
+                    if (kvp.Value.ItemInstanceId != null)
                     {
                         continue;
                     }
 
-                    if (placedCells.Contains(slotKvp.Key))
+                    if (placedCells.Contains(kvp.Key))
                     {
                         continue;
                     }
 
-                    if (!CanPlaceItems(slotKvp.Key, itemId, overflow, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change))
+                    if (!CanPlaceItems(kvp.Key, itemId, overflow, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change))
                     {
                         continue;
                     }
@@ -592,20 +579,25 @@ namespace FishFlingers.Inventories
                 BoolGrid shape = rotations == 0 ? data.Shape : data.Shape.GetRotated(rotations);
                 bool fits = true;
 
-                foreach (KeyValuePair<Vector2Int, bool> kvp in shape)
+                shape.ForEachTrue((Vector2Int cell, bool value) =>
                 {
-                    if (!_netInventorySlots.TryGetValue(pivot + kvp.Key, out NetInventorySlot slot))
+                    if (!fits)
+                    {
+                        return;
+                    }
+
+                    if (!_netInventorySlots.TryGetValue(pivot + cell, out NetInventorySlot slot))
                     {
                         fits = false;
-                        break;
+                        return;
                     }
 
                     if (slot.ItemInstanceId != null)
                     {
                         fits = false;
-                        break;
+                        return;
                     }
-                }
+                });
 
                 if (fits)
                 {
@@ -701,15 +693,10 @@ namespace FishFlingers.Inventories
             NetInventoryItem newNetInventoryItem = new NetInventoryItem(instanceId, place.ItemId, place.Amount, place.Pivot, place.Rotations);
             _netInventoryItems.Add(newNetInventoryItem.InstanceId, newNetInventoryItem);
 
-            foreach (KeyValuePair<Vector2Int, bool> kvp in place.Shape)
+            place.Shape.ForEachTrue((Vector2Int cell, bool value) =>
             {
-                if (!kvp.Value)
-                {
-                    continue;
-                }
-
-                _netInventorySlots[place.Pivot + kvp.Key].SetItemInstanceId(newNetInventoryItem.InstanceId);
-            }
+                _netInventorySlots[place.Pivot + cell].SetItemInstanceId(newNetInventoryItem.InstanceId);
+            });
         }
 
         public IEnumerator<KeyValuePair<Vector2Int, NetInventorySlot>> GetEnumerator()

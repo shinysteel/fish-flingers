@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef16d57506b1ca4479508800a65b6772, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CellOutline
+  _rectTransform: {fileID: 3548842168507428280}
   _topImage: {fileID: 5862099115503826857}
   _leftImage: {fileID: 7183552073647115758}
   _bottomImage: {fileID: 3456966862139823486}

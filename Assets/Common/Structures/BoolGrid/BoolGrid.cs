@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Localization.Plugins.XLIFF.V12;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -91,7 +92,7 @@ namespace ShinyOwl.Common.Structures
             }
 
             BoolGrid grid = (BoolGrid)target;
-            grid.RecalculateBounds();
+            grid.RecalculateVariables();
         }
 
         private void DrawBoolGrid()
@@ -153,36 +154,58 @@ namespace ShinyOwl.Common.Structures
         [SerializeField] private int _rows;
         [SerializeField] private bool[] _bools;
 
-        private Vector2Int _pivot;
-        private Vector2Int _arrayOffset;
-
         public int Columns => _columns;
         public int Rows => _rows;
+
+        private Vector2Int _arrayOffset;
+
+        private Vector2Int _pivot;
         public Vector2Int Pivot => _pivot;
 
-        private int _minX;
-        private int _minY;
-        private int _maxX;
-        private int _maxY;
+        private RectInt _gridBounds;
+        private RectInt _trueBounds;
 
-        public int MinX => _minX;
-        public int MinY => _minY;
-        public int MaxX => _maxX;
-        public int MaxY => _maxY;
+        public RectInt GridBounds => _gridBounds;
+        public RectInt TrueBounds => _trueBounds;
+
+        private int _cellCount;
+        private int _trueCount;
+
+        public int CellCount => _cellCount;
+        public int TrueCount => _trueCount;
 
         public static string ColumnsName => nameof(_columns);
         public static string RowsName => nameof(_rows);
         public static string BoolsName => nameof(_bools);
 
         // You can retrieve cells relative to the pivot here. [-1, -1] is a valid request
-        public bool this[int x, int y]
+        public bool this[Vector2Int cell]
         {
             get
             {
-                int arrayX = x + _arrayOffset.x;
-                int arrayY = y + _arrayOffset.y;
-                return _bools[arrayY * Columns + arrayX];
+                TryGetBool(cell, out bool value);
+                return value;
             }
+        }
+
+        public bool TryGetBool(Vector2Int cell, out bool value)
+        {
+            value = false;
+
+            int arrayX = cell.x + _arrayOffset.x;
+            if (arrayX < 0 || arrayX >= _columns)
+            {
+                return false;
+            }
+
+            int arrayY = cell.y + _arrayOffset.y;
+            if (arrayY < 0 || arrayY >= _rows)
+            {
+                return false;
+            }
+
+            value = _bools[arrayY * Columns + arrayX];
+            return true;
         }
 
         public IEnumerator<KeyValuePair<Vector2Int, bool>> GetEnumerator()
@@ -202,77 +225,112 @@ namespace ShinyOwl.Common.Structures
             return GetEnumerator();
         }
 
-        private void OnEnable()
+        // foreach in 'this' is not so readable for what it's doing, so it's preferred to use these methods
+        public void ForEachCell(Action<Vector2Int, bool> action)
         {
-            RecalculateBounds();
-        }
-
-        public void RecalculateBounds()
-        {
-            int minX = int.MaxValue;
-            int minY = int.MaxValue;
-            int maxX = int.MinValue;
-            int maxY = int.MinValue;
-
             foreach (KeyValuePair<Vector2Int, bool> kvp in this)
             {
-                minX = Mathf.Min(minX, kvp.Key.x);
-                minY = Mathf.Min(minY, kvp.Key.y);
-                maxX = Mathf.Max(maxX, kvp.Key.x);
-                maxY = Mathf.Max(maxY, kvp.Key.y);
+                action(kvp.Key, kvp.Value);
             }
+        }
 
-            _minX = minX;
-            _minY = minY;
-            _maxX = maxX;
-            _maxY = maxY;
+        public void ForEachTrue(Action<Vector2Int, bool> action)
+        {
+            foreach (KeyValuePair<Vector2Int, bool> kvp in this)
+            {
+                if (kvp.Value)
+                {
+                    action(kvp.Key, kvp.Value);
+                }
+            }
+        }
+
+        private void OnEnable()
+        {
+            RecalculateVariables();
+        }
+
+        // Recalculates bounds and counts
+        public void RecalculateVariables()
+        {
+            int minGridX = int.MaxValue;
+            int minGridY = int.MaxValue;
+            int maxGridX = int.MinValue;
+            int maxGridY = int.MinValue;
+
+            int minTrueX = int.MaxValue;
+            int minTrueY = int.MaxValue;
+            int maxTrueX = int.MinValue;
+            int maxTrueY = int.MinValue;
+
+            int cellCount = 0;
+            int trueCount = 0;
+
+            ForEachCell((Vector2Int cell, bool value) =>
+            {
+                minGridX = Mathf.Min(minGridX, cell.x);
+                minGridY = Mathf.Min(minGridY, cell.y);
+                maxGridX = Mathf.Max(maxGridX, cell.x);
+                maxGridY = Mathf.Max(maxGridY, cell.y);
+
+                cellCount++;
+
+                if (!value)
+                {
+                    return;
+                }
+
+                minTrueX = Mathf.Min(minTrueX, cell.x);
+                minTrueY = Mathf.Min(minTrueY, cell.y);
+                maxTrueX = Mathf.Max(maxTrueX, cell.x);
+                maxTrueY = Mathf.Max(maxTrueY, cell.y);
+
+                trueCount++;
+            });
+
+            _gridBounds = new RectInt(minGridX, minGridY, maxGridX - minGridX, maxGridY - minGridY);
+            _trueBounds = new RectInt(minTrueX, minTrueY, maxTrueX - minTrueX, maxTrueY - minTrueY);
+
+            _cellCount = cellCount;
+            _trueCount = trueCount;
         }
 
         public BoolGrid GetRotated(int rotations)
         {
-            int minX = int.MaxValue;
-            int minY = int.MaxValue;
-            int maxX = int.MinValue;
-            int maxY = int.MinValue;
+            int minGridX = int.MaxValue;
+            int minGridY = int.MaxValue;
+            int maxGridX = int.MinValue;
+            int maxGridY = int.MinValue;
 
-            foreach (KeyValuePair<Vector2Int, bool> kvp in this)
+            ForEachCell((Vector2Int cell, bool value) =>
             {
-                Vector2Int rotated = RotateCell(kvp.Key, rotations);
+                Vector2Int rotated = RotateCell(cell, rotations);
 
-                minX = Mathf.Min(minX, rotated.x);
-                minY = Mathf.Min(minY, rotated.y);
-                maxX = Mathf.Max(maxX, rotated.x);
-                maxY = Mathf.Max(maxY, rotated.y);
-            }
+                minGridX = Mathf.Min(minGridX, rotated.x);
+                minGridY = Mathf.Min(minGridY, rotated.y);
+                maxGridX = Mathf.Max(maxGridX, rotated.x);
+                maxGridY = Mathf.Max(maxGridY, rotated.y);
+            });
 
             BoolGrid grid = CreateInstance<BoolGrid>();
-            grid._columns = maxX - minX + 1;
-            grid._rows = maxY - minY + 1;
+            grid._columns = maxGridX - minGridX + 1;
+            grid._rows = maxGridY - minGridY + 1;
             grid._bools = new bool[grid._columns * grid._rows];
 
             // An offset allows us to store 'negative' cells
-            grid._arrayOffset = new Vector2Int(-minX, -minY);
+            grid._arrayOffset = new Vector2Int(-minGridX, -minGridY);
 
-            foreach (KeyValuePair<Vector2Int, bool> kvp in this)
+            ForEachTrue((Vector2Int cell, bool value) =>
             {
-                // Booleans default to false
-                if (!kvp.Value)
-                {
-                    continue;
-                }
-
-                Vector2Int rotated = RotateCell(kvp.Key, rotations);
+                Vector2Int rotated = RotateCell(cell, rotations);
 
                 int arrayX = rotated.x + grid._arrayOffset.x;
                 int arrayY = rotated.y + grid._arrayOffset.y;
 
                 grid._bools[arrayY * grid._columns + arrayX] = true;
-            }
+            });
 
-            grid._minX = minX;
-            grid._minY = minY;
-            grid._maxX = maxX;
-            grid._maxY = maxY;
+            grid.RecalculateVariables();
             
             return grid;
         }

@@ -19,6 +19,9 @@ namespace FishFlingers.UI
         [SerializeField] private RectTransform _rectTransform;
         [SerializeField] private Image _image;
         [SerializeField] private TMP_Text _countText;
+        [SerializeField] private RectTransform _cellOutlinesContainer;
+
+        private PoolManager _poolManager;
 
         private InventoryItem _inventoryItem;
         private bool _isOutlined;
@@ -29,7 +32,13 @@ namespace FishFlingers.UI
         private static readonly Vector2 DefaultSlotSize = new Vector2(60, 60);
         private Vector2 _slotSize = DefaultSlotSize;
 
-        private List<CellOutline> _cellOutlines;
+        private List<CellOutline> _cellOutlines = new();
+
+
+        private void Awake()
+        {
+            _poolManager = GameManager.Instance.Get<PoolManager>();
+        }
 
         public void Setup(InventoryItem inventoryItem, bool isOutlined)
         {
@@ -42,6 +51,17 @@ namespace FishFlingers.UI
         public void SetSlotSize(Vector2 size)
         {
             _slotSize = size;
+        }
+
+        private Vector2 CalculateAnchoredPositionForCell(Vector2Int cell)
+        {
+            // Offset relative to center, and respect inherited rotation
+            Vector2 rawOffset = new Vector2(cell.x - _inventoryItem.Shape.GridBounds.center.x, cell.y - _inventoryItem.Shape.GridBounds.center.y);
+            Vector2 rotatedOffset = Utils.Math.RotateCell(rawOffset, _inventoryItem.Rotations, false);
+
+            Vector2 slotSize = _inventoryItem.Rotations % 2 == 0 ? _slotSize : new Vector2(_slotSize.y, _slotSize.x);
+
+            return rotatedOffset * slotSize;
         }
 
         // View is implied, but the method Update is taken by Monobehaviour
@@ -92,21 +112,52 @@ namespace FishFlingers.UI
                 .First()
                 .Key;
 
-            // Offset relative to center, and respect inherited rotation
-            Vector2 shapeCenter = new Vector2((_inventoryItem.Shape.MinX + _inventoryItem.Shape.MaxX) / 2f, (_inventoryItem.Shape.MinY + _inventoryItem.Shape.MaxY) / 2f);
-            Vector2 rawOffset = new Vector2(cell.x - shapeCenter.x, cell.y - shapeCenter.y);
-            Vector2 rotatedOffset = Utils.Math.RotateCell(rawOffset, _inventoryItem.Rotations, false);
+            // Position
+            _countText.rectTransform.anchoredPosition = CalculateAnchoredPositionForCell(cell);
 
-            Vector2 slotSize = _inventoryItem.Rotations % 2 == 0 ? _slotSize : new Vector2(_slotSize.y, _slotSize.x);
-
-            _countText.rectTransform.anchoredPosition = rotatedOffset * slotSize;
-
+            // Rotation
             _countText.rectTransform.eulerAngles = Vector3.zero;
         }
 
         private void UpdateOutline()
         {
+            if (!_isOutlined)
+            {
+                return;
+            }
 
+            for (int i = _cellOutlines.Count; i < _inventoryItem.Shape.TrueCount; i++)
+            {
+                CellOutline outline = _poolManager.Get<CellOutline>(new SpawnParams() { Parent = _cellOutlinesContainer });
+                _cellOutlines.Add(outline);
+            }
+
+            int index = 0;
+            _inventoryItem.Shape.ForEachTrue((Vector2Int cell, bool cellValue) =>
+            {
+                CellOutline outline = _cellOutlines[index];
+                outline.RectTransform.anchoredPosition = CalculateAnchoredPositionForCell(cell);
+                outline.RectTransform.sizeDelta = _slotSize;
+
+                Vector2Int up = Utils.Math.RotateCell(Vector2Int.up, _inventoryItem.Rotations, true);
+                Vector2Int left = Utils.Math.RotateCell(Vector2Int.left, _inventoryItem.Rotations, true);
+                Vector2Int down = Utils.Math.RotateCell(Vector2Int.down, _inventoryItem.Rotations, true);
+                Vector2Int right = Utils.Math.RotateCell(Vector2Int.right, _inventoryItem.Rotations, true);
+
+                outline.SetEnabled(
+                    !_inventoryItem.Shape.TryGetBool(cell + up, out bool topValue) || !topValue, 
+                    !_inventoryItem.Shape.TryGetBool(cell + left, out bool leftValue) || !leftValue,
+                    !_inventoryItem.Shape.TryGetBool(cell + down, out bool bottomValue) || !bottomValue,
+                    !_inventoryItem.Shape.TryGetBool(cell + right, out bool rightValue) || !rightValue);
+
+                index++;
+            });
+
+            for (int i = _cellOutlines.Count - 1; i >= _inventoryItem.Shape.TrueCount; i--)
+            {
+                _poolManager.Return(_cellOutlines[i]);
+                _cellOutlines.RemoveAt(i);
+            }
         }
     }
 }
