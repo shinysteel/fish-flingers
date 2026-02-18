@@ -53,9 +53,10 @@ public class HeldItemLogic
 
         if (_netHeldInventoryItem.value == null)
         {
+            // It's okay if targetSlotView is null here, it's handled
             if (targetItemView != null)
             {
-                Grab(targetItemView);
+                Grab(targetItemView, targetSlotView);
             }
         }
         else if (targetSlotView != null)
@@ -99,11 +100,17 @@ public class HeldItemLogic
         }
     }
 
-    private void Grab(InventoryItemView itemView)
+    private void Grab(InventoryItemView itemView, InventorySlotView slotView)
     {
         string instanceId = itemView.View.InventoryItem.ItemInstance.InstanceId;
 
-        SetHeldItem(itemView.InventoryWidget.Inventory.GetNetInventoryItem(instanceId));
+        NetInventoryItem item = itemView.InventoryWidget.Inventory.GetNetInventoryItem(instanceId);
+
+        Vector2Int pivot = slotView != null ? slotView.Cell - itemView.View.InventoryItem.Cell : Vector2Int.zero;
+        item.SetPivot(pivot);
+
+        SetHeldItem(item);
+
         itemView.InventoryWidget.Inventory.RemoveItem(instanceId);
     }
 

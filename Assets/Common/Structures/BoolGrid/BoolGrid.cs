@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.Localization.Plugins.XLIFF.V12;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -304,7 +303,7 @@ namespace ShinyOwl.Common.Structures
 
             ForEachCell((Vector2Int cell, bool value) =>
             {
-                Vector2Int rotated = RotateCell(cell, rotations);
+                Vector2Int rotated = Utils.Utils.Math.RotateCell(cell, rotations, true);
 
                 minGridX = Mathf.Min(minGridX, rotated.x);
                 minGridY = Mathf.Min(minGridY, rotated.y);
@@ -322,7 +321,7 @@ namespace ShinyOwl.Common.Structures
 
             ForEachTrue((Vector2Int cell) =>
             {
-                Vector2Int rotated = RotateCell(cell, rotations);
+                Vector2Int rotated = Utils.Utils.Math.RotateCell(cell, rotations, true);
 
                 int arrayX = rotated.x + grid._arrayOffset.x;
                 int arrayY = rotated.y + grid._arrayOffset.y;
@@ -333,25 +332,6 @@ namespace ShinyOwl.Common.Structures
             grid.RecalculateVariables();
             
             return grid;
-        }
-
-        private Vector2Int RotateCell(Vector2Int cell, int rotations)
-        {
-            switch (rotations % 4)
-            {
-                default:
-                case 0:
-                    return cell;
-
-                case 1:
-                    return new Vector2Int(cell.y, -cell.x);
-
-                case 2:
-                    return new Vector2Int(-cell.x, -cell.y);
-
-                case 3:
-                    return new Vector2Int(-cell.y, cell.x);
-            }
         }
     }
 }

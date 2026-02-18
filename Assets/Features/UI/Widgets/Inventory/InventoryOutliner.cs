@@ -105,7 +105,7 @@ namespace FishFlingers.UI
                 {
                     _targetSlotView.InventoryItem.Shape.ForEachTrue((Vector2Int cell) =>
                     {
-                        _inventoryWidget.InventorySlotViews[_targetSlotView.InventoryItem.Pivot + cell].CellOutline.SetColor(Color.white);
+                        _inventoryWidget.InventorySlotViews[_targetSlotView.InventoryItem.Cell + cell].CellOutline.SetColor(Color.white);
                     });
                 }
             }
@@ -118,7 +118,7 @@ namespace FishFlingers.UI
 
                 heldInventoryItem.Shape.ForEachTrue((Vector2Int cell) =>
                 {
-                    if (_inventoryWidget.InventorySlotViews.TryGetValue(_targetSlotView.Cell + cell, out InventorySlotView slotView))
+                    if (_inventoryWidget.InventorySlotViews.TryGetValue(_targetSlotView.Cell - heldInventoryItem.Pivot + cell, out InventorySlotView slotView))
                     {
                         slotView.CellOutline.SetColor(Color.green);
                     }
@@ -136,19 +136,19 @@ namespace FishFlingers.UI
             }
 
             // Enables only the perimeter of an item as if it existed at the given pivot
-            void EnablePerimeter(InventoryItem item, Vector2Int pivot)
+            void EnablePerimeter(InventoryItem item, Vector2Int itemCell)
             {
-                item.Shape.ForEachTrue((Vector2Int cell) =>
+                item.Shape.ForEachTrue((Vector2Int shapeCell) =>
                 {
-                    if (!_inventoryWidget.InventorySlotViews.TryGetValue(pivot + cell, out InventorySlotView slotView))
+                    if (!_inventoryWidget.InventorySlotViews.TryGetValue(itemCell - item.Pivot + shapeCell, out InventorySlotView slotView))
                     {
                         return;
                     }
                     
-                    bool top = !item.Shape.TryGetBool(cell + Vector2Int.up, out _);
-                    bool left = !item.Shape.TryGetBool(cell + Vector2Int.left, out _);
-                    bool bottom = !item.Shape.TryGetBool(cell + Vector2Int.down, out _);
-                    bool right = !item.Shape.TryGetBool(cell + Vector2Int.right, out _);
+                    bool top = !item.Shape.TryGetBool(shapeCell + Vector2Int.up, out bool topBool) || !topBool;
+                    bool left = !item.Shape.TryGetBool(shapeCell + Vector2Int.left, out bool leftBool) || !leftBool;
+                    bool bottom = !item.Shape.TryGetBool(shapeCell + Vector2Int.down, out bool bottomBool) || !bottomBool;
+                    bool right = !item.Shape.TryGetBool(shapeCell + Vector2Int.right, out bool rightBool) || !rightBool;
 
                     slotView.CellOutline.SetEnabled(top, left, bottom, right);
                 });
@@ -157,7 +157,7 @@ namespace FishFlingers.UI
             // Items only enable their 'perimeter'
             foreach (InventoryItemView itemView in _inventoryWidget.InventoryItemViews.Values)
             {
-                EnablePerimeter(itemView.View.InventoryItem, itemView.View.InventoryItem.Pivot);
+                EnablePerimeter(itemView.View.InventoryItem, itemView.View.InventoryItem.Cell);
             }
 
             InventoryItem heldInventoryItem = _inventoryWidget.Context.LocalPlayer.HeldItemLogic.HeldInventoryItem;

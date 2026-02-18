@@ -68,25 +68,50 @@ namespace FishFlingers.UI
                 return;
             }
 
+            UpdateRect();
             UpdateImage();
             UpdateCount();
         }
 
-        private void UpdateImage()
+        private void UpdateRect()
         {
             bool horizontal = _inventoryItem.Rotations % 2 == 0;
+
             int columns = horizontal ? _inventoryItem.Shape.Columns : _inventoryItem.Shape.Rows;
             int rows = horizontal ? _inventoryItem.Shape.Rows : _inventoryItem.Shape.Columns;
 
             float sizeX = horizontal ? _slotSize.x : _slotSize.y;
             float sizeY = horizontal ? _slotSize.y : _slotSize.x;
 
+            int pivotX = horizontal ? _inventoryItem.Pivot.x : _inventoryItem.Pivot.y;
+            int pivotY = horizontal ? _inventoryItem.Pivot.y : _inventoryItem.Pivot.x;
+
+            int minX = horizontal ? _inventoryItem.Shape.TrueBounds.xMin : _inventoryItem.Shape.TrueBounds.yMin;
+            int minY = horizontal ? _inventoryItem.Shape.TrueBounds.yMin : _inventoryItem.Shape.TrueBounds.xMin;
+
+            Vector2 pivot = new Vector2((pivotX - minX + 0.5f) / columns, (pivotY - minY + 0.5f) / rows);
+
+            pivot = _inventoryItem.Rotations switch
+            {
+                0 => pivot,
+                1 => new Vector2(1f - pivot.x, pivot.y),
+                2 => Vector2Int.one - pivot,
+                3 => new Vector2(pivot.x, 1f - pivot.y),
+                _ => pivot
+            };
+
+            // Pivot
+            _rectTransform.pivot = pivot;
+
             // Size
             _rectTransform.sizeDelta = new Vector2(sizeX * columns, sizeY * rows);
 
             // Rotation, negative Z is clockwise
             _rectTransform.eulerAngles = new Vector3(0f, 0f, _inventoryItem.Rotations * -90f);
+        }
 
+        private void UpdateImage()
+        {
             // Sprite
             _image.sprite = _inventoryItem.ItemInstance.Data.Sprite;
         }

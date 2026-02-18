@@ -129,7 +129,7 @@ namespace FishFlingers.UI
         {
             inventoryItem.Shape.ForEachTrue((Vector2Int cell) =>
             {
-                _inventorySlotViews[inventoryItem.Pivot + cell].SetInventoryItem(inventoryItem);
+                _inventorySlotViews[inventoryItem.Cell + cell].SetInventoryItem(inventoryItem);
             });
         }
 
@@ -137,7 +137,7 @@ namespace FishFlingers.UI
         {
             inventoryItem.Shape.ForEachTrue((Vector2Int cell) =>
             {
-                _inventorySlotViews[inventoryItem.Pivot + cell].SetInventoryItem(null);
+                _inventorySlotViews[inventoryItem.Cell + cell].SetInventoryItem(null);
             });
         }
 

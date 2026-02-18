@@ -33,19 +33,18 @@ namespace FishFlingers.UI
         {
             _view.UpdateView();
 
-            UpdateImage();
+            UpdateRect();
         }
 
-        private void UpdateImage()
+        private void UpdateRect()
         {
             bool horizontal = _view.InventoryItem.Rotations % 2 == 0;
             int columns = horizontal ? _view.InventoryItem.Shape.Columns : _view.InventoryItem.Shape.Rows;
             int rows = horizontal ? _view.InventoryItem.Shape.Rows : _view.InventoryItem.Shape.Columns;
 
             // Position
-            _view.RectTransform.pivot = new Vector2(1f / (columns * 2f), 1f / (rows * 2f));
-            InventorySlotView pivotInventorySlotView = _inventoryWidget.InventorySlotViews[_view.InventoryItem.Pivot];
-            _view.RectTransform.anchoredPosition = pivotInventorySlotView.RectTransform.anchoredPosition;
+            InventorySlotView slotView = _inventoryWidget.InventorySlotViews[_view.InventoryItem.Cell];
+            _view.RectTransform.anchoredPosition = slotView.RectTransform.anchoredPosition;
         }
 
         public void OnTakenFromPool() { }
