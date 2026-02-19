@@ -1,24 +1,24 @@
+using FishFlingers.Environments;
+using FishFlingers.Inventories;
+using FishFlingers.Scenes;
 using PurrLobby;
 using PurrNet;
 using PurrNet.Modules;
+using PurrNet.Packing;
+using PurrNet.Steam;
 using PurrNet.Transports;
 using ShinyOwl.Common;
 using Steamworks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
-using System.Net.Sockets;
-using PurrNet.Steam;
-using System.Linq;
-using System;
-using FishFlingers.Scenes;
-
 using Object = UnityEngine.Object;
-using PurrNet.Packing;
-using FishFlingers.Inventories;
-using FishFlingers.Environments;
 
 namespace FishFlingers.Networking
 {
@@ -93,6 +93,17 @@ namespace FishFlingers.Networking
             _purrnetNetworkManager.onPlayerLeft -= HandlePlayerLeft;
 
             base.Shutdown();
+        }
+
+        // SyncVar 'onChanged' events aren't fired for the host even when using SetDirty or FlushImmediately. Using reflection
+        // we can emulate this
+        public void ChangeSyncVar<T>(SyncVar<T> syncVar, Action change) where T : IDeepCloneable<T>
+        {
+            T oldValue = syncVar.value.DeepClone();
+            change?.Invoke();
+            syncVar.SetDirty();
+            string methodName = "TriggerEvents";
+            syncVar.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance).Invoke(syncVar, new object[] { oldValue });
         }
 
         // We no longer need to raise the OnNetworkSpawn event here, but its nice to route

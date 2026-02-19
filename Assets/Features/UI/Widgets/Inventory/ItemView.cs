@@ -21,8 +21,6 @@ namespace FishFlingers.UI
         [SerializeField] private TMP_Text _countText;
         [SerializeField] private RectTransform _cellOutlinesContainer;
 
-        private PoolManager _poolManager;
-
         private InventoryItem _inventoryItem;
 
         public RectTransform RectTransform => _rectTransform;
@@ -30,12 +28,6 @@ namespace FishFlingers.UI
 
         private static readonly Vector2 DefaultSlotSize = new Vector2(60, 60);
         private Vector2 _slotSize = DefaultSlotSize;
-
-
-        private void Awake()
-        {
-            _poolManager = GameManager.Instance.Get<PoolManager>();
-        }
 
         public void Setup(InventoryItem inventoryItem)
         {
@@ -89,7 +81,7 @@ namespace FishFlingers.UI
             int minX = horizontal ? _inventoryItem.Shape.TrueBounds.xMin : _inventoryItem.Shape.TrueBounds.yMin;
             int minY = horizontal ? _inventoryItem.Shape.TrueBounds.yMin : _inventoryItem.Shape.TrueBounds.xMin;
 
-            Vector2 pivot = new Vector2((pivotX - minX + 0.5f) / columns, (pivotY - minY + 0.5f) / rows);
+            Vector2 pivot = new Vector2((-minX + 0.5f) / columns, (-minY + 0.5f) / rows);
 
             pivot = _inventoryItem.Rotations switch
             {

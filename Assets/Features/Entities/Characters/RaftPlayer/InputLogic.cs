@@ -8,8 +8,10 @@ namespace FishFlingers.Entities
 
         // Vars always active
         private bool _click;
+        private bool _rotate;
 
         public bool Click => _click;
+        public bool Rotate => _rotate;
 
         // Vars dependent on RaftPlayer.CanAct
         private Vector2 _mouse;
@@ -32,6 +34,7 @@ namespace FishFlingers.Entities
         public void Tick()
         {
             _click = Input.GetMouseButtonDown(0);
+            _rotate = Input.GetKeyDown(KeyCode.R);
 
             if (_player.CanAct)
             {

@@ -1,4 +1,5 @@
 using FishFlingers.Pools;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +13,20 @@ namespace FishFlingers.UI
         [SerializeField] private Image _bottomImage;
         [SerializeField] private Image _rightImage;
 
+        [SerializeField] private Color _defaultColor = Color.grey;
+        [SerializeField] private Color _highlightColor = Color.white;
+        [SerializeField] private Color _validColor = Color.green;
+        [SerializeField] private Color _invalidColor = Color.red;
+
         public RectTransform RectTransform => _rectTransform;
+
+        public enum EColor
+        {
+            Default     ,
+            Highlighted ,
+            Valid       ,
+            Invalid     ,
+        }
 
         private void Awake()
         {
@@ -27,8 +41,17 @@ namespace FishFlingers.UI
             _rightImage.enabled = right;
         }
 
-        public void SetColor(Color color)
+        public void SetColor(EColor colorEnum)
         {
+            Color color = colorEnum switch
+            {
+                EColor.Default => _defaultColor,
+                EColor.Highlighted => _highlightColor,
+                EColor.Valid => _validColor,
+                EColor.Invalid => _invalidColor,
+                _ => _defaultColor
+            };
+
             _topImage.color = color;
             _leftImage.color = color;
             _bottomImage.color = color;

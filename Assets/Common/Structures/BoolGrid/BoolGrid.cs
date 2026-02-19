@@ -158,9 +158,6 @@ namespace ShinyOwl.Common.Structures
 
         private Vector2Int _arrayOffset;
 
-        private Vector2Int _pivot;
-        public Vector2Int Pivot => _pivot;
-
         private RectInt _gridBounds;
         private RectInt _trueBounds;
 
@@ -294,7 +291,7 @@ namespace ShinyOwl.Common.Structures
             _trueCount = trueCount;
         }
 
-        public BoolGrid GetRotated(int rotations)
+        public BoolGrid GetTransformed(Vector2Int pivot, int rotations)
         {
             int minGridX = int.MaxValue;
             int minGridY = int.MaxValue;
@@ -303,7 +300,7 @@ namespace ShinyOwl.Common.Structures
 
             ForEachCell((Vector2Int cell, bool value) =>
             {
-                Vector2Int rotated = Utils.Utils.Math.RotateCell(cell, rotations, true);
+                Vector2Int rotated = Utils.Utils.Math.RotateCell(cell - pivot, rotations, true);
 
                 minGridX = Mathf.Min(minGridX, rotated.x);
                 minGridY = Mathf.Min(minGridY, rotated.y);
@@ -321,7 +318,7 @@ namespace ShinyOwl.Common.Structures
 
             ForEachTrue((Vector2Int cell) =>
             {
-                Vector2Int rotated = Utils.Utils.Math.RotateCell(cell, rotations, true);
+                Vector2Int rotated = Utils.Utils.Math.RotateCell(cell - pivot, rotations, true);
 
                 int arrayX = rotated.x + grid._arrayOffset.x;
                 int arrayY = rotated.y + grid._arrayOffset.y;

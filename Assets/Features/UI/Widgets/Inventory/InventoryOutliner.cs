@@ -89,7 +89,7 @@ namespace FishFlingers.UI
             // By default, all cells are grey
             foreach (InventorySlotView slotView in _inventoryWidget.InventorySlotViews.Values)
             {
-                slotView.CellOutline.SetColor(Color.gray);
+                slotView.CellOutline.SetColor(CellOutline.EColor.Default);
             }
 
             if (_targetSlotView == null)
@@ -105,22 +105,23 @@ namespace FishFlingers.UI
                 {
                     _targetSlotView.InventoryItem.Shape.ForEachTrue((Vector2Int cell) =>
                     {
-                        _inventoryWidget.InventorySlotViews[_targetSlotView.InventoryItem.Cell + cell].CellOutline.SetColor(Color.white);
+                        _inventoryWidget.InventorySlotViews[_targetSlotView.InventoryItem.Cell + cell].CellOutline.SetColor(CellOutline.EColor.Highlighted);
                     });
                 }
             }
             else
             {
                 // Color the potential place action green or red
-                Color color = true
-                    ? Color.green
-                    : Color.red;
+                CellOutline.EColor color = _inventoryWidget.Inventory.CanPlaceItems(_targetSlotView.Cell, heldInventoryItem.Pivot, new RotationParams() { Rotations = heldInventoryItem.Rotations },
+                    heldInventoryItem.ItemInstance.Data.ItemId, heldInventoryItem.ItemInstance.Count, out _, out _, out _)
+                    ? CellOutline.EColor.Valid
+                    : CellOutline.EColor.Invalid;
 
                 heldInventoryItem.Shape.ForEachTrue((Vector2Int cell) =>
                 {
-                    if (_inventoryWidget.InventorySlotViews.TryGetValue(_targetSlotView.Cell - heldInventoryItem.Pivot + cell, out InventorySlotView slotView))
+                    if (_inventoryWidget.InventorySlotViews.TryGetValue(_targetSlotView.Cell + cell, out InventorySlotView slotView))
                     {
-                        slotView.CellOutline.SetColor(Color.green);
+                        slotView.CellOutline.SetColor(color);
                     }
                 });
             }
@@ -140,7 +141,7 @@ namespace FishFlingers.UI
             {
                 item.Shape.ForEachTrue((Vector2Int shapeCell) =>
                 {
-                    if (!_inventoryWidget.InventorySlotViews.TryGetValue(itemCell - item.Pivot + shapeCell, out InventorySlotView slotView))
+                    if (!_inventoryWidget.InventorySlotViews.TryGetValue(itemCell + shapeCell, out InventorySlotView slotView))
                     {
                         return;
                     }

@@ -52,7 +52,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.UI.InventorySlot
   _rectTransform: {fileID: 7159542584151935292}
+  _image: {fileID: 8945574900454679932}
   _cellOutline: {fileID: 8641748338361621391}
+  _defaultColor: {r: 0.23137255, g: 0.18431373, b: 0.14117648, a: 1}
+  _tintedColor: {r: 0.34117648, g: 0.34117648, b: 0.34117648, a: 1}
 --- !u!222 &1891735651211777932
 CanvasRenderer:
   m_ObjectHideFlags: 0
