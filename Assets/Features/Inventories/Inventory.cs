@@ -14,6 +14,29 @@ using UnityEngine.UIElements;
 
 namespace FishFlingers.Inventories
 {
+    public class PlaceParams
+    {
+        public Vector2Int Cell { get; set; } = Vector2Int.zero;
+        public Vector2Int Pivot { get; set; } = Vector2Int.zero;
+        public RotationParams RotationParams { get; set; } = new();
+        public string InstanceId { get; set; } = null;
+        public ItemId ItemId { get; set; } = default;
+        public int Amount { get; set; } = 0;
+
+        public static PlaceParams Create(Vector2Int cell, InventoryItem item)
+        {
+            return new PlaceParams()
+            {
+                Cell = cell,
+                Pivot = item.Pivot,
+                RotationParams = new RotationParams() { Rotations = item.Rotations },
+                InstanceId = item.ItemInstance.InstanceId,
+                ItemId = item.ItemInstance.Data.ItemId,
+                Amount = item.ItemInstance.Count
+            };
+        }
+    }
+
     public class RotationParams
     {
         public int Rotations { get; set; } = 0;
@@ -454,9 +477,9 @@ namespace FishFlingers.Inventories
         /// Tries to add the given count of an item to a slot. If an item is already there, tries to
         /// add to it. If not, tries to fit by rotating around the pivot
         /// </summary>
-        public bool TryPlaceItems(Vector2Int cell, Vector2Int pivot, RotationParams rotationParams, string instanceId, ItemId itemId, int amount, bool allowPartial, out int overflow)
+        public bool TryPlaceItems(PlaceParams placeParams, bool allowPartial, out int overflow)
         {
-            overflow = amount;
+            overflow = placeParams.Amount;
 
             if (!isOwner)
             {
@@ -464,7 +487,7 @@ namespace FishFlingers.Inventories
                 return false;
             }
 
-            if (!CanPlaceItems(cell, pivot, rotationParams, instanceId, itemId, amount, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change) || overflow > 0)
+            if (!CanPlaceItems(placeParams, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change) || overflow > 0)
             {
                 if (!allowPartial)
                 {
@@ -482,7 +505,7 @@ namespace FishFlingers.Inventories
                 ProcessNetInventoryItemsChange(change);
             }
 
-            return allowPartial ? overflow < amount : true;
+            return allowPartial ? overflow < placeParams.Amount : true;
         }
 
         /// <summary>
@@ -572,7 +595,15 @@ namespace FishFlingers.Inventories
                         continue;
                     }
 
-                    if (!CanPlaceItems(kvp.Key, Vector2Int.zero, new RotationParams() { AutoFit = true }, null, itemId, overflow, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change))
+                    PlaceParams placeParams = new PlaceParams()
+                    {
+                        Cell = kvp.Key,
+                        RotationParams = new RotationParams() { AutoFit = true },
+                        ItemId = itemId,
+                        Amount = overflow
+                    };
+
+                    if (!CanPlaceItems(placeParams, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change))
                     {
                         continue;
                     }
@@ -599,40 +630,40 @@ namespace FishFlingers.Inventories
         }
 
         // Placing can result in either a place or change, depending on if the cell is occupied or not
-        public bool CanPlaceItems(Vector2Int itemCell, Vector2Int pivot, RotationParams rotationParams, string instanceId, ItemId itemId, int amount, out int overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change)
+        public bool CanPlaceItems(PlaceParams placeParams, out int overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change)
         {
-            overflow = amount;
+            overflow = placeParams.Amount;
             place = default;
             change = default;
 
-            ItemData data = _itemManager.GetItemData(itemId);
+            ItemData data = _itemManager.GetItemData(placeParams.ItemId);
 
-            if (data == null || amount <= 0 || amount > data.MaxStack)
+            if (data == null || placeParams.Amount <= 0 || placeParams.Amount > data.MaxStack)
             {
                 Log.Error(this, "Checked if invalid items can be placed");
                 return false;
             }
 
             // Check if the cell exists
-            if (!_netInventorySlots.TryGetValue(itemCell, out NetInventorySlot netInventorySlot))
+            if (!_netInventorySlots.TryGetValue(placeParams.Cell, out NetInventorySlot netInventorySlot))
             {
                 return false;
             }
 
             // Check if the cell is occupied. If so, check if we can add to it
-            if (netInventorySlot.ItemInstanceId != null && netInventorySlot.ItemInstanceId != instanceId)
+            if (netInventorySlot.ItemInstanceId != null && netInventorySlot.ItemInstanceId != placeParams.InstanceId)
             {
                 NetInventoryItem netInventoryItem = _netInventoryItems[netInventorySlot.ItemInstanceId];
-                return netInventoryItem.ItemId == itemId && netInventoryItem.CanAddCount(amount, out overflow, out change);
+                return netInventoryItem.ItemId == placeParams.ItemId && netInventoryItem.CanAddCount(placeParams.Amount, out overflow, out change);
             }
 
             BoolGrid placeShape = null;
             int rotations;
 
             // Test cell and rotation combinations for a fit
-            for (rotations = rotationParams.Rotations; rotations < rotationParams.Rotations + (rotationParams.AutoFit ? 4 : 1); rotations++)
+            for (rotations = placeParams.RotationParams.Rotations; rotations < placeParams.RotationParams.Rotations + (placeParams.RotationParams.AutoFit ? 4 : 1); rotations++)
             {
-                BoolGrid shape = data.Shape.GetTransformed(pivot, rotations);
+                BoolGrid shape = data.Shape.GetTransformed(placeParams.Pivot, rotations);
                 bool fits = true;
 
                 shape.ForEachTrue((Vector2Int shapeCell) =>
@@ -642,14 +673,14 @@ namespace FishFlingers.Inventories
                         return;
                     }
                     
-                    if (!_netInventorySlots.TryGetValue(itemCell + shapeCell, out NetInventorySlot slot))
+                    if (!_netInventorySlots.TryGetValue(placeParams.Cell + shapeCell, out NetInventorySlot slot))
                     {
                         fits = false;
                         return;
                     }
 
                     // It's okay to match our instanceId, since it would then be moving the item
-                    if (slot.ItemInstanceId != null && slot.ItemInstanceId != instanceId)
+                    if (slot.ItemInstanceId != null && slot.ItemInstanceId != placeParams.InstanceId)
                     {
                         fits = false;
                         return;
@@ -668,10 +699,10 @@ namespace FishFlingers.Inventories
                 return false;
             }
 
-            int placeAmount = Mathf.Min(amount, data.MaxStack);
+            int placeAmount = Mathf.Min(placeParams.Amount, data.MaxStack);
 
             overflow -= placeAmount;
-            place = new NetInventoryItemsPlace(instanceId, itemId, placeAmount, itemCell, pivot, rotations, placeShape);
+            place = new NetInventoryItemsPlace(placeParams.InstanceId, placeParams.ItemId, placeAmount, placeParams.Cell, placeParams.Pivot, rotations, placeShape);
 
             return true;
         }

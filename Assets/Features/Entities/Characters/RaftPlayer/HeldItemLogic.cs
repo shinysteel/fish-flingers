@@ -27,7 +27,7 @@ public class HeldItemLogic
     private InventoryItem _heldInventoryItem;
     public InventoryItem HeldInventoryItem => _heldInventoryItem;
 
-    private InventoryItemView _grabbedInventoryItemView;
+    private InventoryItemView _grabbedItemView;
     
     private const float GrabAlpha = 0.5f;
 
@@ -100,6 +100,9 @@ public class HeldItemLogic
         }
     }
 
+    /// <summary>
+    /// Retrieve relevant views to target under the cursor
+    /// </summary>
     private void GetTargetViews(out InventoryItemView targetItemView, out HotbarWidgetSlot targetHotbarSlot, out InventorySlotView targetInventorySlot)
     {
         targetItemView = null;
@@ -137,26 +140,31 @@ public class HeldItemLogic
         }
     }
 
+    /// <summary>
+    /// Mark an item as 'grabbed', and visualise it on the cursor
+    /// </summary>
     private void Grab(InventoryItemView itemView, InventorySlotView slotView)
     {
-        _grabbedInventoryItemView = itemView;
-        _grabbedInventoryItemView.View.SetAlpha(GrabAlpha);
-
-        _grabbedInventoryItemView.InventoryWidget.Inventory.OnInventoryItemChanged += HandleInventoryItemChanged;
-
-        string instanceId = _grabbedInventoryItemView.View.InventoryItem.ItemInstance.InstanceId;
-
         // The item needs to be a clone so that rotating it doesn't affect the original
-        NetInventoryItem item = _grabbedInventoryItemView.InventoryWidget.Inventory.NetInventoryItems[instanceId].DeepClone();
+        string instanceId = itemView.View.InventoryItem.ItemInstance.InstanceId;
+        NetInventoryItem item = itemView.InventoryWidget.Inventory.NetInventoryItems[instanceId].DeepClone();
          
         Vector2Int origin = item.Cell - Utils.Math.RotateCell(item.Pivot, item.Rotations, true);
         Vector2Int offset = slotView.Cell - origin;
         Vector2Int pivot = Utils.Math.RotateCell(offset, item.Rotations, false);
         item.SetPivot(pivot);
 
-        SetHeldItem(item);
+        SetNetHeldInventoryItem(item);
+
+        // Listen for changes while we hold it
+        _grabbedItemView = itemView;
+        _grabbedItemView.View.SetAlpha(GrabAlpha);
+        _grabbedItemView.InventoryWidget.Inventory.OnInventoryItemChanged += HandleInventoryItemChanged;
     }
 
+    /// <summary>
+    /// Retrieve relevant views to target under the cursor
+    /// </summary>
     private void Assign(HotbarWidgetSlot slot)
     {
         _player.Hotbar.SetSlot(slot.Index, _heldInventoryItem);
@@ -164,15 +172,27 @@ public class HeldItemLogic
         Release();
     }
 
+    /// <summary>
+    /// Place the held item at an inventory slot
+    /// </summary>
     private void Place(InventorySlotView slotView)
     {
-        if (slotView.InventoryWidget.Inventory.TryPlaceItems(slotView.Cell, _netHeldInventoryItem.value.Pivot, new RotationParams() { Rotations = _netHeldInventoryItem.value.Rotations }, 
-            _grabbedInventoryItemView.View.InventoryItem.ItemInstance.InstanceId, _grabbedInventoryItemView.View.InventoryItem.ItemInstance.Data.ItemId, _grabbedInventoryItemView.View.InventoryItem.ItemInstance.Count, true, out int overflow))
+        PlaceParams placeParams = new PlaceParams()
+        {
+            Cell = slotView.Cell,
+            Pivot = _netHeldInventoryItem.value.Pivot,
+            RotationParams = new RotationParams() { Rotations = _netHeldInventoryItem.value.Rotations },
+            InstanceId = _grabbedItemView.View.InventoryItem.ItemInstance.InstanceId,
+            ItemId = _grabbedItemView.View.InventoryItem.ItemInstance.Data.ItemId,
+            Amount = _grabbedItemView.View.InventoryItem.ItemInstance.Count
+        };
+
+        if (slotView.InventoryWidget.Inventory.TryPlaceItems(placeParams, true, out int overflow))
         {
             if (overflow > 0)
             {
-                _grabbedInventoryItemView.InventoryWidget.Inventory.NetInventoryItems[_netHeldInventoryItem.value.InstanceId].SetCount(overflow);
-                _grabbedInventoryItemView.InventoryWidget.Inventory.NetInventoryItems.SetDirty(_netHeldInventoryItem.value.InstanceId);
+                _grabbedItemView.InventoryWidget.Inventory.NetInventoryItems[_netHeldInventoryItem.value.InstanceId].SetCount(overflow);
+                _grabbedItemView.InventoryWidget.Inventory.NetInventoryItems.SetDirty(_netHeldInventoryItem.value.InstanceId);
             }
             else
             {
@@ -181,23 +201,29 @@ public class HeldItemLogic
         }
     }
 
+    /// <summary>
+    /// Drop the held item out of the inventory
+    /// </summary>
     private void Drop()
     {
-        _grabbedInventoryItemView.InventoryWidget.Inventory.RemoveItem(_heldInventoryItem.ItemInstance.InstanceId);
+        _grabbedItemView.InventoryWidget.Inventory.RemoveItem(_heldInventoryItem.ItemInstance.InstanceId);
         Release();
     }
 
+    /// <summary>
+    /// Call this after a hold action is resolved
+    /// </summary>
     private void Release()
     {
-        _grabbedInventoryItemView.InventoryWidget.Inventory.OnInventoryItemChanged -= HandleInventoryItemChanged;
+        _grabbedItemView.InventoryWidget.Inventory.OnInventoryItemChanged -= HandleInventoryItemChanged;
 
-        _grabbedInventoryItemView.View.ResetAlpha();
-        _grabbedInventoryItemView = null;
+        _grabbedItemView.View.ResetAlpha();
+        _grabbedItemView = null;
 
-        SetHeldItem(null);
+        SetNetHeldInventoryItem(null);
     }
 
-    private void SetHeldItem(NetInventoryItem item)
+    private void SetNetHeldInventoryItem(NetInventoryItem item)
     {
         if (_netHeldInventoryItem.value == item)
         {
@@ -207,6 +233,9 @@ public class HeldItemLogic
         _netHeldInventoryItem.value = item;
     }
 
+    /// <summary>
+    /// Broadcasts changes to the net held item in a nicer format
+    /// </summary>
     private void HandleNetHeldInventoryItemChanged(NetInventoryItem item)
     {
         _heldInventoryItem = item != null ? new InventoryItem(item) : null;
@@ -214,9 +243,17 @@ public class HeldItemLogic
         OnChanged?.Invoke(_heldInventoryItem);
     }
 
+    /// <summary>
+    /// If the source of the item we are holding has changes, we need to match them
+    /// </summary>
     private void HandleInventoryItemChanged(string instanceId, InventoryItem oldInventoryItem, InventoryItem newInventoryItem)
     {
-        if (instanceId != _netHeldInventoryItem.value.InstanceId)
+        if (_netHeldInventoryItem.value == null)
+        {
+            return;
+        }
+
+        if (_netHeldInventoryItem.value.InstanceId != instanceId)
         {
             return;
         }

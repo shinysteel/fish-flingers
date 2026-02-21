@@ -112,8 +112,7 @@ namespace FishFlingers.UI
             else
             {
                 // Color the potential place action green or red
-                CellOutline.EColor color = _inventoryWidget.Inventory.CanPlaceItems(_targetSlotView.Cell, heldInventoryItem.Pivot, new RotationParams() { Rotations = heldInventoryItem.Rotations },
-                    heldInventoryItem.ItemInstance.InstanceId, heldInventoryItem.ItemInstance.Data.ItemId, heldInventoryItem.ItemInstance.Count, out _, out _, out _)
+                CellOutline.EColor color = _inventoryWidget.Inventory.CanPlaceItems(PlaceParams.Create(_targetSlotView.Cell, heldInventoryItem), out _, out _, out _)
                     ? CellOutline.EColor.Valid
                     : CellOutline.EColor.Invalid;
 
