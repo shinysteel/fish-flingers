@@ -89,7 +89,7 @@ namespace FishFlingers.UI
             // By default, all cells are grey
             foreach (InventorySlotView slotView in _inventoryWidget.InventorySlotViews.Values)
             {
-                slotView.CellOutline.SetColor(CellOutline.EColor.Default);
+                slotView.View.CellOutline.SetColor(CellOutline.EColor.Default);
             }
 
             if (_targetSlotView == null)
@@ -105,7 +105,7 @@ namespace FishFlingers.UI
                 {
                     _targetSlotView.InventoryItem.Shape.ForEachTrue((Vector2Int cell) =>
                     {
-                        _inventoryWidget.InventorySlotViews[_targetSlotView.InventoryItem.Cell + cell].CellOutline.SetColor(CellOutline.EColor.Highlighted);
+                        _inventoryWidget.InventorySlotViews[_targetSlotView.InventoryItem.Cell + cell].View.CellOutline.SetColor(CellOutline.EColor.Highlighted);
                     });
                 }
             }
@@ -121,7 +121,7 @@ namespace FishFlingers.UI
                 {
                     if (_inventoryWidget.InventorySlotViews.TryGetValue(_targetSlotView.Cell + cell, out InventorySlotView slotView))
                     {
-                        slotView.CellOutline.SetColor(color);
+                        slotView.View.CellOutline.SetColor(color);
                     }
                 });
             }
@@ -133,7 +133,7 @@ namespace FishFlingers.UI
             // By default, all sides are enabled
             foreach (InventorySlotView slotView in _inventoryWidget.InventorySlotViews.Values)
             {
-                slotView.CellOutline.SetEnabled(true, true, true, true);
+                slotView.View.CellOutline.SetEnabled(true, true, true, true);
             }
 
             // Enables only the perimeter of an item as if it existed at the given pivot
@@ -151,7 +151,7 @@ namespace FishFlingers.UI
                     bool bottom = !item.Shape.TryGetBool(shapeCell + Vector2Int.down, out bool bottomBool) || !bottomBool;
                     bool right = !item.Shape.TryGetBool(shapeCell + Vector2Int.right, out bool rightBool) || !rightBool;
 
-                    slotView.CellOutline.SetEnabled(top, left, bottom, right);
+                    slotView.View.CellOutline.SetEnabled(top, left, bottom, right);
                 });
             }
 

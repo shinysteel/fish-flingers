@@ -18,8 +18,11 @@ namespace FishFlingers.Entities
         [SerializeField] private CapsuleCollider _capsuleCollider;
 
         [SerializeField] private Inventory _inventory;
-
         [SerializeField] private BoolGrid _inventoryLayout;
+        public Inventory Inventory => _inventory;
+
+        private Hotbar _hotbar;
+        public Hotbar Hotbar => _hotbar;
 
         private InputLogic _inputLogic;
         private PhysicsLogic _physicsLogic;
@@ -27,8 +30,6 @@ namespace FishFlingers.Entities
         private HeldItemLogic _heldItemLogic;
 
         public HeldItemLogic HeldItemLogic => _heldItemLogic;
-
-        public Inventory Inventory => _inventory;
         public bool CanAct => _uiManager.IsLayerEmpty(UILayer.Panels);
 
         // SyncVars
@@ -68,6 +69,11 @@ namespace FishFlingers.Entities
         public override void Initialise(GameplayContext context)
         {
             base.Initialise(context);
+
+            if (isOwner)
+            {
+                _hotbar = new Hotbar(context);
+            }
 
             // Spawn on a random starting tile
             transform.position = _context.Raft.TryGetRandomTile(out RaftTile tile) ? _context.Raft.CellToWorldPosition(tile.Cell) : Vector3.zero;

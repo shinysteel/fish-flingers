@@ -36,7 +36,7 @@ namespace FishFlingers.UI
             foreach (Structure structure in structures)
             {
                 BlueprintEntry entry = _poolManager.Get<BlueprintEntry>(new SpawnParams() { Parent = _blueprintsScrollRect.content });
-                entry.Setup(structure.StructureData, context);
+                entry.Setup(context, structure.StructureData);
 
                 _blueprintEntries[i] = entry;
                 i++;

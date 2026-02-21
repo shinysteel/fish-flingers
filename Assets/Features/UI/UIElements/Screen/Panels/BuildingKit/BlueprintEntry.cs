@@ -20,8 +20,8 @@ namespace FishFlingers.UI
         private LocalisationManager _localisationManager;
         private PoolManager _poolManager;
 
-        private StructureData _data;
         private GameplayContext _context;
+        private StructureData _data;
 
         private RequirementEntry[] _requirementEntries;
 
@@ -33,10 +33,10 @@ namespace FishFlingers.UI
             _buildButton.onClick.AddListener(BuildPressed);
         }
 
-        public void Setup(StructureData data, GameplayContext context)
+        public void Setup(GameplayContext context, StructureData data)
         {
-            _data = data;
             _context = context;
+            _data = data;
 
             _image.sprite = data.Sprite;
             _nameText.text = _localisationManager.GetString(data.NameTerm);

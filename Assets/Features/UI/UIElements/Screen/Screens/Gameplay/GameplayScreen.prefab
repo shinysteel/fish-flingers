@@ -211,13 +211,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9159921681338256375, guid: 1b8b784c76922f245ad6b6104b0993a0, type: 3}
       propertyPath: m_Name
-      value: Hotbar
+      value: HotbarView
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b8b784c76922f245ad6b6104b0993a0, type: 3}
+--- !u!114 &151483751781141703 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1939304295666262477, guid: 1b8b784c76922f245ad6b6104b0993a0, type: 3}
+  m_PrefabInstance: {fileID: 1798035007180844298}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b1f79c075326114cbb9b18a5776b9db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hotbar
 --- !u!224 &4845540541817109415 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6615002952626607789, guid: 1b8b784c76922f245ad6b6104b0993a0, type: 3}
@@ -527,6 +538,7 @@ MonoBehaviour:
   _uiAnimation: {fileID: 6644086406560650574}
   _rectTransform: {fileID: 1576200530004624215}
   _canvasGroup: {fileID: 3187213274882280027}
+  _hotbarView: {fileID: 151483751781141703}
   _settingsButton: {fileID: 8585480431251104968}
   _fishingBagButton: {fileID: 8012368499549825537}
   _buildingKitButton: {fileID: 2778907295588301707}

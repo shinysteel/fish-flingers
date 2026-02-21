@@ -8,9 +8,14 @@ namespace FishFlingers.Networking
     {
         protected GameplayContext _context;
 
+        protected bool _isInitialised;
+        public bool IsInitialised => _isInitialised;
+
         public virtual void Initialise(GameplayContext context)
         {
             _context = context;
+
+            _isInitialised = true;
         }
     }
 }

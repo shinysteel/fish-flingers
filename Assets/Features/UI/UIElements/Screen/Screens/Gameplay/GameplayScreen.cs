@@ -11,6 +11,7 @@ namespace FishFlingers.UI
 {
     public class GameplayScreen : ScreenUI
     {
+        [SerializeField] private HotbarView _hotbarView;
         [SerializeField] private Button _settingsButton;
         [SerializeField] private Button _fishingBagButton;
         [SerializeField] private Button _buildingKitButton;
@@ -35,6 +36,8 @@ namespace FishFlingers.UI
         public void Setup(GameplayContext context)
         {
             _context = context;
+
+            _hotbarView.Setup(context);
         }
 
         private void Update()

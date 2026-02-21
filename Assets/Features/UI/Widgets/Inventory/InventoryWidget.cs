@@ -18,11 +18,11 @@ namespace FishFlingers.UI
 
         private PoolManager _poolManager;
 
-        private Inventory _inventory;
-        public Inventory Inventory => _inventory;
-
         private GameplayContext _context;
         public GameplayContext Context => _context;
+
+        private Inventory _inventory;
+        public Inventory Inventory => _inventory;
 
         private Vector2 _slotSize;
         public Vector2 SlotSize => _slotSize;
@@ -40,10 +40,10 @@ namespace FishFlingers.UI
             _poolManager = GameManager.Instance.Get<PoolManager>();
         }
 
-        public void Setup(Inventory inventory, GameplayContext context)
+        public void Setup(GameplayContext context, Inventory inventory)
         {
-            _inventory = inventory;
             _context = context;
+            _inventory = inventory;
 
             // Setup slot and item views
             _inventorySlotViews = CreateInventorySlotViews();
@@ -197,7 +197,7 @@ namespace FishFlingers.UI
                     (kvp.Key.x - pivotX) * _slotSize.x,
                     (kvp.Key.y - pivotY) * _slotSize.y);
 
-                kvp.Value.SetTransform(position, _slotSize);
+                kvp.Value.View.SetTransform(position, _slotSize);
             }
         }
 

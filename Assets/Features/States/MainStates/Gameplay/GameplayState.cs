@@ -142,6 +142,12 @@ namespace FishFlingers.States
                     }
                 }
 
+                // Avoid timing issues by making sure the localPlayer is initialised before continuing
+                while (!localPlayer.IsInitialised)
+                {
+                    await Task.Yield();
+                }
+
                 _gameplayScreen = await _uiManager.CreateScreenUIAsync(_uiManager.Config.GameplayScreenPrefab, UILayer.Screens);
                 _gameplayScreen.Setup(_context);
                 _gameplayScreen.Show(null);

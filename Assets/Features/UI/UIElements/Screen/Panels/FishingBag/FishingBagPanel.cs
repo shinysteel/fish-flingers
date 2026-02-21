@@ -10,10 +10,12 @@ namespace FishFlingers.UI
     public class FishingBagPanel : Panel
     {
         [SerializeField] private InventoryWidget _inventoryWidget;
+        [SerializeField] private HotbarWidget _hotbarWidget;
 
         public void Setup(GameplayContext context)
         {
-            _inventoryWidget.Setup(context.LocalPlayer.Inventory, context);
+            _inventoryWidget.Setup(context, context.LocalPlayer.Inventory);
+            _hotbarWidget.Setup(context);
         }
     }
 }

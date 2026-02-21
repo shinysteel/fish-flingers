@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80f9c469db7af284f9ebbdc40940d045, type: 3}
   m_Name: PlayerInventory
   m_EditorClassIdentifier: Assembly-CSharp::ShinyOwl.Common.Structures.BoolGrid
-  _columns: 7
-  _rows: 7
-  _bools: 00000000000000000101010101000001010101010000010101010100000101010101000001010101010000000000000000
+  _columns: 6
+  _rows: 5
+  _bools: 010101010101010101010101010101010101010101010101010101010101
