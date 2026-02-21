@@ -31,8 +31,7 @@ namespace FishFlingers.UI
             for (int i = 0; i < _hotbar.Slots.Count; i++)
             {
                 _slots[i] = _poolManager.Get<HotbarWidgetSlot>(new SpawnParams() { Parent = transform });
-                _slots[i].View.CellOutline.SetColor(CellOutline.EColor.Default);
-                _slots[i].View.CellOutline.SetEnabled(true, true, true, true);
+                _slots[i].Setup(i);
             }
 
             OnRectTransformDimensionsChange();

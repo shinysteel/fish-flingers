@@ -29,7 +29,9 @@ namespace FishFlingers.Entities
         private InteractLogic _interactLogic;
         private HeldItemLogic _heldItemLogic;
 
+        public InputLogic InputLogic => _inputLogic;
         public HeldItemLogic HeldItemLogic => _heldItemLogic;
+
         public bool CanAct => _uiManager.IsLayerEmpty(UILayer.Panels);
 
         // SyncVars
@@ -46,7 +48,7 @@ namespace FishFlingers.Entities
             _inputLogic = new InputLogic(this);
             _physicsLogic = new PhysicsLogic(this, _inputLogic, _capsuleCollider);
             _interactLogic = new InteractLogic(this, _inputLogic);
-            _heldItemLogic = new HeldItemLogic(_netHeldInventoryItem, _inputLogic);
+            _heldItemLogic = new HeldItemLogic(this, _netHeldInventoryItem);
 
             if (isOwner)
             {

@@ -171,6 +171,7 @@ namespace FishFlingers.Inventories
     // Instructions to place a NetInventoryItem
     public readonly struct NetInventoryItemsPlace
     {
+        public string InstanceId { get; }
         public ItemId ItemId { get; }
         public int Amount { get; }
         public Vector2Int Cell { get; }
@@ -180,8 +181,9 @@ namespace FishFlingers.Inventories
 
         public bool IsValid => Amount > 0;
 
-        public NetInventoryItemsPlace(ItemId itemId, int amount, Vector2Int cell, Vector2Int pivot, int rotations, BoolGrid shape)
+        public NetInventoryItemsPlace(string instanceId, ItemId itemId, int amount, Vector2Int cell, Vector2Int pivot, int rotations, BoolGrid shape)
         {
+            InstanceId = instanceId;
             ItemId = itemId;
             Amount = amount;
             Cell = cell;
@@ -423,7 +425,7 @@ namespace FishFlingers.Inventories
 
             foreach (NetInventoryItemsPlace place in places)
             {
-                ProcessNetInventoryItemsPlace(place, _itemManager.GetNextItemInstanceId());
+                ProcessNetInventoryItemsPlace(place);
             }
 
             return true;
@@ -433,7 +435,7 @@ namespace FishFlingers.Inventories
         /// Tries to add the given count of an item to a slot. If an item is already there, tries to
         /// add to it. If not, tries to fit by rotating around the pivot
         /// </summary>
-        public bool TryPlaceItems(Vector2Int cell, Vector2Int pivot, RotationParams rotationParams, string instaceId, ItemId itemId, int amount, bool allowPartial, out int overflow)
+        public bool TryPlaceItems(Vector2Int cell, Vector2Int pivot, RotationParams rotationParams, string instanceId, ItemId itemId, int amount, bool allowPartial, out int overflow)
         {
             overflow = amount;
 
@@ -443,7 +445,7 @@ namespace FishFlingers.Inventories
                 return false;
             }
 
-            if (!CanPlaceItems(cell, pivot, rotationParams, itemId, amount, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change) || overflow > 0)
+            if (!CanPlaceItems(cell, pivot, rotationParams, instanceId, itemId, amount, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change) || overflow > 0)
             {
                 if (!allowPartial)
                 {
@@ -453,7 +455,7 @@ namespace FishFlingers.Inventories
 
             if (place.IsValid)
             {
-                ProcessNetInventoryItemsPlace(place, instaceId);
+                ProcessNetInventoryItemsPlace(place);
             }
 
             if (change.IsValid)
@@ -551,7 +553,7 @@ namespace FishFlingers.Inventories
                         continue;
                     }
 
-                    if (!CanPlaceItems(kvp.Key, Vector2Int.zero, new RotationParams() { AutoFit = true }, itemId, overflow, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change))
+                    if (!CanPlaceItems(kvp.Key, Vector2Int.zero, new RotationParams() { AutoFit = true }, null, itemId, overflow, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change))
                     {
                         continue;
                     }
@@ -578,7 +580,7 @@ namespace FishFlingers.Inventories
         }
 
         // Placing can result in either a place or change, depending on if the cell is occupied or not
-        public bool CanPlaceItems(Vector2Int itemCell, Vector2Int pivot, RotationParams rotationParams, ItemId itemId, int amount, out int overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change)
+        public bool CanPlaceItems(Vector2Int itemCell, Vector2Int pivot, RotationParams rotationParams, string instanceId, ItemId itemId, int amount, out int overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change)
         {
             overflow = amount;
             place = default;
@@ -599,7 +601,7 @@ namespace FishFlingers.Inventories
             }
 
             // Check if the cell is occupied. If so, check if we can add to it
-            if (netInventorySlot.ItemInstanceId != null)
+            if (netInventorySlot.ItemInstanceId != null && netInventorySlot.ItemInstanceId != instanceId)
             {
                 NetInventoryItem netInventoryItem = _netInventoryItems[netInventorySlot.ItemInstanceId];
                 return netInventoryItem.ItemId == itemId && netInventoryItem.CanAddCount(amount, out overflow, out change);
@@ -627,7 +629,8 @@ namespace FishFlingers.Inventories
                         return;
                     }
 
-                    if (slot.ItemInstanceId != null)
+                    // It's okay to match our instanceId, since it would then be moving the item
+                    if (slot.ItemInstanceId != null && slot.ItemInstanceId != instanceId)
                     {
                         fits = false;
                         return;
@@ -649,7 +652,7 @@ namespace FishFlingers.Inventories
             int placeAmount = Mathf.Min(amount, data.MaxStack);
 
             overflow -= placeAmount;
-            place = new NetInventoryItemsPlace(itemId, placeAmount, itemCell, pivot, rotations, placeShape);
+            place = new NetInventoryItemsPlace(instanceId, itemId, placeAmount, itemCell, pivot, rotations, placeShape);
 
             return true;
         }
@@ -714,7 +717,7 @@ namespace FishFlingers.Inventories
             }
         }
 
-        private void ProcessNetInventoryItemsPlace(NetInventoryItemsPlace place, string instanceId)
+        private void ProcessNetInventoryItemsPlace(NetInventoryItemsPlace place)
         {
             if (!place.IsValid)
             {
@@ -723,6 +726,15 @@ namespace FishFlingers.Inventories
             }
 
             ItemData data = _itemManager.GetItemData(place.ItemId);
+
+            // A null place.InstanceId indicates this will be a new item. We validate instanceId here since we know for sure it will be placed
+            string instanceId = place.InstanceId != null ? place.InstanceId : _itemManager.GetNextItemInstanceId();
+
+            // This will feel like the item is being 'moved'
+            if (_netInventoryItems.ContainsKey(instanceId))
+            {
+                RemoveItem(instanceId);
+            }
 
             // Place the items
             NetInventoryItem newNetInventoryItem = new NetInventoryItem(instanceId, place.ItemId, place.Amount, place.Cell, place.Pivot, place.Rotations);

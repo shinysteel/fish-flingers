@@ -34,10 +34,12 @@ namespace FishFlingers.UI
             _view.RectTransform.sizeDelta = _view.SlotSize;
         }
 
-        public void OnTakenFromPool()
-        { }
-
         public void OnReturnedToPool()
+        {
+            _view.ResetAlpha();
+        }
+
+        public void OnTakenFromPool()
         { }
     }
 }

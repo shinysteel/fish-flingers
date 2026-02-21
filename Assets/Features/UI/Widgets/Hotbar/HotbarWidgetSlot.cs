@@ -13,12 +13,22 @@ namespace FishFlingers.UI
 
         private PoolManager _poolManager;
 
+        private int _index = -1;
+        public int Index => _index;
+
         private InventoryItem _inventoryItem;
         private UnitItemView _unitItemView;
 
         private void Awake()
         {
             _poolManager = GameManager.Instance.Get<PoolManager>();
+        }
+
+        public void Setup(int index)
+        {
+            _index = index;
+            _view.CellOutline.SetColor(CellOutline.EColor.Default);
+            _view.CellOutline.SetEnabled(true, true, true, true);
         }
 
         public void SetInventoryItem(InventoryItem item)

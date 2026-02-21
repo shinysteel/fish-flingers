@@ -47,6 +47,16 @@ namespace FishFlingers.UI
             _slotSize = size;
         }
 
+        public void ResetAlpha()
+        {
+            SetAlpha(1f);
+        }
+
+        public void SetAlpha(float alpha)
+        {
+            _image.color = new Color(1f, 1f, 1f, alpha);
+        }
+
         private Vector2 CalculateAnchoredPositionForCell(Vector2Int cell)
         {
             // Offset relative to center, and respect inherited rotation

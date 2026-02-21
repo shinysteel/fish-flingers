@@ -43,7 +43,12 @@ namespace FishFlingers.UI
             _view.RectTransform.anchoredPosition = slotView.View.RectTransform.anchoredPosition;
         }
 
-        public void OnTakenFromPool() { }
-        public void OnReturnedToPool() { }
+        public void OnReturnedToPool() 
+        {
+            _view.ResetAlpha();
+        }
+
+        public void OnTakenFromPool() 
+        { }
     }
 }
