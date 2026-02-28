@@ -1,5 +1,6 @@
 using FishFlingers.Inventories;
 using FishFlingers.Pools;
+using FishFlingers.States;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Utils;
 using System.Collections;
@@ -11,34 +12,56 @@ namespace FishFlingers.UI
     public class HotbarWidgetSlot : MonoBehaviour, IPoolable
     {
         [SerializeField] private SlotView _view;
-
-        public SlotView View => _view;
+        [SerializeField] private Button _button;
 
         private PoolManager _poolManager;
+
+        private GameplayContext _context;
 
         private int _index = -1;
         public int Index => _index;
 
-        private InventoryItem _inventoryItem;
         private UnitItemView _unitItemView;
 
         private void Awake()
         {
             _poolManager = GameManager.Instance.Get<PoolManager>();
+
+            _button.onClick.AddListener(Pressed);
         }
 
-        public void Setup(int index)
+        public void Setup(GameplayContext context, int index)
         {
+            _context = context;
+            
+            _view.Setup(context);
+
             _index = index;
+
             _view.CellOutline.SetColor(CellOutline.EColor.Default);
             _view.CellOutline.SetEnabled(true, true, true, true);
         }
 
+        private void Pressed()
+        {
+            if (_index < 0)
+            {
+                return;
+            }
+
+            _context.LocalPlayer.Hotbar.SetSlot(_index, null);
+        }
+
+        public void SetTransform(Vector2 position, Vector2 size)
+        {
+            _view.SetTransform(position, size);
+        }
+
         public void SetInventoryItem(InventoryItem item)
         {
-            _inventoryItem = item;
+            _view.SetInventoryItem(item);
 
-            if (_inventoryItem == null)
+            if (item == null)
             {
                 ReturnUnitItemView();
                 return;
@@ -50,7 +73,7 @@ namespace FishFlingers.UI
                 _unitItemView.SetSlotSize(_view.RectTransform.sizeDelta);
             }
 
-            _unitItemView.Setup(_inventoryItem);
+            _unitItemView.Setup(item);
         }
 
         private void ReturnUnitItemView()
@@ -65,6 +88,8 @@ namespace FishFlingers.UI
 
         public void OnReturnedToPool()
         {
+            _view.OnDestroy();
+
             ReturnUnitItemView();
         }
 

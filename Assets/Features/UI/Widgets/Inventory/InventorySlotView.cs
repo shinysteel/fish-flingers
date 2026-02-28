@@ -1,5 +1,6 @@
 using FishFlingers.Inventories;
 using FishFlingers.Pools;
+using FishFlingers.States;
 using ShinyOwl.Common;
 using TMPro;
 using UnityEngine;
@@ -12,7 +13,8 @@ namespace FishFlingers.UI
     {
         [SerializeField] private SlotView _view;
 
-        public SlotView View => _view;
+        public RectTransform RectTransform => _view.RectTransform;
+        public CellOutline CellOutline => _view.CellOutline;
 
         private InventoryWidget _inventoryWidget;
         private Vector2Int _cell;
@@ -20,28 +22,32 @@ namespace FishFlingers.UI
         public InventoryWidget InventoryWidget => _inventoryWidget;
         public Vector2Int Cell => _cell;
 
-        private InventoryItem _inventoryItem;
+        public InventoryItem InventoryItem => _view.InventoryItem;
 
-        public InventoryItem InventoryItem => _inventoryItem;
-
-        public void Setup(InventoryWidget inventoryWidget, Vector2Int cell)
+        public void Setup(GameplayContext context, InventoryWidget inventoryWidget, Vector2Int cell)
         {
-            _inventoryWidget = inventoryWidget;
-            _cell = cell;
+            _view.Setup(context);
 
-            _view.SetColor(SlotView.EColor.Default);
+            _inventoryWidget = inventoryWidget;
+
+            _cell = cell;
+        }
+
+        public void SetTransform(Vector2 position, Vector2 size)
+        {
+            _view.SetTransform(position, size);
         }
 
         public void SetInventoryItem(InventoryItem item)
         {
-            _inventoryItem = item;
+            _view.SetInventoryItem(item);
 
-            _view.SetColor(_inventoryItem != null ? SlotView.EColor.Tinted : SlotView.EColor.Default);
+            _view.RefreshColor();
         }
-        
-        public void OnReturnedToPool() 
+
+        public void OnReturnedToPool()
         {
-            _inventoryItem = null;
+            _view.OnDestroy();
         }
 
         public void OnTakenFromPool() { }

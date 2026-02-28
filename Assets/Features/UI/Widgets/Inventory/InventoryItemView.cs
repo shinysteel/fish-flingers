@@ -13,9 +13,9 @@ namespace FishFlingers.UI
         [SerializeField] private ItemView _view;
        
         private InventoryWidget _inventoryWidget;
-
-        public ItemView View => _view;
         public InventoryWidget InventoryWidget => _inventoryWidget;
+
+        public InventoryItem InventoryItem => _view.InventoryItem;
 
         public void Setup(InventoryWidget inventoryWidget, InventoryItem inventoryItem)
         {
@@ -40,7 +40,22 @@ namespace FishFlingers.UI
         {
             // Position
             InventorySlotView slotView = _inventoryWidget.InventorySlotViews[_view.InventoryItem.Cell];
-            _view.RectTransform.anchoredPosition = slotView.View.RectTransform.anchoredPosition;
+            _view.RectTransform.anchoredPosition = slotView.RectTransform.anchoredPosition;
+        }
+
+        public void SetAlpha(float alpha)
+        {
+            _view.SetAlpha(alpha);
+        }
+
+        public void ResetAlpha()
+        {
+            _view.ResetAlpha();
+        }
+        
+        public void SetSlotSize(Vector2 size)
+        {
+            _view.SetSlotSize(size);
         }
 
         public void OnReturnedToPool() 

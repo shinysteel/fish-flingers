@@ -1,11 +1,10 @@
 using FishFlingers.Inventories;
 using FishFlingers.States;
-using NUnit.Framework;
 using ShinyOwl.Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class Hotbar
 {
@@ -62,7 +61,7 @@ public class Hotbar
             return;
         }
 
-        // You can't equip the same item in more than one slot, so we check for duplicates when assigning a value that isn't null
+        // You can't equip the same item in more than one slot, so we need to swap the existing assignment when assigning a value that isn't null
         if (item != null)
         {
             for (int i = 0; i < _slots.Count; i++)
@@ -74,13 +73,27 @@ public class Hotbar
 
                 if (_slots[i]?.ItemInstance.InstanceId == item.ItemInstance.InstanceId)
                 {
-                    return;
+                    _slots[i] = null;
+                    OnSlotChanged?.Invoke(i, null);
+                    break;
                 }
             }
         }
 
         _slots[index] = item;
-        
         OnSlotChanged?.Invoke(index, item);
+    }
+
+    public bool IsItemAssigned(InventoryItem item, out int index)
+    {
+        index = -1;
+
+        if (item == null)
+        {
+            return false;
+        }
+
+        index = _slots.FindIndex(slot => slot?.ItemInstance.InstanceId == item.ItemInstance.InstanceId);
+        return index >= 0;
     }
 }

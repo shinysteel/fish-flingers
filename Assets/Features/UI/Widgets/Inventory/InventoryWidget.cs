@@ -20,7 +20,6 @@ namespace FishFlingers.UI
         private PoolManager _poolManager;
 
         private GameplayContext _context;
-        public GameplayContext Context => _context;
 
         private Inventory _inventory;
         public Inventory Inventory => _inventory;
@@ -52,7 +51,7 @@ namespace FishFlingers.UI
 
             OnRectTransformDimensionsChange();
 
-            _inventoryOutliner = new InventoryOutliner(this);
+            _inventoryOutliner = new InventoryOutliner(_context, this);
 
             foreach (KeyValuePair<string, InventoryItem> kvp in _inventory.InventoryItems)
             {
@@ -100,7 +99,7 @@ namespace FishFlingers.UI
 
                 Vector2Int cell = kvp.Key;
 
-                view.Setup(this, new Vector2Int(kvp.Key.x, kvp.Key.y));
+                view.Setup(_context, this, new Vector2Int(kvp.Key.x, kvp.Key.y));
 
                 views.Add(cell, view);
             }
@@ -203,7 +202,7 @@ namespace FishFlingers.UI
                     (kvp.Key.x - pivotX) * _slotSize.x,
                     (kvp.Key.y - pivotY) * _slotSize.y);
 
-                kvp.Value.View.SetTransform(position, _slotSize);
+                kvp.Value.SetTransform(position, _slotSize);
             }
         }
 
@@ -211,7 +210,7 @@ namespace FishFlingers.UI
         {
             foreach (InventoryItemView view in _inventoryItemViews.Values)
             {
-                view.View.SetSlotSize(_slotSize);
+                view.SetSlotSize(_slotSize);
                 view.Refresh();
             }
         }

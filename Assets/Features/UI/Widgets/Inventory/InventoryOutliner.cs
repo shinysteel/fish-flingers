@@ -13,6 +13,8 @@ namespace FishFlingers.UI
     {
         private UIManager _uiManager;
 
+        private GameplayContext _context;
+
         private InventoryWidget _inventoryWidget;
 
         private PointerEventData _pointerEventData;
@@ -20,22 +22,27 @@ namespace FishFlingers.UI
 
         private InventorySlotView _targetSlotView;
 
-        public InventoryOutliner(InventoryWidget widget)
+        public InventoryOutliner(GameplayContext context, InventoryWidget widget)
         {
             _uiManager = GameManager.Instance.Get<UIManager>();
+
+            _context = context;
 
             _inventoryWidget = widget;
 
             _pointerEventData = new PointerEventData(EventSystem.current);
 
-            _inventoryWidget.Context.LocalPlayer.HeldItemLogic.OnChanged += HandleHeldItemChanged;
+            _context.LocalPlayer.HeldItemLogic.OnChanged += HandleHeldItemChanged;
 
             Refresh();
         }
 
         ~InventoryOutliner()
         {
-            _inventoryWidget.Context.LocalPlayer.HeldItemLogic.OnChanged -= HandleHeldItemChanged;
+            if (_context.LocalPlayer != null)
+            {
+                _context.LocalPlayer.HeldItemLogic.OnChanged -= HandleHeldItemChanged;
+            }
         }
 
         private void HandleHeldItemChanged(InventoryItem item)
@@ -89,7 +96,7 @@ namespace FishFlingers.UI
             // By default, all cells are grey
             foreach (InventorySlotView slotView in _inventoryWidget.InventorySlotViews.Values)
             {
-                slotView.View.CellOutline.SetColor(CellOutline.EColor.Default);
+                slotView.CellOutline.SetColor(CellOutline.EColor.Default);
             }
 
             if (_targetSlotView == null)
@@ -97,7 +104,7 @@ namespace FishFlingers.UI
                 return;
             }
 
-            InventoryItem heldInventoryItem = _inventoryWidget.Context.LocalPlayer.HeldItemLogic.HeldInventoryItem;
+            InventoryItem heldInventoryItem = _context.LocalPlayer.HeldItemLogic.HeldInventoryItem;
             if (heldInventoryItem == null)
             {
                 // Color the target item white
@@ -105,7 +112,7 @@ namespace FishFlingers.UI
                 {
                     _targetSlotView.InventoryItem.Shape.ForEachTrue((Vector2Int cell) =>
                     {
-                        _inventoryWidget.InventorySlotViews[_targetSlotView.InventoryItem.Cell + cell].View.CellOutline.SetColor(CellOutline.EColor.Highlighted);
+                        _inventoryWidget.InventorySlotViews[_targetSlotView.InventoryItem.Cell + cell].CellOutline.SetColor(CellOutline.EColor.Highlighted);
                     });
                 }
             }
@@ -120,7 +127,7 @@ namespace FishFlingers.UI
                 {
                     if (_inventoryWidget.InventorySlotViews.TryGetValue(_targetSlotView.Cell + cell, out InventorySlotView slotView))
                     {
-                        slotView.View.CellOutline.SetColor(color);
+                        slotView.CellOutline.SetColor(color);
                     }
                 });
             }
@@ -132,7 +139,7 @@ namespace FishFlingers.UI
             // By default, all sides are enabled
             foreach (InventorySlotView slotView in _inventoryWidget.InventorySlotViews.Values)
             {
-                slotView.View.CellOutline.SetEnabled(true, true, true, true);
+                slotView.CellOutline.SetEnabled(true, true, true, true);
             }
 
             // Enables only the perimeter of an item as if it existed at the given pivot
@@ -150,17 +157,17 @@ namespace FishFlingers.UI
                     bool bottom = !item.Shape.TryGetBool(shapeCell + Vector2Int.down, out bool bottomBool) || !bottomBool;
                     bool right = !item.Shape.TryGetBool(shapeCell + Vector2Int.right, out bool rightBool) || !rightBool;
 
-                    slotView.View.CellOutline.SetEnabled(top, left, bottom, right);
+                    slotView.CellOutline.SetEnabled(top, left, bottom, right);
                 });
             }
 
             // Items only enable their 'perimeter'
             foreach (InventoryItemView itemView in _inventoryWidget.InventoryItemViews.Values)
             {
-                EnablePerimeter(itemView.View.InventoryItem, itemView.View.InventoryItem.Cell);
+                EnablePerimeter(itemView.InventoryItem, itemView.InventoryItem.Cell);
             }
 
-            InventoryItem heldInventoryItem = _inventoryWidget.Context.LocalPlayer.HeldItemLogic.HeldInventoryItem;
+            InventoryItem heldInventoryItem = _context.LocalPlayer.HeldItemLogic.HeldInventoryItem;
             if (heldInventoryItem == null || _targetSlotView == null)
             {   
                 return;
