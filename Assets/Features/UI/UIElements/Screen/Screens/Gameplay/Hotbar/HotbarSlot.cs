@@ -12,14 +12,12 @@ namespace FishFlingers.UI
         private PoolManager _poolManager;
 
         private UnitItemView _unitItemView;
-        
-        private void Awake()
-        {
-            _poolManager = GameManager.Instance.Get<PoolManager>();
-        }
 
         public void SetInventoryItem(InventoryItem item)
         {
+            // Somehow assigning in Awake is not soon enough, so we need to do it here
+            _poolManager ??= GameManager.Instance.Get<PoolManager>();
+
             if (item != null)
             {
                 if (_unitItemView == null)

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b87a32c41585134fa7bda360bec58d1, type: 3}
+  m_Name: HammerData
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Inventories.ItemData
+  _itemId: 3
+  _spriteAssetName: item_hammer
+  _maxStack: 1
+  _sprite: {fileID: -1732200139, guid: 852434f20d6a1b644a5c67a01efaf177, type: 3}
+  _shape: {fileID: 11400000, guid: b87a2e1f7cd586940af0f1731cbf0e20, type: 2}

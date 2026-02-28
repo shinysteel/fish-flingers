@@ -135,7 +135,8 @@ namespace FishFlingers.UI
             _countText.rectTransform.sizeDelta = _slotSize;
 
             // Count
-            _countText.text = _inventoryItem.ItemInstance.Count.ToString();
+            int count = _inventoryItem.ItemInstance.Count;
+            _countText.text = count > 1 ? count.ToString() : string.Empty;
         }
 
         public void RefreshCountRect()

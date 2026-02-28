@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using PurrNet;
 using FishFlingers.States;
 using FishFlingers.UI;
+using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace FishFlingers.Entities
 {
@@ -59,6 +61,21 @@ namespace FishFlingers.Entities
 
             // Invoke OnNetworkSpawn after logic components are created
             base.OnSpawned();
+            
+            _ = SetupStartingItemsAsync();
+        }
+
+        private async Task SetupStartingItemsAsync()
+        {
+            while (!_inventory.isFullySpawned)
+            {
+                await Task.Yield();
+            }
+            
+            // Start with a hammer
+            _inventory.TryAddItems(ItemId.Hammer, 1);
+
+            _hotbar.SetSlot(0, _inventory.InventoryItems.First().Value);
         }
 
         protected override void OnDespawned()
