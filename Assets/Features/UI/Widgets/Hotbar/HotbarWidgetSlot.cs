@@ -26,6 +26,8 @@ namespace FishFlingers.UI
         public InventoryItem InventoryItem => _view.InventoryItem;
         public CellOutline CellOutline => _view.CellOutline;
 
+        private const float SlotSizeScalar = 0.9f;
+
         private void Awake()
         {
             _poolManager = GameManager.Instance.Get<PoolManager>();
@@ -73,7 +75,7 @@ namespace FishFlingers.UI
             if (_unitItemView == null)
             {
                 _unitItemView = _poolManager.Get<UnitItemView>(new SpawnParams() { Parent = transform });
-                _unitItemView.SetSlotSize(_view.RectTransform.sizeDelta);
+                _unitItemView.SetSlotSize(_view.RectTransform.sizeDelta * SlotSizeScalar);
             }
 
             _unitItemView.Setup(item);

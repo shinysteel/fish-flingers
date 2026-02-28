@@ -1,3 +1,4 @@
+using FishFlingers.Inventories;
 using FishFlingers.States;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Utils;
@@ -25,6 +26,8 @@ namespace FishFlingers.UI
         private const string SlotsCountName = "_SlotsCount";
         private const string HighlightIndexName = "_HighlightIndex";
 
+        private const float ScrollSpeed = 100f;
+
         public void Setup(GameplayContext context)
         {
             _hotbar = context.LocalPlayer.Hotbar;
@@ -38,11 +41,31 @@ namespace FishFlingers.UI
 
             _backgroundMaterial = _backgroundImage.material;
             _backgroundMaterial.SetInt(SlotsCountName, _hotbar.Slots.Count);
-
+            
             // Since the background is getting inverse masked, it needs to be last
             _backgroundTransform.SetAsLastSibling();
 
-            RefreshSlots();
+            for (int i = 0; i < _hotbar.Slots.Count; i++)
+            {
+                HandleSlotChanged(i, _hotbar.Slots[i]);
+            }
+
+            _hotbar.OnSlotChanged += HandleSlotChanged;
+
+            RefreshSelected();
+        }
+
+        ~HotbarView()
+        {
+            if (_hotbar != null)
+            {
+                _hotbar.OnSlotChanged -= HandleSlotChanged;
+            }
+        }
+
+        private void HandleSlotChanged(int index, InventoryItem item)
+        {
+            _slots[index].SetInventoryItem(item);
         }
 
         private void Update()
@@ -67,8 +90,7 @@ namespace FishFlingers.UI
 
         private void BackgroundUpdate()
         {
-            float speed = 50f;
-            _selectedIndexBlend = Mathf.Lerp(_selectedIndexBlend, _selectedIndex, speed * Time.deltaTime);
+            _selectedIndexBlend = Mathf.Lerp(_selectedIndexBlend, _selectedIndex, ScrollSpeed * Time.deltaTime);
 
             // The background uses a shader to highlight the selected slot
             _backgroundMaterial.SetFloat(HighlightIndexName, _selectedIndexBlend);
@@ -83,10 +105,10 @@ namespace FishFlingers.UI
 
             _selectedIndex += delta;
 
-            RefreshSlots();
+            RefreshSelected();
         }
 
-        private void RefreshSlots()
+        private void RefreshSelected()
         {
             for (int i = 0; i < _slots.Length; i++)
             {

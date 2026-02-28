@@ -50,9 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c36183b729253ee4baba247623a2746d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HotbarSlot
-  _image: {fileID: 4311673215966640939}
-  _selectedColor: {r: 0, g: 0, b: 0, a: 0.5882353}
-  _unselectedColor: {r: 0, g: 0, b: 0, a: 0.5882353}
+  _rectTransform: {fileID: 4745594184199027524}
 --- !u!222 &8434698779778807739
 CanvasRenderer:
   m_ObjectHideFlags: 0

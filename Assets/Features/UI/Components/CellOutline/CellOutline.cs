@@ -22,10 +22,10 @@ namespace FishFlingers.UI
 
         public enum EColor
         {
-            Default     ,
-            Highlighted ,
-            Positive       ,
-            Negative     ,
+            Default,
+            Highlighted,
+            Positive,
+            Negative,
         }
 
         private void Awake()

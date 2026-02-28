@@ -32,7 +32,7 @@ namespace FishFlingers.UI
                 }
                 else if (heldItem == null && slot == _targetSlotView && slot.InventoryItem != null)
                 {
-                    color = CellOutline.EColor.Highlighted;
+                    color = CellOutline.EColor.Negative;
                 }
                 else
                 {
