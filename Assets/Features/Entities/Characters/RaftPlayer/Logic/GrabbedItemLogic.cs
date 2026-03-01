@@ -1,3 +1,4 @@
+using FishFlingers.Cameras;
 using FishFlingers.Entities;
 using FishFlingers.Inventories;
 using FishFlingers.UI;
@@ -8,9 +9,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Pool;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
-using UnityEngine.Pool;
 using NetworkManager = FishFlingers.Networking.NetworkManager;
 
 public class GrabbedItemLogic
@@ -18,6 +19,7 @@ public class GrabbedItemLogic
     private UIManager _uiManager;
     private NetworkManager _networkManager;
     private EntityManager _entityManager;
+    private CameraManager _cameraManager;
 
     private RaftPlayer _player;
 
@@ -31,7 +33,11 @@ public class GrabbedItemLogic
 
     private InventoryItemView _grabbedItemView;
     
+    // When an item is 'grabbed', it's alpha is modified until the grab is resolved
     private const float GrabAlpha = 0.5f;
+
+    private const float DropPitch = -45f;
+    private const float DropStrength = 3f;
 
     public event Action<InventoryItem> OnChanged;
 
@@ -40,6 +46,7 @@ public class GrabbedItemLogic
         _uiManager = GameManager.Instance.Get<UIManager>();
         _networkManager = GameManager.Instance.Get<NetworkManager>();
         _entityManager = GameManager.Instance.Get<EntityManager>();
+        _cameraManager = GameManager.Instance.Get<CameraManager>();
 
         _player = player;
 
@@ -246,7 +253,22 @@ public class GrabbedItemLogic
     {
         DroppedItem item = (DroppedItem)_entityManager.Spawn(EEntity.DroppedItem, new SpawnParams() { Position = _player.transform.position });
         item.SetItem(_grabbedInventoryItem.ItemInstance.InstanceId, _grabbedInventoryItem.ItemInstance.Data.ItemId, _grabbedInventoryItem.ItemInstance.Count);
-        
+
+        Vector3 direction = _player.transform.forward;
+        direction.y = 0f;
+        direction.Normalize();
+
+        Ray ray = _cameraManager.MainCamera.ScreenPointToRay(_player.InputLogic.Mouse);
+        Plane plane = new Plane(Vector3.up, _player.transform.position);
+        if (plane.Raycast(ray, out float distance))
+        {
+            direction = (ray.GetPoint(distance) - _player.transform.position).normalized;
+        }
+
+        // Launch the item in a direction
+        direction = Quaternion.AngleAxis(DropPitch, Vector3.Cross(Vector3.up, direction)) * direction;
+        item.Rigidbody.AddForce(direction * DropStrength, ForceMode.Impulse);
+
         _grabbedItemView.InventoryWidget.Inventory.RemoveItem(_grabbedInventoryItem.ItemInstance.InstanceId);
         Release();
     }
