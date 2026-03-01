@@ -59,24 +59,29 @@ namespace FishFlingers.Entities
             {
                 _inventory.SetLayout(_inventoryLayout);
 
+                _ = SetupStartingItemsAsync();
+
                 _cameraManager.SetMode(new FollowCameraMode(transform, new Vector3(0f, 3f, -5f)));
             }
 
             // Invoke OnNetworkSpawn after logic components are created
             base.OnSpawned();
-            
-            _ = SetupStartingItemsAsync();
         }
 
         private async Task SetupStartingItemsAsync()
         {
-            while (!_inventory.isFullySpawned)
+            while (!_inventory.NetInventorySlots.IsReady)
             {
                 await Task.Yield();
             }
             
             // Start with a hammer
-            _inventory.TryAddItems(ItemId.Hammer, 1);
+            _inventory.TryAddItems(new AddParams()
+            {
+                ItemId = ItemId.Hammer,
+                Amount = 1
+            });
+
             _hotbar.SetSlot(_hotbar.Slots.Count - 1, _inventory.InventoryItems.First().Value);
         }
 

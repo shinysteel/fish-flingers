@@ -13,6 +13,8 @@ namespace FishFlingers.Networking
         // When the wrapped SyncDictionary is safe to use
         private bool _isReady;
 
+        public bool IsReady => _isReady;
+
         private List<KeyValuePair<TKey, TValue>> _pendingAdds = new();
 
         // Pseudo override of the onChanged callback

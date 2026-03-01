@@ -32,6 +32,11 @@ namespace FishFlingers.UI
 
         private void BrowseGamesPressed()
         {
+            if (_uiManager.IsLayerInUse(UILayer.Panels))
+            {
+                return;
+            }
+
             _uiManager.CreateScreenUIAsync(_uiManager.Config.BrowseGamesPanelPrefab, UILayer.Panels).completed += (BrowseGamesPanel panel) =>
             {
                 panel.Show(null);

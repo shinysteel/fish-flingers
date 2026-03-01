@@ -17,6 +17,7 @@ public class GrabbedItemLogic
 {
     private UIManager _uiManager;
     private NetworkManager _networkManager;
+    private EntityManager _entityManager;
 
     private RaftPlayer _player;
 
@@ -38,6 +39,7 @@ public class GrabbedItemLogic
     {
         _uiManager = GameManager.Instance.Get<UIManager>();
         _networkManager = GameManager.Instance.Get<NetworkManager>();
+        _entityManager = GameManager.Instance.Get<EntityManager>();
 
         _player = player;
 
@@ -77,7 +79,7 @@ public class GrabbedItemLogic
 
     private void Click()
     {
-        GetTargetViews(out InventoryItemView targetItemView, out InventorySlotView targetInventorySlot, out HotbarWidgetSlot targetHotbarSlot);
+        GetTargetViews(out InventoryItemView targetItemView, out InventorySlotView targetInventorySlot, out HotbarWidgetSlot targetHotbarSlot, out Panel targetPanel);
 
         if (_grabbedInventoryItem == null)
         {
@@ -95,7 +97,7 @@ public class GrabbedItemLogic
         {
             Place(targetInventorySlot);
         }
-        else
+        else if (targetPanel == null)
         {
             Drop();
         }
@@ -104,11 +106,12 @@ public class GrabbedItemLogic
     /// <summary>
     /// Retrieve relevant views to target under the cursor
     /// </summary>
-    private void GetTargetViews(out InventoryItemView targetItemView, out InventorySlotView targetInventorySlot, out HotbarWidgetSlot targetHotbarSlot)
+    private void GetTargetViews(out InventoryItemView targetItemView, out InventorySlotView targetInventorySlot, out HotbarWidgetSlot targetHotbarSlot, out Panel targetPanel)
     {
         targetItemView = null;
         targetInventorySlot = null;
         targetHotbarSlot = null;
+        targetPanel = null;
 
         List<InventoryItemView> targetItemViews = ListPool<InventoryItemView>.Get();
 
@@ -136,6 +139,11 @@ public class GrabbedItemLogic
             if (targetHotbarSlot == null)
             {
                 result.gameObject.TryGetComponent(out targetHotbarSlot);
+            }
+
+            if (targetPanel == null)
+            {
+                result.gameObject.TryGetComponent(out targetPanel);
             }
         }
 
@@ -236,12 +244,15 @@ public class GrabbedItemLogic
     /// </summary>
     private void Drop()
     {
+        DroppedItem item = (DroppedItem)_entityManager.Spawn(EEntity.DroppedItem, new SpawnParams() { Position = _player.transform.position });
+        item.SetItem(_grabbedInventoryItem.ItemInstance.InstanceId, _grabbedInventoryItem.ItemInstance.Data.ItemId, _grabbedInventoryItem.ItemInstance.Count);
+        
         _grabbedItemView.InventoryWidget.Inventory.RemoveItem(_grabbedInventoryItem.ItemInstance.InstanceId);
         Release();
     }
 
     /// <summary>
-    /// Call this after a grab action is resolved
+    /// Call this after a grab action is resolved to do necessary cleanup
     /// </summary>
     private void Release()
     {

@@ -14,6 +14,13 @@ using UnityEngine.UIElements;
 
 namespace FishFlingers.Inventories
 {
+    public class AddParams
+    {
+        public string InstanceId { get; set; } = null;
+        public ItemId ItemId { get; set; } = default;
+        public int Amount { get; set; } = 0;
+    }
+    
     public class PlaceParams
     {
         public Vector2Int Cell { get; set; } = Vector2Int.zero;
@@ -300,15 +307,8 @@ namespace FishFlingers.Inventories
         {
             base.OnDespawned();
 
-            if (_netInventorySlots != null)
-            {
-                _netInventorySlots.onChanged -= HandleNetInventorySlotsChanged;
-            }
-
-            if (_netInventoryItems != null)
-            {
-                _netInventoryItems.onChanged -= HandleNetInventoryItemsChanged;
-            }
+            _netInventorySlots.onChanged -= HandleNetInventorySlotsChanged;
+            _netInventoryItems.onChanged -= HandleNetInventoryItemsChanged;            
         }
 
         public void SetLayout(BoolGrid layout)
@@ -437,7 +437,7 @@ namespace FishFlingers.Inventories
         /// Tries to add the given count of an item to the inventory. Will first add to matches,
         /// and then place new instances
         /// </summary>
-        public bool TryAddItems(ItemId itemId, int amount)
+        public bool TryAddItems(AddParams parameters)
         {
             if (!isOwner)
             {
@@ -445,7 +445,7 @@ namespace FishFlingers.Inventories
                 return false;
             }
 
-            if (!CanAddItems(itemId, amount, out HashSet<NetInventoryItemsChange> changes, out HashSet<NetInventoryItemsPlace> places))
+            if (!CanAddItems(parameters, out HashSet<NetInventoryItemsChange> changes, out HashSet<NetInventoryItemsPlace> places))
             {
                 return false;
             }
@@ -522,27 +522,27 @@ namespace FishFlingers.Inventories
             return true;
         }
 
-        private bool CanAddItems(ItemId itemId, int amount, out HashSet<NetInventoryItemsChange> changes, out HashSet<NetInventoryItemsPlace> places)
+        private bool CanAddItems(AddParams addParams, out HashSet<NetInventoryItemsChange> changes, out HashSet<NetInventoryItemsPlace> places)
         {
             changes = new();
             places = new();
 
-            ItemData data = _itemManager.GetItemData(itemId);
+            ItemData data = _itemManager.GetItemData(addParams.ItemId);
 
-            if (data == null || amount <= 0)
+            if (data == null || addParams.Amount <= 0)
             {
                 Log.Error("Checked if invalid items can be added");
                 return false;
             }
 
-            int overflow = amount;
+            int overflow = addParams.Amount;
 
             // Check matching instances
             if (data.MaxStack > 1)
             {
                 foreach (NetInventoryItem netInventoryItem in _netInventoryItems.Values)
                 {
-                    if (netInventoryItem.ItemId != itemId)
+                    if (netInventoryItem.ItemId != addParams.ItemId)
                     {
                         continue;
                     }
@@ -585,15 +585,16 @@ namespace FishFlingers.Inventories
                         continue;
                     }
 
-                    PlaceParams parameters = new PlaceParams()
+                    PlaceParams placeParams = new PlaceParams()
                     {
                         Cell = kvp.Key,
                         RotationParams = new RotationParams() { AutoFit = true },
-                        ItemId = itemId,
+                        InstanceId = addParams.InstanceId,
+                        ItemId = addParams.ItemId,
                         Amount = overflow
                     };
 
-                    if (!CanPlaceItems(parameters, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change))
+                    if (!CanPlaceItems(placeParams, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change))
                     {
                         continue;
                     }

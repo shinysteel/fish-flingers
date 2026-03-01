@@ -142,7 +142,7 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            Log.Error($"The top-level class of {entity} is unkown, and so it couldn't be despawned");
+            Log.Error($"The top-level class of {entity} is unknown, and so it couldn't be despawned");
         }
 
         public void Despawn<T>(T entity) where T : Entity, IPoolable

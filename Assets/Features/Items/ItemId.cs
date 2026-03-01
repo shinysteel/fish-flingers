@@ -4,6 +4,7 @@ namespace FishFlingers.Items
 {
     public enum ItemId
     {
+        None      = 0,
         Driftwood = 1,
         Paddle    = 2,
         Hammer    = 3,
