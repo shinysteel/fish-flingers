@@ -418,8 +418,9 @@ MonoBehaviour:
   _entityData: {fileID: 11400000, guid: 357cc2c034c459b4fbb0da20b294afa9, type: 2}
   _rigidbody: {fileID: 7366413579655585675}
   _capsuleCollider: {fileID: 6072639463593192333}
-  _inventoryLayout: {fileID: 11400000, guid: cfd8c0c5e490b4a47aa4e9b24205efd8, type: 2}
   _inventory: {fileID: 1599098731476295394}
+  _inventoryLayout: {fileID: 11400000, guid: cfd8c0c5e490b4a47aa4e9b24205efd8, type: 2}
+  _targetPrefab: {fileID: 314228302824124450, guid: 2670416595be96242aab7d0775b6f1bf, type: 3}
 --- !u!114 &8218739825401116068
 MonoBehaviour:
   m_ObjectHideFlags: 0

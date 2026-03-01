@@ -20,17 +20,17 @@ namespace FishFlingers.UI
 
         private void RefreshColors()
         {
-            InventoryItem heldItem = _context.LocalPlayer.HeldItemLogic.HeldInventoryItem;
+            InventoryItem grabbedItem = _context.LocalPlayer.GrabbedItemLogic.GrabbedInventoryItem;
 
             foreach (HotbarWidgetSlot slot in _hotbarWidget.Slots)
             {
                 CellOutline.EColor color;
 
-                if (heldItem != null && slot == _targetSlotView)
+                if (grabbedItem != null && slot == _targetSlotView)
                 {
                     color = CellOutline.EColor.Positive;
                 }
-                else if (heldItem == null && slot == _targetSlotView && slot.InventoryItem != null)
+                else if (grabbedItem == null && slot == _targetSlotView && slot.InventoryItem != null)
                 {
                     color = CellOutline.EColor.Negative;
                 }

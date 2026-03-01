@@ -37,6 +37,7 @@ namespace FishFlingers.Environments
         private SyncDictionaryWrapper<Vector2Int, NetTile> _netTiles = new();
 
         private Dictionary<Vector2Int, RaftTile> _tiles = new();
+        public IReadOnlyDictionary<Vector2Int, RaftTile> Tiles => _tiles;
 
         // Every column will have x rows, and every row will have x columns
         private Dictionary<int, SortedSet<int>> _columnToRowsMap = new();

@@ -40,6 +40,27 @@ namespace FishFlingers.Environments
             return new Vector3(cell.x, 0f, cell.y);
         }
 
+        public Vector2Int WorldPositionToCell(Vector3 position)
+        {
+            return new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y));
+        }
+
+        /// <summary>
+        /// Retrieves a random tile
+        /// </summary>
+        public bool TryGetRandomTile(out RaftTile tile)
+        {
+            tile = null;
+
+            if (_tiles.Values.Count == 0)
+            {
+                return false;
+            }
+
+            tile = _tiles.Values.ElementAt(Random.Range(0, _tiles.Count));
+            return true;
+        }
+
         /// <summary>
         /// Finds the closest edge to a cell. Ties are resolved randomly
         /// </summary>
@@ -75,22 +96,6 @@ namespace FishFlingers.Environments
                 .First()
                 .edge;
 
-            return true;
-        }
-
-        /// <summary>
-        /// Retrieves a random tile
-        /// </summary>
-        public bool TryGetRandomTile(out RaftTile tile)
-        {
-            tile = null;
-
-            if (_tiles.Values.Count == 0)
-            {
-                return false;
-            }
-            
-            tile = _tiles.Values.ElementAt(Random.Range(0, _tiles.Count));
             return true;
         }
     }

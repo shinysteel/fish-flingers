@@ -107,23 +107,23 @@ namespace FishFlingers.UI
             
             if (_owner != null)
             {
-                _owner.HeldItemLogic.OnChanged -= HandleHeldItemChanged;
+                _owner.GrabbedItemLogic.OnChanged -= HandleGrabbedItemChanged;
             }
 
             _owner = owner;
 
             if (_owner != null)
             {
-                _owner.HeldItemLogic.OnChanged += HandleHeldItemChanged;
+                _owner.GrabbedItemLogic.OnChanged += HandleGrabbedItemChanged;
             }
 
-            HandleHeldItemChanged(_owner?.HeldItemLogic.HeldInventoryItem);
+            HandleGrabbedItemChanged(_owner?.GrabbedItemLogic.GrabbedInventoryItem);
 
             // No need to show the hand image for the local client
             _handImage.gameObject.SetActive(!_owner?.IsLocalPlayer ?? false);
         }
 
-        private void HandleHeldItemChanged(InventoryItem item)
+        private void HandleGrabbedItemChanged(InventoryItem item)
         {
             if (item != null)
             {

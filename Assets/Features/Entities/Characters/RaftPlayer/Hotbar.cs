@@ -16,7 +16,11 @@ public class Hotbar
 
     private GameplayContext _context;
 
+    private int _selectedIndex;
+    public int SelectedIndex => _selectedIndex;
+
     public event Action<int, InventoryItem> OnSlotChanged;
+    public event Action<int, InventoryItem> OnSelectedChanged;
 
     public Hotbar(GameplayContext context)
     {
@@ -82,6 +86,32 @@ public class Hotbar
 
         _slots[index] = item;
         OnSlotChanged?.Invoke(index, item);
+
+        if (_selectedIndex == index)
+        {
+            NotifyOnSelectedChanged();
+        }
+    }
+
+    public void SetSelected(int index)
+    {
+        if (_selectedIndex == index)
+        {
+            return;
+        }
+
+        _selectedIndex = index;
+        NotifyOnSelectedChanged();
+    }
+
+    private void NotifyOnSelectedChanged()
+    {
+        OnSelectedChanged?.Invoke(_selectedIndex, _slots[_selectedIndex]);
+    }
+
+    public InventoryItem GetSelected()
+    {
+        return _slots[_selectedIndex];
     }
 
     public bool IsItemAssigned(InventoryItem item, out int index)

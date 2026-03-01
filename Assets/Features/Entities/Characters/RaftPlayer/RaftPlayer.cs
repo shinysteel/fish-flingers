@@ -29,18 +29,21 @@ namespace FishFlingers.Entities
         private InputLogic _inputLogic;
         private PhysicsLogic _physicsLogic;
         private InteractLogic _interactLogic;
-        private HeldItemLogic _heldItemLogic;
+        private GrabbedItemLogic _grabbedItemLogic;
 
         public InputLogic InputLogic => _inputLogic;
-        public HeldItemLogic HeldItemLogic => _heldItemLogic;
+        public GrabbedItemLogic GrabbedItemLogic => _grabbedItemLogic;
+
+        [SerializeField] private Target _targetPrefab;
+        private TargetLogic _targetLogic;
+        public TargetLogic TargetLogic => _targetLogic;
 
         public bool CanAct => _uiManager.IsLayerEmpty(UILayer.Panels);
 
         // SyncVars
-        private SyncVar<NetInventoryItem> _netHeldInventoryItem = new(ownerAuth: true);
+        private SyncVar<NetInventoryItem> _netGrabbedInventoryItem = new(ownerAuth: true);
         private SyncVar<Vector2> _netMousePositionNormalised = new(ownerAuth: true);
 
-        public NetInventoryItem NetHeldInventoryItem => _netHeldInventoryItem.value;
         public Vector2 MousePositionNormalised => _netMousePositionNormalised.value;
 
         public bool IsLocalPlayer => this == _context.LocalPlayer;
@@ -50,7 +53,7 @@ namespace FishFlingers.Entities
             _inputLogic = new InputLogic(this);
             _physicsLogic = new PhysicsLogic(this, _inputLogic, _capsuleCollider);
             _interactLogic = new InteractLogic(this, _inputLogic);
-            _heldItemLogic = new HeldItemLogic(this, _netHeldInventoryItem);
+            _grabbedItemLogic = new GrabbedItemLogic(this, _netGrabbedInventoryItem);
 
             if (isOwner)
             {
@@ -74,14 +77,14 @@ namespace FishFlingers.Entities
             
             // Start with a hammer
             _inventory.TryAddItems(ItemId.Hammer, 1);
-            _hotbar.SetSlot(0, _inventory.InventoryItems.First().Value);
+            _hotbar.SetSlot(_hotbar.Slots.Count - 1, _inventory.InventoryItems.First().Value);
         }
 
         protected override void OnDespawned()
         {
             base.OnDespawned();
 
-            _heldItemLogic.Dispose();
+            _grabbedItemLogic.Dispose();
         }
 
         public override void Initialise(GameplayContext context)
@@ -91,6 +94,8 @@ namespace FishFlingers.Entities
             if (isOwner)
             {
                 _hotbar = new Hotbar(context);
+
+                _targetLogic = new TargetLogic(context, _targetPrefab);
             }
 
             // Spawn on a random starting tile
@@ -112,7 +117,8 @@ namespace FishFlingers.Entities
             _inputLogic.Tick();
             _physicsLogic.Tick();
             _interactLogic.Tick();
-            _heldItemLogic.Tick();
+            _grabbedItemLogic.Tick();
+            _targetLogic.Tick();
 
             SyncVarsUpdate();
         }

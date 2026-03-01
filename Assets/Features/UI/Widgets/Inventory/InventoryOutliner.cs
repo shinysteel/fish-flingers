@@ -40,8 +40,8 @@ namespace FishFlingers.UI
                 return;
             }
 
-            InventoryItem heldInventoryItem = _context.LocalPlayer.HeldItemLogic.HeldInventoryItem;
-            if (heldInventoryItem == null)
+            InventoryItem grabbedInventoryItem = _context.LocalPlayer.GrabbedItemLogic.GrabbedInventoryItem;
+            if (grabbedInventoryItem == null)
             {
                 // Color the target item white
                 if (_targetSlotView.InventoryItem != null)
@@ -55,11 +55,11 @@ namespace FishFlingers.UI
             else
             {
                 // Color the potential place action green or red
-                CellOutline.EColor color = _inventoryWidget.Inventory.CanPlaceItems(PlaceParams.Create(_targetSlotView.Cell, heldInventoryItem), out _, out _, out _)
+                CellOutline.EColor color = _inventoryWidget.Inventory.CanPlaceItems(PlaceParams.Create(_targetSlotView.Cell, grabbedInventoryItem), out _, out _, out _)
                     ? CellOutline.EColor.Positive
                     : CellOutline.EColor.Negative;
 
-                heldInventoryItem.Shape.ForEachTrue((Vector2Int cell) =>
+                grabbedInventoryItem.Shape.ForEachTrue((Vector2Int cell) =>
                 {
                     if (_inventoryWidget.InventorySlotViews.TryGetValue(_targetSlotView.Cell + cell, out InventorySlotView slotView))
                     {
@@ -103,13 +103,13 @@ namespace FishFlingers.UI
                 EnablePerimeter(itemView.InventoryItem, itemView.InventoryItem.Cell);
             }
 
-            InventoryItem heldInventoryItem = _context.LocalPlayer.HeldItemLogic.HeldInventoryItem;
-            if (heldInventoryItem == null || _targetSlotView == null)
+            InventoryItem grabbedInventoryItem = _context.LocalPlayer.GrabbedItemLogic.GrabbedInventoryItem;
+            if (grabbedInventoryItem == null || _targetSlotView == null)
             {   
                 return;
             }
 
-            EnablePerimeter(heldInventoryItem, _targetSlotView.Cell);
+            EnablePerimeter(grabbedInventoryItem, _targetSlotView.Cell);
         }
     }
 }

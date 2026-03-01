@@ -12,9 +12,9 @@ namespace FishFlingers.UI
     public class GameplayScreen : ScreenUI
     {
         [SerializeField] private HotbarView _hotbarView;
+        [SerializeField] private ItemActionsView _itemActionsView;
         [SerializeField] private Button _settingsButton;
         [SerializeField] private Button _fishingBagButton;
-        [SerializeField] private Button _buildingKitButton;
         
         private NetworkManager _networkManager;
         private UIManager _uiManager;
@@ -30,7 +30,6 @@ namespace FishFlingers.UI
 
             _settingsButton.onClick.AddListener(SettingsPressed);
             _fishingBagButton.onClick.AddListener(FishingBagPressed);
-            _buildingKitButton.onClick.AddListener(BuildingKitPressed);
         }
 
         public void Setup(GameplayContext context)
@@ -38,23 +37,19 @@ namespace FishFlingers.UI
             _context = context;
 
             _hotbarView.Setup(context);
+            _itemActionsView.Setup(context);
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (_context.LocalPlayer.InputLogic.OpenSettings)
             {
                 Utils.UI.SimulatePressed(_settingsButton);
             }
 
-            if (Input.GetKeyDown(KeyCode.E))
+            if (_context.LocalPlayer.InputLogic.OpenFishingBag)
             {
                 Utils.UI.SimulatePressed(_fishingBagButton);
-            }
-
-            if (Input.GetMouseButtonDown(1))
-            {
-                Utils.UI.SimulatePressed(_buildingKitButton);
             }
         }
 
@@ -71,15 +66,6 @@ namespace FishFlingers.UI
         private void FishingBagPressed()
         {
             _uiManager.CreateScreenUIAsync(_uiManager.Config.FishingBagPanelPrefab, UILayer.Panels).completed += (FishingBagPanel panel) =>
-            {
-                panel.Setup(_context);
-                panel.Show(null);
-            };
-        }
-
-        private void BuildingKitPressed()
-        {
-            _uiManager.CreateScreenUIAsync(_uiManager.Config.BuildingKitPanelPrefab, UILayer.Panels).completed += (BuildingKitPanel panel) =>
             {
                 panel.Setup(_context);
                 panel.Show(null);

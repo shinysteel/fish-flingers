@@ -76,5 +76,14 @@ namespace FishFlingers.Entities
             Vector3 targetPosition = new Vector3(_rigidbody.position.x, targetY, _rigidbody.position.z);
             _rigidbody.MovePosition(Vector3.MoveTowards(_rigidbody.position, targetPosition, Data.SinkSettings.Speed * Time.fixedDeltaTime));
         }
+
+        /// <summary>
+        /// Retrieves the y coord that sits on top of the tile
+        /// </summary>
+        public float GetSurfaceY()
+        {
+            float height = 0.25f;
+            return transform.position.y + height * 0.5f;
+        }
     }
 }

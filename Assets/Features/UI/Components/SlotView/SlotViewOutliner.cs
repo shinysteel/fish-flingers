@@ -25,18 +25,18 @@ namespace FishFlingers.UI
             _raycastResults = new();
 
             _context = context;
-            _context.LocalPlayer.HeldItemLogic.OnChanged += HandleHeldItemChanged;
+            _context.LocalPlayer.GrabbedItemLogic.OnChanged += HandleGrabbedItemChanged;
         }
 
         ~SlotViewOutliner()
         {
             if (_context.LocalPlayer != null)
             {
-                _context.LocalPlayer.HeldItemLogic.OnChanged -= HandleHeldItemChanged;
+                _context.LocalPlayer.GrabbedItemLogic.OnChanged -= HandleGrabbedItemChanged;
             }
         }
 
-        private void HandleHeldItemChanged(InventoryItem item)
+        private void HandleGrabbedItemChanged(InventoryItem item)
         {
             Refresh();
         }

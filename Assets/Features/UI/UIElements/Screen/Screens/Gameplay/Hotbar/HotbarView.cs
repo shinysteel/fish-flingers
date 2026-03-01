@@ -20,6 +20,8 @@ namespace FishFlingers.UI
 
         private HotbarSlot[] _slots;
 
+        // Background shader requires an index that doesn't wrap, so we use a local index here and just use the
+        // delta when updating the hotbar's selected index
         private int _selectedIndex;
         private float _selectedIndexBlend;
 
@@ -52,7 +54,11 @@ namespace FishFlingers.UI
 
             _hotbar.OnSlotChanged += HandleSlotChanged;
 
-            RefreshSelected();
+            _selectedIndex = _hotbar.SelectedIndex;
+            _selectedIndexBlend = _selectedIndex;
+
+            HandleSelectedChanged(_hotbar.SelectedIndex, _hotbar.Slots[_hotbar.SelectedIndex]);
+            _hotbar.OnSelectedChanged += HandleSelectedChanged;
         }
 
         ~HotbarView()
@@ -60,6 +66,7 @@ namespace FishFlingers.UI
             if (_hotbar != null)
             {
                 _hotbar.OnSlotChanged -= HandleSlotChanged;
+                _hotbar.OnSelectedChanged -= HandleSelectedChanged;
             }
         }
 
@@ -105,14 +112,14 @@ namespace FishFlingers.UI
 
             _selectedIndex += delta;
 
-            RefreshSelected();
+            _hotbar.SetSelected(Utils.Math.EuclideanModulo(_selectedIndex, _slots.Length));
         }
 
-        private void RefreshSelected()
+        private void HandleSelectedChanged(int index, InventoryItem item)
         {
             for (int i = 0; i < _slots.Length; i++)
             {
-                _slots[i].SetSelected(i == _selectedIndex);
+                _slots[i].SetSelected(i == index);
             }
         }
     }
