@@ -1,7 +1,10 @@
 using FishFlingers.Inventories;
 using FishFlingers.States;
+using PrimeTween;
 using ShinyOwl.Common;
+using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace FishFlingers.Entities
 {
@@ -11,14 +14,19 @@ namespace FishFlingers.Entities
 
         private Target _target;
 
+        private bool _isTargeting;
+
         private Vector2Int _targetCell;
         public Vector2Int TargetCell => _targetCell;
 
         private const float Range = 1f;
 
         // Scales for the target depending on context
-        private static readonly Vector3 StructureVisualScale = new Vector3(0.66f, 0.25f, 0.66f);
+        private static readonly Vector3 StructureVisualScale = new Vector3(0.75f, 0.25f, 0.75f);
         private static readonly Vector3 TileVisualScale = new Vector3(1f, 0.25f, 1f);
+
+        private Tween _fadeTween;
+        private const float FadeDuration = 0.1f;
 
         public TargetLogic(GameplayContext context, Target targetPrefab)
         {
@@ -40,19 +48,36 @@ namespace FishFlingers.Entities
 
         private void HandleHotbarSelectedItemChanged(int index, InventoryItem item)
         {
-            _target.gameObject.SetActive(item?.ItemInstance.Data.DisplaysTarget ?? false);
+            _isTargeting = item?.ItemInstance.Data.DisplaysTarget ?? false;
+
+            _fadeTween.Stop();
+
+            Action<float> fade = (float value) => _target.SetAlphaBlend(value);
+
+            // Fade in or out the target based on if we are using it or not
+            if (_isTargeting)
+            {
+                _target.gameObject.SetActive(true);
+
+                _fadeTween = Tween.Custom(startValue: _target.GetAlphaBlend(), endValue: 1f, duration: FadeDuration, onValueChange: fade);
+            }
+            else
+            {
+                _fadeTween = Tween.Custom(startValue: _target.GetAlphaBlend(), endValue: 0f, duration: FadeDuration, onValueChange: fade)
+                    .OnComplete(() => _target.gameObject.SetActive(false));
+            }
         }
 
         public void Tick()
         {
-            // Targets become locked when you can't act
-            if (!_context.LocalPlayer.CanAct)
+            // _isTargeting represents if the selected item displays a target
+            if (!_isTargeting)
             {
                 return;
             }
 
-            // activeSelf represents if the selected item displays a target
-            if (!_target.gameObject.activeSelf)
+            // Targets become locked when you can't act
+            if (!_context.LocalPlayer.CanAct)
             {
                 return;
             }

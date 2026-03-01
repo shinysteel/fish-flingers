@@ -1,3 +1,4 @@
+using FishFlingers.Items;
 using System;
 using UnityEngine;
 
@@ -30,9 +31,11 @@ namespace FishFlingers.Entities
     [CreateAssetMenu(fileName = "RaftTileData", menuName = "Data/Entities/RaftTileData")]
     public class RaftTileData : EntityData
     {
+        [SerializeField] private Recipe _recipe;
         [SerializeField] private BobSettings _bobSettings;
         [SerializeField] private SinkSettings _sinkSettings;
 
+        public Recipe Recipe => _recipe;
         public BobSettings BobSettings => _bobSettings;
         public SinkSettings SinkSettings => _sinkSettings;
     }
