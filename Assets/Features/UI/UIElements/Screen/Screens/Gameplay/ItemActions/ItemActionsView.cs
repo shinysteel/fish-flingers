@@ -50,9 +50,16 @@ namespace FishFlingers.UI
         [SerializeField] private ActionView _leftClickActionView;
         [SerializeField] private ActionView _rightClickActionView;
 
+        private UIManager _uiManager;
+
         private GameplayContext _context;
 
         private InventoryItem _selectedItem;
+
+        private void Awake()
+        {
+            _uiManager = GameManager.Instance.Get<UIManager>();
+        }
 
         public void Setup(GameplayContext context)
         {
@@ -92,6 +99,11 @@ namespace FishFlingers.UI
 
         private void SimulatePressedUpdate()
         {
+            if (_uiManager.IsLayerInUse(UILayer.Panels))
+            {
+                return;
+            }
+
             if (_leftClickActionView.Button.gameObject.activeSelf && _context.LocalPlayer.InputLogic.LeftClick)
             {
                 Utils.UI.SimulatePressed(_leftClickActionView.Button);

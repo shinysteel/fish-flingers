@@ -15,6 +15,7 @@ MonoBehaviour:
   _screenCanvasPrefab: {fileID: 1505244041761917001, guid: 4687bec03d9a66f44993e9531bc49895, type: 3}
   _worldCanvasPrefab: {fileID: 7527798416915421535, guid: 6f1579913b1281c4fa6e987bd6a1b6cc, type: 3}
   _eventSystemPrefab: {fileID: 4836926237432439950, guid: 8a82de54485014b45a720335ce9afb87, type: 3}
+  _layerPrefab: {fileID: 6324883857503925224, guid: af71315c19c26e84bac0a17f88e762ce, type: 3}
   _mainMenuScreenPrefab: {fileID: 7405705974341425097, guid: c883b20faf188be41b180dff0fc5ed37, type: 3}
   _gameplayScreenPrefab: {fileID: 5343249973355746534, guid: c12e3262ac9ddfb4c877d5ab0645d33f, type: 3}
   _browseGamesPanelPrefab: {fileID: 6530453185160498948, guid: 8c64bae2a57806b459e4abb61cba563f, type: 3}

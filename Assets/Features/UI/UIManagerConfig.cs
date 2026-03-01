@@ -18,6 +18,11 @@ namespace FishFlingers.UI
         public Canvas WorldCanvasPrefab => _worldCanvasPrefab;
         public EventSystem EventSystemPrefab => _eventSystemPrefab;
 
+        [Header("Layers")]
+        [SerializeField] private Layer _layerPrefab;
+
+        public Layer LayerPrefab => _layerPrefab;
+
         [Header("ScreenUI - Screens")]
         [SerializeField] private MainMenuScreen _mainMenuScreenPrefab;
         [SerializeField] private GameplayScreen _gameplayScreenPrefab;

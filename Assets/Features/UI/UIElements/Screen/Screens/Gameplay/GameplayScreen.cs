@@ -2,7 +2,9 @@ using FishFlingers.Items;
 using FishFlingers.Networking;
 using FishFlingers.States;
 using FishFlingers.UI.Transitions;
+using ShinyOwl.Common;
 using ShinyOwl.Common.Utils;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -42,6 +44,12 @@ namespace FishFlingers.UI
 
         private void Update()
         {
+            // Both buttons want to open a panel. Currently, we are enforcing one panel active at a tiime
+            if (_uiManager.IsLayerInUse(UILayer.Panels))
+            {
+                return;
+            }
+
             if (_context.LocalPlayer.InputLogic.OpenSettings)
             {
                 Utils.UI.SimulatePressed(_settingsButton);

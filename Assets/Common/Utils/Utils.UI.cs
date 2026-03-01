@@ -17,14 +17,15 @@ namespace ShinyOwl.Common.Utils
 
             private static async Task SimulatePressedAsync(Button button)
             {
+                // Invoking onClick at the end was more trouble than it was worth, so we're doing it at the start instead
+                button.onClick?.Invoke();
+
                 ExecuteEvents.Execute(button.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerDownHandler);
 
                 int delay = 100; // ms
                 await Task.Delay(delay);
-
+                
                 ExecuteEvents.Execute(button.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerUpHandler);
-
-                button.onClick?.Invoke();
             }
 
             public static void StretchToParent(RectTransform rect)

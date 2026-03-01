@@ -89,6 +89,9 @@ namespace ShinyOwl.Common.Framework
                 _isCompleted = true;
 
                 _result = getResult(operation);
+
+                // Annoying null reference happening here when it's invoked after play mode has ended. I have no
+                // idea how to fix it
                 _tcs.SetResult(_result);
 
                 completed?.Invoke(_result);

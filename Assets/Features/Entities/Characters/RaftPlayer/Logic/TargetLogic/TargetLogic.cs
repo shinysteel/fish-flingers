@@ -9,13 +9,14 @@ namespace FishFlingers.Entities
     {
         private GameplayContext _context;
 
+        private Target _target;
+
         private Vector2Int _targetCell;
         public Vector2Int TargetCell => _targetCell;
 
-        private Target _target;
-
         private const float Range = 1f;
 
+        // Scales for the target depending on context
         private static readonly Vector3 StructureVisualScale = new Vector3(0.66f, 0.25f, 0.66f);
         private static readonly Vector3 TileVisualScale = new Vector3(1f, 0.25f, 1f);
 
@@ -39,11 +40,18 @@ namespace FishFlingers.Entities
 
         private void HandleHotbarSelectedItemChanged(int index, InventoryItem item)
         {
-            _target.gameObject.SetActive(item?.ItemInstance.Data.DisplayTarget ?? false);
+            _target.gameObject.SetActive(item?.ItemInstance.Data.DisplaysTarget ?? false);
         }
 
         public void Tick()
         {
+            // Targets become locked when you can't act
+            if (!_context.LocalPlayer.CanAct)
+            {
+                return;
+            }
+
+            // activeSelf represents if the selected item displays a target
             if (!_target.gameObject.activeSelf)
             {
                 return;
@@ -65,6 +73,9 @@ namespace FishFlingers.Entities
             _targetCell = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         }
 
+        /// <summary>
+        /// Transforms the visual based on whether we are targeting a tile or not
+        /// </summary>
         private void TransformVisualTick()
         {
             Vector3 scale;

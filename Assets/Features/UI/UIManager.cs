@@ -10,6 +10,7 @@ using ShinyOwl.Common.Framework;
 using Object = UnityEngine.Object;
 using FishFlingers.Cameras;
 using UnityEngine.UI;
+using ShinyOwl.Common.Utils;
 
 namespace FishFlingers.UI
 {
@@ -35,7 +36,7 @@ namespace FishFlingers.UI
     }
 
     public class UIManager : GameSystem<IUIManagerListener>
-    {
+    {   
         private CameraManager _cameraManager;
 
         private UIManagerConfig _config;
@@ -45,7 +46,7 @@ namespace FishFlingers.UI
         private Canvas _worldCanvas;
         private EventSystem _eventSystem;
 
-        private RectTransform[] _layerContainers;
+        private Layer[] _layers;
 
         private GraphicRaycaster _screenGraphicRaycaster;
         public GraphicRaycaster ScreenGraphicRaycaster => _screenGraphicRaycaster;
@@ -62,6 +63,9 @@ namespace FishFlingers.UI
             base.Initialise(config);
         }
 
+        /// <summary>
+        /// Initialises the persistent canvases
+        /// </summary>
         private void CreateCanvases()
         {
             _screenCanvas = Object.Instantiate(_config.ScreenCanvasPrefab);
@@ -77,30 +81,31 @@ namespace FishFlingers.UI
             _screenGraphicRaycaster = _screenCanvas.GetComponent<GraphicRaycaster>();
         }
 
+        /// <summary>
+        /// Sets up all layers for the _screenCanvas
+        /// </summary>
         private void CreateLayers()
         {
             UILayer[] enums = (UILayer[])Enum.GetValues(typeof(UILayer));
-            _layerContainers = new RectTransform[enums.Length];
+            _layers = new Layer[enums.Length];
             for (int i = 0; i < enums.Length; i++)
             {
-                _layerContainers[i] = CreateLayer(enums[i].ToString(), (RectTransform)_screenCanvas.transform);
+                _layers[i] = CreateLayer(enums[i].ToString());
             }
         }
 
-        private RectTransform CreateLayer(string name, RectTransform parent)
+        private Layer CreateLayer(string name)
         {
-            GameObject obj = new GameObject(name);
-            RectTransform rect = obj.AddComponent<RectTransform>();
-            rect.SetParent(parent, false);
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-            rect.anchoredPosition = Vector2.zero;
-            return rect;
+            Layer layer = Object.Instantiate(_config.LayerPrefab, _screenCanvas.transform, false);
+            layer.name = name;
+            Utils.UI.StretchToParent(layer.RectTransform);
+            return layer;
         }
 
-        public AsyncOperationBridge<T> CreateScreenUIAsync<T>(T prefab, UILayer layer, UILayerInsertMode mode = UILayerInsertMode.LastSibling) where T : ScreenUI
+        /// <summary>
+        /// Creates a screen ui async. These live in the _screenCanvas
+        /// </summary>
+        public AsyncOperationBridge<T> CreateScreenUIAsync<T>(T prefab, UILayer uiLayer, UILayerInsertMode mode = UILayerInsertMode.LastSibling) where T : ScreenUI
         {
             if (prefab == null)
             {
@@ -108,9 +113,13 @@ namespace FishFlingers.UI
                 return null;
             }
 
+            Layer layer = _layers[(int)uiLayer];
+
+            layer.ChangePendingCreateOps(1);
+
             InstantiateParameters parameters = new()
             {
-                parent = _layerContainers[(int)layer], 
+                parent = layer.RectTransform, 
                 worldSpace = false
             };
 
@@ -119,29 +128,47 @@ namespace FishFlingers.UI
             AsyncOperationBridge<T> bridge = new AsyncOperationBridge<T>(op, _ =>
             {
                 AsyncInstantiateOperation instantiateOp = (AsyncInstantiateOperation)op;
-                T ui = (T)instantiateOp.Result[0];
 
-                // Recover the prefab's transform, since we are instantiating in local space
-                ui.RectTransform.anchoredPosition = prefab.RectTransform.anchoredPosition;
-
-                if (mode == UILayerInsertMode.LastSibling)
+                try
                 {
-                    ui.transform.SetAsLastSibling();
-                }
-                else if (mode == UILayerInsertMode.FirstSibling)
-                {
-                    ui.transform.SetAsFirstSibling();
-                }
+                    // Ops exists outside of playmode, and can throw null refs unless we guard against the .Result being null
+                    if (instantiateOp.Result == null)
+                    {
+                        return null;
+                    }
 
-                ui.Load(_screenCanvas);
-                ui.gameObject.SetActive(false);
-                return ui;
+                    T ui = (T)instantiateOp.Result[0];
+
+                    // Recover the prefab's transform, since we are instantiating in local space
+                    ui.RectTransform.anchoredPosition = prefab.RectTransform.anchoredPosition;
+
+                    if (mode == UILayerInsertMode.LastSibling)
+                    {
+                        ui.transform.SetAsLastSibling();
+                    }
+                    else if (mode == UILayerInsertMode.FirstSibling)
+                    {
+                        ui.transform.SetAsFirstSibling();
+                    }
+
+                    ui.Load(_screenCanvas);
+                    ui.gameObject.SetActive(false);
+
+                    return ui;
+                }
+                finally
+                {
+                    layer.ChangePendingCreateOps(-1);
+                }
             });
 
             return bridge;
         }
 
-        public void DestroyScreenUI(ScreenUI ui, UILayer layer)
+        /// <summary>
+        /// Destroys a screen ui at the end of the frame
+        /// </summary>
+        public void DestroyScreenUI(ScreenUI ui, UILayer uiLayer)
         {
             if (ui == null)
             {
@@ -149,7 +176,7 @@ namespace FishFlingers.UI
                 return;
             }
 
-            if (!ui.transform.IsChildOf(_layerContainers[(int)layer]))
+            if (!ui.transform.IsChildOf(_layers[(int)uiLayer].RectTransform))
             {
                 Log.Error("The ScreenUI to destroy was not on the specified layer");
                 return;
@@ -159,9 +186,12 @@ namespace FishFlingers.UI
             Object.Destroy(ui.gameObject);
         }
 
-        public void PopLayer(UILayer layer)
+        /// <summary>
+        /// Destroys the topmost ui in a layer
+        /// </summary>
+        public void PopLayer(UILayer uiLayer)
         {
-            RectTransform container = _layerContainers[(int)layer];
+            RectTransform container = _layers[(int)uiLayer].RectTransform;
 
             if (container.childCount == 0)
             {
@@ -170,14 +200,20 @@ namespace FishFlingers.UI
 
             ScreenUI ui = container.GetChild(container.childCount - 1).GetComponent<ScreenUI>();
 
-            ui.Hide(() => DestroyScreenUI(ui, layer));
+            ui.Hide(() => DestroyScreenUI(ui, uiLayer));
         }
 
-        public bool IsLayerEmpty(UILayer layer)
+        /// <summary>
+        /// InUse translates to a layer having any pending create ops, or simply ui being active in it
+        /// </summary>
+        public bool IsLayerInUse(UILayer uiLayer)
         {
-            return _layerContainers[(int)layer].childCount == 0;
+            return _layers[(int)uiLayer].InUse();
         }
 
+        /// <summary>
+        /// Creates a world ui async. These live in the _worldCanvas, and layers aren't relevant
+        /// </summary>
         public T CreateWorldUI<T>(T prefab, Vector3 position) where T : WorldUI
         {
             if (prefab == null)
@@ -190,7 +226,10 @@ namespace FishFlingers.UI
             ui.Load(_worldCanvas);
             return ui;
         }
-
+        
+        /// <summary>
+        /// Destroys a world ui at the end of the frame
+        /// </summary>
         public void DestroyWorldUI(WorldUI ui)
         {
             if (ui == null)

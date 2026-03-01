@@ -23,6 +23,8 @@ namespace FishFlingers.Entities
         [SerializeField] private BoolGrid _inventoryLayout;
         public Inventory Inventory => _inventory;
 
+        [SerializeField] private Target _targetPrefab;
+
         private Hotbar _hotbar;
         public Hotbar Hotbar => _hotbar;
 
@@ -30,15 +32,13 @@ namespace FishFlingers.Entities
         private PhysicsLogic _physicsLogic;
         private InteractLogic _interactLogic;
         private GrabbedItemLogic _grabbedItemLogic;
+        private TargetLogic _targetLogic;
 
         public InputLogic InputLogic => _inputLogic;
         public GrabbedItemLogic GrabbedItemLogic => _grabbedItemLogic;
-
-        [SerializeField] private Target _targetPrefab;
-        private TargetLogic _targetLogic;
         public TargetLogic TargetLogic => _targetLogic;
 
-        public bool CanAct => _uiManager.IsLayerEmpty(UILayer.Panels);
+        public bool CanAct => !_uiManager.IsLayerInUse(UILayer.Panels);
 
         // SyncVars
         private SyncVar<NetInventoryItem> _netGrabbedInventoryItem = new(ownerAuth: true);
