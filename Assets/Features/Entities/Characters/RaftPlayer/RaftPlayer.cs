@@ -1,17 +1,17 @@
 using FishFlingers.Cameras;
 using FishFlingers.Environments;
-using FishFlingers.Items;
 using FishFlingers.Inventories;
+using FishFlingers.Items;
+using FishFlingers.States;
+using FishFlingers.UI;
+using PurrNet;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Structures;
 using System;
-using UnityEngine;
-using System.Threading.Tasks;
-using PurrNet;
-using FishFlingers.States;
-using FishFlingers.UI;
-using System.Runtime.InteropServices;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace FishFlingers.Entities
 {
@@ -32,10 +32,12 @@ namespace FishFlingers.Entities
         private PhysicsLogic _physicsLogic;
         private InteractLogic _interactLogic;
         private GrabbedItemLogic _grabbedItemLogic;
+        private DropItemLogic _dropItemLogic;
         private TargetLogic _targetLogic;
 
         public InputLogic InputLogic => _inputLogic;
         public GrabbedItemLogic GrabbedItemLogic => _grabbedItemLogic;
+        public DropItemLogic DropItemLogic => _dropItemLogic;
         public TargetLogic TargetLogic => _targetLogic;
 
         public bool CanAct => !_uiManager.IsLayerInUse(UILayer.Panels);
@@ -54,6 +56,7 @@ namespace FishFlingers.Entities
             _physicsLogic = new PhysicsLogic(this, _inputLogic, _capsuleCollider);
             _interactLogic = new InteractLogic(this, _inputLogic);
             _grabbedItemLogic = new GrabbedItemLogic(this, _netGrabbedInventoryItem);
+            _dropItemLogic = new DropItemLogic(this);
 
             if (isOwner)
             {

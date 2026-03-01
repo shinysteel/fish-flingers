@@ -12,6 +12,7 @@ namespace FishFlingers.Entities
         private bool _leftClick;
         private bool _rightClick;
         private bool _rotateItem;
+        private bool _dropItem;
         private bool _toggleSettings;
         private bool _toggleFishingBag;
 
@@ -19,6 +20,7 @@ namespace FishFlingers.Entities
         public bool LeftClick => _leftClick;
         public bool RightClick => _rightClick;
         public bool RotateItem => _rotateItem;
+        public bool DropItem => _dropItem;
         public bool ToggleSettings => _toggleSettings;
         public bool ToggleFishingBag => _toggleFishingBag;
 
@@ -49,6 +51,7 @@ namespace FishFlingers.Entities
             _leftClick = Input.GetMouseButtonDown(0);
             _rightClick = Input.GetMouseButtonDown(1);
             _rotateItem = Input.GetKeyDown(KeyCode.R);
+            _dropItem = Input.GetKeyDown(KeyCode.Q);
             _toggleSettings = Input.GetKeyDown(KeyCode.Escape);
             _toggleFishingBag = Input.GetKeyDown(KeyCode.E);
 

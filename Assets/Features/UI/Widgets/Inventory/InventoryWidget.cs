@@ -33,6 +33,7 @@ namespace FishFlingers.UI
         public IReadOnlyDictionary<Vector2Int, InventorySlotView> InventorySlotViews => _inventorySlotViews;
         public IReadOnlyDictionary<string, InventoryItemView> InventoryItemViews => _inventoryItemViews;
 
+        private InventoryRaycaster _inventoryRaycaster;
         private InventoryOutliner _inventoryOutliner;
 
         private void Awake()
@@ -51,6 +52,7 @@ namespace FishFlingers.UI
 
             OnRectTransformDimensionsChange();
 
+            _inventoryRaycaster = new();
             _inventoryOutliner = new InventoryOutliner(_context, this);
 
             foreach (KeyValuePair<string, InventoryItem> kvp in _inventory.InventoryItems)
@@ -85,7 +87,25 @@ namespace FishFlingers.UI
 
         private void Update()
         {
+            if (_context.LocalPlayer.GrabbedItemLogic.GrabbedInventoryItem == null && _context.LocalPlayer.InputLogic.DropItem)
+            {
+                DropItem();
+            }
+            
             _inventoryOutliner.Tick();   
+        }
+
+        public void DropItem()
+        {
+            _inventoryRaycaster.GetTargetViews(out InventoryItemView targetItemView, out _, out _, out _);
+
+            if (targetItemView == null)
+            {
+                return;
+            }
+
+            _context.LocalPlayer.DropItemLogic.Drop(targetItemView.InventoryItem.ItemInstance, false);
+            _inventory.RemoveItem(targetItemView.InventoryItem.ItemInstance.InstanceId);
         }
 
         // Setup the slot views

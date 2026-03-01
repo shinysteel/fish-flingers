@@ -60,6 +60,12 @@ namespace FishFlingers.UI
 
         private void SettingsPressed()
         {
+            // Since this isn't a panel yet, we need a guard here
+            if (_uiManager.IsLayerInUse(UILayer.Panels))
+            {
+                return;
+            }
+
             if (_networkManager.IsServer)
             {
                 _networkManager.StopServer();

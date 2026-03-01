@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Pool;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using NetworkManager = FishFlingers.Networking.NetworkManager;
@@ -25,19 +24,15 @@ public class GrabbedItemLogic
 
     private SyncVar<NetInventoryItem> _netGrabbedInventoryItem;
 
-    private PointerEventData _pointerEventData;
-    private List<RaycastResult> _raycastResults = new();
-
     private InventoryItem _grabbedInventoryItem;
     public InventoryItem GrabbedInventoryItem => _grabbedInventoryItem;
 
     private InventoryItemView _grabbedItemView;
-    
+
+    private InventoryRaycaster _inventoryRaycaster;
+
     // When an item is 'grabbed', it's alpha is modified until the grab is resolved
     private const float GrabAlpha = 0.5f;
-
-    private const float DropPitch = -45f;
-    private const float DropStrength = 3f;
 
     public event Action<InventoryItem> OnChanged;
 
@@ -53,7 +48,7 @@ public class GrabbedItemLogic
         _netGrabbedInventoryItem = netGrabbedInventoryItem;
         _netGrabbedInventoryItem.onChanged += HandleNetGrabbedInventoryItemChanged;
 
-        _pointerEventData = new PointerEventData(EventSystem.current);
+        _inventoryRaycaster = new();
     }
 
     public void Dispose()
@@ -86,7 +81,7 @@ public class GrabbedItemLogic
 
     private void Click()
     {
-        GetTargetViews(out InventoryItemView targetItemView, out InventorySlotView targetInventorySlot, out HotbarWidgetSlot targetHotbarSlot, out Panel targetPanel);
+        _inventoryRaycaster.GetTargetViews(out InventoryItemView targetItemView, out InventorySlotView targetInventorySlot, out HotbarWidgetSlot targetHotbarSlot, out Panel targetPanel);
 
         if (_grabbedInventoryItem == null)
         {
@@ -107,81 +102,6 @@ public class GrabbedItemLogic
         else if (targetPanel == null)
         {
             Drop();
-        }
-    }
-
-    /// <summary>
-    /// Retrieve relevant views to target under the cursor
-    /// </summary>
-    private void GetTargetViews(out InventoryItemView targetItemView, out InventorySlotView targetInventorySlot, out HotbarWidgetSlot targetHotbarSlot, out Panel targetPanel)
-    {
-        targetItemView = null;
-        targetInventorySlot = null;
-        targetHotbarSlot = null;
-        targetPanel = null;
-
-        List<InventoryItemView> targetItemViews = ListPool<InventoryItemView>.Get();
-
-        _pointerEventData.Reset();
-        _pointerEventData.position = Input.mousePosition;
-
-        _raycastResults.Clear();
-
-        _uiManager.ScreenGraphicRaycaster.Raycast(_pointerEventData, _raycastResults);
-
-        // Retrieve the first inventory slot and hotbar slot we detect. We can expect multiple items in a single raycast,
-        // so we use a list to track those
-        foreach (RaycastResult result in _raycastResults)
-        {
-            if (result.gameObject.TryGetComponent(out targetItemView))
-            {
-                targetItemViews.Add(targetItemView);
-            }
-
-            if (targetInventorySlot == null)
-            {
-                result.gameObject.TryGetComponent(out targetInventorySlot);
-            }
-
-            if (targetHotbarSlot == null)
-            {
-                result.gameObject.TryGetComponent(out targetHotbarSlot);
-            }
-
-            if (targetPanel == null)
-            {
-                result.gameObject.TryGetComponent(out targetPanel);
-            }
-        }
-
-        // Choose the preferred targetItemView 
-        try
-        {
-            if (targetItemViews.Count == 0)
-            {
-                return;
-            }
-
-            targetItemView = targetItemViews[0];
-
-            if (targetInventorySlot?.InventoryItem == null)
-            {
-                return;
-            }
-            
-            // Given items can overlap cells they aren't actually on, we'd prefer to target items that are actually on the slot
-            foreach (InventoryItemView itemView in targetItemViews)
-            {
-                if (itemView.InventoryItem.ItemInstance.InstanceId == targetInventorySlot.InventoryItem.ItemInstance.InstanceId)
-                {
-                    targetItemView = itemView;
-                    return;
-                }
-            }
-        }
-        finally
-        {
-            ListPool<InventoryItemView>.Release(targetItemViews);
         }
     }
 
@@ -251,24 +171,7 @@ public class GrabbedItemLogic
     /// </summary>
     private void Drop()
     {
-        DroppedItem item = (DroppedItem)_entityManager.Spawn(EEntity.DroppedItem, new SpawnParams() { Position = _player.transform.position });
-        item.SetItem(_grabbedInventoryItem.ItemInstance.InstanceId, _grabbedInventoryItem.ItemInstance.Data.ItemId, _grabbedInventoryItem.ItemInstance.Count);
-
-        Vector3 direction = _player.transform.forward;
-        direction.y = 0f;
-        direction.Normalize();
-
-        Ray ray = _cameraManager.MainCamera.ScreenPointToRay(_player.InputLogic.Mouse);
-        Plane plane = new Plane(Vector3.up, _player.transform.position);
-        if (plane.Raycast(ray, out float distance))
-        {
-            direction = (ray.GetPoint(distance) - _player.transform.position).normalized;
-        }
-
-        // Launch the item in a direction
-        direction = Quaternion.AngleAxis(DropPitch, Vector3.Cross(Vector3.up, direction)) * direction;
-        item.Rigidbody.AddForce(direction * DropStrength, ForceMode.Impulse);
-
+        _player.DropItemLogic.Drop(_grabbedInventoryItem.ItemInstance, true);
         _grabbedItemView.InventoryWidget.Inventory.RemoveItem(_grabbedInventoryItem.ItemInstance.InstanceId);
         Release();
     }
