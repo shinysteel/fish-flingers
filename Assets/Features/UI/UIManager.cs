@@ -11,6 +11,7 @@ using Object = UnityEngine.Object;
 using FishFlingers.Cameras;
 using UnityEngine.UI;
 using ShinyOwl.Common.Utils;
+using FishFlingers.States;
 
 namespace FishFlingers.UI
 {
@@ -35,9 +36,10 @@ namespace FishFlingers.UI
         FirstSibling , 
     }
 
-    public class UIManager : GameSystem<IUIManagerListener>
+    public class UIManager : GameSystem<IUIManagerListener>, IStateManagerListener
     {   
         private CameraManager _cameraManager;
+        private StateManager _stateManager;
 
         private UIManagerConfig _config;
         public UIManagerConfig Config => _config;
@@ -54,6 +56,9 @@ namespace FishFlingers.UI
         public override void Initialise(GameManagerConfig config)
         {
             _cameraManager = GameManager.Instance.Get<CameraManager>();
+            _stateManager = GameManager.Instance.Get<StateManager>();
+
+            _stateManager.AddListener(this);
 
             _config = config.UIManagerConfig;
 
@@ -61,6 +66,11 @@ namespace FishFlingers.UI
             CreateLayers();            
 
             base.Initialise(config);
+        }
+
+        public override void Shutdown()
+        {
+            _stateManager?.RemoveListener(this);
         }
 
         /// <summary>
@@ -100,6 +110,15 @@ namespace FishFlingers.UI
             layer.name = name;
             Utils.UI.StretchToParent(layer.RectTransform);
             return layer;
+        }
+
+        public override void Tick()
+        {
+            // Universal 'return' input
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                PopLayer(UILayer.Panels);
+            }
         }
 
         /// <summary>
@@ -191,16 +210,28 @@ namespace FishFlingers.UI
         /// </summary>
         public void PopLayer(UILayer uiLayer)
         {
-            RectTransform container = _layers[(int)uiLayer].RectTransform;
+            RectTransform rect = _layers[(int)uiLayer].RectTransform;
 
-            if (container.childCount == 0)
+            if (rect.childCount == 0)
             {
                 return;
             }
 
-            ScreenUI ui = container.GetChild(container.childCount - 1).GetComponent<ScreenUI>();
+            ScreenUI ui = rect.GetChild(rect.childCount - 1).GetComponent<ScreenUI>();
 
             ui.Hide(() => DestroyScreenUI(ui, uiLayer));
+        }
+
+        /// <summary>
+        /// Destroys all ui in a layer
+        /// </summary>
+        public void ClearLayer(UILayer uiLayer)
+        {
+            foreach (Transform child in _layers[(int)uiLayer].RectTransform)
+            {
+                ScreenUI ui = child.GetComponent<ScreenUI>();
+                ui.Hide(() => DestroyScreenUI(ui, uiLayer));
+            }
         }
 
         /// <summary>
@@ -246,6 +277,11 @@ namespace FishFlingers.UI
 
             ui.Unload();
             Object.Destroy(ui.gameObject);
+        }
+
+        public void OnStateChanged(EMainState previous, EMainState current)
+        {
+            ClearLayer(UILayer.Panels);
         }
     }
 }

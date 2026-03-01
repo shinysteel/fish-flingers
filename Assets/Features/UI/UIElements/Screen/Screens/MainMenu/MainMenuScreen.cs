@@ -1,11 +1,12 @@
 using FishFlingers.Networking;
 using FishFlingers.States;
+using ShinyOwl.Common;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Threading.Tasks;
 
 namespace FishFlingers.UI
 {
@@ -17,6 +18,9 @@ namespace FishFlingers.UI
 
         private LobbyManager _lobbyManager;
         private UIManager _uiManager;
+
+        private BrowseGamesPanel _browseGamesPanel;
+        private bool _creatingBrowseGames;
 
         public override void Load(Canvas canvas)
         {
@@ -32,15 +36,24 @@ namespace FishFlingers.UI
 
         private void BrowseGamesPressed()
         {
-            if (_uiManager.IsLayerInUse(UILayer.Panels))
+            if (_browseGamesPanel != null)
             {
+                _browseGamesPanel.SimulateClosePressed();
                 return;
             }
 
-            _uiManager.CreateScreenUIAsync(_uiManager.Config.BrowseGamesPanelPrefab, UILayer.Panels).completed += (BrowseGamesPanel panel) =>
+            if (!_creatingBrowseGames)
             {
-                panel.Show(null);
-            };
+                _creatingBrowseGames = true;
+
+                _uiManager.CreateScreenUIAsync(_uiManager.Config.BrowseGamesPanelPrefab, UILayer.Panels).completed += (BrowseGamesPanel panel) =>
+                {
+                    _browseGamesPanel = panel;
+                    _browseGamesPanel.Show(null);
+
+                    _creatingBrowseGames = false;
+                };
+            }
         }
 
         private void HostGamePressed()

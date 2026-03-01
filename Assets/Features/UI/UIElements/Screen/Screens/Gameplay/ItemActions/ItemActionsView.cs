@@ -99,6 +99,9 @@ namespace FishFlingers.UI
 
         private void SimulatePressedUpdate()
         {
+            // Note that the repeated check here stops the simulated presses. There's a reason we repeat it, since
+            // you can still press the buttons via the mouse. We aren't stopping that, and rather just not simulating
+            // the presses when it's not reasonable
             if (_uiManager.IsLayerInUse(UILayer.Panels))
             {
                 return;
@@ -117,11 +120,21 @@ namespace FishFlingers.UI
 
         private void LeftPressed()
         {
+            if (_uiManager.IsLayerInUse(UILayer.Panels))
+            {
+                return;
+            }
+
             _selectedItem.ItemInstance.Data.LeftClickAction.Execute(_context);   
         }
 
         private void RightPressed()
         {
+            if (_uiManager.IsLayerInUse(UILayer.Panels))
+            {
+                return;
+            }
+
             _selectedItem.ItemInstance.Data.RightClickAction.Execute(_context);
         }
     }

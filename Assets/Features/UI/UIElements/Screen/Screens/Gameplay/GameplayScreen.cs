@@ -23,6 +23,9 @@ namespace FishFlingers.UI
 
         private GameplayContext _context;
 
+        private FishingBagPanel _fishingBagPanel;
+        private bool _creatingFishingBag;
+
         public override void Load(Canvas canvas)
         {
             base.Load(canvas);
@@ -44,18 +47,12 @@ namespace FishFlingers.UI
 
         private void Update()
         {
-            // Both buttons want to open a panel. Currently, we are enforcing one panel active at a tiime
-            if (_uiManager.IsLayerInUse(UILayer.Panels))
-            {
-                return;
-            }
-
-            if (_context.LocalPlayer.InputLogic.OpenSettings)
+            if (_context.LocalPlayer.InputLogic.ToggleSettings)
             {
                 Utils.UI.SimulatePressed(_settingsButton);
             }
 
-            if (_context.LocalPlayer.InputLogic.OpenFishingBag)
+            if (_context.LocalPlayer.InputLogic.ToggleFishingBag)
             {
                 Utils.UI.SimulatePressed(_fishingBagButton);
             }
@@ -73,11 +70,25 @@ namespace FishFlingers.UI
 
         private void FishingBagPressed()
         {
-            _uiManager.CreateScreenUIAsync(_uiManager.Config.FishingBagPanelPrefab, UILayer.Panels).completed += (FishingBagPanel panel) =>
+            if (_fishingBagPanel != null)
             {
-                panel.Setup(_context);
-                panel.Show(null);
-            };
+                _fishingBagPanel.SimulateClosePressed();
+                return;
+            }
+
+            if (!_creatingFishingBag)
+            {
+                _creatingFishingBag = true;
+
+                _uiManager.CreateScreenUIAsync(_uiManager.Config.FishingBagPanelPrefab, UILayer.Panels).completed += (FishingBagPanel panel) =>
+                {
+                    _fishingBagPanel = panel;
+                    _fishingBagPanel.Setup(_context);
+                    _fishingBagPanel.Show(null);
+
+                    _creatingFishingBag = false;
+                };
+            }
         }
     }
 }

@@ -11,14 +11,14 @@ namespace FishFlingers.Entities
         private bool _leftClick;
         private bool _rightClick;
         private bool _rotateItem;
-        private bool _openSettings;
-        private bool _openFishingBag;
+        private bool _toggleSettings;
+        private bool _toggleFishingBag;
 
         public bool LeftClick => _leftClick;
         public bool RightClick => _rightClick;
         public bool RotateItem => _rotateItem;
-        public bool OpenSettings => _openSettings;
-        public bool OpenFishingBag => _openFishingBag;
+        public bool ToggleSettings => _toggleSettings;
+        public bool ToggleFishingBag => _toggleFishingBag;
 
         // Vars dependent on RaftPlayer.CanAct
         private Vector2 _mouse;
@@ -33,6 +33,9 @@ namespace FishFlingers.Entities
         public bool Ascend => _ascend;
         public bool Interact => _interact;
 
+        private const string HorizontalAxis = "Horizontal";
+        private const string VerticalAxis = "Vertical";
+
         public InputLogic(RaftPlayer player)
         {
             _player = player;
@@ -43,13 +46,13 @@ namespace FishFlingers.Entities
             _leftClick = Input.GetMouseButtonDown(0);
             _rightClick = Input.GetMouseButtonDown(1);
             _rotateItem = Input.GetKeyDown(KeyCode.R);
-            _openSettings = Input.GetKeyDown(KeyCode.Escape);
-            _openFishingBag = Input.GetKeyDown(KeyCode.E);
+            _toggleSettings = Input.GetKeyDown(KeyCode.Escape);
+            _toggleFishingBag = Input.GetKeyDown(KeyCode.E);
 
             if (_player.CanAct)
             {
                 _mouse = Input.mousePosition;
-                _moveDirection = Vector3.ClampMagnitude(new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical")), 1f);
+                _moveDirection = Vector3.ClampMagnitude(new Vector3(Input.GetAxisRaw(HorizontalAxis), 0f, Input.GetAxisRaw(VerticalAxis)), 1f);
                 _jump = Input.GetKeyDown(KeyCode.Space);
                 _ascend = Input.GetKey(KeyCode.Space);
                 _interact = Input.GetKeyDown(KeyCode.F);
