@@ -44,6 +44,8 @@ public class Hotbar
 
     private void HandleInventoryItemChanged(string instanceId, InventoryItem oldInventoryItem, InventoryItem newInventoryItem)
     {
+        bool assigned = false;
+
         // Find and update a potential slot linked to the item
         for (int i = 0; i < _slots.Count; i++)
         {
@@ -53,7 +55,14 @@ public class Hotbar
             }
 
             SetSlot(i, newInventoryItem);
-            return;
+            assigned = true;
+            break;
+        }
+
+        // If it's not assigned and a slot is available, assign it
+        if (oldInventoryItem == null && newInventoryItem != null && !assigned && TryGetNextUnassignedSlot(out int index))
+        {
+            SetSlot(index, newInventoryItem);
         }
     }
 
@@ -124,6 +133,24 @@ public class Hotbar
         }
 
         index = _slots.FindIndex(slot => slot?.ItemInstance.InstanceId == item.ItemInstance.InstanceId);
+        return index >= 0;
+    }
+
+    private bool TryGetNextUnassignedSlot(out int index)
+    {
+        index = -1;
+        
+        for (int i = 0; i < _slots.Count; i++)
+        {
+            if (_slots[i] != null)
+            {
+                continue;
+            }
+
+            index = i;
+            break;
+        }
+
         return index >= 0;
     }
 }

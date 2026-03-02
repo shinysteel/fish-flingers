@@ -84,8 +84,6 @@ namespace FishFlingers.Entities
                 ItemId = ItemId.Hammer,
                 Amount = 1
             });
-
-            _hotbar.SetSlot(_hotbar.Slots.Count - 1, _inventory.InventoryItems.First().Value);
         }
 
         protected override void OnDespawned()
