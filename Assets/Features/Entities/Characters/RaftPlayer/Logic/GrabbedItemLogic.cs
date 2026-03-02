@@ -171,7 +171,7 @@ public class GrabbedItemLogic
     /// </summary>
     private void Drop()
     {
-        _player.DropItemLogic.Drop(_grabbedInventoryItem.ItemInstance, true);
+        _player.DropItemLogic.SpawnDroppedItem(_grabbedInventoryItem.ItemInstance, true);
         _grabbedItemView.InventoryWidget.Inventory.RemoveItem(_grabbedInventoryItem.ItemInstance.InstanceId);
         Release();
     }

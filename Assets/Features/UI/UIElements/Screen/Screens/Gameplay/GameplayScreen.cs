@@ -60,7 +60,6 @@ namespace FishFlingers.UI
 
         private void SettingsPressed()
         {
-            // Since this isn't a panel yet, we need a guard here
             if (_uiManager.IsLayerInUse(UILayer.Panels))
             {
                 return;
@@ -79,6 +78,11 @@ namespace FishFlingers.UI
             if (_fishingBagPanel != null)
             {
                 _fishingBagPanel.SimulateClosePressed();
+                return;
+            }
+
+            if (_uiManager.IsLayerInUse(UILayer.Panels))
+            {
                 return;
             }
 

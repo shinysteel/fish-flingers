@@ -116,7 +116,7 @@ namespace FishFlingers.UI
                 return;
             }
 
-            _context.LocalPlayer.DropItemLogic.Drop(targetItemView.InventoryItem.ItemInstance, false);
+            _context.LocalPlayer.DropItemLogic.SpawnDroppedItem(targetItemView.InventoryItem.ItemInstance, false);
             _inventory.RemoveItem(targetItemView.InventoryItem.ItemInstance.InstanceId);
         }
 

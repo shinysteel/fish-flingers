@@ -124,6 +124,7 @@ namespace FishFlingers.Entities
             _physicsLogic.Tick();
             _interactLogic.Tick();
             _grabbedItemLogic.Tick();
+            _dropItemLogic.Tick();
             _targetLogic.Tick();
 
             SyncVarsUpdate();
