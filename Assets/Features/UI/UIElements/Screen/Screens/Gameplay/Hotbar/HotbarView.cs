@@ -14,7 +14,7 @@ namespace FishFlingers.UI
 
         [SerializeField] private HotbarSlot _slotPrefab;
 
-        private Hotbar _hotbar;
+        private GameplayContext _context;
 
         private Material _backgroundMaterial;
 
@@ -32,9 +32,11 @@ namespace FishFlingers.UI
 
         public void Setup(GameplayContext context)
         {
-            _hotbar = context.LocalPlayer.Hotbar;
+            _context = context;
 
-            _slots = new HotbarSlot[_hotbar.Slots.Count];
+            Hotbar hotbar = _context.LocalPlayer.Hotbar;
+
+            _slots = new HotbarSlot[hotbar.Slots.Count];
 
             for (int i = 0; i < _slots.Length; i++)
             {
@@ -42,31 +44,31 @@ namespace FishFlingers.UI
             }
 
             _backgroundMaterial = _backgroundImage.material;
-            _backgroundMaterial.SetInt(SlotsCountName, _hotbar.Slots.Count);
+            _backgroundMaterial.SetInt(SlotsCountName, hotbar.Slots.Count);
             
             // Since the background is getting inverse masked, it needs to be last
             _backgroundTransform.SetAsLastSibling();
 
-            for (int i = 0; i < _hotbar.Slots.Count; i++)
+            for (int i = 0; i < hotbar.Slots.Count; i++)
             {
-                HandleSlotChanged(i, _hotbar.Slots[i]);
+                HandleSlotChanged(i, hotbar.Slots[i]);
             }
 
-            _hotbar.OnSlotChanged += HandleSlotChanged;
+            hotbar.OnSlotChanged += HandleSlotChanged;
 
-            _selectedIndex = _hotbar.SelectedIndex;
+            _selectedIndex = hotbar.SelectedIndex;
             _selectedIndexBlend = _selectedIndex;
 
-            HandleSelectedChanged(_hotbar.SelectedIndex, _hotbar.Slots[_hotbar.SelectedIndex]);
-            _hotbar.OnSelectedChanged += HandleSelectedChanged;
+            HandleSelectedChanged(hotbar.SelectedIndex, hotbar.Slots[hotbar.SelectedIndex]);
+            hotbar.OnSelectedChanged += HandleSelectedChanged;
         }
 
         ~HotbarView()
         {
-            if (_hotbar != null)
+            if (_context.LocalPlayer?.Hotbar != null)
             {
-                _hotbar.OnSlotChanged -= HandleSlotChanged;
-                _hotbar.OnSelectedChanged -= HandleSelectedChanged;
+                _context.LocalPlayer.Hotbar.OnSlotChanged -= HandleSlotChanged;
+                _context.LocalPlayer.Hotbar.OnSelectedChanged -= HandleSelectedChanged;
             }
         }
 
@@ -77,7 +79,12 @@ namespace FishFlingers.UI
 
         private void Update()
         {
-            ScrollUpdate();
+            if (_context.LocalPlayer.CanAct)
+            {
+                ScrollUpdate();
+                HotkeyUpdate();
+            }
+
             BackgroundUpdate();
         }
 
@@ -93,6 +100,17 @@ namespace FishFlingers.UI
             {
                 ChangeSelectedSlot(1);
             }
+        }
+
+        private void HotkeyUpdate()
+        {
+            if (!_context.LocalPlayer.InputLogic.TryGetNumber(out int number))
+            {
+                return;
+            }
+
+            int delta = number - 1 - Utils.Math.EuclideanModulo(_selectedIndex, _slots.Length);
+            ChangeSelectedSlot(delta);
         }
 
         private void BackgroundUpdate()
@@ -112,7 +130,7 @@ namespace FishFlingers.UI
 
             _selectedIndex += delta;
 
-            _hotbar.SetSelected(Utils.Math.EuclideanModulo(_selectedIndex, _slots.Length));
+            _context.LocalPlayer.Hotbar.SetSelected(Utils.Math.EuclideanModulo(_selectedIndex, _slots.Length));
         }
 
         private void HandleSelectedChanged(int index, InventoryItem item)

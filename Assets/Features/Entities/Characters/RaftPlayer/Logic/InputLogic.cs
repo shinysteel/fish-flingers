@@ -11,6 +11,10 @@ namespace FishFlingers.Entities
         private Vector2 _mouse;
         private bool _leftClick;
         private bool _rightClick;
+        private int _number;
+        private bool _one;
+        private bool _two;
+        private bool _three;
         private bool _rotateItem;
         private bool _dropItem;
         private bool _toggleSettings;
@@ -19,11 +23,14 @@ namespace FishFlingers.Entities
         public Vector2 Mouse => _mouse;
         public bool LeftClick => _leftClick;
         public bool RightClick => _rightClick;
+        public bool One => _one;
+        public bool Two => _two;
+        public bool Three => _three;
         public bool RotateItem => _rotateItem;
         public bool DropItem => _dropItem;
         public bool ToggleSettings => _toggleSettings;
         public bool ToggleFishingBag => _toggleFishingBag;
-
+        
         // Vars dependent on RaftPlayer.CanAct
         private Vector2 _gameplayMouse;
         private Vector3 _moveDirection;
@@ -50,6 +57,9 @@ namespace FishFlingers.Entities
             _mouse = Input.mousePosition;
             _leftClick = Input.GetMouseButtonDown(0);
             _rightClick = Input.GetMouseButtonDown(1);
+            _one = Input.GetKeyDown(KeyCode.Alpha1);
+            _two = Input.GetKeyDown(KeyCode.Alpha2);
+            _three = Input.GetKeyDown(KeyCode.Alpha3);
             _rotateItem = Input.GetKeyDown(KeyCode.R);
             _dropItem = Input.GetKeyDown(KeyCode.Q);
             _toggleSettings = Input.GetKeyDown(KeyCode.Escape);
@@ -70,6 +80,26 @@ namespace FishFlingers.Entities
                 _ascend = false;
                 _interact = false;
             }
+        }
+
+        public bool TryGetNumber(out int number)
+        {
+            number = -1;
+
+            if (_one)
+            {
+                number = 1;
+            }
+            else if (_two)
+            {
+                number = 2;
+            }
+            else if (_three)
+            {
+                number = 3;
+            }
+
+            return number >= 1;
         }
     }
 }

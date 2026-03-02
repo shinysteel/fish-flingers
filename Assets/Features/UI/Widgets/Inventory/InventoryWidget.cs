@@ -88,16 +88,31 @@ namespace FishFlingers.UI
 
         private void Update()
         {
-            if (_context.LocalPlayer.GrabbedItemLogic.GrabbedInventoryItem == null && _context.LocalPlayer.InputLogic.RotateItem)
+            // Using hotkeys, rotate or drop items
+            if (_context.LocalPlayer.GrabbedItemLogic.GrabbedInventoryItem == null)
             {
-                RotateInventoryItemAtCursor();
-            }
+                if (_context.LocalPlayer.InputLogic.RotateItem)
+                {
+                    RotateInventoryItemAtCursor();
+                }
 
-            if (_context.LocalPlayer.GrabbedItemLogic.GrabbedInventoryItem == null && _context.LocalPlayer.InputLogic.DropItem)
-            {
-                DropInventoryItemAtCursor();
+                if (_context.LocalPlayer.InputLogic.DropItem)
+                {
+                    DropInventoryItemAtCursor();
+                }
             }
             
+            // Using hotkeys, assign items to the hotbar
+            if (_context.LocalPlayer.GrabbedItemLogic.GrabbedInventoryItem == null && _context.LocalPlayer.InputLogic.TryGetNumber(out int number))
+            {
+                _inventoryRaycaster.GetTargetViews(out InventoryItemView targetItemView, out _, out _, out _);
+
+                if (targetItemView != null)
+                {
+                    _context.LocalPlayer.Hotbar.SetSlot(number - 1, targetItemView.InventoryItem);
+                }
+            }
+
             _inventoryOutliner.Tick();   
         }
 
