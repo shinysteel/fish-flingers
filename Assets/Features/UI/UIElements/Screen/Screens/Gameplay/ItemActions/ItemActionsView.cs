@@ -65,7 +65,7 @@ namespace FishFlingers.UI
         {
             _context = context;
 
-            HandleHotbarSelectedChanged(_context.LocalPlayer.Hotbar.SelectedIndex, _context.LocalPlayer.Hotbar.GetSelected());
+            HandleHotbarSelectedChanged(_context.LocalPlayer.Hotbar.SelectedIndex, _context.LocalPlayer.Hotbar.SelectedItem);
             _context.LocalPlayer.Hotbar.OnSelectedChanged += HandleHotbarSelectedChanged;
 
             _leftClickActionView.Setup();

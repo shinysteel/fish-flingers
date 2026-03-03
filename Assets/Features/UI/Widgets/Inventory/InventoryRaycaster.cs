@@ -25,14 +25,14 @@ namespace FishFlingers.UI
         /// <summary>
         /// Retrieve relevant views to target under the cursor
         /// </summary>
-        public void GetTargetViews(out InventoryItemView targetItemView, out InventorySlotView targetInventorySlot, out HotbarWidgetSlot targetHotbarSlot, out Panel targetPanel)
+        public void GetViews(out InventoryItemView itemView, out InventorySlotView inventorySlot, out HotbarWidgetSlot hotbarSlot, out Panel panel)
         {
-            targetItemView = null;
-            targetInventorySlot = null;
-            targetHotbarSlot = null;
-            targetPanel = null;
+            itemView = null;
+            inventorySlot = null;
+            hotbarSlot = null;
+            panel = null;
 
-            List<InventoryItemView> targetItemViews = ListPool<InventoryItemView>.Get();
+            List<InventoryItemView> itemViews = ListPool<InventoryItemView>.Get();
 
             _pointerEventData.Reset();
             _pointerEventData.position = Input.mousePosition;
@@ -45,55 +45,55 @@ namespace FishFlingers.UI
             // so we use a list to track those
             foreach (RaycastResult result in _raycastResults)
             {
-                if (result.gameObject.TryGetComponent(out targetItemView))
+                if (result.gameObject.TryGetComponent(out itemView))
                 {
-                    targetItemViews.Add(targetItemView);
+                    itemViews.Add(itemView);
                 }
 
-                if (targetInventorySlot == null)
+                if (inventorySlot == null)
                 {
-                    result.gameObject.TryGetComponent(out targetInventorySlot);
+                    result.gameObject.TryGetComponent(out inventorySlot);
                 }
 
-                if (targetHotbarSlot == null)
+                if (hotbarSlot == null)
                 {
-                    result.gameObject.TryGetComponent(out targetHotbarSlot);
+                    result.gameObject.TryGetComponent(out hotbarSlot);
                 }
 
-                if (targetPanel == null)
+                if (panel == null)
                 {
-                    result.gameObject.TryGetComponent(out targetPanel);
+                    result.gameObject.TryGetComponent(out panel);
                 }
             }
 
-            // Choose the preferred targetItemView 
+            // Choose the most relevant itemView 
             try
             {
-                if (targetItemViews.Count == 0)
+                if (itemViews.Count == 0)
                 {
                     return;
                 }
 
-                targetItemView = targetItemViews[0];
+                itemView = itemViews[0];
 
-                if (targetInventorySlot?.InventoryItem == null)
+                if (inventorySlot?.InventoryItem == null)
                 {
                     return;
                 }
 
                 // Given items can overlap cells they aren't actually on, we'd prefer to target items that are actually on the slot
-                foreach (InventoryItemView itemView in targetItemViews)
+                for (int i = 0; i < itemViews.Count; i++)
                 {
-                    if (itemView.InventoryItem.ItemInstance.InstanceId == targetInventorySlot.InventoryItem.ItemInstance.InstanceId)
+                    if (itemViews[i].InventoryItem.ItemInstance.InstanceId == inventorySlot.InventoryItem.ItemInstance.InstanceId)
                     {
-                        targetItemView = itemView;
+                        itemView = itemViews[i];
                         return;
                     }
                 }
             }
             finally
             {
-                ListPool<InventoryItemView>.Release(targetItemViews);
+                ListPool<InventoryItemView>.Release(itemViews);
             }
         }
     }

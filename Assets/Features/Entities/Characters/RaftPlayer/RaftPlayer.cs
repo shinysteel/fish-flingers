@@ -9,7 +9,6 @@ using ShinyOwl.Common;
 using ShinyOwl.Common.Structures;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -33,9 +32,11 @@ namespace FishFlingers.Entities
         private InteractLogic _interactLogic;
         private GrabbedItemLogic _grabbedItemLogic;
         private DropItemLogic _dropItemLogic;
+        private HotkeyLogic _hotkeyLogic;
         private TargetLogic _targetLogic;
 
         public InputLogic InputLogic => _inputLogic;
+        public InteractLogic InteractLogic => _interactLogic;
         public GrabbedItemLogic GrabbedItemLogic => _grabbedItemLogic;
         public DropItemLogic DropItemLogic => _dropItemLogic;
         public TargetLogic TargetLogic => _targetLogic;
@@ -86,13 +87,6 @@ namespace FishFlingers.Entities
             });
         }
 
-        protected override void OnDespawned()
-        {
-            base.OnDespawned();
-
-            _grabbedItemLogic.Dispose();
-        }
-
         public override void Initialise(GameplayContext context)
         {
             base.Initialise(context);
@@ -101,6 +95,7 @@ namespace FishFlingers.Entities
             {
                 _hotbar = new Hotbar(context);
 
+                _hotkeyLogic = new HotkeyLogic(context, _netGrabbedInventoryItem);
                 _targetLogic = new TargetLogic(context, _targetPrefab);
             }
 
@@ -123,8 +118,7 @@ namespace FishFlingers.Entities
             _inputLogic.Tick();
             _physicsLogic.Tick();
             _interactLogic.Tick();
-            _grabbedItemLogic.Tick();
-            _dropItemLogic.Tick();
+            _hotkeyLogic.Tick();
             _targetLogic.Tick();
 
             SyncVarsUpdate();

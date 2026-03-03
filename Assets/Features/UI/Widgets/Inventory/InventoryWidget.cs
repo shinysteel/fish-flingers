@@ -34,7 +34,6 @@ namespace FishFlingers.UI
         public IReadOnlyDictionary<Vector2Int, InventorySlotView> InventorySlotViews => _inventorySlotViews;
         public IReadOnlyDictionary<string, InventoryItemView> InventoryItemViews => _inventoryItemViews;
 
-        private InventoryRaycaster _inventoryRaycaster;
         private InventoryOutliner _inventoryOutliner;
 
         private void Awake()
@@ -53,7 +52,6 @@ namespace FishFlingers.UI
 
             OnRectTransformDimensionsChange();
 
-            _inventoryRaycaster = new();
             _inventoryOutliner = new InventoryOutliner(_context, this);
 
             foreach (KeyValuePair<string, InventoryItem> kvp in _inventory.InventoryItems)
@@ -88,51 +86,7 @@ namespace FishFlingers.UI
 
         private void Update()
         {
-            // Using hotkeys, rotate or drop items
-            if (_context.LocalPlayer.GrabbedItemLogic.GrabbedInventoryItem == null)
-            {
-                if (_context.LocalPlayer.InputLogic.RotateItem)
-                {
-                    RotateInventoryItemAtCursor();
-                }
-
-                if (_context.LocalPlayer.InputLogic.DropItem)
-                {
-                    DropInventoryItemAtCursor();
-                }
-            }
-            
-            // Using hotkeys, assign items to the hotbar
-            if (_context.LocalPlayer.GrabbedItemLogic.GrabbedInventoryItem == null && _context.LocalPlayer.InputLogic.TryGetNumber(out int number))
-            {
-                _inventoryRaycaster.GetTargetViews(out InventoryItemView targetItemView, out _, out _, out _);
-
-                if (targetItemView != null)
-                {
-                    _context.LocalPlayer.Hotbar.SetSlot(number - 1, targetItemView.InventoryItem);
-                }
-            }
-
             _inventoryOutliner.Tick();   
-        }
-
-        public void RotateInventoryItemAtCursor()
-        {
-            // Not implemented yet, but InventoryItem was made IDeepCloneable so that we could implement
-            // this behaviour. It's just a bit tricky with modifying the pivot
-        }
-
-        public void DropInventoryItemAtCursor()
-        {
-            _inventoryRaycaster.GetTargetViews(out InventoryItemView targetItemView, out _, out _, out _);
-
-            if (targetItemView == null)
-            {
-                return;
-            }
-
-            _context.LocalPlayer.DropItemLogic.SpawnDroppedItem(targetItemView.InventoryItem.ItemInstance, false);
-            _inventory.RemoveItem(targetItemView.InventoryItem.ItemInstance.InstanceId);
         }
 
         // Setup the slot views

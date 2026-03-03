@@ -8,18 +8,9 @@ using ShinyOwl.Common.Utils;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-using NetworkManager = FishFlingers.Networking.NetworkManager;
 
 public class GrabbedItemLogic
 {
-    private UIManager _uiManager;
-    private NetworkManager _networkManager;
-    private EntityManager _entityManager;
-    private CameraManager _cameraManager;
-
     private RaftPlayer _player;
 
     private SyncVar<NetInventoryItem> _netGrabbedInventoryItem;
@@ -29,8 +20,6 @@ public class GrabbedItemLogic
 
     private InventoryItemView _grabbedItemView;
 
-    private InventoryRaycaster _inventoryRaycaster;
-
     // When an item is 'grabbed', it's alpha is modified until the grab is resolved
     private const float GrabAlpha = 0.5f;
 
@@ -38,77 +27,24 @@ public class GrabbedItemLogic
 
     public GrabbedItemLogic(RaftPlayer player, SyncVar<NetInventoryItem> netGrabbedInventoryItem)
     {
-        _uiManager = GameManager.Instance.Get<UIManager>();
-        _networkManager = GameManager.Instance.Get<NetworkManager>();
-        _entityManager = GameManager.Instance.Get<EntityManager>();
-        _cameraManager = GameManager.Instance.Get<CameraManager>();
-
         _player = player;
 
         _netGrabbedInventoryItem = netGrabbedInventoryItem;
         _netGrabbedInventoryItem.onChanged += HandleNetGrabbedInventoryItemChanged;
-
-        _inventoryRaycaster = new();
     }
 
-    public void Dispose()
+    ~GrabbedItemLogic()
     {
-        _netGrabbedInventoryItem.onChanged -= HandleNetGrabbedInventoryItemChanged;
-    }
-
-    public void Tick()
-    {
-        if (_player.InputLogic.RotateItem)
+        if (_netGrabbedInventoryItem != null)
         {
-            Rotate();
-        }
-
-        if (_player.InputLogic.LeftClick)
-        {
-            Click();
-        }
-    }
-
-    private void Rotate()
-    {
-        if (_grabbedInventoryItem == null)
-        {
-            return;
-        }
-
-        _networkManager.ChangeSyncVar(_netGrabbedInventoryItem, () => _netGrabbedInventoryItem.value.ChangeRotations(1));
-    }
-
-    private void Click()
-    {
-        _inventoryRaycaster.GetTargetViews(out InventoryItemView targetItemView, out InventorySlotView targetInventorySlot, out HotbarWidgetSlot targetHotbarSlot, out Panel targetPanel);
-
-        if (_grabbedInventoryItem == null)
-        {
-            // If the item and slot is linked, grab it
-            if (targetItemView != null && targetInventorySlot != null && targetItemView.InventoryItem.ItemInstance.InstanceId == targetInventorySlot.InventoryItem?.ItemInstance.InstanceId)
-            {
-                Grab(targetItemView, targetInventorySlot);
-            }
-        }
-        else if (targetHotbarSlot != null)
-        {
-            Assign(targetHotbarSlot);
-        }
-        else if (targetInventorySlot != null)
-        {
-            Place(targetInventorySlot);
-        }
-        else if (targetPanel == null)
-        {
-            Drop();
+            _netGrabbedInventoryItem.onChanged -= HandleNetGrabbedInventoryItemChanged;
         }
     }
 
     /// <summary>
     /// Mark an item as 'grabbed', and visualise it on the cursor
     /// </summary>
-    private void Grab(InventoryItemView itemView, InventorySlotView slotView)
+    public void Grab(InventoryItemView itemView, InventorySlotView slotView)
     {
         // The item needs to be a clone so that rotating it doesn't affect the original
         string instanceId = itemView.InventoryItem.ItemInstance.InstanceId;
@@ -130,7 +66,7 @@ public class GrabbedItemLogic
     /// <summary>
     /// Retrieve relevant views to target under the cursor
     /// </summary>
-    private void Assign(HotbarWidgetSlot slot)
+    public void Assign(HotbarWidgetSlot slot)
     {
         _player.Hotbar.SetSlot(slot.Index, _grabbedInventoryItem);
 
@@ -140,7 +76,7 @@ public class GrabbedItemLogic
     /// <summary>
     /// Place the grabbed item at an inventory slot
     /// </summary>
-    private void Place(InventorySlotView slotView)
+    public void Place(InventorySlotView slotView)
     {
         PlaceParams placeParams = new PlaceParams()
         {
@@ -169,7 +105,7 @@ public class GrabbedItemLogic
     /// <summary>
     /// Drop the grabbed item out of the inventory
     /// </summary>
-    private void Drop()
+    public void Drop()
     {
         _player.DropItemLogic.SpawnDroppedItem(_grabbedInventoryItem.ItemInstance, true);
         _grabbedItemView.InventoryWidget.Inventory.RemoveItem(_grabbedInventoryItem.ItemInstance.InstanceId);

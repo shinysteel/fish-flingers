@@ -9,9 +9,9 @@ namespace FishFlingers.Entities
 
         // Vars always active
         private Vector2 _mouse;
+        private float _scroll;
         private bool _leftClick;
         private bool _rightClick;
-        private int _number;
         private bool _one;
         private bool _two;
         private bool _three;
@@ -21,6 +21,7 @@ namespace FishFlingers.Entities
         private bool _toggleFishingBag;
 
         public Vector2 Mouse => _mouse;
+        public float Scroll => _scroll;
         public bool LeftClick => _leftClick;
         public bool RightClick => _rightClick;
         public bool One => _one;
@@ -44,6 +45,7 @@ namespace FishFlingers.Entities
         public bool Ascend => _ascend;
         public bool Interact => _interact;
 
+        private const string MouseScrollWheelAxis = "Mouse ScrollWheel";
         private const string HorizontalAxis = "Horizontal";
         private const string VerticalAxis = "Vertical";
 
@@ -55,6 +57,7 @@ namespace FishFlingers.Entities
         public void Tick()
         {
             _mouse = Input.mousePosition;
+            _scroll = Input.GetAxis(MouseScrollWheelAxis);
             _leftClick = Input.GetMouseButtonDown(0);
             _rightClick = Input.GetMouseButtonDown(1);
             _one = Input.GetKeyDown(KeyCode.Alpha1);
@@ -80,6 +83,12 @@ namespace FishFlingers.Entities
                 _ascend = false;
                 _interact = false;
             }
+        }
+
+        public bool TryGetScroll(out float scroll)
+        {
+            scroll = _scroll;
+            return scroll != 0f;
         }
 
         public bool TryGetNumber(out int number)

@@ -1,12 +1,13 @@
+using FishFlingers.Cameras;
+using FishFlingers.Items;
 using FishFlingers.Networking;
 using FishFlingers.Pools;
 using FishFlingers.Scenes;
 using ShinyOwl.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using System;
-
 using Object = UnityEngine.Object;
 
 namespace FishFlingers.Entities
@@ -149,6 +150,18 @@ namespace FishFlingers.Entities
         {
             // Entity + Poolable
             _poolManager.Return(entity);
+        }
+
+        /// <summary>
+        /// Spawns a DroppedItem and launches it in a direction
+        /// </summary>
+        public void SpawnDroppedItem(SpawnParams parameters, ItemInstance instance, Vector3 direction, float strength)
+        {
+            DroppedItem item = (DroppedItem)Spawn(EEntity.DroppedItem, parameters);
+            item.SetItem(instance.InstanceId, instance.Data.ItemId, instance.Count);
+
+            // Launch the item
+            item.Rigidbody.AddForce(direction * strength, ForceMode.Impulse);
         }
     }
 }

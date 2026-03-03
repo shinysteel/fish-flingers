@@ -1,6 +1,7 @@
 using FishFlingers.Inventories;
 using FishFlingers.States;
 using ShinyOwl.Common;
+using ShinyOwl.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,12 @@ public class Hotbar
     private int _selectedIndex;
     public int SelectedIndex => _selectedIndex;
 
+    public InventoryItem SelectedItem => _slots[_selectedIndex];
+
+    // Invoked when a slot is changed
     public event Action<int, InventoryItem> OnSlotChanged;
+
+    // Invoked when a slot is selected
     public event Action<int, InventoryItem> OnSelectedChanged;
 
     public Hotbar(GameplayContext context)
@@ -102,7 +108,18 @@ public class Hotbar
         }
     }
 
-    public void SetSelected(int index)
+    public void ChangeSelectedIndex(int delta)
+    {
+        if (delta == 0)
+        {
+            return;
+        }
+
+        int index = Utils.Math.EuclideanModulo(_selectedIndex + delta, _slots.Count);
+        SetSelectedIndex(index);
+    }
+
+    public void SetSelectedIndex(int index)
     {
         if (_selectedIndex == index)
         {
@@ -116,11 +133,6 @@ public class Hotbar
     private void NotifyOnSelectedChanged()
     {
         OnSelectedChanged?.Invoke(_selectedIndex, _slots[_selectedIndex]);
-    }
-
-    public InventoryItem GetSelected()
-    {
-        return _slots[_selectedIndex];
     }
 
     public bool IsItemAssigned(InventoryItem item, out int index)

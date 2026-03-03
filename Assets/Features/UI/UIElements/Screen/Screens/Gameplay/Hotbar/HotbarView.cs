@@ -79,38 +79,7 @@ namespace FishFlingers.UI
 
         private void Update()
         {
-            if (_context.LocalPlayer.CanAct)
-            {
-                ScrollUpdate();
-                HotkeyUpdate();
-            }
-
             BackgroundUpdate();
-        }
-
-        private void ScrollUpdate()
-        {
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
-
-            if (scroll > 0f)
-            {
-                ChangeSelectedSlot(-1);
-            }
-            else if (scroll < 0f)
-            {
-                ChangeSelectedSlot(1);
-            }
-        }
-
-        private void HotkeyUpdate()
-        {
-            if (!_context.LocalPlayer.InputLogic.TryGetNumber(out int number))
-            {
-                return;
-            }
-
-            int delta = number - 1 - Utils.Math.EuclideanModulo(_selectedIndex, _slots.Length);
-            ChangeSelectedSlot(delta);
         }
 
         private void BackgroundUpdate()
@@ -121,20 +90,11 @@ namespace FishFlingers.UI
             _backgroundMaterial.SetFloat(HighlightIndexName, _selectedIndexBlend);
         }
 
-        private void ChangeSelectedSlot(int delta)
-        {
-            if (delta == 0)
-            {
-                return;
-            }
-
-            _selectedIndex += delta;
-
-            _context.LocalPlayer.Hotbar.SetSelected(Utils.Math.EuclideanModulo(_selectedIndex, _slots.Length));
-        }
-
         private void HandleSelectedChanged(int index, InventoryItem item)
         {
+            int delta = index - Utils.Math.EuclideanModulo(_selectedIndex, _slots.Length);
+            _selectedIndex += delta;
+
             for (int i = 0; i < _slots.Length; i++)
             {
                 _slots[i].SetSelected(i == index);

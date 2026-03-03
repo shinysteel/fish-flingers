@@ -204,6 +204,16 @@ namespace FishFlingers.Entities
             _uiStateMachine.AddState(EState.Destroy, destroyState);
         }
 
+        public void Interact()
+        {
+            if (_targetInteractable as Object == null)
+            {
+                return;
+            }
+
+            _targetInteractable.Interact();            
+        }
+
         public void Tick()
         {
             _targetInteractable = FindTarget();
@@ -211,8 +221,6 @@ namespace FishFlingers.Entities
             _uiStateMachine.Tick();
 
             AnimateTick();
-
-            InteractTick();
         }
 
         private IInteractable FindTarget()
@@ -287,19 +295,6 @@ namespace FishFlingers.Entities
 
             // Bob up and down slightly above the interactable
             _interactPromptUI.transform.position = _currentInteractable.Position + offset;
-        }
-
-        private void InteractTick()
-        {
-            if (_targetInteractable as Object == null)
-            {
-                return;
-            }
-
-            if (_inputLogic.Interact)
-            {
-                _targetInteractable.Interact();
-            }
         }
     }
 }
