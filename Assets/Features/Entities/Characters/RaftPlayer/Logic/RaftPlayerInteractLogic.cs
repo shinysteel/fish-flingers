@@ -16,7 +16,6 @@ namespace FishFlingers.Entities
         private UIManager _uiManager;
 
         private RaftPlayer _player;
-        private RaftPlayerInputLogic _inputLogic;
 
         private StateMachine<EState> _uiStateMachine;
 
@@ -179,12 +178,11 @@ namespace FishFlingers.Entities
             }
         }
 
-        public RaftPlayerInteractLogic(RaftPlayer player, RaftPlayerInputLogic inputLogic)
+        public RaftPlayerInteractLogic(RaftPlayer player)
         {
             _uiManager = GameManager.Instance.Get<UIManager>();
 
             _player = player;
-            _inputLogic = inputLogic;
 
             _uiStateMachine = new();
 

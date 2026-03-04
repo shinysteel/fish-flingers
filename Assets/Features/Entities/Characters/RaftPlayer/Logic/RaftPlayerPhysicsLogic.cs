@@ -11,7 +11,6 @@ namespace FishFlingers.Entities
         private CameraManager _cameraManager;
 
         private RaftPlayer _player;
-        private RaftPlayerInputLogic _inputLogic;
         private CapsuleCollider _capsuleCollider;
 
         private float _jumpTimer;
@@ -21,12 +20,11 @@ namespace FishFlingers.Entities
         private RaycastHit[] _groundedHitsNonAlloc = new RaycastHit[2];
         private Collider[] _swimCollidersNonAlloc = new Collider[1];
 
-        public RaftPlayerPhysicsLogic(RaftPlayer player, RaftPlayerInputLogic inputLogic, CapsuleCollider capsuleCollider)
+        public RaftPlayerPhysicsLogic(RaftPlayer player, CapsuleCollider capsuleCollider)
         {
             _cameraManager = GameManager.Instance.Get<CameraManager>();
 
             _player = player;
-            _inputLogic = inputLogic;
             _capsuleCollider = capsuleCollider;
         }
 
@@ -48,7 +46,7 @@ namespace FishFlingers.Entities
         {
             _jumpTimer += Time.deltaTime;
 
-            if (!_inputLogic.Jump)
+            if (!_player.InputLogic.Jump)
             {
                 return;
             }
@@ -64,16 +62,16 @@ namespace FishFlingers.Entities
 
         private void MoveFixedTick()
         {
-            Vector3 targetVelocity = _inputLogic.MoveDirection * _player.Data.MoveSettings.Speed;
+            Vector3 targetVelocity = _player.InputLogic.MoveDirection * _player.Data.MoveSettings.Speed;
             targetVelocity.y = _player.Rigidbody.linearVelocity.y;
-            float speed = _inputLogic.MoveDirection != Vector3.zero ? _player.Data.MoveSettings.Acceleration : _player.Data.MoveSettings.Deceleration;
+            float speed = _player.InputLogic.MoveDirection != Vector3.zero ? _player.Data.MoveSettings.Acceleration : _player.Data.MoveSettings.Deceleration;
 
             _player.Rigidbody.linearVelocity = Vector3.MoveTowards(_player.Rigidbody.linearVelocity, targetVelocity, speed * Time.fixedDeltaTime);
         }
 
         private void LookFixedTick()
         {
-            Ray ray = _cameraManager.MainCamera.ScreenPointToRay(_inputLogic.GameplayMouse);
+            Ray ray = _cameraManager.MainCamera.ScreenPointToRay(_player.InputLogic.GameplayMouse);
 
             // Have the plane sit at the player's origin so that y does not influence the target
             Plane plane = new Plane(Vector3.up, _player.transform.position);
@@ -136,7 +134,7 @@ namespace FishFlingers.Entities
         private void SwimFixedTick()
         {
             // While swimming, the player can hold spacebar to propel themselves up
-            if (!_inputLogic.Ascend)
+            if (!_player.InputLogic.Ascend)
             {
                 return;
             }

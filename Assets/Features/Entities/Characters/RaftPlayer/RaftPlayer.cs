@@ -54,8 +54,8 @@ namespace FishFlingers.Entities
         protected override void OnSpawned()
         {
             _inputLogic = new RaftPlayerInputLogic(this);
-            _physicsLogic = new RaftPlayerPhysicsLogic(this, _inputLogic, _capsuleCollider);
-            _interactLogic = new RaftPlayerInteractLogic(this, _inputLogic);
+            _physicsLogic = new RaftPlayerPhysicsLogic(this, _capsuleCollider);
+            _interactLogic = new RaftPlayerInteractLogic(this);
             _grabbedItemLogic = new RaftPlayerGrabbedItemLogic(this, _netGrabbedInventoryItem);
             _dropItemLogic = new RaftPlayerDropItemLogic(this);
 
@@ -85,6 +85,11 @@ namespace FishFlingers.Entities
                 ItemId = ItemId.Hammer,
                 Amount = 1
             });
+
+            for (int i = 0; i < 12; i++)
+            {
+                _inventory.TryAddItems(new AddParams() { ItemId = ItemId.Driftwood, Amount = 3 });
+            }
         }
 
         public override void Initialise(GameplayContext context)

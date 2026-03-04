@@ -211,7 +211,12 @@ namespace FishFlingers.Entities
         {
             _inventoryRaycaster.GetViews(out InventoryItemView itemView, out InventorySlotView inventorySlot, out _, out _);
 
-            if (itemView?.InventoryItem == null || inventorySlot == null)
+            if (itemView == null || inventorySlot == null)
+            {
+                return;
+            }
+
+            if (itemView.InventoryItem.ItemInstance.InstanceId != inventorySlot.InventoryItem?.ItemInstance.InstanceId)
             {
                 return;
             }
