@@ -48,8 +48,6 @@ namespace FishFlingers.UI
         }
 
         public virtual void Unload()
-        {
-            _canvas = null;
-        }
+        { }
     }
 }

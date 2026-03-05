@@ -6,6 +6,7 @@ using FishFlingers.States;
 using PurrNet;
 using PurrNet.Transports;
 using ShinyOwl.Common;
+using ShinyOwl.Common.Utils;
 using System.Collections.Generic;
 using UnityEditor.Localization.Plugins.XLIFF.V12;
 using UnityEngine;
@@ -65,24 +66,10 @@ namespace FishFlingers.UI
         // Cursor lifecycle
         private void SyncCursors()
         {
-            int numCursors = _context.Players.Count;
-
-            for (int i = _cursors.Count; i < numCursors; i++)
-            {
-                Cursor cursor = _poolManager.Get<Cursor>(new SpawnParams() { Parent = transform });
-                _cursors.Add(cursor);
-            }
-
-            for (int i = _cursors.Count - 1; i >= numCursors; i--)
-            {
-                _poolManager.Return(_cursors[i]);
-                _cursors.RemoveAt(i);
-            }
-
-            for (int i = 0; i < numCursors; i++)
-            {
-                _cursors[i].SetOwner(_context.Players[i]);
-            }
+            Utils.Collections.ResizeList(_cursors, _context.Players.Count,
+                createElement: () => _poolManager.Get<Cursor>(new SpawnParams() { Parent = transform }),
+                removeElement: (Cursor cursor) => _poolManager.Return(cursor),
+                processElement: (Cursor cursor, int index) => cursor.SetOwner(_context.Players[index]));
         }
 
         public void OnNetworkSpawn(NetBehaviour behaviour) 

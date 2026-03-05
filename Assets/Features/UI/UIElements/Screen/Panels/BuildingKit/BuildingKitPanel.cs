@@ -1,9 +1,12 @@
 using FishFlingers.Entities;
 using FishFlingers.Pools;
 using FishFlingers.States;
+using ShinyOwl.Common.Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,7 +19,9 @@ namespace FishFlingers.UI
         private EntityManager _entityManager;
         private PoolManager _poolManager;
 
-        private BlueprintEntry[] _blueprintEntries;
+        private GameplayContext _context;
+
+        private List<BlueprintEntry> _blueprintEntries = new();
 
         public override void Load(Canvas canvas)
         {
@@ -28,32 +33,41 @@ namespace FishFlingers.UI
 
         public void Setup(GameplayContext context)
         {
-            IEnumerable<IBuildable> buildables = context.LocalPlayer.TargetLogic.Target.Tile == null
-                ? _entityManager.GetEntities<RaftTile>().Select(tile => tile.Data)
-                : _entityManager.GetEntities<Structure>().Select(structure => structure.StructureData);
+            _context = context;
 
-            _blueprintEntries = new BlueprintEntry[buildables.Count()];
-
-            // Populate the blueprint entries
-            int i = 0;
-            foreach (IBuildable buildable in buildables)
-            {
-                BlueprintEntry entry = _poolManager.Get<BlueprintEntry>(new SpawnParams() { Parent = _blueprintsScrollRect.content });
-                entry.Setup(context, buildable);
-
-                _blueprintEntries[i] = entry;
-                i++;
-            }
+            RefreshEntries();
+            _context.LocalPlayer.TargetLogic.OnTargetChanged += HandleRaftPlayerTargetChanged;
         }
 
         public override void Unload()
         {
-            base.Unload();
+            if (_context.LocalPlayer != null)
+            {
+                _context.LocalPlayer.TargetLogic.OnTargetChanged -= HandleRaftPlayerTargetChanged;
+            }
 
             foreach (BlueprintEntry entry in _blueprintEntries)
             {
                 _poolManager.Return(entry);
             }
+        }
+
+        private void HandleRaftPlayerTargetChanged(RaftPlayerTarget target)
+        {
+            RefreshEntries();
+        }
+
+        private void RefreshEntries()
+        {
+            // We populate the entries with either tiles or structures depending on the target
+            IEnumerable<IBuildable> buildables = _context.LocalPlayer.TargetLogic.Target.Tile == null
+                ? _entityManager.GetEntities<RaftTile>().Select(tile => tile.Data)
+                : _entityManager.GetEntities<Structure>().Select(structure => structure.StructureData);
+
+            Utils.Collections.ResizeList(_blueprintEntries, buildables.Count(),
+                createElement: () => _poolManager.Get<BlueprintEntry>(new SpawnParams() { Parent = _blueprintsScrollRect.content }),
+                removeElement: (BlueprintEntry entry) => _poolManager.Return(entry),
+                processElement: (BlueprintEntry entry, int index) => entry.Setup(_context, buildables.ElementAt(index)));
         }
     }
 }

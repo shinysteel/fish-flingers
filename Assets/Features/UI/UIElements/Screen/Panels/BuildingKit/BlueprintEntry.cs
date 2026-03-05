@@ -6,6 +6,8 @@ using FishFlingers.States;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using ShinyOwl.Common.Utils;
 
 namespace FishFlingers.UI
 {
@@ -23,7 +25,7 @@ namespace FishFlingers.UI
         private GameplayContext _context;
         private IBuildable _buildable;
 
-        private RequirementEntry[] _requirementEntries;
+        private List<RequirementEntry> _requirementEntries = new();
 
         private void Awake()
         {
@@ -42,17 +44,16 @@ namespace FishFlingers.UI
             _nameText.text = _localisationManager.GetString(_buildable.EntityData.NameTerm);
             _descriptionText.text = _localisationManager.GetString(_buildable.EntityData.DescriptionTerm);
 
-            RecipeRequirement[] requirements = _buildable.Recipe.Requirements;
-            _requirementEntries = new RequirementEntry[requirements.Length];
+            RefreshEntries();
+        }
 
-            // Populate the recipe requirements
-            for (int i = 0; i < _requirementEntries.Length; i++)
-            {
-                RequirementEntry entry = _poolManager.Get<RequirementEntry>(new SpawnParams() { Parent = _requirementEntriesContainer });
-                entry.Setup(requirements[i]);
-                
-                _requirementEntries[i] = entry;
-            }
+        // Populate the recipe requirements
+        private void RefreshEntries()
+        {
+            Utils.Collections.ResizeList(_requirementEntries, _buildable.Recipe.Requirements.Length,
+                createElement: () => _poolManager.Get<RequirementEntry>(new SpawnParams() { Parent = _requirementEntriesContainer }),
+                removeElement: (RequirementEntry entry) => _poolManager.Return(entry),
+                processElement: (RequirementEntry entry, int index) => entry.Setup(_buildable.Recipe.Requirements[index]));
         }
 
         private void BuildPressed()
@@ -71,6 +72,8 @@ namespace FishFlingers.UI
             {
                 _poolManager.Return(entry);
             }
+
+            _requirementEntries.Clear();
         }
 
         public void OnTakenFromPool()

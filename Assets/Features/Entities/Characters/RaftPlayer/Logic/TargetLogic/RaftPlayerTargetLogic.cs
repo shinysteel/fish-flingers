@@ -66,7 +66,7 @@ namespace FishFlingers.Entities
                 _context.Raft.OnTileChanged -= HandleTileChanged;
             }
 
-            if (_context.LocalPlayer?.Hotbar != null)
+            if (_context.LocalPlayer != null)
             {
                 _context.LocalPlayer.Hotbar.OnSelectedChanged -= HandleHotbarSelectedItemChanged;
             }

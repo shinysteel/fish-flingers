@@ -2,6 +2,7 @@ using FishFlingers.Localisation;
 using FishFlingers.Networking;
 using FishFlingers.Pools;
 using ShinyOwl.Common;
+using ShinyOwl.Common.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -117,22 +118,10 @@ namespace FishFlingers.UI
         // Use pooling once we allow the scroll rect to display only what is on screen
         private void SyncLobbyEntries(LobbyContainerModel model, Lobby[] lobbies)
         {
-            for (int i = model.Entries.Count; i < lobbies.Length; i++)
-            {
-                LobbyEntry entry = _poolManager.Get<LobbyEntry>(new SpawnParams() { Parent = model.Container.transform });
-                model.Entries.Add(entry);
-            }
-
-            for (int i = 0; i < lobbies.Length; i++)
-            {
-                model.Entries[i].Setup(lobbies[i]);
-            }
-
-            for (int i = model.Entries.Count - 1; i >= lobbies.Length; i--)
-            {
-                _poolManager.Return(model.Entries[i]);
-                model.Entries.RemoveAt(i);
-            }
+            Utils.Collections.ResizeList(model.Entries, lobbies.Length,
+                createElement: () => _poolManager.Get<LobbyEntry>(new SpawnParams() { Parent = model.Container.transform }),
+                removeElement: (LobbyEntry entry) => _poolManager.Return(entry),
+                processElement: (LobbyEntry entry, int index) => entry.Setup(lobbies[index]));
 
             model.Container.gameObject.SetActive(true);
             model.Container.Setup(model.TitleTerm, lobbies.Length);
