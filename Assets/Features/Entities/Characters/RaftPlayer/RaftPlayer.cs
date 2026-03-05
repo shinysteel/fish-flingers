@@ -22,7 +22,7 @@ namespace FishFlingers.Entities
         [SerializeField] private BoolGrid _inventoryLayout;
         public Inventory Inventory => _inventory;
 
-        [SerializeField] private RaftPlayerTarget _targetPrefab;
+        [SerializeField] private RaftPlayerTargetVisual _targetVisualPrefab;
 
         private Hotbar _hotbar;
         public Hotbar Hotbar => _hotbar;
@@ -44,8 +44,8 @@ namespace FishFlingers.Entities
         public bool CanAct => !_uiManager.IsLayerInUse(UILayer.Panels);
 
         // SyncVars
-        private SyncVar<NetInventoryItem> _netGrabbedInventoryItem = new(ownerAuth: true);
-        private SyncVar<Vector2> _netMousePositionNormalised = new(ownerAuth: true);
+        private SyncVar<NetInventoryItem> _netGrabbedInventoryItem = new SyncVar<NetInventoryItem>(ownerAuth: true);
+        private SyncVar<Vector2> _netMousePositionNormalised = new SyncVar<Vector2>(ownerAuth: true);
 
         public Vector2 MousePositionNormalised => _netMousePositionNormalised.value;
 
@@ -74,7 +74,7 @@ namespace FishFlingers.Entities
 
         private async Task SetupStartingItemsAsync()
         {
-            while (!_inventory.NetInventorySlots.IsReady)
+            while (!_inventory.NetInventoryItems.IsReady)
             {
                 await Task.Yield();
             }
@@ -85,11 +85,6 @@ namespace FishFlingers.Entities
                 ItemId = ItemId.Hammer,
                 Amount = 1
             });
-
-            for (int i = 0; i < 12; i++)
-            {
-                _inventory.TryAddItems(new AddParams() { ItemId = ItemId.Driftwood, Amount = 3 });
-            }
         }
 
         public override void Initialise(GameplayContext context)
@@ -101,7 +96,7 @@ namespace FishFlingers.Entities
                 _hotbar = new Hotbar(context);
 
                 _hotkeyLogic = new RaftPlayerHotkeyLogic(context, _netGrabbedInventoryItem);
-                _targetLogic = new RaftPlayerTargetLogic(context, _targetPrefab);
+                _targetLogic = new RaftPlayerTargetLogic(context, _targetVisualPrefab);
             }
 
             // Spawn on a random starting tile

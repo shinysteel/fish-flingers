@@ -21,7 +21,7 @@ namespace FishFlingers.UI
         private PoolManager _poolManager;
 
         private GameplayContext _context;
-        private StructureData _data;
+        private IBuildable _buildable;
 
         private RequirementEntry[] _requirementEntries;
 
@@ -33,16 +33,16 @@ namespace FishFlingers.UI
             _buildButton.onClick.AddListener(BuildPressed);
         }
 
-        public void Setup(GameplayContext context, StructureData data)
+        public void Setup(GameplayContext context, IBuildable buildable)
         {
             _context = context;
-            _data = data;
+            _buildable = buildable;
 
-            _image.sprite = data.Sprite;
-            _nameText.text = _localisationManager.GetString(data.NameTerm);
-            _descriptionText.text = _localisationManager.GetString(data.DescriptionTerm);
+            _image.sprite = _buildable.EntityData.Sprite;
+            _nameText.text = _localisationManager.GetString(_buildable.EntityData.NameTerm);
+            _descriptionText.text = _localisationManager.GetString(_buildable.EntityData.DescriptionTerm);
 
-            RecipeRequirement[] requirements = data.Recipe.Requirements;
+            RecipeRequirement[] requirements = _buildable.Recipe.Requirements;
             _requirementEntries = new RequirementEntry[requirements.Length];
 
             // Populate the recipe requirements
@@ -57,10 +57,12 @@ namespace FishFlingers.UI
 
         private void BuildPressed()
         {
-            foreach (RecipeRequirement requirement in _data.Recipe.Requirements)
+            foreach (RecipeRequirement requirement in _buildable.Recipe.Requirements)
             {
                 _context.LocalPlayer.Inventory.TryRemoveItems(requirement.ItemId, requirement.Count);
             }
+
+            _buildable.Build(_context, _context.LocalPlayer.TargetLogic.Target);
         }
 
         public void OnReturnedToPool()

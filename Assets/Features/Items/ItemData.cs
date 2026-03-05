@@ -15,7 +15,7 @@ namespace FishFlingers.Inventories
         [SerializeField] private BoolGrid _shape;
         [SerializeField] private ItemActionData _leftClickAction;
         [SerializeField] private ItemActionData _rightClickAction;
-        [SerializeField] private bool _displaysTarget;
+        [SerializeField] private bool _showsTarget;
 
         // To differentiate from InstanceId, we use ItemId
         public ItemId ItemId => _itemId;
@@ -26,6 +26,6 @@ namespace FishFlingers.Inventories
         public BoolGrid Shape => _shape;
         public ItemActionData LeftClickAction => _leftClickAction;
         public ItemActionData RightClickAction => _rightClickAction;
-        public bool DisplaysTarget => _displaysTarget;
+        public bool ShowsTarget => _showsTarget;
     }
 }

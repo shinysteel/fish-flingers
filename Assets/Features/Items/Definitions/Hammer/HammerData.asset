@@ -19,4 +19,4 @@ MonoBehaviour:
   _shape: {fileID: 11400000, guid: b87a2e1f7cd586940af0f1731cbf0e20, type: 2}
   _leftClickAction: {fileID: 0}
   _rightClickAction: {fileID: 11400000, guid: b81f3743d0b140a44bb0052430656351, type: 2}
-  _displaysTarget: 1
+  _showsTarget: 1

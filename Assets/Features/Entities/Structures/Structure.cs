@@ -1,3 +1,4 @@
+using FishFlingers.Items;
 using UnityEngine;
 
 namespace FishFlingers.Entities

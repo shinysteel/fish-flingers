@@ -28,15 +28,18 @@ namespace FishFlingers.UI
 
         public void Setup(GameplayContext context)
         {
-            IEnumerable<Structure> structures = _entityManager.GetEntities<Structure>();
-            _blueprintEntries = new BlueprintEntry[structures.Count()];
+            IEnumerable<IBuildable> buildables = context.LocalPlayer.TargetLogic.Target.Tile == null
+                ? _entityManager.GetEntities<RaftTile>().Select(tile => tile.Data)
+                : _entityManager.GetEntities<Structure>().Select(structure => structure.StructureData);
+
+            _blueprintEntries = new BlueprintEntry[buildables.Count()];
 
             // Populate the blueprint entries
             int i = 0;
-            foreach (Structure structure in structures)
+            foreach (IBuildable buildable in buildables)
             {
                 BlueprintEntry entry = _poolManager.Get<BlueprintEntry>(new SpawnParams() { Parent = _blueprintsScrollRect.content });
-                entry.Setup(context, structure.StructureData);
+                entry.Setup(context, buildable);
 
                 _blueprintEntries[i] = entry;
                 i++;

@@ -10,6 +10,7 @@ using FishFlingers.States;
 using System.Threading.Tasks;
 using FishFlingers.Networking;
 using FishFlingers.Scenes;
+using System;
 
 namespace FishFlingers.Environments
 {
@@ -34,10 +35,12 @@ namespace FishFlingers.Environments
     {
         [SerializeField] private Transform _tilesContainer;
 
-        private SyncDictionaryWrapper<Vector2Int, NetTile> _netTiles = new();
+        private SyncDictionaryWrapper<Vector2Int, NetTile> _netTiles = new SyncDictionaryWrapper<Vector2Int, NetTile>(ownerAuth: true);
 
         private Dictionary<Vector2Int, RaftTile> _tiles = new();
         public IReadOnlyDictionary<Vector2Int, RaftTile> Tiles => _tiles;
+
+        public event Action<Vector2Int, RaftTile> OnTileChanged;
 
         // Every column will have x rows, and every row will have x columns
         private Dictionary<int, SortedSet<int>> _columnToRowsMap = new();
@@ -89,6 +92,12 @@ namespace FishFlingers.Environments
                 SyncDictionaryChange<Vector2Int, NetTile> change = new(SyncDictionaryOperation.Set, kvp.Key, kvp.Value);
                 HandleNetTilesChanged(change);
             }
+        }
+
+        [ServerRpc(runLocally: false, requireOwnership: false)]
+        public void AddTileRpc(Vector2Int cell)
+        {
+            _netTiles.TryAdd(cell, new NetTile(NetTile.MaxHealth));
         }
 
         // No tile param is good here, since it lets callers request to damage a cell without having to worry
@@ -148,11 +157,13 @@ namespace FishFlingers.Environments
 
             RaftTile tile = _tiles[cell];
 
-            tile.SetCell(new Vector2Int(cell.x, cell.y));
+            tile.SetCell(cell);
             tile.SetHealth(netTile.Health);
 
             SetTileUpdateMaps(cell);
             SetTileUpdateBoundaries(cell);
+
+            OnTileChanged?.Invoke(cell, tile);
         }
 
         private void RemoveTile(Vector2Int cell)
@@ -169,6 +180,8 @@ namespace FishFlingers.Environments
 
             RemoveTileUpdateMaps(cell);
             RemoveTileUpdateBoundaries(cell);
+
+            OnTileChanged?.Invoke(cell, null);
         }
 
         // Maintains positional maps when SetTile is called

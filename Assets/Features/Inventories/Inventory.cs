@@ -1,3 +1,4 @@
+using FishFlingers.Entities;
 using FishFlingers.Items;
 using FishFlingers.Networking;
 using PrimeTween;
@@ -9,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -318,8 +320,8 @@ namespace FishFlingers.Inventories
 
     public class Inventory : GameplayBehaviour, IEnumerable<KeyValuePair<Vector2Int, NetInventorySlot>>
     {
-        private SyncDictionaryWrapper<Vector2Int, NetInventorySlot> _netInventorySlots = new(ownerAuth: true);
-        private SyncDictionaryWrapper<string, NetInventoryItem> _netInventoryItems = new(ownerAuth: true);
+        private SyncDictionaryWrapper<Vector2Int, NetInventorySlot> _netInventorySlots = new SyncDictionaryWrapper<Vector2Int, NetInventorySlot>(ownerAuth: true);
+        private SyncDictionaryWrapper<string, NetInventoryItem> _netInventoryItems = new SyncDictionaryWrapper<string, NetInventoryItem>(ownerAuth: true);
 
         public SyncDictionaryWrapper<Vector2Int, NetInventorySlot> NetInventorySlots => _netInventorySlots;
         public SyncDictionaryWrapper<string, NetInventoryItem> NetInventoryItems => _netInventoryItems;

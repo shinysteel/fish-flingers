@@ -11,9 +11,9 @@ namespace FishFlingers.Entities
     {
         [SerializeField] private SpriteRenderer _spriteRenderer;
 
-        private SyncVar<string> _instanceId = new(ownerAuth: true);
-        private SyncVar<ItemId> _itemId = new(ownerAuth: true);
-        private SyncVar<int> _count = new(ownerAuth: true);
+        private SyncVar<string> _instanceId = new SyncVar<string>(ownerAuth: true);
+        private SyncVar<ItemId> _itemId = new SyncVar<ItemId>(ownerAuth: true);
+        private SyncVar<int> _count = new SyncVar<int>(ownerAuth: true);
 
         public DroppedItemData Data => (DroppedItemData)_entityData;
 

@@ -28,8 +28,8 @@ namespace FishFlingers.Networking
             base.OnSpawn();
 
             base.onChanged += HandleOnChanged;
-
-            if (isServer && isOwner)
+            
+            if (isServer == isOwner)
             {
                 _isReady = true;
                 FlushPendingAdds();
@@ -51,8 +51,7 @@ namespace FishFlingers.Networking
             }
             else
             {
-                // Allows immediate calls to Add without having to worry
-                // about timing
+                // Allows immediate calls to Add without having to worry about timing
                 _pendingAdds.Add(item);
             }
         }
@@ -68,17 +67,16 @@ namespace FishFlingers.Networking
             {
                 onChanged?.Invoke(change);
             }
-            // SyncDictionaries spawned by clients are unsafe to use until an initial clear operation
-            // is received
+            // SyncDictionaries spawned by clients are unsafe to use until an initial clear operation is received
             else if (change.operation == SyncDictionaryOperation.Cleared)
             {
                 _ = ReadyAsync();
-            }
+            }         
         }
 
         private async Task ReadyAsync()
         {
-            // Additionally, we need to wait one frame for the SyncDictionary to do an internal sync
+            // Wait one frame for the SyncDictionary to do an internal sync
             await Task.Yield();
 
             _isReady = true;

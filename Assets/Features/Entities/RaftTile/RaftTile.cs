@@ -1,4 +1,5 @@
 using FishFlingers.Environments;
+using FishFlingers.Items;
 using ShinyOwl.Common;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,5 @@
 using FishFlingers.Items;
+using FishFlingers.States;
 using System;
 using UnityEngine;
 
@@ -29,14 +30,25 @@ namespace FishFlingers.Entities
     }
 
     [CreateAssetMenu(fileName = "RaftTileData", menuName = "Data/Entities/RaftTileData")]
-    public class RaftTileData : EntityData
+    public class RaftTileData : EntityData, IBuildable
     {
         [SerializeField] private Recipe _recipe;
         [SerializeField] private BobSettings _bobSettings;
         [SerializeField] private SinkSettings _sinkSettings;
 
+        public EntityData EntityData => this;
         public Recipe Recipe => _recipe;
         public BobSettings BobSettings => _bobSettings;
         public SinkSettings SinkSettings => _sinkSettings;
+
+        public void Build(GameplayContext context, RaftPlayerTarget target)
+        {
+            if (target.Tile != null)
+            {
+                return;
+            }
+
+            context.Raft.AddTileRpc(target.Cell);
+        }
     }
 }

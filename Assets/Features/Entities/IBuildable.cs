@@ -1,0 +1,14 @@
+using FishFlingers.Items;
+using FishFlingers.States;
+using UnityEngine;
+
+namespace FishFlingers.Entities
+{
+    public interface IBuildable
+    {
+        EntityData EntityData { get; }
+        Recipe Recipe { get; }
+
+        void Build(GameplayContext context, RaftPlayerTarget target);
+    }
+}
