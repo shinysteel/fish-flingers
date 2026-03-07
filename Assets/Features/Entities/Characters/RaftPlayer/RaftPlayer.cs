@@ -78,13 +78,15 @@ namespace FishFlingers.Entities
             {
                 await Task.Yield();
             }
-            
+
             // Start with a hammer
-            _inventory.TryAddItems(new AddParams()
+            ChangeParams parameters = new ChangeParams()
             {
                 ItemId = ItemId.Hammer,
-                Amount = 1
-            });
+                Count = 1
+            };
+
+            _inventory.TryAddItem(parameters, false, out _, out _, out _);
         }
 
         public override void Initialise(GameplayContext context)

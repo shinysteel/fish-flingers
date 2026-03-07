@@ -8,6 +8,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using ShinyOwl.Common.Utils;
+using FishFlingers.Inventories;
+using System.Linq;
 
 namespace FishFlingers.UI
 {
@@ -58,9 +60,9 @@ namespace FishFlingers.UI
 
         private void BuildPressed()
         {
-            foreach (RecipeRequirement requirement in _buildable.Recipe.Requirements)
+            if (!_context.LocalPlayer.Inventory.TryRemoveItems(_buildable.Recipe.ToChangeParams()))
             {
-                _context.LocalPlayer.Inventory.TryRemoveItems(requirement.ItemId, requirement.Count);
+                return;
             }
 
             _buildable.Build(_context, _context.LocalPlayer.TargetLogic.Target);

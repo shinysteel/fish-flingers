@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -29,13 +30,13 @@ namespace FishFlingers.Inventories
         }
     }
 
-    public class AddParams
+    public class ChangeParams
     {
         public string InstanceId { get; set; } = null;
         public ItemId ItemId { get; set; } = default;
-        public int Amount { get; set; } = 0;
+        public int Count { get; set; } = 0;
     }
-    
+   
     public class PlaceParams
     {
         public Vector2Int Cell { get; set; } = Vector2Int.zero;
@@ -43,7 +44,7 @@ namespace FishFlingers.Inventories
         public RotationParams RotationParams { get; set; } = new();
         public string InstanceId { get; set; } = null;
         public ItemId ItemId { get; set; } = default;
-        public int Amount { get; set; } = 0;
+        public int Count { get; set; } = 0;
 
         public static PlaceParams Create(Vector2Int cell, InventoryItem item)
         {
@@ -54,7 +55,7 @@ namespace FishFlingers.Inventories
                 RotationParams = new RotationParams() { Rotations = item.Rotations },
                 InstanceId = item.ItemInstance.InstanceId,
                 ItemId = item.ItemInstance.Data.ItemId,
-                Amount = item.ItemInstance.Count
+                Count = item.ItemInstance.Count
             };
         }
     }
@@ -99,13 +100,13 @@ namespace FishFlingers.Inventories
             return new NetInventoryItem(Cell, Pivot, Rotations, InstanceId, ItemId, Count);
         }
 
-        public bool CanAddCount(int amount, out int overflow, out NetInventoryItemsChange change)
+        public bool CanAddCount(int count, out int overflow, out NetInventoryItemsChange change)
         {
-            overflow = amount;
+            overflow = count;
             change = default;
 
             // Guard against invalid adds
-            if (amount <= 0)
+            if (count <= 0)
             {
                 return false;
             }
@@ -123,15 +124,15 @@ namespace FishFlingers.Inventories
             int changeAmount;
 
             // Add in mind of remaining space
-            if (amount <= remainingSpace)
+            if (count <= remainingSpace)
             {
-                changeAmount = amount;
+                changeAmount = count;
                 overflow = 0;
             }
             else
             {
                 changeAmount = remainingSpace;
-                overflow = amount - remainingSpace;
+                overflow = count - remainingSpace;
             }
 
             change = new NetInventoryItemsChange(InstanceId, changeAmount);
@@ -139,26 +140,26 @@ namespace FishFlingers.Inventories
             return true;
         }
 
-        public bool CanRemoveCount(int amount, out int remaining, out NetInventoryItemsChange change)
+        public bool CanRemoveCount(int count, out int remaining, out NetInventoryItemsChange change)
         {
-            if (amount <= 0)
+            if (count <= 0)
             {
-                remaining = amount;
+                remaining = count;
                 change = default;
                 return false;
             }
 
             int changeAmount;
 
-            if (Count > amount)
+            if (Count > count)
             {
-                changeAmount = -amount;
+                changeAmount = -count;
                 remaining = 0;
             }
             else
             {
                 changeAmount = -Count;
-                remaining = amount - Count;
+                remaining = count - Count;
             }
 
             change = new NetInventoryItemsChange(InstanceId, changeAmount);
@@ -219,7 +220,7 @@ namespace FishFlingers.Inventories
         public PlaceParams Parameters { get; }
         public BoolGrid Shape { get; }
 
-        public bool IsValid => Parameters?.Amount > 0;
+        public bool IsValid => Parameters?.Count > 0;
 
         public NetInventoryItemsPlace(PlaceParams parameters, BoolGrid shape)
         {
@@ -489,20 +490,65 @@ namespace FishFlingers.Inventories
         }
 
         /// <summary>
-        /// Tries to add the given count of an item to the inventory. Will first add to matches,
-        /// and then place new instances
+        /// Tries to remove a collection of items. Fails if the request can't be fulfilled entirely
         /// </summary>
-        public bool TryAddItems(AddParams parameters)
+        public bool TryRemoveItems(List<ChangeParams> allParameters)
         {
             if (!isOwner)
             {
-                Log.Error("Tried to add items without being the owner");
+                Log.Error($"Tried to remove items without being the owner");
                 return false;
             }
 
-            if (!CanAddItems(parameters, out HashSet<NetInventoryItemsChange> changes, out HashSet<NetInventoryItemsPlace> places))
+            bool canRemove = true;
+            List<NetInventoryItemsChange> allChanges = new();
+
+            foreach (ChangeParams parameters in allParameters)
+            {
+                if (!CanRemoveItem(parameters, out _, out List<NetInventoryItemsChange> changes))
+                {
+                    canRemove = false;
+                    break;
+                }
+
+                allChanges.AddRange(changes);
+            }
+
+            if (!canRemove)
             {
                 return false;
+            }
+
+            foreach (NetInventoryItemsChange change in allChanges)
+            {
+                ProcessNetInventoryItemsChange(change);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Tries to add the given count of an item to the inventory. Will first add to matches,
+        /// and then place new instances
+        /// </summary>
+        public bool TryAddItem(ChangeParams parameters, bool allowPartial, out int overflow, out List<NetInventoryItemsChange> changes, out List<NetInventoryItemsPlace> places)
+        {
+            overflow = parameters.Count;
+            changes = null;
+            places = null;
+
+            if (!isOwner)
+            {
+                Log.Error("Tried to add an item without being the owner");
+                return false;
+            }
+
+            if (!CanAddItem(parameters, out overflow, out changes, out places))
+            {
+                if (!allowPartial)
+                {
+                    return false;
+                }
             }
 
             foreach (NetInventoryItemsChange change in changes)
@@ -522,17 +568,19 @@ namespace FishFlingers.Inventories
         /// Tries to add the given count of an item to a slot. If an item is already there, tries to
         /// add to it. If not, tries to fit by rotating around the pivot
         /// </summary>
-        public bool TryPlaceItems(PlaceParams parameters, bool allowPartial, out int overflow)
+        public bool TryPlaceItem(PlaceParams parameters, bool allowPartial, out int overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change)
         {
-            overflow = parameters.Amount;
+            overflow = parameters.Count;
+            place = default;
+            change = default;
 
             if (!isOwner)
             {
-                Log.Error("Tried to place items without being the owner");
+                Log.Error("Tried to place an item without being the owner");
                 return false;
             }
 
-            if (!CanPlaceItems(parameters, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change) || overflow > 0)
+            if (!CanPlaceItem(parameters, out overflow, out place, out change) || overflow > 0)
             {
                 if (!allowPartial)
                 {
@@ -550,23 +598,29 @@ namespace FishFlingers.Inventories
                 ProcessNetInventoryItemsChange(change);
             }
 
-            return allowPartial ? overflow < parameters.Amount : true;
+            return allowPartial ? overflow < parameters.Count : true;
         }
 
         /// <summary>
-        /// Tries to remove the given count of an item from the invenotry
+        /// Tries to remove the given count of an item from the inventory
         /// </summary>
-        public bool TryRemoveItems(ItemId itemId, int amount)
+        public bool TryRemoveItem(ChangeParams parameters, bool allowPartial, out int remaining, out List<NetInventoryItemsChange> changes)
         {
+            remaining = parameters.Count;
+            changes = null;
+
             if (!isOwner)
             {
-                Log.Error("Tried to remove items without being the owner");
+                Log.Error("Tried to remove an item without being the owner");
                 return false;
             }
 
-            if (!CanRemoveItems(itemId, amount, out HashSet<NetInventoryItemsChange> changes))
+            if (!CanRemoveItem(parameters, out remaining, out changes))
             {
-                return false;
+                if (!allowPartial)
+                {
+                    return false;
+                }
             }
 
             foreach (NetInventoryItemsChange change in changes)
@@ -577,20 +631,19 @@ namespace FishFlingers.Inventories
             return true;
         }
 
-        private bool CanAddItems(AddParams addParams, out HashSet<NetInventoryItemsChange> changes, out HashSet<NetInventoryItemsPlace> places)
+        public bool CanAddItem(ChangeParams addParams, out int overflow, out List<NetInventoryItemsChange> changes, out List<NetInventoryItemsPlace> places)
         {
+            overflow = addParams.Count;
             changes = new();
             places = new();
 
             ItemData data = _itemManager.GetItemData(addParams.ItemId);
 
-            if (data == null || addParams.Amount <= 0)
+            if (data == null || addParams.Count <= 0)
             {
-                Log.Error("Checked if invalid items can be added");
+                Log.Error("Checked if an invalid item can be added");
                 return false;
             }
-
-            int overflow = addParams.Amount;
 
             // Check matching instances
             if (data.MaxStack > 1)
@@ -616,7 +669,7 @@ namespace FishFlingers.Inventories
                 }
             }
 
-            HashSet<Vector2Int> placedCells = new();
+            List<Vector2Int> placedCells = new();
             void AddPlacedCells(Vector2Int placedCell, BoolGrid shape)
             {
                 shape.ForEachTrue((Vector2Int shapeCell) =>
@@ -640,29 +693,29 @@ namespace FishFlingers.Inventories
                         continue;
                     }
 
+                    int placeCount = Mathf.Min(overflow, data.MaxStack);
+
                     PlaceParams placeParams = new PlaceParams()
                     {
                         Cell = kvp.Key,
                         RotationParams = new RotationParams() { AutoFit = true },
                         InstanceId = addParams.InstanceId,
                         ItemId = addParams.ItemId,
-                        Amount = overflow
+                        Count = placeCount
                     };
 
-                    if (!CanPlaceItems(placeParams, out overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change))
+                    if (!CanPlaceItem(placeParams, out _, out NetInventoryItemsPlace place, out _))
                     {
                         continue;
                     }
+
+                    // We can assume the full count is placed, since we are only checking empty slots
+                    overflow -= placeCount;
 
                     if (place.IsValid)
                     {
                         places.Add(place);
                         AddPlacedCells(place.Parameters.Cell, place.Shape);
-                    }
-
-                    if (change.IsValid)
-                    {
-                        changes.Add(change);
                     }
 
                     if (overflow == 0)
@@ -676,17 +729,17 @@ namespace FishFlingers.Inventories
         }
 
         // Placing can result in either a place or change, depending on if the cell is occupied or not
-        public bool CanPlaceItems(PlaceParams parameters, out int overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change)
+        public bool CanPlaceItem(PlaceParams parameters, out int overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change)
         {
-            overflow = parameters.Amount;
+            overflow = parameters.Count;
             place = default;
             change = default;
 
             ItemData data = _itemManager.GetItemData(parameters.ItemId);
 
-            if (data == null || parameters.Amount <= 0 || parameters.Amount > data.MaxStack)
+            if (data == null || parameters.Count <= 0 || parameters.Count > data.MaxStack)
             {
-                Log.Error("Checked if invalid items can be placed");
+                Log.Error("Checked if an invalid item can be placed");
                 return false;
             }
 
@@ -700,7 +753,7 @@ namespace FishFlingers.Inventories
             if (netInventorySlot.ItemInstanceId != null && netInventorySlot.ItemInstanceId != parameters.InstanceId)
             {
                 NetInventoryItem netInventoryItem = _netInventoryItems[netInventorySlot.ItemInstanceId];
-                return netInventoryItem.ItemId == parameters.ItemId && netInventoryItem.CanAddCount(parameters.Amount, out overflow, out change);
+                return netInventoryItem.ItemId == parameters.ItemId && netInventoryItem.CanAddCount(parameters.Count, out overflow, out change);
             }
 
             BoolGrid placeShape = null;
@@ -747,31 +800,30 @@ namespace FishFlingers.Inventories
 
             parameters.RotationParams = new RotationParams() { Rotations = rotations };
 
-            parameters.Amount = Mathf.Min(parameters.Amount, data.MaxStack);
+            parameters.Count = Mathf.Min(parameters.Count, data.MaxStack);
 
-            overflow -= parameters.Amount;
+            overflow -= parameters.Count;
             place = new NetInventoryItemsPlace(parameters, placeShape);
 
             return true;
         }
 
-        private bool CanRemoveItems(ItemId itemId, int amount, out HashSet<NetInventoryItemsChange> changes)
+        public bool CanRemoveItem(ChangeParams parameters, out int remaining, out List<NetInventoryItemsChange> changes)
         {
+            remaining = parameters.Count;
             changes = new();
             
-            ItemData data = _itemManager.GetItemData(itemId);
+            ItemData data = _itemManager.GetItemData(parameters.ItemId);
 
-            if (data == null || amount <= 0)
+            if (data == null || parameters.Count <= 0)
             {
-                Log.Error("Checked if invalid items can be removed");
+                Log.Error("Checked if an invalid item can be removed");
                 return false;
             }
 
-            int remaining = amount;
-
             foreach (NetInventoryItem netInventoryItem in _netInventoryItems.Values)
             {
-                if (netInventoryItem.ItemId != itemId)
+                if (netInventoryItem.ItemId != parameters.ItemId)
                 {
                     continue;
                 }
@@ -828,7 +880,7 @@ namespace FishFlingers.Inventories
             // A null place.InstanceId indicates this will be a new item. We validate instanceId here since we know for sure it will be placed
             string instanceId = place.Parameters.InstanceId != null ? place.Parameters.InstanceId : _itemManager.GetNextItemInstanceId();
 
-            NetInventoryItem item = new NetInventoryItem(place.Parameters.Cell, place.Parameters.Pivot, place.Parameters.RotationParams.Rotations, instanceId, place.Parameters.ItemId, place.Parameters.Amount);
+            NetInventoryItem item = new NetInventoryItem(place.Parameters.Cell, place.Parameters.Pivot, place.Parameters.RotationParams.Rotations, instanceId, place.Parameters.ItemId, place.Parameters.Count);
 
             if (!_netInventoryItems.ContainsKey(instanceId))
             {

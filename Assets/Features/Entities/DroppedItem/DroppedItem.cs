@@ -49,14 +49,14 @@ namespace FishFlingers.Entities
 
         public void Interact()
         {
-            AddParams parameters = new AddParams()
+            ChangeParams parameters = new ChangeParams()
             {
                 InstanceId = _instanceId,
                 ItemId = _itemId,
-                Amount = _count
+                Count = _count
             };
 
-            if (_context.LocalPlayer.Inventory.TryAddItems(parameters))
+            if (_context.LocalPlayer.Inventory.TryAddItem(parameters, false, out _, out _, out _))
             {
                 _networkManager.Despawn(this);
             }

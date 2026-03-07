@@ -1,4 +1,5 @@
 using FishFlingers.Entities;
+using FishFlingers.Inventories;
 using FishFlingers.Pools;
 using FishFlingers.States;
 using ShinyOwl.Common.Utils;
@@ -9,6 +10,7 @@ using System.Linq;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.UI;
+using FishFlingers.Items;
 
 namespace FishFlingers.UI
 {
@@ -37,6 +39,8 @@ namespace FishFlingers.UI
 
             RefreshEntries();
             _context.LocalPlayer.TargetLogic.OnTargetChanged += HandleRaftPlayerTargetChanged;
+
+            _context.LocalPlayer.Hotbar.OnSelectedChanged += HandleHotbarSelectedChanged;
         }
 
         public override void Unload()
@@ -44,6 +48,8 @@ namespace FishFlingers.UI
             if (_context.LocalPlayer != null)
             {
                 _context.LocalPlayer.TargetLogic.OnTargetChanged -= HandleRaftPlayerTargetChanged;
+
+                _context.LocalPlayer.Hotbar.OnSelectedChanged -= HandleHotbarSelectedChanged;
             }
 
             foreach (BlueprintEntry entry in _blueprintEntries)
@@ -68,6 +74,15 @@ namespace FishFlingers.UI
                 createElement: () => _poolManager.Get<BlueprintEntry>(new SpawnParams() { Parent = _blueprintsScrollRect.content }),
                 removeElement: (BlueprintEntry entry) => _poolManager.Return(entry),
                 processElement: (BlueprintEntry entry, int index) => entry.Setup(_context, buildables.ElementAt(index)));
+        }
+        
+        private void HandleHotbarSelectedChanged(int index, InventoryItem item)
+        {
+            // There's a scenario where you aren't holding a hammer anymore while this is open
+            if (item?.ItemInstance.Data.ItemId != ItemId.Hammer)
+            {
+                ClosePressed();
+            }
         }
     }
 }

@@ -228,7 +228,7 @@ namespace FishFlingers.Entities
             item.ChangeRotations(1);
 
             PlaceParams parameters = PlaceParams.Create(inventorySlot.Cell, item);
-            itemView.InventoryWidget.Inventory.TryPlaceItems(parameters, false, out _);
+            itemView.InventoryWidget.Inventory.TryPlaceItem(parameters, false, out _, out _, out _);
         }
 
         /// <summary>

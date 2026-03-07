@@ -16,11 +16,11 @@ namespace FishFlingers.UI
             _closeButton.onClick.AddListener(ClosePressed);
         }
 
-        private void ClosePressed()
+        protected void ClosePressed()
         {
             // Not every panel will need a reference to UIManager, so this is a one off
             // If more references came up, then I would consider defining all manager refs here
-            GameManager.Instance.Get<UIManager>().PopLayer(UILayer.Panels);
+            Hide(() => GameManager.Instance.Get<UIManager>().DestroyScreenUI(this, UILayer.Panels));
         }
 
         public void SimulateClosePressed()

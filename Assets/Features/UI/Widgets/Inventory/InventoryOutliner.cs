@@ -55,7 +55,7 @@ namespace FishFlingers.UI
             else
             {
                 // Color the potential place action green or red
-                CellOutline.EColor color = _inventoryWidget.Inventory.CanPlaceItems(PlaceParams.Create(_targetSlotView.Cell, grabbedInventoryItem), out _, out _, out _)
+                CellOutline.EColor color = _inventoryWidget.Inventory.CanPlaceItem(PlaceParams.Create(_targetSlotView.Cell, grabbedInventoryItem), out _, out _, out _)
                     ? CellOutline.EColor.Positive
                     : CellOutline.EColor.Negative;
 

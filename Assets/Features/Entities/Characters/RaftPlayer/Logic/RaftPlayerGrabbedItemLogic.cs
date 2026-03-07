@@ -83,20 +83,25 @@ public class RaftPlayerGrabbedItemLogic
             RotationParams = new RotationParams() { Rotations = _netGrabbedInventoryItem.value.Rotations },
             InstanceId = _grabbedItemView.InventoryItem.ItemInstance.InstanceId,
             ItemId = _grabbedItemView.InventoryItem.ItemInstance.Data.ItemId,
-            Amount = _grabbedItemView.InventoryItem.ItemInstance.Count
+            Count = _grabbedItemView.InventoryItem.ItemInstance.Count
         };
 
-        if (slotView.InventoryWidget.Inventory.TryPlaceItems(placeParams, true, out int overflow))
+        if (slotView.InventoryWidget.Inventory.TryPlaceItem(placeParams, true, out int overflow, out _, out NetInventoryItemsChange change))
         {
             if (overflow > 0)
             {
                 _grabbedItemView.InventoryWidget.Inventory.NetInventoryItems[_netGrabbedInventoryItem.value.InstanceId].SetCount(overflow);
                 _grabbedItemView.InventoryWidget.Inventory.NetInventoryItems.SetDirty(_netGrabbedInventoryItem.value.InstanceId);
+                return;
             }
-            else
+            
+            // No overflow and a valid change implies the item has no count left
+            if (change.IsValid)
             {
-                Release();
+                _grabbedItemView.InventoryWidget.Inventory.RemoveItem(_netGrabbedInventoryItem.value.InstanceId);
             }
+
+            Release();
         }
     }
 

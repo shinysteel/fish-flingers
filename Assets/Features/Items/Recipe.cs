@@ -1,3 +1,5 @@
+using FishFlingers.Inventories;
+using System.Collections.Generic;
 using System;
 using UnityEngine;
 
@@ -19,5 +21,21 @@ namespace FishFlingers.Items
         [SerializeField] private RecipeRequirement[] _requirements;
 
         public RecipeRequirement[] Requirements => _requirements;
+
+        public List<ChangeParams> ToChangeParams()
+        {
+            List<ChangeParams> parameters = new();
+
+            foreach (RecipeRequirement requirement in _requirements)
+            {
+                parameters.Add(new ChangeParams()
+                {
+                    ItemId = requirement.ItemId,
+                    Count = requirement.Count
+                });
+            }
+
+            return parameters;
+        }
     }
 }
