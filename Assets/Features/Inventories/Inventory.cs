@@ -347,16 +347,35 @@ namespace FishFlingers.Inventories
         protected override void OnSpawned()
         {
             base.OnSpawned();
-            
-            _netInventorySlots.onChanged += HandleNetInventorySlotsChanged;
-            _netInventoryItems.onChanged += HandleNetInventoryItemsChanged;
-
-            if (!isOwner)
+          
+            foreach (KeyValuePair<Vector2Int, NetInventorySlot> kvp in _netInventorySlots)
             {
-                return;
+                HandleNetInventorySlotsChanged(new SyncDictionaryChange<Vector2Int, NetInventorySlot>()
+                {
+                    operation = SyncDictionaryOperation.Added,
+                    key = kvp.Key,
+                    value = kvp.Value
+                });
             }
 
-            PopulateSlots();            
+            _netInventorySlots.onChanged += HandleNetInventorySlotsChanged;
+
+            foreach (KeyValuePair<string, NetInventoryItem> kvp in _netInventoryItems)
+            {
+                HandleNetInventoryItemsChanged(new SyncDictionaryChange<string, NetInventoryItem>()
+                {
+                    operation = SyncDictionaryOperation.Added,
+                    key = kvp.Key,
+                    value = kvp.Value
+                });
+            }
+
+            _netInventoryItems.onChanged += HandleNetInventoryItemsChanged;
+
+            if (isOwner)
+            {
+                PopulateSlots();
+            }
         }
 
         protected override void OnDespawned()
