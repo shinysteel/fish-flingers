@@ -2,6 +2,7 @@ using FishFlingers.States;
 using PurrNet;
 using ShinyOwl.Common;
 using UnityEngine;
+using System.Threading.Tasks;
 
 namespace FishFlingers.Networking
 {
@@ -12,37 +13,45 @@ namespace FishFlingers.Networking
         protected bool _isInitialised;
         public bool IsInitialised => _isInitialised;
 
-        protected override void OnSpawned()
-        {
-            base.OnSpawned();
-
-            if (isServer)
-            {
-                return;
-            }
-
-            if (TryGetComponent<NetworkTransform>(out _))
-            {
-                ForceSyncNetworkTransform();
-            }
-        }
-
-        /// <summary>
-        /// Since scene setup is not immediate, clients can have their NetworkTransform parents be desynced. 
-        /// We can force a sync on the server by making the parent dirty
-        /// </summary>
-        private void ForceSyncNetworkTransform()
-        {
-            Transform parent = transform.parent;
-            transform.SetParent(null);
-            transform.SetParent(parent);
-        }
-
         public virtual void Initialise(GameplayContext context)
         {
             _context = context;
 
             _isInitialised = true;
+
+            if (!isServer && TryGetComponent<NetworkTransform>(out _))
+            {
+                _ = RequestForceSyncAsync();
+            }
+        }
+
+        // The raft needs to initialise before it creates it's tiles. This can cause desync for some NetworkTransforms
+        // parented to those tiles. This is also only relevant to GameplayBehaviours that implement NetworkTransform
+        private async Task RequestForceSyncAsync()
+        {
+            while (!_context.Raft.IsInitialised)
+            {
+                await Task.Yield();
+            }
+
+            RequestForceSyncRpc();
+        }
+
+        [ServerRpc(requireOwnership: false)]
+        private void RequestForceSyncRpc()
+        {
+            _ = ForceSync();
+        }
+
+        // We can cause OnTransformParentChanged to be invoked by waiting 2 frames in between updating the parent
+        private async Task ForceSync()
+        {
+            Transform parent = transform.parent;
+
+            transform.SetParent(null);
+            await Task.Yield();
+            await Task.Yield();
+            transform.SetParent(parent);
         }
     }
 }
