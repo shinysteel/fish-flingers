@@ -22,13 +22,13 @@ namespace FishFlingers.Items
 
         public RecipeRequirement[] Requirements => _requirements;
 
-        public List<ChangeParams> ToChangeParams()
+        public List<InventoryChangeParams> ToChangeParams()
         {
-            List<ChangeParams> parameters = new();
+            List<InventoryChangeParams> parameters = new();
 
             foreach (RecipeRequirement requirement in _requirements)
             {
-                parameters.Add(new ChangeParams()
+                parameters.Add(new InventoryChangeParams()
                 {
                     ItemId = requirement.ItemId,
                     Count = requirement.Count

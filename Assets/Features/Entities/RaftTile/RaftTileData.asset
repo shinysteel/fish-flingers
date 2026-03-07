@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b5578235882c140a774104bbe000ca, type: 3}
   m_Name: RaftTileData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.RaftTileData
+  _type: 1
   _nameTerm: 500
   _descriptionTerm: 501
   _sprite: {fileID: 21300000, guid: 6f972666f32701e45bbe695d518d3d38, type: 3}

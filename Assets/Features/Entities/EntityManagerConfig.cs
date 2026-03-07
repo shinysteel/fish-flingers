@@ -6,10 +6,10 @@ namespace FishFlingers.Entities
     [Serializable]
     public class EntityMapping
     {
-        [SerializeField] private EEntity _entity;
+        [SerializeField] private EntityId _id;
         [SerializeField] private GameObject _prefab;
 
-        public EEntity Entity => _entity;
+        public EntityId Id => _id;
         public GameObject Prefab => _prefab;
     }
 

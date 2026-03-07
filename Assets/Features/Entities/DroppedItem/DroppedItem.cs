@@ -49,7 +49,7 @@ namespace FishFlingers.Entities
 
         public void Interact()
         {
-            ChangeParams parameters = new ChangeParams()
+            InventoryChangeParams parameters = new InventoryChangeParams()
             {
                 InstanceId = _instanceId,
                 ItemId = _itemId,

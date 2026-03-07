@@ -8,12 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
 using Object = UnityEngine.Object;
 
 namespace FishFlingers.Entities
 {
-    public enum EEntity
+    public enum EntityId
     {
+        None        = 0   ,
+
         RaftTile    = 1   ,
         DroppedItem = 2   ,
 
@@ -35,7 +38,7 @@ namespace FishFlingers.Entities
 
         private EntityManagerConfig _config;
 
-        private Dictionary<EEntity, IEntity> _entityPrefabMap = new();
+        private Dictionary<EntityId, IEntity> _idPrefabMap = new();
         private Dictionary<Type, HashSet<IEntity>> _typeEntitiesMap = new();
 
         public override void Initialise(GameManagerConfig config)
@@ -48,7 +51,7 @@ namespace FishFlingers.Entities
             // Entity prefab map
             foreach (EntityMapping mapping in _config.EntityMappings)
             {
-                _entityPrefabMap.Add(mapping.Entity, mapping.Prefab.GetComponent<IEntity>());
+                _idPrefabMap.Add(mapping.Id, mapping.Prefab.GetComponent<IEntity>());
             }
 
             // Type entities map
@@ -80,6 +83,15 @@ namespace FishFlingers.Entities
         }
 
         /// <summary>
+        /// Retrieves a single entity mapped to the type
+        /// </summary>
+        public IEntity GetEntity(EntityId id)
+        {
+            _idPrefabMap.TryGetValue(id, out IEntity prefab);
+            return prefab;
+        }
+
+        /// <summary>
         /// Retrieves a registered collection of entities
         /// </summary>
         public IEnumerable<T> GetEntities<T>() where T : IEntity
@@ -95,11 +107,11 @@ namespace FishFlingers.Entities
         /// <summary>
         /// Centralised spawn method for entities, handling NetEntity, Entity + Poolable and Entity all in one
         /// </summary>
-        public IEntity Spawn(EEntity type, SpawnParams parameters)
+        public IEntity Spawn(EntityId id, SpawnParams parameters)
         {
-            if (!_entityPrefabMap.TryGetValue(type, out IEntity prefab))
+            if (!_idPrefabMap.TryGetValue(id, out IEntity prefab))
             {
-                Log.Error($"The entity {type} has not been mapped to a prefab");
+                Log.Error($"The entity {id} has not been mapped to a prefab");
                 return default;
             }
 
@@ -157,7 +169,7 @@ namespace FishFlingers.Entities
         /// </summary>
         public void SpawnDroppedItem(SpawnParams parameters, ItemInstance instance, Vector3 direction, float strength)
         {
-            DroppedItem item = (DroppedItem)Spawn(EEntity.DroppedItem, parameters);
+            DroppedItem item = (DroppedItem)Spawn(EntityId.DroppedItem, parameters);
             item.SetItem(instance.InstanceId, instance.Data.ItemId, instance.Count);
 
             // Launch the item

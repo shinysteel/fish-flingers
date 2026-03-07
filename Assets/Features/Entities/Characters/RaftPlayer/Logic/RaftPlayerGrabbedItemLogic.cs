@@ -76,11 +76,11 @@ public class RaftPlayerGrabbedItemLogic
     /// </summary>
     public void Place(InventorySlotView slotView)
     {
-        PlaceParams placeParams = new PlaceParams()
+        InventoryPlaceParams placeParams = new InventoryPlaceParams()
         {
             Cell = slotView.Cell,
             Pivot = _netGrabbedInventoryItem.value.Pivot,
-            RotationParams = new RotationParams() { Rotations = _netGrabbedInventoryItem.value.Rotations },
+            RotationParams = new InventoryRotationParams() { Rotations = _netGrabbedInventoryItem.value.Rotations },
             InstanceId = _grabbedItemView.InventoryItem.ItemInstance.InstanceId,
             ItemId = _grabbedItemView.InventoryItem.ItemInstance.Data.ItemId,
             Count = _grabbedItemView.InventoryItem.ItemInstance.Count

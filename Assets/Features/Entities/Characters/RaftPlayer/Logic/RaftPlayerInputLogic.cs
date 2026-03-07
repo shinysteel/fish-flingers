@@ -68,7 +68,7 @@ namespace FishFlingers.Entities
             _toggleSettings = Input.GetKeyDown(KeyCode.Escape);
             _toggleFishingBag = Input.GetKeyDown(KeyCode.E);
 
-            if (_player.CanAct)
+            if (Application.isFocused && _player.CanAct)
             {
                 _gameplayMouse = _mouse;
                 _moveDirection = Vector3.ClampMagnitude(new Vector3(Input.GetAxisRaw(HorizontalAxis), 0f, Input.GetAxisRaw(VerticalAxis)), 1f);

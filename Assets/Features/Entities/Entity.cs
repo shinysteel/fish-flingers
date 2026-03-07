@@ -41,10 +41,12 @@ namespace FishFlingers.Entities
         // End of IEntity
 
         protected NetworkManager _networkManager;
+        protected EntityManager _entityManager;
 
         protected virtual void Awake()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
+            _entityManager = GameManager.Instance.Get<EntityManager>();
         }
 
         public virtual void OnTakenFromPool()

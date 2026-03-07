@@ -1,6 +1,7 @@
 using FishFlingers.Items;
 using FishFlingers.States;
 using UnityEngine;
+using ShinyOwl.Common;
 
 namespace FishFlingers.Entities
 {
@@ -14,7 +15,7 @@ namespace FishFlingers.Entities
 
         public void Build(GameplayContext context, RaftPlayerTarget target)
         {
-            
+            context.Raft.SetStructureIdRpc(target.Cell, _id);
         }
     }
 }

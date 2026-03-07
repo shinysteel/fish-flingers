@@ -227,7 +227,7 @@ namespace FishFlingers.Entities
             item.SetPivot(InventoryItemUtils.RecalculatePivot(item.Cell, inventorySlot.Cell, item.Pivot, item.Rotations));
             item.ChangeRotations(1);
 
-            PlaceParams parameters = PlaceParams.Create(inventorySlot.Cell, item);
+            InventoryPlaceParams parameters = InventoryPlaceParams.Create(inventorySlot.Cell, item);
             itemView.InventoryWidget.Inventory.TryPlaceItem(parameters, false, out _, out _, out _);
         }
 

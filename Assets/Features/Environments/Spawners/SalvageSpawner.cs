@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using FishFlingers.States;
 using FishFlingers.Items;
 
+using EntityId = FishFlingers.Entities.EntityId;
+
 namespace FishFlingers.Environments
 {
     public class SalvageSpawner : GameplayBehaviour, INetworkManagerListener
@@ -72,7 +74,7 @@ namespace FishFlingers.Environments
             int y = raft.ForwardmostRow + forwardDist;
             Vector3 position = raft.CellToWorldPosition(new Vector2(x, y));
 
-            DroppedItem item = (DroppedItem)_entityManager.Spawn(EEntity.DroppedItem, new SpawnParams() { Position = position });
+            DroppedItem item = (DroppedItem)_entityManager.Spawn(EntityId.DroppedItem, new SpawnParams() { Position = position });
             item.SetItem(null, ItemId.Driftwood, 1);
 
             _salvages.Add(item);

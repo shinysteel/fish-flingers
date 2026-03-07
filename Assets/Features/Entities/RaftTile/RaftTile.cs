@@ -21,6 +21,8 @@ namespace FishFlingers.Entities
         
         public RaftTileData Data => (RaftTileData)_entityData;
 
+        private Structure _structure;
+
         protected override void Awake()
         {
             base.Awake();
@@ -48,6 +50,35 @@ namespace FishFlingers.Entities
             _cell = cell;
 
             transform.position = _context.Raft.CellToWorldPosition(cell);
+        }
+
+        public void SetStructure(EntityId id)
+        {
+            if (!_networkManager.IsServer)
+            {
+                return;
+            }
+
+            if (_entityManager.GetEntity(id) is not Structure)
+            {
+                return;
+            }
+
+            if (id == _structure?.StructureData.Id)
+            {
+                return;
+            }
+
+            if (id == EntityId.None && _structure != null)
+            {
+                _entityManager.Despawn(_structure);
+                _structure = null;
+            }
+
+            if (id != EntityId.None && _structure == null)
+            {
+                _structure = (Structure)_entityManager.Spawn(id, new SpawnParams() { Parent = _visualsContainer, Position = new Vector3(transform.position.x, GetSurfaceY(), transform.position.z) });
+            }
         }
 
         private void FixedUpdate()

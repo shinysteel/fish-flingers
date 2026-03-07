@@ -30,29 +30,29 @@ namespace FishFlingers.Inventories
         }
     }
 
-    public class ChangeParams
+    public class InventoryChangeParams
     {
         public string InstanceId { get; set; } = null;
         public ItemId ItemId { get; set; } = default;
         public int Count { get; set; } = 0;
     }
    
-    public class PlaceParams
+    public class InventoryPlaceParams
     {
         public Vector2Int Cell { get; set; } = Vector2Int.zero;
         public Vector2Int Pivot { get; set; } = Vector2Int.zero;
-        public RotationParams RotationParams { get; set; } = new();
+        public InventoryRotationParams RotationParams { get; set; } = new();
         public string InstanceId { get; set; } = null;
         public ItemId ItemId { get; set; } = default;
         public int Count { get; set; } = 0;
 
-        public static PlaceParams Create(Vector2Int cell, InventoryItem item)
+        public static InventoryPlaceParams Create(Vector2Int cell, InventoryItem item)
         {
-            return new PlaceParams()
+            return new InventoryPlaceParams()
             {
                 Cell = cell,
                 Pivot = item.Pivot,
-                RotationParams = new RotationParams() { Rotations = item.Rotations },
+                RotationParams = new InventoryRotationParams() { Rotations = item.Rotations },
                 InstanceId = item.ItemInstance.InstanceId,
                 ItemId = item.ItemInstance.Data.ItemId,
                 Count = item.ItemInstance.Count
@@ -60,7 +60,7 @@ namespace FishFlingers.Inventories
         }
     }
 
-    public class RotationParams
+    public class InventoryRotationParams
     {
         public int Rotations { get; set; } = 0;
         public bool AutoFit { get; set; } = false;
@@ -217,12 +217,12 @@ namespace FishFlingers.Inventories
     // Instructions to place a NetInventoryItem
     public readonly struct NetInventoryItemsPlace
     {
-        public PlaceParams Parameters { get; }
+        public InventoryPlaceParams Parameters { get; }
         public BoolGrid Shape { get; }
 
         public bool IsValid => Parameters?.Count > 0;
 
-        public NetInventoryItemsPlace(PlaceParams parameters, BoolGrid shape)
+        public NetInventoryItemsPlace(InventoryPlaceParams parameters, BoolGrid shape)
         {
             Parameters = parameters;
             Shape = shape;
@@ -492,7 +492,7 @@ namespace FishFlingers.Inventories
         /// <summary>
         /// Tries to remove a collection of items. Fails if the request can't be fulfilled entirely
         /// </summary>
-        public bool TryRemoveItems(List<ChangeParams> allParameters)
+        public bool TryRemoveItems(List<InventoryChangeParams> allParameters)
         {
             if (!isOwner)
             {
@@ -503,7 +503,7 @@ namespace FishFlingers.Inventories
             bool canRemove = true;
             List<NetInventoryItemsChange> allChanges = new();
 
-            foreach (ChangeParams parameters in allParameters)
+            foreach (InventoryChangeParams parameters in allParameters)
             {
                 if (!CanRemoveItem(parameters, out _, out List<NetInventoryItemsChange> changes))
                 {
@@ -531,7 +531,7 @@ namespace FishFlingers.Inventories
         /// Tries to add the given count of an item to the inventory. Will first add to matches,
         /// and then place new instances
         /// </summary>
-        public bool TryAddItem(ChangeParams parameters, bool allowPartial, out int overflow, out List<NetInventoryItemsChange> changes, out List<NetInventoryItemsPlace> places)
+        public bool TryAddItem(InventoryChangeParams parameters, bool allowPartial, out int overflow, out List<NetInventoryItemsChange> changes, out List<NetInventoryItemsPlace> places)
         {
             overflow = parameters.Count;
             changes = null;
@@ -568,7 +568,7 @@ namespace FishFlingers.Inventories
         /// Tries to add the given count of an item to a slot. If an item is already there, tries to
         /// add to it. If not, tries to fit by rotating around the pivot
         /// </summary>
-        public bool TryPlaceItem(PlaceParams parameters, bool allowPartial, out int overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change)
+        public bool TryPlaceItem(InventoryPlaceParams parameters, bool allowPartial, out int overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change)
         {
             overflow = parameters.Count;
             place = default;
@@ -604,7 +604,7 @@ namespace FishFlingers.Inventories
         /// <summary>
         /// Tries to remove the given count of an item from the inventory
         /// </summary>
-        public bool TryRemoveItem(ChangeParams parameters, bool allowPartial, out int remaining, out List<NetInventoryItemsChange> changes)
+        public bool TryRemoveItem(InventoryChangeParams parameters, bool allowPartial, out int remaining, out List<NetInventoryItemsChange> changes)
         {
             remaining = parameters.Count;
             changes = null;
@@ -631,7 +631,7 @@ namespace FishFlingers.Inventories
             return true;
         }
 
-        public bool CanAddItem(ChangeParams addParams, out int overflow, out List<NetInventoryItemsChange> changes, out List<NetInventoryItemsPlace> places)
+        public bool CanAddItem(InventoryChangeParams addParams, out int overflow, out List<NetInventoryItemsChange> changes, out List<NetInventoryItemsPlace> places)
         {
             overflow = addParams.Count;
             changes = new();
@@ -695,10 +695,10 @@ namespace FishFlingers.Inventories
 
                     int placeCount = Mathf.Min(overflow, data.MaxStack);
 
-                    PlaceParams placeParams = new PlaceParams()
+                    InventoryPlaceParams placeParams = new InventoryPlaceParams()
                     {
                         Cell = kvp.Key,
-                        RotationParams = new RotationParams() { AutoFit = true },
+                        RotationParams = new InventoryRotationParams() { AutoFit = true },
                         InstanceId = addParams.InstanceId,
                         ItemId = addParams.ItemId,
                         Count = placeCount
@@ -729,7 +729,7 @@ namespace FishFlingers.Inventories
         }
 
         // Placing can result in either a place or change, depending on if the cell is occupied or not
-        public bool CanPlaceItem(PlaceParams parameters, out int overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change)
+        public bool CanPlaceItem(InventoryPlaceParams parameters, out int overflow, out NetInventoryItemsPlace place, out NetInventoryItemsChange change)
         {
             overflow = parameters.Count;
             place = default;
@@ -798,7 +798,7 @@ namespace FishFlingers.Inventories
                 return false;
             }
 
-            parameters.RotationParams = new RotationParams() { Rotations = rotations };
+            parameters.RotationParams = new InventoryRotationParams() { Rotations = rotations };
 
             parameters.Count = Mathf.Min(parameters.Count, data.MaxStack);
 
@@ -808,7 +808,7 @@ namespace FishFlingers.Inventories
             return true;
         }
 
-        public bool CanRemoveItem(ChangeParams parameters, out int remaining, out List<NetInventoryItemsChange> changes)
+        public bool CanRemoveItem(InventoryChangeParams parameters, out int remaining, out List<NetInventoryItemsChange> changes)
         {
             remaining = parameters.Count;
             changes = new();

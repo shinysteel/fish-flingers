@@ -80,13 +80,9 @@ namespace FishFlingers.Entities
             }
 
             // Start with a hammer
-            ChangeParams parameters = new ChangeParams()
-            {
-                ItemId = ItemId.Hammer,
-                Count = 1
-            };
+            _inventory.TryAddItem(new InventoryChangeParams() { ItemId = ItemId.Hammer, Count = 1 }, false, out _, out _, out _);
 
-            _inventory.TryAddItem(parameters, false, out _, out _, out _);
+            _inventory.TryAddItem(new InventoryChangeParams() { ItemId = ItemId.Driftwood, Count = 3 }, false, out _, out _, out _);
         }
 
         public override void Initialise(GameplayContext context)
@@ -143,7 +139,7 @@ namespace FishFlingers.Entities
 
         private void SyncVarsUpdate()
         {   
-            _netMousePositionNormalised.value = new Vector2(Mathf.Clamp01(Input.mousePosition.x / Screen.width), Mathf.Clamp01(Input.mousePosition.y / Screen.height));
+            _netMousePositionNormalised.value = new Vector2(Mathf.Clamp01(_inputLogic.GameplayMouse.x / Screen.width), Mathf.Clamp01(_inputLogic.GameplayMouse.y / Screen.height));
         }
     }
 }

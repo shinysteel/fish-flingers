@@ -3,6 +3,7 @@ using UnityEngine;
 using FishFlingers.Networking;
 
 using NetworkManager = FishFlingers.Networking.NetworkManager;
+using EntityId = FishFlingers.Entities.EntityId;
 
 namespace FishFlingers.Environments
 {
@@ -37,7 +38,7 @@ namespace FishFlingers.Environments
 
         private void Spawn()
         {
-            _entityManager.Spawn(EEntity.FlyingFish, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
+            _entityManager.Spawn(EntityId.FlyingFish, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
         }
     }
 }

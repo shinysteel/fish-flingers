@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 886f3bf16237d25499b5cd04227d2154, type: 3}
   m_Name: DroppedItemData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.DroppedItemData
+  _type: 2
   _nameTerm: 502
   _descriptionTerm: 503
   _sprite: {fileID: 21300000, guid: 613c7c555dab2ab468e3c294e10b1aeb, type: 3}
   _health: 1
-  _buoyancyFactor: 3

@@ -12,22 +12,31 @@ using FishFlingers.Networking;
 using FishFlingers.Scenes;
 using System;
 
+using EntityId = FishFlingers.Entities.EntityId;
+
 namespace FishFlingers.Environments
 {
     public class NetTile
     {
         public int Health { get; private set; }
+        public EntityId StructureId { get; private set; }
 
         public const int MaxHealth = 3;
 
-        public NetTile(int health)
+        public NetTile(int health, EntityId structureId)
         {
             SetHealth(health);
+            SetStructureId(structureId);
         }
 
         public void SetHealth(int health)
         {
             Health = Mathf.Clamp(health, 0, MaxHealth);
+        }
+
+        public void SetStructureId(EntityId structureId)
+        {
+            StructureId = structureId;
         }
     }
 
@@ -70,7 +79,7 @@ namespace FishFlingers.Environments
             {
                 for (int y = -1; y <= 1; y++)
                 {
-                    _netTiles.Add(new Vector2Int(x, y), new NetTile(NetTile.MaxHealth));
+                    _netTiles.Add(new Vector2Int(x, y), new NetTile(NetTile.MaxHealth, EntityId.None));
                 }
             }            
         }
@@ -94,10 +103,16 @@ namespace FishFlingers.Environments
             }
         }
 
-        [ServerRpc(runLocally: false, requireOwnership: false)]
+        [ServerRpc(requireOwnership: false)]
         public void AddTileRpc(Vector2Int cell)
         {
-            _netTiles.TryAdd(cell, new NetTile(NetTile.MaxHealth));
+            _netTiles.TryAdd(cell, new NetTile(NetTile.MaxHealth, EntityId.None));
+        }
+
+        [ServerRpc(requireOwnership: false)]
+        public void SetStructureIdRpc(Vector2Int cell, EntityId structureId)
+        {
+            SetNetTileStructureId(cell, structureId);
         }
 
         // No tile param is good here, since it lets callers request to damage a cell without having to worry
@@ -131,6 +146,28 @@ namespace FishFlingers.Environments
             }
         }
 
+        private void SetNetTileStructureId(Vector2Int cell, EntityId structureId)
+        {
+            if (!isOwner)
+            {
+                return;
+            }
+
+            if (!_netTiles.TryGetValue(cell, out NetTile netTile))
+            {
+                return;
+            }
+
+            if (netTile.StructureId == structureId)
+            {
+                return;
+            }
+            
+            netTile.SetStructureId(structureId);
+
+            _netTiles.SetDirty(cell);
+        }
+
         private void HandleNetTilesChanged(SyncDictionaryChange<Vector2Int, NetTile> change)
         {
             // Tile exists
@@ -151,7 +188,7 @@ namespace FishFlingers.Environments
             // Retrieve from pool
             if (!_tiles.ContainsKey(cell))
             {
-                _tiles[cell] = (RaftTile)_entityManager.Spawn(EEntity.RaftTile, new SpawnParams() { Parent = _tilesContainer });
+                _tiles[cell] = (RaftTile)_entityManager.Spawn(EntityId.RaftTile, new SpawnParams() { Parent = _tilesContainer });
                 _tiles[cell].Initialise(_context);
             }
 
@@ -159,6 +196,7 @@ namespace FishFlingers.Environments
 
             tile.SetCell(cell);
             tile.SetHealth(netTile.Health);
+            tile.SetStructure(netTile.StructureId);
 
             SetTileUpdateMaps(cell);
             SetTileUpdateBoundaries(cell);

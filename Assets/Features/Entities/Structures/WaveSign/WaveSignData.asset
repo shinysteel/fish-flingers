@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85d58ddfebb3e0469ee4662a681ead0, type: 3}
   m_Name: WaveSignData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.WaveSignData
+  _id: 200
   _nameTerm: 700
   _descriptionTerm: 701
   _sprite: {fileID: 21300000, guid: 2891ff8d50c7ee142acb3eef63e9baf1, type: 3}
