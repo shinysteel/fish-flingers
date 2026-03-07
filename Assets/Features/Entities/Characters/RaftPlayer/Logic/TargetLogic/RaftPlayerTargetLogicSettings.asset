@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RaftPlayerTargetLogicSettings
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.RaftPlayerTargetLogicSettings
   _targetVisualPrefab: {fileID: 314228302824124450, guid: 2670416595be96242aab7d0775b6f1bf, type: 3}
-  _validColor: {r: 0.5415094, g: 1, b: 0.5415094, a: 1}
-  _invalidColor: {r: 1, g: 0.5420456, b: 0.5411765, a: 1}
+  _validColor: {r: 0.5411765, g: 1, b: 0.5917012, a: 1}
+  _invalidColor: {r: 1, g: 0.5415094, b: 0.5415094, a: 1}

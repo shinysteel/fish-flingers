@@ -30,7 +30,7 @@ namespace FishFlingers.Entities
 
             _material = _meshRenderer.material;
         }
-
+        
         public override void SetHealth(int health)
         {
             base.SetHealth(health);
