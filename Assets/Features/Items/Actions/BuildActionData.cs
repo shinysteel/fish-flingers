@@ -9,6 +9,11 @@ namespace FishFlingers.Items
     {
         public override void Execute(GameplayContext context)
         {
+            if (context.LocalPlayer.TargetLogic.Target.Tile?.Structure != null)
+            {
+                return;
+            }
+            
             UIManager uiManager = GameManager.Instance.Get<UIManager>();
 
             uiManager.CreateScreenUIAsync(uiManager.Config.BuildingKitPanelPrefab, UILayer.Panels).completed += (BuildingKitPanel panel) =>

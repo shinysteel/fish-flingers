@@ -41,14 +41,16 @@ namespace FishFlingers.Entities
         public BobSettings BobSettings => _bobSettings;
         public SinkSettings SinkSettings => _sinkSettings;
 
-        public void Build(GameplayContext context, RaftPlayerTarget target)
+        public bool TryBuild(GameplayContext context, RaftPlayerTarget target)
         {
             if (target.Tile != null)
             {
-                return;
+                return false;
             }
 
             context.Raft.AddTileRpc(target.Cell);
+
+            return true;
         }
     }
 }

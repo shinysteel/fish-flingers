@@ -500,8 +500,24 @@ namespace FishFlingers.Inventories
                 return false;
             }
 
+            if (!CanRemoveItems(allParameters, out List<NetInventoryItemsChange> allChanges))
+            {
+                return false;
+            }
+
+            foreach (NetInventoryItemsChange change in allChanges)
+            {
+                ProcessNetInventoryItemsChange(change);
+            }
+
+            return true;
+        }
+
+        public bool CanRemoveItems(List<InventoryChangeParams> allParameters, out List<NetInventoryItemsChange> allChanges)
+        {
+            allChanges = new();
+
             bool canRemove = true;
-            List<NetInventoryItemsChange> allChanges = new();
 
             foreach (InventoryChangeParams parameters in allParameters)
             {
@@ -514,17 +530,7 @@ namespace FishFlingers.Inventories
                 allChanges.AddRange(changes);
             }
 
-            if (!canRemove)
-            {
-                return false;
-            }
-
-            foreach (NetInventoryItemsChange change in allChanges)
-            {
-                ProcessNetInventoryItemsChange(change);
-            }
-
-            return true;
+            return canRemove;
         }
 
         /// <summary>

@@ -81,7 +81,20 @@ namespace FishFlingers.Environments
                 {
                     _netTiles.Add(new Vector2Int(x, y), new NetTile(NetTile.MaxHealth, EntityId.None));
                 }
-            }            
+            }
+
+            _ = SetupStartingStructuresAsync();
+        }
+
+        private async Task SetupStartingStructuresAsync()
+        {
+            while (!_netTiles.IsReady)
+            {
+                await Task.Yield();
+            }
+
+            // Start with a wave sign
+            SetStructureIdRpc(new Vector2Int(0, 1), EntityId.WaveSign);
         }
 
         public override void Initialise(GameplayContext context)

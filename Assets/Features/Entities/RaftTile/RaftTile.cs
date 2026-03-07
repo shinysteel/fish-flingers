@@ -16,12 +16,13 @@ namespace FishFlingers.Entities
 
         private const string DamagedBlendName = "_DamagedBlend";
 
-        private Vector2Int _cell;
+        private Vector2Int _cell = Vector2Int.one * int.MinValue;
         public Vector2Int Cell => _cell;
         
         public RaftTileData Data => (RaftTileData)_entityData;
 
         private Structure _structure;
+        public Structure Structure => _structure;
 
         protected override void Awake()
         {
@@ -47,6 +48,11 @@ namespace FishFlingers.Entities
 
         public void SetCell(Vector2Int cell)
         {
+            if (_cell == cell)
+            {
+                return;
+            }
+
             _cell = cell;
 
             transform.position = _context.Raft.CellToWorldPosition(cell);
@@ -59,7 +65,7 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            if (_entityManager.GetEntity(id) is not Structure)
+            if (_entityManager.GetEntity(id) is not Entities.Structure)
             {
                 return;
             }
@@ -83,10 +89,10 @@ namespace FishFlingers.Entities
 
         private void FixedUpdate()
         {
-            PositionFixedUpdate();
+            PositionFixedUpdate(Time.fixedDeltaTime);
         }
 
-        private void PositionFixedUpdate()
+        private void PositionFixedUpdate(float fixedDeltaTime)
         {
             bool sink = Physics.CheckSphere(transform.position, Data.SinkSettings.Radius, Data.SinkSettings.Mask);
 
@@ -106,7 +112,7 @@ namespace FishFlingers.Entities
             }
 
             Vector3 targetPosition = new Vector3(_rigidbody.position.x, targetY, _rigidbody.position.z);
-            _rigidbody.MovePosition(Vector3.MoveTowards(_rigidbody.position, targetPosition, Data.SinkSettings.Speed * Time.fixedDeltaTime));
+            _rigidbody.MovePosition(Vector3.MoveTowards(_rigidbody.position, targetPosition, Data.SinkSettings.Speed * fixedDeltaTime));
         }
 
         /// <summary>

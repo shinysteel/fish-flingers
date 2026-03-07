@@ -60,12 +60,19 @@ namespace FishFlingers.UI
 
         private void BuildPressed()
         {
-            if (!_context.LocalPlayer.Inventory.TryRemoveItems(_buildable.Recipe.ToChangeParams()))
+            List<InventoryChangeParams> parameters = _buildable.Recipe.ToChangeParams();
+
+            if (!_context.LocalPlayer.Inventory.CanRemoveItems(parameters, out _))
             {
                 return;
             }
 
-            _buildable.Build(_context, _context.LocalPlayer.TargetLogic.Target);
+            if (!_buildable.TryBuild(_context, _context.LocalPlayer.TargetLogic.Target))
+            {
+                return;
+            }
+
+            _context.LocalPlayer.Inventory.TryRemoveItems(parameters);
         }
 
         public void OnReturnedToPool()

@@ -79,9 +79,8 @@ namespace FishFlingers.Entities
                 await Task.Yield();
             }
 
-            // Start with a hammer
+            // Start with a hammer and some driftwood
             _inventory.TryAddItem(new InventoryChangeParams() { ItemId = ItemId.Hammer, Count = 1 }, false, out _, out _, out _);
-
             _inventory.TryAddItem(new InventoryChangeParams() { ItemId = ItemId.Driftwood, Count = 3 }, false, out _, out _, out _);
         }
 
@@ -139,7 +138,7 @@ namespace FishFlingers.Entities
 
         private void SyncVarsUpdate()
         {   
-            _netMousePositionNormalised.value = new Vector2(Mathf.Clamp01(_inputLogic.GameplayMouse.x / Screen.width), Mathf.Clamp01(_inputLogic.GameplayMouse.y / Screen.height));
+            _netMousePositionNormalised.value = new Vector2(Mathf.Clamp01(_inputLogic.Mouse.x / Screen.width), Mathf.Clamp01(_inputLogic.Mouse.y / Screen.height));
         }
     }
 }

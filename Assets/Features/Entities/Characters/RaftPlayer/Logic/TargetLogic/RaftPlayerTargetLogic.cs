@@ -60,7 +60,7 @@ namespace FishFlingers.Entities
         }
 
         ~RaftPlayerTargetLogic()
-        {
+        { 
             if (_context.Raft != null)
             {
                 _context.Raft.OnTileChanged -= HandleTileChanged;
