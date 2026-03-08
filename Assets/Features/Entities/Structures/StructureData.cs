@@ -15,12 +15,12 @@ namespace FishFlingers.Entities
 
         public bool TryBuild(GameplayContext context, RaftPlayerTarget target)
         {
-            if (target.Tile == null || target.Tile.Structure != null)
+            if (!target.CanBuildStructure())
             {
                 return false;
             }
 
-            context.Raft.SetStructureIdRpc(target.Cell, _id);
+            context.Raft.SetStructureRpc(target.Cell, _id);
 
             return true;
         }

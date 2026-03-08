@@ -21,9 +21,6 @@ namespace FishFlingers.Entities
         
         public RaftTileData Data => (RaftTileData)_entityData;
 
-        private Structure _structure;
-        public Structure Structure => _structure;
-
         protected override void Awake()
         {
             base.Awake();
@@ -58,41 +55,12 @@ namespace FishFlingers.Entities
             transform.position = _context.Raft.CellToWorldPosition(cell);
         }
 
-        public void SetStructure(EntityId id)
-        {
-            if (!_networkManager.IsServer)
-            {
-                return;
-            }
-
-            if (_entityManager.GetEntity(id) is not Entities.Structure)
-            {
-                return;
-            }
-
-            if (id == _structure?.StructureData.Id)
-            {
-                return;
-            }
-
-            if (id == EntityId.None && _structure != null)
-            {
-                _entityManager.Despawn(_structure);
-                _structure = null;
-            }
-
-            if (id != EntityId.None && _structure == null)
-            {
-                _structure = (Structure)_entityManager.Spawn(id, new SpawnParams() { Parent = _visualsContainer, Position = new Vector3(transform.position.x, GetSurfaceY(), transform.position.z) });
-            }
-        }
-
         private void FixedUpdate()
         {
-            PositionFixedUpdate(Time.fixedDeltaTime);
+            PositionFixedUpdate();
         }
 
-        private void PositionFixedUpdate(float fixedDeltaTime)
+        private void PositionFixedUpdate()
         {
             bool sink = Physics.CheckSphere(transform.position, Data.SinkSettings.Radius, Data.SinkSettings.Mask);
 
@@ -112,7 +80,7 @@ namespace FishFlingers.Entities
             }
 
             Vector3 targetPosition = new Vector3(_rigidbody.position.x, targetY, _rigidbody.position.z);
-            _rigidbody.MovePosition(Vector3.MoveTowards(_rigidbody.position, targetPosition, Data.SinkSettings.Speed * fixedDeltaTime));
+            _rigidbody.MovePosition(Vector3.MoveTowards(_rigidbody.position, targetPosition, Data.SinkSettings.Speed * Time.fixedDeltaTime));
         }
 
         /// <summary>

@@ -1,8 +1,10 @@
 using FishFlingers.Inventories;
 using FishFlingers.States;
 using PrimeTween;
+using PurrNet;
 using ShinyOwl.Common;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -12,14 +14,70 @@ namespace FishFlingers.Entities
     {
         private Vector2Int _cell;
         private RaftTile _tile;
+        private Structure _structure;
 
         public Vector2Int Cell => _cell;
         public RaftTile Tile => _tile;
+        public Structure Structure => _structure;
 
-        public RaftPlayerTarget(Vector2Int cell, RaftTile tile)
+        public event Action OnChanged;
+
+        public RaftPlayerTarget()
         {
+            _cell = Vector2Int.one * int.MinValue;
+        }
+
+        public void SetCell(Vector2Int cell)
+        {
+            if (_cell == cell)
+            {
+                return;
+            }
+
             _cell = cell;
+            NotifyOnChanged();
+        }
+
+        public void SetTile(RaftTile tile)
+        {
+            if (_tile == tile)
+            {
+                return;
+            }
+
             _tile = tile;
+            NotifyOnChanged();
+        }
+
+        public void SetStructure(Structure structure)
+        {
+            if (_structure == structure)
+            {
+                return;
+            }
+
+            _structure = structure;
+            NotifyOnChanged();
+        }
+
+        private void NotifyOnChanged()
+        {
+            OnChanged?.Invoke();
+        }
+
+        public bool CanBuild()
+        {
+            return CanBuildTile() || CanBuildStructure();
+        }
+
+        public bool CanBuildTile()
+        {
+            return _tile == null;
+        }
+
+        public bool CanBuildStructure()
+        {
+            return _tile != null && _structure == null;
         }
     }
 
@@ -57,10 +115,11 @@ namespace FishFlingers.Entities
 
             _targetVisual = Object.Instantiate(_settings.TargetVisualPrefab);
 
-            _target = new RaftPlayerTarget(Vector2Int.one * int.MinValue, null);
+            _target = new();
+            _target.OnChanged += HandleTargetChanged;
 
-            HandleTileChanged(_target.Cell, _target.Tile);
             _context.Raft.OnTileChanged += HandleTileChanged;
+            _context.Raft.OnStructureChanged += HandleStructureChanged;
 
             HandleHotbarSelectedItemChanged(_context.LocalPlayer.Hotbar.SelectedIndex, _context.LocalPlayer.Hotbar.SelectedItem);
             _context.LocalPlayer.Hotbar.OnSelectedChanged += HandleHotbarSelectedItemChanged;
@@ -79,18 +138,15 @@ namespace FishFlingers.Entities
             }
         }
 
-        private void SetTarget(RaftPlayerTarget target)
+        private void HandleTargetChanged()
         {
-            _target = target;
-            OnTargetChanged?.Invoke(target);
-
-            if (!_showingTarget)
+            if (_showingTarget)
             {
-                return;
+                RefreshVisualColor();
             }
 
-            bool valid = _target.Tile == null || _target.Tile.Structure == null;
-            _targetVisual.SetColor(valid ? _settings.ValidColor : _settings.InvalidColor);
+            // Passes along the event from Target -> Logic -> Listener
+            OnTargetChanged?.Invoke(_target);
         }
 
         private void HandleTileChanged(Vector2Int cell, RaftTile tile)
@@ -100,7 +156,17 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            SetTarget(new RaftPlayerTarget(cell, tile));
+            _target.SetTile(tile);
+        }
+
+        private void HandleStructureChanged(Vector2Int cell, Structure structure)
+        {
+            if (cell != _target.Cell)
+            {
+                return;
+            }
+
+            _target.SetStructure(structure);
         }
 
         private void HandleHotbarSelectedItemChanged(int index, InventoryItem item)
@@ -152,14 +218,18 @@ namespace FishFlingers.Entities
 
             Vector2Int cell = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
 
+            // We only care if the cell has changed
             if (_target.Cell == cell)
             {
                 return;
             }
 
             _context.Raft.Tiles.TryGetValue(cell, out RaftTile tile);
+            _context.Raft.Structures.TryGetValue(cell, out Structure structure);
 
-            SetTarget(new RaftPlayerTarget(cell, tile));
+            _target.SetCell(cell);
+            _target.SetTile(tile);
+            _target.SetStructure(structure);
         }
 
         /// <summary>
@@ -170,10 +240,10 @@ namespace FishFlingers.Entities
             Vector3 scale;
             Vector3 position = _context.Raft.CellToWorldPosition(_target.Cell);
 
-            if (_context.Raft.Tiles.TryGetValue(_target.Cell, out RaftTile tile))
+            if (_target.Tile != null)
             {
                 scale = StructureVisualScale;
-                position.y = tile.GetSurfaceY() + scale.y * 0.5f;
+                position.y = _target.Tile.GetSurfaceY() + scale.y * 0.5f;
             }
             else
             {
@@ -183,6 +253,11 @@ namespace FishFlingers.Entities
 
             _targetVisual.SetVisualScale(scale);
             _targetVisual.transform.position = position;
+        }
+
+        private void RefreshVisualColor()
+        {
+            _targetVisual.SetColor(_target.CanBuild() ? _settings.ValidColor : _settings.InvalidColor);
         }
     }
 }

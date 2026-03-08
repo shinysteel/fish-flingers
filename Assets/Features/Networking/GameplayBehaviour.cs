@@ -43,14 +43,19 @@ namespace FishFlingers.Networking
             _ = ForceSync();
         }
 
-        // We can cause OnTransformParentChanged to be invoked by waiting 2 frames in between updating the parent
+        // We can cause OnTransformParentChanged to be invoked by waiting some frames in between updating the parent
         private async Task ForceSync()
         {
             Transform parent = transform.parent;
 
             transform.SetParent(null);
-            await Task.Yield();
-            await Task.Yield();
+
+            int frames = 2;
+            for (int i = 0; i < frames; i++)
+            {
+                await Task.Yield();
+            }
+
             transform.SetParent(parent);
         }
     }

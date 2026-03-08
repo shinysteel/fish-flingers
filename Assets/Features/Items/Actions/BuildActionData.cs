@@ -9,7 +9,7 @@ namespace FishFlingers.Items
     {
         public override void Execute(GameplayContext context)
         {
-            if (context.LocalPlayer.TargetLogic.Target.Tile?.Structure != null)
+            if (!context.LocalPlayer.TargetLogic.Target.CanBuild())
             {
                 return;
             }

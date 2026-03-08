@@ -59,7 +59,7 @@ namespace FishFlingers.UI
 
         private void HandleRaftPlayerTargetChanged(RaftPlayerTarget target)
         {
-            if (target.Tile?.Structure != null)
+            if (!target.CanBuild())
             {
                 ClosePressed();
                 return;
