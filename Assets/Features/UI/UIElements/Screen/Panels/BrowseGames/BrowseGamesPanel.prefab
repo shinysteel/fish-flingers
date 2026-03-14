@@ -248,6 +248,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 750988990251542737, guid: b2445ca03474c9642b1410dde0e1ffcc, type: 3}
+      propertyPath: m_StringReference.m_TableEntryReference.m_KeyId
+      value: 434358620160
+      objectReference: {fileID: 0}
+    - target: {fileID: 750988990251542737, guid: b2445ca03474c9642b1410dde0e1ffcc, type: 3}
+      propertyPath: m_StringReference.m_TableReference.m_TableCollectionName
+      value: GUID:ba15cc2badf73b049b6edadebd7ea401
+      objectReference: {fileID: 0}
     - target: {fileID: 882401190243713336, guid: b2445ca03474c9642b1410dde0e1ffcc, type: 3}
       propertyPath: m_StringReference.m_TableEntryReference.m_KeyId
       value: 434358620160
@@ -261,6 +269,10 @@ PrefabInstance:
       value: BrowseGamesPanel
       objectReference: {fileID: 0}
     - target: {fileID: 4619599197589356375, guid: b2445ca03474c9642b1410dde0e1ffcc, type: 3}
+      propertyPath: m_text
+      value: Lobbies
+      objectReference: {fileID: 0}
+    - target: {fileID: 4705308164282050647, guid: b2445ca03474c9642b1410dde0e1ffcc, type: 3}
       propertyPath: m_text
       value: Lobbies
       objectReference: {fileID: 0}
