@@ -12,19 +12,31 @@ namespace FishFlingers.Entities
 {
     public class RaftPlayerTarget
     {
+        private GameplayContext _context;
+
         private Vector2Int _cell;
         private RaftTile _tile;
-        private Structure _structure;
 
         public Vector2Int Cell => _cell;
         public RaftTile Tile => _tile;
-        public Structure Structure => _structure;
 
         public event Action OnChanged;
 
-        public RaftPlayerTarget()
+        public RaftPlayerTarget(GameplayContext context)
         {
+            _context = context;
+
             _cell = Vector2Int.one * int.MinValue;
+
+            _context.Raft.OnRaftTileChanged += HandleRaftTileChanged;
+        }
+
+        ~RaftPlayerTarget()
+        {
+            if (_context.Raft != null)
+            {
+                _context.Raft.OnRaftTileChanged -= HandleRaftTileChanged;
+            }
         }
 
         public void SetCell(Vector2Int cell)
@@ -35,33 +47,21 @@ namespace FishFlingers.Entities
             }
 
             _cell = cell;
-            NotifyOnChanged();
+
+            // Refresh _tile whenever _cell changes
+            _context.Raft.RaftTiles.TryGetValue(_cell, out RaftTile tile);
+            HandleRaftTileChanged(_cell, tile);
         }
 
-        public void SetTile(RaftTile tile)
+        private void HandleRaftTileChanged(Vector2Int cell, RaftTile tile)
         {
-            if (_tile == tile)
+            if (_cell != cell)
             {
                 return;
             }
 
             _tile = tile;
-            NotifyOnChanged();
-        }
 
-        public void SetStructure(Structure structure)
-        {
-            if (_structure == structure)
-            {
-                return;
-            }
-
-            _structure = structure;
-            NotifyOnChanged();
-        }
-
-        private void NotifyOnChanged()
-        {
             OnChanged?.Invoke();
         }
 
@@ -77,7 +77,7 @@ namespace FishFlingers.Entities
 
         public bool CanBuildStructure()
         {
-            return _tile != null && _structure == null;
+            return _tile != null && _tile.Structure == null;
         }
     }
 
@@ -115,11 +115,8 @@ namespace FishFlingers.Entities
 
             _targetVisual = Object.Instantiate(_settings.TargetVisualPrefab);
 
-            _target = new();
+            _target = new RaftPlayerTarget(context);
             _target.OnChanged += HandleTargetChanged;
-
-            _context.Raft.OnTileChanged += HandleTileChanged;
-            _context.Raft.OnStructureChanged += HandleStructureChanged;
 
             HandleHotbarSelectedItemChanged(_context.LocalPlayer.Hotbar.SelectedIndex, _context.LocalPlayer.Hotbar.SelectedItem);
             _context.LocalPlayer.Hotbar.OnSelectedChanged += HandleHotbarSelectedItemChanged;
@@ -127,11 +124,6 @@ namespace FishFlingers.Entities
 
         ~RaftPlayerTargetLogic()
         { 
-            if (_context.Raft != null)
-            {
-                _context.Raft.OnTileChanged -= HandleTileChanged;
-            }
-
             if (_context.LocalPlayer != null)
             {
                 _context.LocalPlayer.Hotbar.OnSelectedChanged -= HandleHotbarSelectedItemChanged;
@@ -147,26 +139,6 @@ namespace FishFlingers.Entities
 
             // Passes along the event from Target -> Logic -> Listener
             OnTargetChanged?.Invoke(_target);
-        }
-
-        private void HandleTileChanged(Vector2Int cell, RaftTile tile)
-        {
-            if (cell != _target.Cell)
-            {
-                return;
-            }
-
-            _target.SetTile(tile);
-        }
-
-        private void HandleStructureChanged(Vector2Int cell, Structure structure)
-        {
-            if (cell != _target.Cell)
-            {
-                return;
-            }
-
-            _target.SetStructure(structure);
         }
 
         private void HandleHotbarSelectedItemChanged(int index, InventoryItem item)
@@ -224,12 +196,7 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            _context.Raft.Tiles.TryGetValue(cell, out RaftTile tile);
-            _context.Raft.Structures.TryGetValue(cell, out Structure structure);
-
             _target.SetCell(cell);
-            _target.SetTile(tile);
-            _target.SetStructure(structure);
         }
 
         /// <summary>

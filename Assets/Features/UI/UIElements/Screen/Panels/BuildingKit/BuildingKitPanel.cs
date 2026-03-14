@@ -61,7 +61,11 @@ namespace FishFlingers.UI
         {
             if (!target.CanBuild())
             {
-                ClosePressed();
+                if (_isShowing)
+                {
+                    ClosePressed();
+                }
+
                 return;
             }
 

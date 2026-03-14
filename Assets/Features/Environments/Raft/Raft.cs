@@ -22,7 +22,9 @@ namespace FishFlingers.Environments
 
         public const int MaxHealth = 3;
 
-        public NetTile(int health, EntityId structureId)
+        public Structure Structure { get; private set; }
+
+        public NetTile(int health)
         {
             SetHealth(health);
         }
@@ -30,6 +32,11 @@ namespace FishFlingers.Environments
         public void SetHealth(int health)
         {
             Health = Mathf.Clamp(health, 0, MaxHealth);
+        }
+
+        public void SetStructure(Structure structure)
+        {
+            Structure = structure;
         }
     }
 
@@ -39,15 +46,10 @@ namespace FishFlingers.Environments
 
         private SyncDictionaryWrapper<Vector2Int, NetTile> _netTiles = new SyncDictionaryWrapper<Vector2Int, NetTile>(ownerAuth: true);
 
-        private Dictionary<Vector2Int, RaftTile> _tiles = new();
-        public IReadOnlyDictionary<Vector2Int, RaftTile> Tiles => _tiles;
+        private Dictionary<Vector2Int, RaftTile> _raftTiles = new();
+        public IReadOnlyDictionary<Vector2Int, RaftTile> RaftTiles => _raftTiles;
 
-        public event Action<Vector2Int, RaftTile> OnTileChanged;
-
-        private SyncDictionaryWrapper<Vector2Int, Structure> _structures = new SyncDictionaryWrapper<Vector2Int, Structure>(ownerAuth: true);
-        public SyncDictionaryWrapper<Vector2Int, Structure> Structures => _structures;
-
-        public event Action<Vector2Int, Structure> OnStructureChanged;
+        public event Action<Vector2Int, RaftTile> OnRaftTileChanged;
 
         // Every column will have x rows, and every row will have x columns
         private Dictionary<int, SortedSet<int>> _columnToRowsMap = new();
@@ -77,7 +79,7 @@ namespace FishFlingers.Environments
             {
                 for (int y = -1; y <= 1; y++)
                 {
-                    _netTiles.Add(new Vector2Int(x, y), new NetTile(NetTile.MaxHealth, EntityId.None));
+                    _netTiles.Add(new Vector2Int(x, y), new NetTile(NetTile.MaxHealth));
                 }
             }
 
@@ -86,13 +88,13 @@ namespace FishFlingers.Environments
 
         private async Task SetupStartingStructuresAsync()
         {
-            while (!_structures.IsReady)
+            while (!_netTiles.IsReady)
             {
                 await Task.Yield();
             }
 
             // Start with a wave sign
-            SetStructure(new Vector2Int(0, 1), EntityId.WaveSign);
+            AddStructure(new Vector2Int(0, 1), EntityId.WaveSign);
         }
 
         public override void Initialise(GameplayContext context)
@@ -100,7 +102,6 @@ namespace FishFlingers.Environments
             base.Initialise(context);
 
             _netTiles.onChanged += HandleNetTilesChanged;
-            _structures.onChanged += HandleStructuresChanged;
 
             if (isOwner)
             {
@@ -116,15 +117,15 @@ namespace FishFlingers.Environments
         }
 
         [ServerRpc(requireOwnership: false)]
-        public void AddTileRpc(Vector2Int cell)
+        public void AddNetTileRpc(Vector2Int cell)
         {
-            _netTiles.TryAdd(cell, new NetTile(NetTile.MaxHealth, EntityId.None));
+            _netTiles.TryAdd(cell, new NetTile(NetTile.MaxHealth));
         }
 
         [ServerRpc(requireOwnership: false)]
-        public void SetStructureRpc(Vector2Int cell, EntityId structureId)
+        public void AddStructureRpc(Vector2Int cell, EntityId structureId)
         {
-            SetStructure(cell, structureId);
+            AddStructure(cell, structureId);
         }
 
         // No tile param is good here, since it lets callers request to damage a cell without having to worry
@@ -158,7 +159,7 @@ namespace FishFlingers.Environments
             }
         }
 
-        private void SetStructure(Vector2Int cell, EntityId structureId)
+        private void AddStructure(Vector2Int cell, EntityId structureId)
         {
             if (!isOwner)
             {
@@ -170,29 +171,25 @@ namespace FishFlingers.Environments
                 return;
             }
 
-            if (!_tiles.TryGetValue(cell, out RaftTile tile))
+            if (!_netTiles.TryGetValue(cell, out NetTile netTile))
             {
                 return;
             }
 
-            _structures.TryGetValue(cell, out Structure existingStructure);
-
-            if (structureId == existingStructure?.StructureData.Id)
+            if (netTile.Structure != null)
             {
                 return;
             }
 
-            if (structureId == EntityId.None && existingStructure != null)
+            if (!_raftTiles.TryGetValue(cell, out RaftTile raftTile))
             {
-                _entityManager.Despawn(existingStructure);
-                _structures.Remove(cell);
+                return;
             }
 
-            if (structureId != EntityId.None && existingStructure == null)
-            {
-                Structure newStructure = (Structure)_entityManager.Spawn(structureId, new SpawnParams() { Parent = tile.transform, Position = new Vector3(tile.transform.position.x, tile.GetSurfaceY(), tile.transform.position.z) });
-                _structures.Add(cell, newStructure);
-            }
+            Structure structure = (Structure)_entityManager.Spawn(structureId, new SpawnParams() { Parent = raftTile.transform, Position = new Vector3(raftTile.transform.position.x, raftTile.GetSurfaceY(), raftTile.transform.position.z) });
+            netTile.SetStructure(structure);
+
+            _netTiles.SetDirty(cell);
         }
 
         private void HandleNetTilesChanged(SyncDictionaryChange<Vector2Int, NetTile> change)
@@ -200,61 +197,57 @@ namespace FishFlingers.Environments
             // Tile exists
             if (change.operation != SyncDictionaryOperation.Removed && change.value != null)
             {
-                SetTile(change.key, change.value);
+                SetRaftTile(change.key, change.value);
             }
             // Tile no longer exists
             else
             {
-                RemoveTile(change.key);
+                RemoveRaftTile(change.key);
             }
-        }
-
-        private void HandleStructuresChanged(SyncDictionaryChange<Vector2Int, Structure> change)
-        {
-            OnStructureChanged?.Invoke(change.key, change.value);
         }
 
         // Adds a new tile, or updates an existing one
-        private void SetTile(Vector2Int cell, NetTile netTile)
+        private void SetRaftTile(Vector2Int cell, NetTile netTile)
         {
             // Retrieve from pool
-            if (!_tiles.ContainsKey(cell))
+            if (!_raftTiles.ContainsKey(cell))
             {
-                _tiles[cell] = (RaftTile)_entityManager.Spawn(EntityId.RaftTile, new SpawnParams() { Parent = _tilesContainer });
-                _tiles[cell].Initialise(_context);
+                _raftTiles[cell] = (RaftTile)_entityManager.Spawn(EntityId.RaftTile, new SpawnParams() { Parent = _tilesContainer });
+                _raftTiles[cell].Initialise(_context);
             }
 
-            RaftTile tile = _tiles[cell];
+            RaftTile raftTile = _raftTiles[cell];
 
-            tile.SetCell(cell);
-            tile.SetHealth(netTile.Health);
+            raftTile.SetHealth(netTile.Health);
+            raftTile.SetCell(cell);
+            raftTile.SetStructure(netTile.Structure);
 
-            SetTileUpdateMaps(cell);
-            SetTileUpdateBoundaries(cell);
+            SetRaftTileUpdateMaps(cell);
+            SetRaftTileUpdateBoundaries(cell);
 
-            OnTileChanged?.Invoke(cell, tile);
+            OnRaftTileChanged?.Invoke(cell, raftTile);
         }
 
-        private void RemoveTile(Vector2Int cell)
+        private void RemoveRaftTile(Vector2Int cell)
         {
-            if (!_tiles.TryGetValue(cell, out RaftTile tile))
+            if (!_raftTiles.TryGetValue(cell, out RaftTile raftTile))
             {
                 return;
             }
 
             // Return to pool
-            _entityManager.Despawn(tile);
+            _entityManager.Despawn(raftTile);
 
-            _tiles.Remove(tile.Cell);
+            _raftTiles.Remove(raftTile.Cell);
 
-            RemoveTileUpdateMaps(cell);
-            RemoveTileUpdateBoundaries(cell);
+            RemoveRaftTileUpdateMaps(cell);
+            RemoveRaftTileUpdateBoundaries(cell);
 
-            OnTileChanged?.Invoke(cell, null);
+            OnRaftTileChanged?.Invoke(cell, null);
         }
 
-        // Maintains positional maps when SetTile is called
-        private void SetTileUpdateMaps(Vector2Int cell)
+        // Maintains positional maps when SetRaftTile is called
+        private void SetRaftTileUpdateMaps(Vector2Int cell)
         {
             if (!_columnToRowsMap.ContainsKey(cell.x))
             {
@@ -270,7 +263,7 @@ namespace FishFlingers.Environments
             _rowToColumnsMap[cell.y].Add(cell.x);
         }
 
-        private void RemoveTileUpdateMaps(Vector2Int cell)
+        private void RemoveRaftTileUpdateMaps(Vector2Int cell)
         {
             _columnToRowsMap[cell.x].Remove(cell.y);
             _rowToColumnsMap[cell.y].Remove(cell.x);
@@ -286,8 +279,8 @@ namespace FishFlingers.Environments
             }
         }
 
-        // Recalculates boundaries when SetTile is called
-        private void SetTileUpdateBoundaries(Vector2Int cell)
+        // Recalculates boundaries when SetRaftTile is called
+        private void SetRaftTileUpdateBoundaries(Vector2Int cell)
         {
             _forwardmostRow = Mathf.Max(_forwardmostRow, cell.y);
             _backmostRow = Mathf.Min(_backmostRow, cell.y);
@@ -295,7 +288,7 @@ namespace FishFlingers.Environments
             _leftmostColumn = Mathf.Min(_leftmostColumn, cell.x);
         }
 
-        private void RemoveTileUpdateBoundaries(Vector2Int cell)
+        private void RemoveRaftTileUpdateBoundaries(Vector2Int cell)
         {
             if (_forwardmostRow == cell.y && !_rowToColumnsMap.ContainsKey(cell.y))
             {

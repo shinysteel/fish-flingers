@@ -21,6 +21,9 @@ namespace FishFlingers.Entities
         
         public RaftTileData Data => (RaftTileData)_entityData;
 
+        private Structure _structure;
+        public Structure Structure => _structure;
+
         protected override void Awake()
         {
             base.Awake();
@@ -53,6 +56,11 @@ namespace FishFlingers.Entities
             _cell = cell;
 
             transform.position = _context.Raft.CellToWorldPosition(cell);
+        }
+
+        public void SetStructure(Structure structure)
+        {
+            _structure = structure;
         }
 
         private void FixedUpdate()

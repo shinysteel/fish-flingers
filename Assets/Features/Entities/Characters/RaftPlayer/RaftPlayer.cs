@@ -81,7 +81,7 @@ namespace FishFlingers.Entities
 
             // Start with a hammer and some driftwood
             _inventory.TryAddItem(new InventoryChangeParams() { ItemId = ItemId.Hammer, Count = 1 }, false, out _, out _, out _);
-            _inventory.TryAddItem(new InventoryChangeParams() { ItemId = ItemId.Driftwood, Count = 3 }, false, out _, out _, out _);
+            _inventory.TryAddItem(new InventoryChangeParams() { ItemId = ItemId.Driftwood, Count = 15 }, false, out _, out _, out _);
         }
 
         public override void Initialise(GameplayContext context)

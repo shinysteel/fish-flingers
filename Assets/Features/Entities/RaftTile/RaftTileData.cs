@@ -48,7 +48,7 @@ namespace FishFlingers.Entities
                 return false;
             }
 
-            context.Raft.AddTileRpc(target.Cell);
+            context.Raft.AddNetTileRpc(target.Cell);
 
             return true;
         }

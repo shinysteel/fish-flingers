@@ -52,12 +52,12 @@ namespace FishFlingers.Environments
         {
             tile = null;
 
-            if (_tiles.Values.Count == 0)
+            if (_raftTiles.Values.Count == 0)
             {
                 return false;
             }
 
-            tile = _tiles.Values.ElementAt(Random.Range(0, _tiles.Count));
+            tile = _raftTiles.Values.ElementAt(Random.Range(0, _raftTiles.Count));
             return true;
         }
 
@@ -74,10 +74,10 @@ namespace FishFlingers.Environments
             }
 
             // Determine the edges relative to the cell
-            RaftEdge forwardEdge = new RaftEdge(_tiles[new Vector2Int(cell.x, column.Max)], Vector2Int.up, Vector3.forward);
-            RaftEdge backEdge = new RaftEdge(_tiles[new Vector2Int(cell.x, column.Min)], Vector2Int.down, Vector3.back);
-            RaftEdge rightEdge = new RaftEdge(_tiles[new Vector2Int(row.Max, cell.y)], Vector2Int.right, Vector3.right);
-            RaftEdge leftEdge = new RaftEdge(_tiles[new Vector2Int(row.Min, cell.y)], Vector2Int.left, Vector3.left);
+            RaftEdge forwardEdge = new RaftEdge(_raftTiles[new Vector2Int(cell.x, column.Max)], Vector2Int.up, Vector3.forward);
+            RaftEdge backEdge = new RaftEdge(_raftTiles[new Vector2Int(cell.x, column.Min)], Vector2Int.down, Vector3.back);
+            RaftEdge rightEdge = new RaftEdge(_raftTiles[new Vector2Int(row.Max, cell.y)], Vector2Int.right, Vector3.right);
+            RaftEdge leftEdge = new RaftEdge(_raftTiles[new Vector2Int(row.Min, cell.y)], Vector2Int.left, Vector3.left);
 
             // Pair the edges with their distance from the cell
             (RaftEdge edge, int dist)[] edges = new (RaftEdge, int)[]

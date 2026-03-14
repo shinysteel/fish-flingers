@@ -20,7 +20,7 @@ namespace FishFlingers.Entities
                 return false;
             }
 
-            context.Raft.SetStructureRpc(target.Cell, _id);
+            context.Raft.AddStructureRpc(target.Cell, _id);
 
             return true;
         }
