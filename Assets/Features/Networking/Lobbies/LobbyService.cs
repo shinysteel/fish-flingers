@@ -75,9 +75,9 @@ namespace FishFlingers.Networking
         public abstract void LeaveLobby();
         public abstract bool IsLobbyOwner(Lobby lobby);
 
-        protected void RaiseOnLobbyCreated(Lobby lobby) => OnLobbyCreated?.Invoke(lobby);
-        protected void RaiseOnLobbyEnter(Lobby lobby) => OnLobbyEnter?.Invoke(lobby);
-        protected void RaiseOnLobbyStart(Lobby lobby) => OnLobbyStart?.Invoke(lobby);
-        protected void RaiseOnLobbyLeave() => OnLobbyLeave?.Invoke();
+        protected void RaiseLobbyCreated(Lobby lobby) => OnLobbyCreated?.Invoke(lobby);
+        protected void RaiseLobbyEnter(Lobby lobby) => OnLobbyEnter?.Invoke(lobby);
+        protected void RaiseLobbyStart(Lobby lobby) => OnLobbyStart?.Invoke(lobby);
+        protected void RaiseLobbyLeave() => OnLobbyLeave?.Invoke();
     }
 }

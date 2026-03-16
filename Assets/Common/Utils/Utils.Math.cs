@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace ShinyOwl.Common.Utils
@@ -36,6 +37,23 @@ namespace ShinyOwl.Common.Utils
             public static Vector2Int RotateCell(Vector2Int cell, int rotations, bool clockwise)
             {
                 return Vector2Int.RoundToInt(RotateCell((Vector2)cell, rotations, clockwise));
+            }
+
+            public static Vector3 RoundVector3(Vector3 vector3, int precision)
+            {
+                return new Vector3(
+                    (float)System.Math.Round(vector3.x, precision), 
+                    (float)System.Math.Round(vector3.y, precision), 
+                    (float)System.Math.Round(vector3.z, precision));
+            }
+
+            public static Quaternion RoundQuaternion(Quaternion quaternion, int precision)
+            {
+                return new Quaternion(
+                    (float)System.Math.Round(quaternion.x, precision),
+                    (float)System.Math.Round(quaternion.y, precision),
+                    (float)System.Math.Round(quaternion.z, precision),
+                    (float)System.Math.Round(quaternion.w, precision));
             }
         }
     }

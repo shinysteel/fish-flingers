@@ -181,8 +181,8 @@ namespace FishFlingers.Networking
 
             StartBroadcasting();
 
-            RaiseOnLobbyCreated(CurrentLobby);
-            RaiseOnLobbyEnter(CurrentLobby);
+            RaiseLobbyCreated(CurrentLobby);
+            RaiseLobbyEnter(CurrentLobby);
 
             return Task.FromResult(CurrentLobby);
         }
@@ -207,7 +207,7 @@ namespace FishFlingers.Networking
 
             _networkManager.StartClient();
 
-            RaiseOnLobbyEnter(lobby);
+            RaiseLobbyEnter(lobby);
 
             RaiseLobbyEvents(null, lobby);
 
@@ -224,7 +224,7 @@ namespace FishFlingers.Networking
 
             CurrentLobby.Properties[StartedKey] = true.ToString();
 
-            RaiseOnLobbyStart(CurrentLobby);
+            RaiseLobbyStart(CurrentLobby);
         }
 
         public override void LeaveLobby()
@@ -233,7 +233,7 @@ namespace FishFlingers.Networking
 
             StopBroadcasting();
 
-            RaiseOnLobbyLeave();
+            RaiseLobbyLeave();
         }
 
         public override bool IsLobbyOwner(Lobby lobby)
@@ -329,7 +329,7 @@ namespace FishFlingers.Networking
             // Detects when the 'started' property goes from false to true and relays it
             if (GetBool(previous, StartedKey) == false && GetBool(current, StartedKey) == true)
             {
-                RaiseOnLobbyStart(current);
+                RaiseLobbyStart(current);
             }
         }
 
@@ -363,41 +363,41 @@ namespace FishFlingers.Networking
             _isListening = false;
         }
 
-        void INetworkManagerListener.OnPlayerJoined(PlayerID id, bool isReconnect, bool asServer)
+        void INetworkManagerListener.OnPlayerJoined(PlayerID playerId, bool isReconnect, bool asServer)
         {
             if (asServer)
             {
                 return;
             }
 
-            if (_networkManager.IsServer == false || _networkManager.LocalPlayerId == id)
+            if (_networkManager.IsServer == false || _networkManager.LocalPlayerId == playerId)
             {
                 return;
             }
 
             if (CurrentLobby.Members.Count >= CurrentLobby.MemberLimit)
             {
-                _networkManager.KickPlayer(id);
+                _networkManager.KickPlayer(playerId);
                 return;
             }
 
-            LobbyMember member = new LobbyMember(id.ToString(), $"Player {id}");
+            LobbyMember member = new LobbyMember(playerId.ToString(), $"Player {playerId}");
             CurrentLobby.Members.Add(member);
         }
 
-        void INetworkManagerListener.OnPlayerLeft(PlayerID id, bool asServer) 
+        void INetworkManagerListener.OnPlayerLeft(PlayerID playerId, bool asServer) 
         {
             if (asServer)
             {
                 return;
             }
 
-            if (_networkManager.IsServer == false || _networkManager.LocalPlayerId == id)
+            if (_networkManager.IsServer == false || _networkManager.LocalPlayerId == playerId)
             {
                 return;
             }
 
-            CurrentLobby.Members.RemoveAll(member => member.Id == id.ToString());
+            CurrentLobby.Members.RemoveAll(member => member.Id == playerId.ToString());
         }
     }
 }

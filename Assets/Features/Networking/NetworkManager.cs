@@ -36,8 +36,8 @@ namespace FishFlingers.Networking
         void OnNetBehaviourSpawned(NetBehaviour behaviour) { }
         void OnNetBehaviourDespawned(NetBehaviour behaviour) { }
         void OnClientConnectionState(ConnectionState state) { }
-        void OnPlayerJoined(PlayerID id, bool isReconnect, bool asServer) { }
-        void OnPlayerLeft(PlayerID id, bool asServer) { }
+        void OnPlayerJoined(PlayerID playerId, bool isReconnect, bool asServer) { }
+        void OnPlayerLeft(PlayerID playerId, bool asServer) { }
     }
 
     public class NetworkManager : GameSystem<INetworkManagerListener>, ISceneManagerListener
@@ -48,9 +48,14 @@ namespace FishFlingers.Networking
 
         private PurrNet.NetworkManager _purrnetNetworkManager;
 
-        public PlayerID LocalPlayerId => _purrnetNetworkManager.localPlayer;
         public bool IsServer => _purrnetNetworkManager.isServer;
 
+        public IReadOnlyList<PlayerID> PlayerIds => _purrnetNetworkManager.players;
+        public PlayerID LocalPlayerId => _purrnetNetworkManager.localPlayer;
+
+        private Dictionary<PlayerID, PurrnetPlayer> _purrnetPlayers = new();
+        public IReadOnlyDictionary<PlayerID, PurrnetPlayer> PurrnetPlayers => _purrnetPlayers;
+        public PurrnetPlayer LocalPurrnetPlayer => _purrnetPlayers[_purrnetNetworkManager.localPlayer];
 
         public static readonly Vector3 HiddenSpawnPosition = new Vector3(0f, -15f, 0f);
 
@@ -129,11 +134,21 @@ namespace FishFlingers.Networking
 
         public void RaiseNetBehaviourSpawned(NetBehaviour behaviour)
         {
+            if (behaviour is PurrnetPlayer player)
+            {
+                _purrnetPlayers.Add(behaviour.owner.Value, player);
+            }
+
             Listeners.Dispatch(NotifyOnNetBehaviourSpawned, behaviour);
         }
 
         public void RaiseNetBehaviourDespawned(NetBehaviour behaviour)
         {
+            if (behaviour is PurrnetPlayer player)
+            {
+                _purrnetPlayers.Remove(behaviour.owner.Value);
+            }
+
             Listeners.Dispatch(NotifyOnNetBehaviourDespawned, behaviour);
         }
 
@@ -168,9 +183,9 @@ namespace FishFlingers.Networking
             return module;
         }
 
-        public void Send<T>(PlayerID id, T data, Channel method = Channel.ReliableUnordered)
+        public void Send<T>(PlayerID playerId, T data, Channel method = Channel.ReliableUnordered)
         {
-            _purrnetNetworkManager.Send(id, data, method);
+            _purrnetNetworkManager.Send(playerId, data, method);
         }
 
         public void Subscribe<T>(PlayerBroadcastDelegate<T> callback, bool asServer) where T : new()
@@ -183,9 +198,9 @@ namespace FishFlingers.Networking
             _purrnetNetworkManager.Unsubscribe(callback);
         }
 
-        public void KickPlayer(PlayerID id)
+        public void KickPlayer(PlayerID playerId)
         {
-            _purrnetNetworkManager.playerModule.KickPlayer(id);
+            _purrnetNetworkManager.playerModule.KickPlayer(playerId);
         }
 
         public void StartServer()
@@ -209,18 +224,37 @@ namespace FishFlingers.Networking
         }
 
         private void HandleNetworkStarted(PurrNet.NetworkManager manager, bool asServer) => Listeners.Dispatch(NotifyOnNetworkStarted, asServer);
-        private void HandleNetworkShutdown(PurrNet.NetworkManager manager, bool asServer) => Listeners.Dispatch(NotifyOnNetworkShutdown, asServer);
-        private void HandleClientConnectionState(ConnectionState state) => Listeners.Dispatch(NotifyOnClientConnectionState, state);
-        private void HandlePlayerJoined(PlayerID id, bool isReconnect, bool asServer) => Listeners.Dispatch(NotifyOnPlayerJoined, id, isReconnect, asServer);
-        private void HandlePlayerLeft(PlayerID id, bool asServer) => Listeners.Dispatch(NotifyOnPlayerLeft, id, asServer);
 
+        private void HandleNetworkShutdown(PurrNet.NetworkManager manager, bool asServer)
+        {
+            Listeners.Dispatch(NotifyOnNetworkShutdown, asServer);
+
+            if (asServer)
+            {
+                return;
+            }
+
+            // Cleanup after a frame to retain the collection during shutdown
+            async Task cleanup()
+            {
+                await Task.Yield();
+                _purrnetPlayers.Clear();
+            }
+
+            _ = cleanup();
+        }
+
+        private void HandleClientConnectionState(ConnectionState state) => Listeners.Dispatch(NotifyOnClientConnectionState, state);
+        private void HandlePlayerJoined(PlayerID playerId, bool isReconnect, bool asServer) => Listeners.Dispatch(NotifyOnPlayerJoined, playerId, isReconnect, asServer);
+        private void HandlePlayerLeft(PlayerID playerId, bool asServer) => Listeners.Dispatch(NotifyOnPlayerLeft, playerId, asServer);
+        
         private static void NotifyOnNetworkStarted(INetworkManagerListener listener, bool asServer) => listener.OnNetworkStarted(asServer);
         private static void NotifyOnNetworkShutdown(INetworkManagerListener listener, bool asServer) => listener.OnNetworkShutdown(asServer);
         private static void NotifyOnNetBehaviourSpawned(INetworkManagerListener listener, NetBehaviour behaviour) => listener.OnNetBehaviourSpawned(behaviour);
         private static void NotifyOnNetBehaviourDespawned(INetworkManagerListener listener, NetBehaviour behaviour) => listener.OnNetBehaviourDespawned(behaviour);
         private static void NotifyOnClientConnectionState(INetworkManagerListener listener, ConnectionState state) => listener.OnClientConnectionState(state);
-        private static void NotifyOnPlayerJoined(INetworkManagerListener listener, PlayerID id, bool isReconnect, bool asServer) => listener.OnPlayerJoined(id, isReconnect, asServer);
-        private static void NotifyOnPlayerLeft(INetworkManagerListener listener, PlayerID id, bool asServer) => listener.OnPlayerLeft(id, asServer);
+        private static void NotifyOnPlayerJoined(INetworkManagerListener listener, PlayerID playerId, bool isReconnect, bool asServer) => listener.OnPlayerJoined(playerId, isReconnect, asServer);
+        private static void NotifyOnPlayerLeft(INetworkManagerListener listener, PlayerID playerId, bool asServer) => listener.OnPlayerLeft(playerId, asServer);
 
         void ISceneManagerListener.OnPlayerLoadedScene(PlayerID playerId, EScene scene, bool asServer) 
         { 

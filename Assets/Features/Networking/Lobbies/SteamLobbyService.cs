@@ -129,8 +129,8 @@ namespace FishFlingers.Networking
                 Properties = GetLobbyProperties(lobbyId)
             });
 
-            RaiseOnLobbyCreated(CurrentLobby);
-            RaiseOnLobbyEnter(CurrentLobby);
+            RaiseLobbyCreated(CurrentLobby);
+            RaiseLobbyEnter(CurrentLobby);
             return CurrentLobby;
         }
 
@@ -170,7 +170,7 @@ namespace FishFlingers.Networking
                 Properties = GetLobbyProperties(cLobbyId)
             });
 
-            RaiseOnLobbyEnter(CurrentLobby);
+            RaiseLobbyEnter(CurrentLobby);
             return CurrentLobby;
         }
 
@@ -188,7 +188,7 @@ namespace FishFlingers.Networking
 
             SteamMatchmaking.SetLobbyGameServer(GetLobbyId(), 0, 0, SteamUser.GetSteamID());
             
-            RaiseOnLobbyStart(CurrentLobby);
+            RaiseLobbyStart(CurrentLobby);
         }
 
         public override void LeaveLobby()
@@ -206,7 +206,7 @@ namespace FishFlingers.Networking
             SteamMatchmaking.LeaveLobby(GetLobbyId());
             CurrentLobby = null;
 
-            RaiseOnLobbyLeave();
+            RaiseLobbyLeave();
         }
 
         public override bool IsLobbyOwner(Lobby lobby)

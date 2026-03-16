@@ -2,6 +2,7 @@ using FishFlingers.Cameras;
 using FishFlingers.Environments;
 using FishFlingers.Inventories;
 using FishFlingers.Items;
+using FishFlingers.Networking;
 using FishFlingers.States;
 using FishFlingers.UI;
 using PurrNet;
@@ -10,6 +11,7 @@ using ShinyOwl.Common.Structures;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 
 namespace FishFlingers.Entities
@@ -95,9 +97,18 @@ namespace FishFlingers.Entities
                 _hotkeyLogic = new RaftPlayerHotkeyLogic(context, _netGrabbedInventoryItem);
                 _targetLogic = new RaftPlayerTargetLogic(context, _targetLogicSettings);
             }
+        }
 
-            // Spawn on a random starting tile
-            transform.position = _context.Raft.TryGetRandomTile(out RaftTile tile) ? _context.Raft.CellToWorldPosition(tile.Cell) : Vector3.zero;
+        public async Task LoadDataAsync(string guid)
+        {
+            Saving.RaftPlayerData data = await GetDataRpc(guid);
+            _saveManager.LoadRaftPlayer(this, data);
+        }
+
+        [ServerRpc]
+        private async Task<Saving.RaftPlayerData> GetDataRpc(string guid)
+        {
+            return _saveManager.GetRaftPlayerData(guid, _context);
         }
 
         private void Update()

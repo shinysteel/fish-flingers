@@ -18,6 +18,7 @@ using System.Linq;
 
 using NetworkManager = FishFlingers.Networking.NetworkManager;
 using Object = UnityEngine.Object;
+using FishFlingers.Saving;
 
 namespace FishFlingers.States
 {
@@ -47,6 +48,7 @@ namespace FishFlingers.States
         private NetworkManager _networkManager;
         private SceneManager _sceneManager;
         private LobbyManager _lobbyManager;
+        private SaveManager _saveManager;
 
         private GameplayStateConfig _config;
 
@@ -64,6 +66,7 @@ namespace FishFlingers.States
             _networkManager = GameManager.Instance.Get<NetworkManager>();
             _sceneManager = GameManager.Instance.Get<SceneManager>();
             _lobbyManager = GameManager.Instance.Get<LobbyManager>();
+            _saveManager = GameManager.Instance.Get<SaveManager>();
 
             _networkManager.AddListener(this);
             _lobbyManager.AddListener(this);
@@ -125,7 +128,7 @@ namespace FishFlingers.States
 
                 _players = new();
 
-                RaftPlayer localPlayer = _networkManager.Spawn(_config.RaftPlayerPrefab, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
+                RaftPlayer localPlayer = _networkManager.LocalPurrnetPlayer.CreateRaftPlayer();
 
                 _context = new GameplayContext(_players, localPlayer, raft, waveSpawner, _cursorsUI);
 
@@ -155,6 +158,13 @@ namespace FishFlingers.States
                 _cursorsUI = await _uiManager.CreateScreenUIAsync(_uiManager.Config.CursorsUIPrefab, UILayer.Cursors);
                 _cursorsUI.Show(null);
                 _cursorsUI.Setup(_context);
+
+                if (_networkManager.IsServer)
+                {
+                    _saveManager.LoadGame();
+                }
+
+                await _networkManager.LocalPurrnetPlayer.LoadRaftPlayerAsync();
 
                 _transitionManager.UncoverScreen(null);
             }
@@ -215,10 +225,12 @@ namespace FishFlingers.States
             // This will get called twice on the server, as they act as both the server and a client
             if (asServer)
             {
-                return;
+                _saveManager.SaveGame();
             }
-            
-            _transitionManager.CoverScreen(() => _stateManager.ChangeState(EMainState.Menus));
+            else
+            {
+                _transitionManager.CoverScreen(() => _stateManager.ChangeState(EMainState.Menus));
+            }            
         }
 
         void INetworkManagerListener.OnNetBehaviourSpawned(NetBehaviour behaviour) 

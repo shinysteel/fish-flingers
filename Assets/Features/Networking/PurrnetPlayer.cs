@@ -10,48 +10,49 @@ using System.Threading.Tasks;
 using UnityEngine;
 using System.Threading;
 using FishFlingers.Entities;
+using FishFlingers.Saving;
 
 namespace FishFlingers.Networking
 {
-    public class PurrnetPlayer : NetBehaviour, ILobbyManagerListener
+    public class PurrnetPlayer : NetBehaviour
     {
-        protected override void OnInitializeModules()
-        {
-            base.OnInitializeModules();
-        }
+        [SerializeField] private RaftPlayer _raftPlayerPrefab;
+
+        private SyncVar<string> _guid = new SyncVar<string>(ownerAuth: true);
+        private SyncVar<RaftPlayer> _raftPlayer = new SyncVar<RaftPlayer>(ownerAuth: true);
+
+        public string Guid => _guid;
+        public RaftPlayer RaftPlayer => _raftPlayer;
 
         protected override void OnSpawned()
         {
             base.OnSpawned();
 
-            // If we've missed the OnLobbyStart event, let's invoke it here
-            if (_lobbyManager.CurrentLobby.Properties[LobbyService.StartedKey] == true.ToString())
+            if (isOwner)
             {
-                ((ILobbyManagerListener)this).OnLobbyStart(_lobbyManager.CurrentLobby);
+                _guid.value = _saveManager.UserData.Guid;
             }
-
-            // We deliberately subscribe after invoking missed events
-            _lobbyManager.AddListener(this);
         }
 
         protected override void OnDespawned()
         {
             base.OnDespawned();
 
-            _lobbyManager?.RemoveListener(this);
+            if (_networkManager.IsServer)
+            {
+                _saveManager.SaveRaftPlayer(_guid, _raftPlayer);
+            }
         }
 
-        protected override void OnOwnerDisconnected(PlayerID ownerId)
+        public RaftPlayer CreateRaftPlayer()
         {
-            Destroy(gameObject);
+            _raftPlayer.value = _networkManager.Spawn(_raftPlayerPrefab, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
+            return _raftPlayer;
         }
 
-        void ILobbyManagerListener.OnLobbyStart(Lobby lobby)
+        public async Task LoadRaftPlayerAsync()
         {
-            // There used to be code for spawning a 'human' to control here.
-            // Since we moved to Purrdiction, that's handled separately from
-            // Purrnet. I'm leaving the implementation here since it's a nice
-            // reference to look back on
+            await _raftPlayer.value.LoadDataAsync(_guid);
         }
     }
 }

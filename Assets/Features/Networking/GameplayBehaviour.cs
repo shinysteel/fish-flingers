@@ -50,7 +50,7 @@ namespace FishFlingers.Networking
 
             transform.SetParent(null);
 
-            int frames = 2;
+            int frames = 5;
             for (int i = 0; i < frames; i++)
             {
                 await Task.Yield();
