@@ -23,15 +23,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 78748749824
-    m_Localized: pez volador
+    m_Localized: Peces voladores
     m_Metadata:
       m_Items: []
   - m_Id: 57181638656
-    m_Localized: "Defensor de balsas, lanzador de peces. \xA1Eres t\xFA!"
+    m_Localized: "Defensor de las balsas, lanzador de peces. \xA1Eres t\xFA!"
     m_Metadata:
       m_Items: []
   - m_Id: 134080008192
-    m_Localized: "Un enemigo \xE1gil que usa sus alas para lanzarse a la balsa"
+    m_Localized: "Un enemigo \xE1gil que usa sus alas para impulsarse hacia la balsa."
     m_Metadata:
       m_Items: []
   references:

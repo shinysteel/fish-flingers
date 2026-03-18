@@ -23,11 +23,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 546971488256
-    m_Localized: "\rJuego anfitri\xF3n"
+    m_Localized: "Juego anfitri\xF3n"
     m_Metadata:
       m_Items: []
   - m_Id: 4215347515392
-    m_Localized: Lanzadores de pescado
+    m_Localized: Lanzadores de peces
     m_Metadata:
       m_Items: []
   references:

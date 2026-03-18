@@ -352,9 +352,9 @@ MonoBehaviour:
   _lobbyContainerPrefab: {fileID: 2810597675660413345, guid: aabaeaacd6d0b3840a6c32d63d1203e0, type: 3}
   _lobbyContainerModels:
   - _lobbyService: 1
-    _titleTerm: 2
+    _titleTerm: -527790014
   - _lobbyService: 2
-    _titleTerm: 3
+    _titleTerm: 1636470845
 --- !u!225 &6622945185957960759 stripped
 CanvasGroup:
   m_CorrespondingSourceObject: {fileID: 2403927208547714065, guid: b2445ca03474c9642b1410dde0e1ffcc, type: 3}

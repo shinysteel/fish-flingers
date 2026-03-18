@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-String-Tables-Polish (Poland) (pl-PL)
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-String-Tables-Polish (Poland) (pl-PL)
+  m_GUID: 2fd387beca6625b4da05b5692f805b43
+  m_SerializeEntries:
+  - m_GUID: 0aa81323d4d9f2d489e5332e2aef4d89
+    m_Address: CharactersTable_pl-PL
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-pl-PL
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0d60e19d1db619e43a1ecb6a1a889738
+    m_Address: BrowseGamesPanelTable_pl-PL
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-pl-PL
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 51d64800774d32b4e95bbd87c2ac1498
+    m_Address: FishingBagPanelTable_pl-PL
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-pl-PL
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 83db800d00264504390ad2792490a748
+    m_Address: CommonTable_pl-PL
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-pl-PL
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c9c3630710933e443b2ba8ebb811dd5d
+    m_Address: EntitiesTable_pl-PL
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-pl-PL
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dd34477258d12064a9ead60f2a7038c0
+    m_Address: StructuresTable_pl-PL
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-pl-PL
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e43ac347f7b61e748b79e0ab0748b477
+    m_Address: BuildingKitPanelTable_pl-PL
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-pl-PL
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f34c776d929717048823f79d85b17fd6
+    m_Address: MainMenuScreenTable_pl-PL
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-pl-PL
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 933aa2bad58f3bb4e97b370211ae6e9a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4aaaffb9420dfbc48afb83e15564f0eb, type: 2}
+    - {fileID: 11400000, guid: baaf92cef997f6949af93569bc3fc4d2, type: 2}

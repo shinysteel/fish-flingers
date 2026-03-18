@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-String-Tables-Arabic (ar)
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-String-Tables-Arabic (ar)
+  m_GUID: a338eafee02fa6945bc95b4e10c8457d
+  m_SerializeEntries:
+  - m_GUID: 2f341bba2dc31b747b7c13aaea0c3f70
+    m_Address: BrowseGamesPanelTable_ar
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ar
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4369f6aa37f117b4c84ea8eb8a35a472
+    m_Address: MainMenuScreenTable_ar
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ar
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55e77437b905a8b4580dc882d3bf32ee
+    m_Address: FishingBagPanelTable_ar
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ar
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 60f18574ec1bc6740854bb3c6c57a19c
+    m_Address: StructuresTable_ar
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ar
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 851f42d4afadb814b903e7fb960a055c
+    m_Address: EntitiesTable_ar
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ar
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b8f6caa53e1b7eb4fb169e9c27bd4824
+    m_Address: CharactersTable_ar
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ar
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ee6b040cd0f483b499c49b4a92e21d56
+    m_Address: CommonTable_ar
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ar
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ee730365cd8666440b3d188e70463166
+    m_Address: BuildingKitPanelTable_ar
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ar
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 933aa2bad58f3bb4e97b370211ae6e9a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: ea462ef6428281b42912dc8d0f556c2c, type: 2}
+    - {fileID: 11400000, guid: d2216fb3dda9e1e4d87f42ac87aed785, type: 2}

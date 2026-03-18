@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5df523b8b266ff043afe50dbd6945af1, type: 3}
   m_Name: RaftPlayerData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.RaftPlayerData
-  _type: 100
-  _nameTerm: 600
-  _descriptionTerm: 601
+  _id: 100
+  _nameTerm: 814387201
+  _descriptionTerm: 1347063821
   _sprite: {fileID: 21300000, guid: 4d5437e4103caf0479f3fe3a36805b12, type: 3}
   _health: 3
   _moveSettings:

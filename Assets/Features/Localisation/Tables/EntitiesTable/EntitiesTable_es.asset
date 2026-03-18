@@ -19,11 +19,11 @@ MonoBehaviour:
     m_Items: []
   m_TableData:
   - m_Id: 4480208896
-    m_Localized: Azulejo de balsa
+    m_Localized: Baldosa de balsa
     m_Metadata:
       m_Items: []
   - m_Id: 187037290496
-    m_Localized: "Art\xEDculo ca\xEDdo"
+    m_Localized: "Objeto ca\xEDdo"
     m_Metadata:
       m_Items: []
   - m_Id: 164996222976

@@ -23,7 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 46536495104
-    m_Localized: "Realiza un seguimiento de cu\xE1ntas olas has sobrevivido"
+    m_Localized: "Lleva la cuenta de cu\xE1ntas olas has sobrevivido."
     m_Metadata:
       m_Items: []
   references:

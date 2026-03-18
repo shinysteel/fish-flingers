@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-String-Tables-Italian (Italy) (it-IT)
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-String-Tables-Italian (Italy) (it-IT)
+  m_GUID: f386ca1f0b3551a42beecc4d0d69dc25
+  m_SerializeEntries:
+  - m_GUID: 3de4623182aa287438abff7248c6996c
+    m_Address: MainMenuScreenTable_it-IT
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-it-IT
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e5557c96271e6644a72490345306f91
+    m_Address: BuildingKitPanelTable_it-IT
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-it-IT
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 65bc1644364b1c3439a56fb25a649cc7
+    m_Address: BrowseGamesPanelTable_it-IT
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-it-IT
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 75ad90e7096db6b4690decae9e5c41d8
+    m_Address: CharactersTable_it-IT
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-it-IT
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8e1fe900e777956499c0375b86e036a0
+    m_Address: EntitiesTable_it-IT
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-it-IT
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b0586decdc76cd64888c545d82b5e307
+    m_Address: CommonTable_it-IT
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-it-IT
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c9dee1fee6eee564699eb5ef0bfc8379
+    m_Address: FishingBagPanelTable_it-IT
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-it-IT
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f4ba1e66c11211649b734838109d2357
+    m_Address: StructuresTable_it-IT
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-it-IT
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 933aa2bad58f3bb4e97b370211ae6e9a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: cdbab11cfe2b0d54f865507764e277cd, type: 2}
+    - {fileID: 11400000, guid: 29036efe8390470419d9445e21518c74, type: 2}

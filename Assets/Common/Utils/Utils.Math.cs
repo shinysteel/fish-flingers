@@ -55,6 +55,11 @@ namespace ShinyOwl.Common.Utils
                     (float)System.Math.Round(quaternion.z, precision),
                     (float)System.Math.Round(quaternion.w, precision));
             }
+
+            public static int HashLongToInt(long value)
+            {
+                return (int)(value ^ (value >> 32));
+            }
         }
     }
 }
