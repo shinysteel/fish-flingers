@@ -20,9 +20,9 @@ namespace FishFlingers.UI.Transitions
 
         public override void Initialise(GameManagerConfig config)
         {
-            _config = config.TransitionManagerConfig;
-
             _uiManager = GameManager.Instance.Get<UIManager>();
+
+            _config = config.TransitionManagerConfig;
 
             _uiManager.CreateScreenUIAsync(_uiManager.Config.FadeOverlayPrefab, UILayer.Overlays).completed += (FadeOverlay overlay) =>
             {

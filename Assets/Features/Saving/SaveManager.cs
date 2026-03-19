@@ -14,6 +14,7 @@ using UnityEngine;
 using NetworkManager = FishFlingers.Networking.NetworkManager;
 using Random = UnityEngine.Random;
 using EntityId = FishFlingers.Entities.EntityId;
+using FishFlingers.GameObjects;
 
 namespace FishFlingers.Saving
 {
@@ -149,9 +150,10 @@ namespace FishFlingers.Saving
     public interface ISaveManagerListener
     { }
 
-    public class SaveManager : GameSystem<ISaveManagerListener>
+    public class SaveManager : GameSystem<ISaveManagerListener>, IGameObjectManagerListener
     {
         private NetworkManager _networkManager;
+        private GameObjectManager _gameObjectManager;
 
         private SaveManagerConfig _config;
 
@@ -168,6 +170,9 @@ namespace FishFlingers.Saving
         public override void Initialise(GameManagerConfig config)
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
+            _gameObjectManager = GameManager.Instance.Get<GameObjectManager>();
+
+            _gameObjectManager.AddListener(this);
 
             _config = config.SaveManagerConfig;
 
@@ -179,6 +184,13 @@ namespace FishFlingers.Saving
             LoadUser();
 
             base.Initialise(config);
+        }
+
+        public override void Shutdown()
+        {
+            _gameObjectManager?.RemoveListener(this);
+
+            base.Shutdown();
         }
 
         private string CreatePersistentSavePath()
@@ -307,6 +319,16 @@ namespace FishFlingers.Saving
         public void SaveRaftPlayer(string guid, RaftPlayer raftPlayer)
         {
             _gameSave.Players[guid] = new RaftPlayerSave(raftPlayer.transform.position, raftPlayer.transform.rotation);
+        }
+
+        void IGameObjectManagerListener.OnGameObjectInstantiated(GameObject gameObject)
+        {
+            Log.Info($"instantiated {gameObject.name}");
+        }
+
+        void IGameObjectManagerListener.OnGameObjectDestroyed(GameObject gameObject)
+        {
+            Log.Info($"destroyed {gameObject.name}");
         }
     }
 }

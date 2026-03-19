@@ -1,3 +1,4 @@
+using FishFlingers.GameObjects;
 using FishFlingers.Inventories;
 using FishFlingers.States;
 using PrimeTween;
@@ -6,7 +7,6 @@ using ShinyOwl.Common;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace FishFlingers.Entities
 {
@@ -83,6 +83,8 @@ namespace FishFlingers.Entities
 
     public class RaftPlayerTargetLogic
     {
+        private GameObjectManager _gameObjectManager;
+
         private GameplayContext _context;
 
         private RaftPlayerTargetLogicSettings _settings;
@@ -109,11 +111,13 @@ namespace FishFlingers.Entities
 
         public RaftPlayerTargetLogic(GameplayContext context, RaftPlayerTargetLogicSettings settings)
         {
+            _gameObjectManager = GameManager.Instance.Get<GameObjectManager>();
+
             _context = context;
 
             _settings = settings;
 
-            _targetVisual = Object.Instantiate(_settings.TargetVisualPrefab);
+            _targetVisual = _gameObjectManager.Instantiate(_settings.TargetVisualPrefab);
 
             _target = new RaftPlayerTarget(context);
             _target.OnChanged += HandleTargetChanged;

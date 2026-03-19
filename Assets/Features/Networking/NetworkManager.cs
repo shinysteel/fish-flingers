@@ -1,5 +1,6 @@
 using FishFlingers.Entities;
 using FishFlingers.Environments;
+using FishFlingers.GameObjects;
 using FishFlingers.Inventories;
 using FishFlingers.Scenes;
 using PurrLobby;
@@ -20,7 +21,6 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace FishFlingers.Networking
 {
@@ -46,6 +46,7 @@ namespace FishFlingers.Networking
         private NetworkManagerConfig _config;
 
         private SceneManager _sceneManager;
+        private GameObjectManager _gameObjectManager;
 
         private PurrNet.NetworkManager _purrnetNetworkManager;
 
@@ -65,12 +66,14 @@ namespace FishFlingers.Networking
 
         public override void Initialise(GameManagerConfig config)
         {
-            _config = config.NetworkManagerConfig;
-            
             _sceneManager = GameManager.Instance.Get<SceneManager>();
+            _gameObjectManager = GameManager.Instance.Get<GameObjectManager>();
+
             _sceneManager.AddListener(this);
 
-            _purrnetNetworkManager = Object.Instantiate(_config.PurrnetNetworkManagerPrefab);
+            _config = config.NetworkManagerConfig;
+
+            _purrnetNetworkManager = _gameObjectManager.Instantiate(_config.PurrnetNetworkManagerPrefab);
             _purrnetNetworkManager.onNetworkStarted += HandleNetworkStarted;
             _purrnetNetworkManager.onNetworkShutdown += HandleNetworkShutdown;
             _purrnetNetworkManager.onClientConnectionState += HandleClientConnectionState;
@@ -127,13 +130,13 @@ namespace FishFlingers.Networking
         public T Spawn<T>(T prefab, SpawnParams parameters) where T : NetBehaviour
         {
             return parameters.Parent != null
-                ? UnityProxy.Instantiate(prefab, parameters.Position, parameters.Rotation, parameters.Parent)
-                : UnityProxy.Instantiate(prefab, parameters.Position, parameters.Rotation, parameters.SpawnScene.Get());
+                ? _gameObjectManager.UnityProxyInstantiate(prefab, parameters.Position, parameters.Rotation, parameters.Parent)
+                : _gameObjectManager.UnityProxyInstantiate(prefab, parameters.Position, parameters.Rotation, parameters.SpawnScene.Get());
         }
 
         public void Despawn(NetBehaviour behaviour)
         {
-            Object.Destroy(behaviour.gameObject);
+            _gameObjectManager.Destroy(behaviour.gameObject);
         }
 
         public void RaiseNetBehaviourSpawned(NetBehaviour behaviour)
@@ -143,7 +146,7 @@ namespace FishFlingers.Networking
                 _purrnetPlayers.Add(behaviour.owner.Value, player);
             }
 
-            Listeners.Dispatch(NotifyOnNetBehaviourSpawned, behaviour);
+            Listeners.Dispatch(NotifyNetBehaviourSpawned, behaviour);
         }
 
         public void RaiseNetBehaviourDespawned(NetBehaviour behaviour)
@@ -153,7 +156,7 @@ namespace FishFlingers.Networking
                 _purrnetPlayers.Remove(behaviour.owner.Value);
             }
 
-            Listeners.Dispatch(NotifyOnNetBehaviourDespawned, behaviour);
+            Listeners.Dispatch(NotifyNetBehaviourDespawned, behaviour);
         }
 
         // Our transport will always be composite, so it is a safe cast
@@ -227,11 +230,11 @@ namespace FishFlingers.Networking
             _purrnetNetworkManager.StopClient();
         }
 
-        private void HandleNetworkStarted(PurrNet.NetworkManager manager, bool asServer) => Listeners.Dispatch(NotifyOnNetworkStarted, asServer);
+        private void HandleNetworkStarted(PurrNet.NetworkManager manager, bool asServer) => Listeners.Dispatch(NotifyNetworkStarted, asServer);
 
         private void HandleNetworkShutdown(PurrNet.NetworkManager manager, bool asServer)
         {
-            Listeners.Dispatch(NotifyOnNetworkShutdown, asServer);
+            Listeners.Dispatch(NotifyNetworkShutdown, asServer);
 
             if (asServer)
             {
@@ -248,17 +251,17 @@ namespace FishFlingers.Networking
             _ = cleanup();
         }
 
-        private void HandleClientConnectionState(ConnectionState state) => Listeners.Dispatch(NotifyOnClientConnectionState, state);
-        private void HandlePlayerJoined(PlayerID playerId, bool isReconnect, bool asServer) => Listeners.Dispatch(NotifyOnPlayerJoined, playerId, isReconnect, asServer);
-        private void HandlePlayerLeft(PlayerID playerId, bool asServer) => Listeners.Dispatch(NotifyOnPlayerLeft, playerId, asServer);
+        private void HandleClientConnectionState(ConnectionState state) => Listeners.Dispatch(NotifyClientConnectionState, state);
+        private void HandlePlayerJoined(PlayerID playerId, bool isReconnect, bool asServer) => Listeners.Dispatch(NotifyPlayerJoined, playerId, isReconnect, asServer);
+        private void HandlePlayerLeft(PlayerID playerId, bool asServer) => Listeners.Dispatch(NotifyPlayerLeft, playerId, asServer);
         
-        private static void NotifyOnNetworkStarted(INetworkManagerListener listener, bool asServer) => listener.OnNetworkStarted(asServer);
-        private static void NotifyOnNetworkShutdown(INetworkManagerListener listener, bool asServer) => listener.OnNetworkShutdown(asServer);
-        private static void NotifyOnNetBehaviourSpawned(INetworkManagerListener listener, NetBehaviour behaviour) => listener.OnNetBehaviourSpawned(behaviour);
-        private static void NotifyOnNetBehaviourDespawned(INetworkManagerListener listener, NetBehaviour behaviour) => listener.OnNetBehaviourDespawned(behaviour);
-        private static void NotifyOnClientConnectionState(INetworkManagerListener listener, ConnectionState state) => listener.OnClientConnectionState(state);
-        private static void NotifyOnPlayerJoined(INetworkManagerListener listener, PlayerID playerId, bool isReconnect, bool asServer) => listener.OnPlayerJoined(playerId, isReconnect, asServer);
-        private static void NotifyOnPlayerLeft(INetworkManagerListener listener, PlayerID playerId, bool asServer) => listener.OnPlayerLeft(playerId, asServer);
+        private void NotifyNetworkStarted(INetworkManagerListener listener, bool asServer) => listener.OnNetworkStarted(asServer);
+        private void NotifyNetworkShutdown(INetworkManagerListener listener, bool asServer) => listener.OnNetworkShutdown(asServer);
+        private void NotifyNetBehaviourSpawned(INetworkManagerListener listener, NetBehaviour behaviour) => listener.OnNetBehaviourSpawned(behaviour);
+        private void NotifyNetBehaviourDespawned(INetworkManagerListener listener, NetBehaviour behaviour) => listener.OnNetBehaviourDespawned(behaviour);
+        private void NotifyClientConnectionState(INetworkManagerListener listener, ConnectionState state) => listener.OnClientConnectionState(state);
+        private void NotifyPlayerJoined(INetworkManagerListener listener, PlayerID playerId, bool isReconnect, bool asServer) => listener.OnPlayerJoined(playerId, isReconnect, asServer);
+        private void NotifyPlayerLeft(INetworkManagerListener listener, PlayerID playerId, bool asServer) => listener.OnPlayerLeft(playerId, asServer);
 
         void ISceneManagerListener.OnPlayerLoadedScene(PlayerID playerId, EScene scene, bool asServer) 
         { 

@@ -33,11 +33,11 @@ namespace FishFlingers.States
 
         public override void Initialise(GameManagerConfig config)
         {
-            _config = config.StateManagerConfig;
-
             _sceneManager = GameManager.Instance.Get<SceneManager>();
 
             _sceneManager.AddListener(this);
+
+            _config = config.StateManagerConfig;
 
             _stateMachine = new();
             MenusState menusState = new MenusState(_stateMachine);
@@ -71,10 +71,10 @@ namespace FishFlingers.States
         {
             EMainState previous = _stateMachine.CurrentEnum;
             _stateMachine.ChangeState(state);
-            Listeners.Dispatch(NotifyOnStateChanged, previous, state);
+            Listeners.Dispatch(NotifyStateChanged, previous, state);
         }
 
-        private void NotifyOnStateChanged(IStateManagerListener listener, EMainState previous, EMainState current)
+        private void NotifyStateChanged(IStateManagerListener listener, EMainState previous, EMainState current)
         {
             listener.OnStateChanged(previous, current);
         }

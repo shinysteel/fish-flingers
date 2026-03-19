@@ -104,7 +104,7 @@ public class Hotbar
 
         if (_selectedIndex == index)
         {
-            NotifyOnSelectedChanged();
+            NotifySelectedChanged();
         }
     }
 
@@ -127,10 +127,10 @@ public class Hotbar
         }
 
         _selectedIndex = index;
-        NotifyOnSelectedChanged();
+        NotifySelectedChanged();
     }
 
-    private void NotifyOnSelectedChanged()
+    private void NotifySelectedChanged()
     {
         OnSelectedChanged?.Invoke(_selectedIndex, _slots[_selectedIndex]);
     }

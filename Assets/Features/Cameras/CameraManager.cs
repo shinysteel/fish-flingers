@@ -1,3 +1,4 @@
+using FishFlingers.GameObjects;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,8 @@ namespace FishFlingers.Cameras
 
     public class CameraManager : GameSystem<ICameraManagerListener>
     {
+        private GameObjectManager _gameObjectManager;
+
         private CameraManagerConfig _config;
 
         private Camera _mainCamera;
@@ -25,9 +28,11 @@ namespace FishFlingers.Cameras
 
         public override void Initialise(GameManagerConfig config)
         {
+            _gameObjectManager = GameManager.Instance.Get<GameObjectManager>();
+
             _config = config.CameraManagerConfig;
 
-            _mainCamera = Object.Instantiate(_config.MainCameraPrefab);
+            _mainCamera = _gameObjectManager.Instantiate(_config.MainCameraPrefab);
 
             Object.DontDestroyOnLoad(_mainCamera.gameObject);
 

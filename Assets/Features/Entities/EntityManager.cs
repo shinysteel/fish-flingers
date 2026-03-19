@@ -1,4 +1,5 @@
 using FishFlingers.Cameras;
+using FishFlingers.GameObjects;
 using FishFlingers.Items;
 using FishFlingers.Networking;
 using FishFlingers.Pools;
@@ -35,6 +36,7 @@ namespace FishFlingers.Entities
     {
         private NetworkManager _networkManager;
         private PoolManager _poolManager;
+        private GameObjectManager _gameObjectManager;
 
         private EntityManagerConfig _config;
 
@@ -45,6 +47,7 @@ namespace FishFlingers.Entities
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
             _poolManager = GameManager.Instance.Get<PoolManager>();
+            _gameObjectManager = GameManager.Instance.Get<GameObjectManager>();
 
             _config = config.EntityManagerConfig;
 
@@ -151,7 +154,7 @@ namespace FishFlingers.Entities
             // Entity
             if (entity is Entity obj)
             {
-                Object.Destroy(obj.gameObject);
+                _gameObjectManager.Destroy(obj.gameObject);
                 return;
             }
 

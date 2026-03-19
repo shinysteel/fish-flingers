@@ -1,3 +1,4 @@
+using FishFlingers.GameObjects;
 using FishFlingers.Inventories;
 using FishFlingers.States;
 using ShinyOwl.Common;
@@ -13,6 +14,8 @@ namespace FishFlingers.UI
         [SerializeField] private Image _backgroundImage;
 
         [SerializeField] private HotbarSlot _slotPrefab;
+
+        private GameObjectManager _gameObjectManager;
 
         private GameplayContext _context;
 
@@ -32,6 +35,8 @@ namespace FishFlingers.UI
 
         public void Setup(GameplayContext context)
         {
+            _gameObjectManager = GameManager.Instance.Get<GameObjectManager>();
+
             _context = context;
 
             Hotbar hotbar = _context.LocalPlayer.Hotbar;
@@ -40,7 +45,7 @@ namespace FishFlingers.UI
 
             for (int i = 0; i < _slots.Length; i++)
             {
-                _slots[i] = Instantiate(_slotPrefab, transform);
+                _slots[i] = _gameObjectManager.Instantiate(_slotPrefab, transform);
             }
 
             _backgroundMaterial = _backgroundImage.material;
