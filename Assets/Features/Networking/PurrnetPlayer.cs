@@ -1,20 +1,23 @@
 using FishFlingers.Cameras;
+using FishFlingers.Entities;
+using FishFlingers.Saving;
 using FishFlingers.Scenes;
+using Newtonsoft.Json;
 using PurrLobby;
 using PurrNet;
 using PurrNet.Transports;
 using ShinyOwl.Common;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using UnityEngine;
 using System.Threading;
-using FishFlingers.Entities;
-using FishFlingers.Saving;
+using System.Threading.Tasks;
+using UnityEditor;
+using UnityEngine;
 
 namespace FishFlingers.Networking
 {
-    public class PurrnetPlayer : NetBehaviour
+    public class PurrnetPlayer : NetBehaviour, ISaveable
     {
         [SerializeField] private RaftPlayer _raftPlayerPrefab;
 
@@ -28,6 +31,8 @@ namespace FishFlingers.Networking
         {
             base.OnSpawned();
 
+            _instantiateManager.RaiseComponentInstantiated(this);
+
             if (isOwner)
             {
                 _guid.value = _saveManager.UserSave.Guid;
@@ -38,9 +43,11 @@ namespace FishFlingers.Networking
         {
             base.OnDespawned();
 
+            _instantiateManager.RaiseComponentDestroyed(this);
+
             if (_networkManager.IsServer)
             {
-                _saveManager.SaveRaftPlayer(_guid, _raftPlayer);
+                ((ISaveable)this).Save();
             }
         }
 
@@ -50,9 +57,14 @@ namespace FishFlingers.Networking
             return _raftPlayer;
         }
 
-        public async Task LoadRaftPlayerAsync()
+        async Task ISaveable.LoadAsync()
         {
             await _raftPlayer.value.LoadDataAsync(_guid);
+        }
+
+        void ISaveable.Save()
+        {
+            _raftPlayer.value.Save(_guid);
         }
     }
 }

@@ -1,6 +1,6 @@
 using FishFlingers.Entities;
 using FishFlingers.Environments;
-using FishFlingers.GameObjects;
+using FishFlingers.Instantiating;
 using FishFlingers.Inventories;
 using FishFlingers.Scenes;
 using PurrLobby;
@@ -21,6 +21,8 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
+
+using Object = UnityEngine.Object;
 
 namespace FishFlingers.Networking
 {
@@ -46,7 +48,6 @@ namespace FishFlingers.Networking
         private NetworkManagerConfig _config;
 
         private SceneManager _sceneManager;
-        private GameObjectManager _gameObjectManager;
 
         private PurrNet.NetworkManager _purrnetNetworkManager;
 
@@ -67,13 +68,12 @@ namespace FishFlingers.Networking
         public override void Initialise(GameManagerConfig config)
         {
             _sceneManager = GameManager.Instance.Get<SceneManager>();
-            _gameObjectManager = GameManager.Instance.Get<GameObjectManager>();
 
             _sceneManager.AddListener(this);
 
             _config = config.NetworkManagerConfig;
 
-            _purrnetNetworkManager = _gameObjectManager.Instantiate(_config.PurrnetNetworkManagerPrefab);
+            _purrnetNetworkManager = Object.Instantiate(_config.PurrnetNetworkManagerPrefab);
             _purrnetNetworkManager.onNetworkStarted += HandleNetworkStarted;
             _purrnetNetworkManager.onNetworkShutdown += HandleNetworkShutdown;
             _purrnetNetworkManager.onClientConnectionState += HandleClientConnectionState;
@@ -130,13 +130,13 @@ namespace FishFlingers.Networking
         public T Spawn<T>(T prefab, SpawnParams parameters) where T : NetBehaviour
         {
             return parameters.Parent != null
-                ? _gameObjectManager.UnityProxyInstantiate(prefab, parameters.Position, parameters.Rotation, parameters.Parent)
-                : _gameObjectManager.UnityProxyInstantiate(prefab, parameters.Position, parameters.Rotation, parameters.SpawnScene.Get());
+                ? UnityProxy.Instantiate(prefab, parameters.Position, parameters.Rotation, parameters.Parent)
+                : UnityProxy.Instantiate(prefab, parameters.Position, parameters.Rotation, parameters.SpawnScene.Get());
         }
 
         public void Despawn(NetBehaviour behaviour)
         {
-            _gameObjectManager.Destroy(behaviour.gameObject);
+            Object.Destroy(behaviour.gameObject);
         }
 
         public void RaiseNetBehaviourSpawned(NetBehaviour behaviour)

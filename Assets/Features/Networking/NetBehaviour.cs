@@ -7,6 +7,7 @@ using FishFlingers.UI;
 using ShinyOwl.Common;
 using FishFlingers.States;
 using FishFlingers.Saving;
+using FishFlingers.Instantiating;
 
 namespace FishFlingers.Networking
 {
@@ -19,6 +20,7 @@ namespace FishFlingers.Networking
         protected CameraManager _cameraManager;
         protected UIManager _uiManager;
         protected SaveManager _saveManager;
+        protected InstantiateManager _instantiateManager;
 
         protected override void OnInitializeModules()
         {
@@ -29,6 +31,7 @@ namespace FishFlingers.Networking
             _cameraManager = GameManager.Instance.Get<CameraManager>();
             _uiManager = GameManager.Instance.Get<UIManager>();
             _saveManager = GameManager.Instance.Get<SaveManager>();
+            _instantiateManager = GameManager.Instance.Get<InstantiateManager>();
         }
 
         protected override void OnSpawned()

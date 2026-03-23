@@ -3,11 +3,14 @@ using FishFlingers.Environments;
 using FishFlingers.Inventories;
 using FishFlingers.Items;
 using FishFlingers.Networking;
+using FishFlingers.Saving;
 using FishFlingers.States;
 using FishFlingers.UI;
+using Newtonsoft.Json;
 using PurrNet;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Structures;
+using ShinyOwl.Common.Utils;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +19,24 @@ using UnityEngine;
 
 namespace FishFlingers.Entities
 {
+    [Serializable]
+    public class RaftPlayerSave
+    {
+        [JsonProperty] public SerialisableVector3 Position { get; private set; }
+        [JsonProperty] public SerialisableQuaternion Rotation { get; private set; }
+
+        private const int Precision = 1;
+
+        public RaftPlayerSave(Vector3 position, Quaternion rotation)
+        {
+            position = Utils.Math.RoundVector3(position, Precision);
+            rotation = Utils.Math.RoundQuaternion(rotation, Precision);
+
+            Position = new SerialisableVector3(position);
+            Rotation = new SerialisableQuaternion(rotation);
+        }
+    }
+
     public class RaftPlayer : Character<RaftPlayerData>
     {
         [SerializeField] private CapsuleCollider _capsuleCollider;
@@ -99,16 +120,31 @@ namespace FishFlingers.Entities
             }
         }
 
-        public async Task LoadDataAsync(string guid)
+        [ServerRpc]
+        private async Task<RaftPlayerSave> GetDataRpc(string guid)
         {
-            Saving.RaftPlayerSave data = await GetDataRpc(guid);
-            _saveManager.LoadRaftPlayer(this, data);
+            if (!_saveManager.GameSave.Players.ContainsKey(guid))
+            {
+                _saveManager.GameSave.Players[guid] = new RaftPlayerSave(Vector3.zero, Quaternion.identity);
+            }
+
+            return _saveManager.GameSave.Players[guid];
         }
 
-        [ServerRpc]
-        private async Task<Saving.RaftPlayerSave> GetDataRpc(string guid)
+        public async Task LoadDataAsync(string guid)
         {
-            return _saveManager.GetRaftPlayerSave(guid, _context);
+            RaftPlayerSave save = await GetDataRpc(guid);
+
+            transform.position = save.Position.ToVector3();
+            transform.rotation = save.Rotation.ToQuaternion();
+
+            _rigidbody.linearVelocity = Vector3.zero;
+            _rigidbody.angularVelocity = Vector3.zero;
+        }
+
+        public void Save(string guid)
+        {
+            _saveManager.GameSave.Players[guid] = new RaftPlayerSave(transform.position, transform.rotation);
         }
 
         private void Update()

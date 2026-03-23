@@ -1,21 +1,31 @@
+using FishFlingers.Entities;
+using FishFlingers.Networking;
+using FishFlingers.Pools;
+using FishFlingers.Saving;
+using FishFlingers.Scenes;
+using FishFlingers.States;
+using Newtonsoft.Json;
+using PurrNet;
+using ShinyOwl.Common;
+using ShinyOwl.Common.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using UnityEngine;
-using System.Collections.Generic;
-using ShinyOwl.Common;
-using PurrNet;
-using FishFlingers.Pools;
-using System.Linq;
-using FishFlingers.Entities;
-using FishFlingers.States;
-using System.Threading.Tasks;
-using FishFlingers.Networking;
-using FishFlingers.Scenes;
-using System;
-
 using EntityId = FishFlingers.Entities.EntityId;
+using Random = UnityEngine.Random;
 
 namespace FishFlingers.Environments
 {
+    [Serializable]
+    public class RaftSave
+    {
+        [JsonProperty] public List<TileSave> Tiles { get; private set; } = new();
+        [JsonProperty] public List<StructureSave> Structures { get; private set; } = new();
+    }
+
     public class NetTile
     {
         public int Health { get; private set; }
@@ -40,7 +50,7 @@ namespace FishFlingers.Environments
         }
     }
 
-    public partial class Raft : GameplayBehaviour
+    public partial class Raft : GameplayBehaviour, ISaveable
     {
         [SerializeField] private Transform _tilesContainer;
 
@@ -69,6 +79,8 @@ namespace FishFlingers.Environments
         {
             base.Initialise(context);
 
+            _instantiateManager.RaiseComponentInstantiated(this);
+
             _netTiles.onChanged += HandleNetTilesChanged;
 
             if (isOwner)
@@ -82,6 +94,11 @@ namespace FishFlingers.Environments
                 SyncDictionaryChange<Vector2Int, NetTile> change = new(SyncDictionaryOperation.Added, kvp.Key, kvp.Value);
                 HandleNetTilesChanged(change);
             }
+        }
+
+        protected override void OnDespawned()
+        {
+            _instantiateManager.RaiseComponentDestroyed(this);
         }
 
         [ServerRpc(requireOwnership: false)]
@@ -276,6 +293,57 @@ namespace FishFlingers.Environments
             if (_leftmostColumn == cell.x && !_columnToRowsMap.ContainsKey(cell.x))
             {
                 _leftmostColumn = _columnToRowsMap.Count > 0 ? _columnToRowsMap.Keys.Min() : 0;
+            }
+        }
+
+        async Task ISaveable.LoadAsync()
+        {
+            if (_saveManager.GameSave.Raft == null)
+            {
+                _saveManager.GameSave.Raft = new();
+
+                // Start with a 3x3 grid
+                for (int x = -1; x <= 1; x++)
+                {
+                    for (int y = -1; y <= 1; y++)
+                    {
+                        int health = Random.Range(NetTile.MaxHealth - 1, NetTile.MaxHealth + 1);
+                        _saveManager.GameSave.Raft.Tiles.Add(new TileSave(new Vector2Int(x, y), health));
+                    }
+                }
+
+                // Start with a wave sign
+                _saveManager.GameSave.Raft.Structures.Add(new StructureSave(new Vector2Int(0, 1), EntityId.WaveSign));
+            }
+
+            foreach (TileSave save in _saveManager.GameSave.Raft.Tiles)
+            {
+                AddNetTileRpc(save.Cell.ToVector2Int(), save.Health);
+            }
+
+            foreach (StructureSave save in _saveManager.GameSave.Raft.Structures)
+            {
+                AddStructureRpc(save.Cell.ToVector2Int(), save.StructureId);
+            }
+        }
+
+        void ISaveable.Save()
+        {
+            _saveManager.GameSave.Raft.Tiles.Clear();
+
+            foreach (RaftTile tile in _raftTiles.Values)
+            {
+                _saveManager.GameSave.Raft.Tiles.Add(new TileSave(tile.Cell, tile.CurrentHealth));
+            }
+
+            _saveManager.GameSave.Raft.Structures.Clear();
+
+            foreach (RaftTile tile in _raftTiles.Values)
+            {
+                if (tile.Structure != null)
+                {
+                    _saveManager.GameSave.Raft.Structures.Add(new StructureSave(tile.Cell, tile.Structure.StructureData.Id));
+                }
             }
         }
     }

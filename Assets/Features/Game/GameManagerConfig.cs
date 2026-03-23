@@ -12,13 +12,13 @@ using FishFlingers.Localisation;
 using FishFlingers.Items;
 using FishFlingers.Entities;
 using FishFlingers.Saving;
-using FishFlingers.GameObjects;
+using FishFlingers.Instantiating;
 
 [CreateAssetMenu(fileName = "GameManagerConfig", menuName = "Configs/Managers/GameManagerConfig")]
 public class GameManagerConfig : ScriptableObject
 {
     [SerializeField] private SaveManagerConfig _saveManagerConfig;
-    [SerializeField] private GameObjectManagerConfig _gameObjectManagerConfig;
+    [SerializeField] private InstantiateManagerConfig _instantiateManagerConfig;
     [SerializeField] private SteamManagerConfig _steamManagerConfig;
     [SerializeField] private NetworkManagerConfig _networkManagerConfig;
     [SerializeField] private CameraManagerConfig _cameraManagerConfig;
@@ -34,7 +34,7 @@ public class GameManagerConfig : ScriptableObject
     [SerializeField] private EntityManagerConfig _entityManagerConfig;
 
     public SaveManagerConfig SaveManagerConfig => _saveManagerConfig;
-    public GameObjectManagerConfig GameObjectManagerConfig => _gameObjectManagerConfig;
+    public InstantiateManagerConfig InstantiateManagerConfig => _instantiateManagerConfig;
     public SteamManagerConfig SteamManagerConfig => _steamManagerConfig;
     public NetworkManagerConfig NetworkManagerConfig => _networkManagerConfig;
     public CameraManagerConfig CameraManagerConfig => _cameraManagerConfig;

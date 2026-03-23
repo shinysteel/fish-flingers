@@ -11,13 +11,19 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using FishFlingers.Instantiating;
+using System.Threading.Tasks;
 using NetworkManager = FishFlingers.Networking.NetworkManager;
-using Random = UnityEngine.Random;
-using EntityId = FishFlingers.Entities.EntityId;
-using FishFlingers.GameObjects;
+using UnityEngine.Pool;
 
 namespace FishFlingers.Saving
 {
+    public interface ISaveable
+    {
+        Task LoadAsync();
+        void Save();
+    }
+
     [Serializable]
     public class UserSave
     {
@@ -33,127 +39,16 @@ namespace FishFlingers.Saving
     public class GameSave
     {
         [JsonProperty] public Dictionary<string, RaftPlayerSave> Players { get; private set; } = new();
-        [JsonProperty] public List<TileSave> Tiles { get; private set; } = new();
-        [JsonProperty] public List<StructureSave> Structures { get; private set; } = new();
-    }
-
-    [Serializable]
-    public class RaftPlayerSave
-    {
-        [JsonProperty] public SerialisableVector3 Position { get; private set; }
-        [JsonProperty] public SerialisableQuaternion Rotation { get; private set; }
-
-        private const int Precision = 1;
-
-        public RaftPlayerSave(Vector3 position, Quaternion rotation)
-        {
-            position = Utils.Math.RoundVector3(position, Precision);
-            rotation = Utils.Math.RoundQuaternion(rotation, Precision);
-
-            Position = new SerialisableVector3(position);
-            Rotation = new SerialisableQuaternion(rotation);
-        }
-    }
-
-    [Serializable]
-    public class TileSave
-    {
-        [JsonProperty] public SerialisableVector2Int Cell { get; private set; }
-        [JsonProperty] public int Health { get; private set; }
-
-        public TileSave(Vector2Int cell, int health)
-        {
-            Cell = new SerialisableVector2Int(cell);
-            Health = health;
-        }
-    }
-
-    [Serializable]
-    public class StructureSave
-    {
-        [JsonProperty] public SerialisableVector2Int Cell { get; private set; }
-        [JsonProperty] public EntityId StructureId { get; private set; }
-
-        public StructureSave(Vector2Int cell, EntityId structureId)
-        {
-            Cell = new SerialisableVector2Int(cell);
-            StructureId = structureId;
-        }
-    }
-
-    public class SerialisableVector2Int
-    {
-        [JsonProperty] public int X { get; private set; }
-        [JsonProperty] public int Y { get; private set; }
-
-        public SerialisableVector2Int() : this(Vector2Int.zero)
-        { }
-
-        public SerialisableVector2Int(Vector2Int vector2Int)
-        {
-            X = vector2Int.x;
-            Y = vector2Int.y;
-        }
-
-        public Vector2Int ToVector2Int()
-        {
-            return new Vector2Int(X, Y);
-        }
-    }
-
-    public class SerialisableVector3
-    {
-        [JsonProperty] public float X { get; private set; }
-        [JsonProperty] public float Y { get; private set; }
-        [JsonProperty] public float Z { get; private set; }
-
-        public SerialisableVector3() : this(Vector3.zero) 
-        { }
-
-        public SerialisableVector3(Vector3 vector3)
-        {
-            X = vector3.x;
-            Y = vector3.y;
-            Z = vector3.z;
-        }
-
-        public Vector3 ToVector3()
-        {
-            return new Vector3(X, Y, Z);
-        }
-    }
-
-    public class SerialisableQuaternion
-    {
-        [JsonProperty] public float X { get; private set; }
-        [JsonProperty] public float Y { get; private set; }
-        [JsonProperty] public float Z { get; private set; }
-        [JsonProperty] public float W { get; private set; }
-
-        public SerialisableQuaternion() : this(Quaternion.identity)
-        { }
-
-        public SerialisableQuaternion(Quaternion quaternion)
-        {
-            X = quaternion.x;
-            Y = quaternion.y;
-            Z = quaternion.z;
-            W = quaternion.w;
-        }
-
-        public Quaternion ToQuaternion()
-        {
-            return new Quaternion(X, Y, Z, W);
-        }
+        [JsonProperty] public RaftSave Raft { get; set; }
     }
 
     public interface ISaveManagerListener
     { }
 
-    public class SaveManager : GameSystem<ISaveManagerListener>, IGameObjectManagerListener
+    public class SaveManager : GameSystem<ISaveManagerListener>, IInstantiateManagerListener
     {
         private NetworkManager _networkManager;
-        private GameObjectManager _gameObjectManager;
+        private InstantiateManager _gameObjectManager;
 
         private SaveManagerConfig _config;
 
@@ -167,10 +62,12 @@ namespace FishFlingers.Saving
         public UserSave UserSave => _userSave;
         public GameSave GameSave => _gameSave;
 
+        private List<ISaveable> _saveables = new();
+
         public override void Initialise(GameManagerConfig config)
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
-            _gameObjectManager = GameManager.Instance.Get<GameObjectManager>();
+            _gameObjectManager = GameManager.Instance.Get<InstantiateManager>();
 
             _gameObjectManager.AddListener(this);
 
@@ -233,7 +130,7 @@ namespace FishFlingers.Saving
         /// <summary>
         /// Loads a game save file. This includes data for players, other entities, and the raft
         /// </summary>
-        public void LoadGame(GameplayContext context)
+        public async Task LoadGameAsync()
         {
             if (File.Exists(_gameSavePath))
             {
@@ -243,92 +140,50 @@ namespace FishFlingers.Saving
             else
             {
                 _gameSave = new();
+            }
 
-                // Start with a 3x3 grid
-                for (int x = -1; x <= 1; x++)
+            List<Task> tasks = ListPool<Task>.Get();
+
+            try
+            {
+                foreach (ISaveable saveable in _saveables)
                 {
-                    for (int y = -1; y <= 1; y++)
-                    {
-                        int health = Random.Range(NetTile.MaxHealth - 1, NetTile.MaxHealth + 1);
-                        _gameSave.Tiles.Add(new TileSave(new Vector2Int(x, y), health));
-                    }
+                    tasks.Add(saveable.LoadAsync());
                 }
 
-                // Start with a wave sign
-                _gameSave.Structures.Add(new StructureSave(new Vector2Int(0, 1), EntityId.WaveSign));
+                await Task.WhenAll(tasks);
             }
-
-            foreach (TileSave save in _gameSave.Tiles)
+            finally
             {
-                context.Raft.AddNetTileRpc(save.Cell.ToVector2Int(), save.Health);
-            }
-
-            foreach (StructureSave save in _gameSave.Structures)
-            {
-                context.Raft.AddStructureRpc(save.Cell.ToVector2Int(), save.StructureId);
+                ListPool<Task>.Release(tasks);
             }
         }
 
-        public void SaveGame(GameplayContext context)
+        public void SaveGame()
         {
-            foreach (PurrnetPlayer purrnetPlayer in _networkManager.PurrnetPlayers.Values)
+            foreach (ISaveable saveable in _saveables)
             {
-                SaveRaftPlayer(purrnetPlayer.Guid, purrnetPlayer.RaftPlayer);
-            }
-
-            _gameSave.Tiles.Clear();
-            
-            foreach (RaftTile tile in context.Raft.RaftTiles.Values)
-            {
-                _gameSave.Tiles.Add(new TileSave(tile.Cell, tile.CurrentHealth));
-            }
-
-            _gameSave.Structures.Clear();
-
-            foreach (RaftTile tile in context.Raft.RaftTiles.Values)
-            {
-                if (tile.Structure != null)
-                {
-                    _gameSave.Structures.Add(new StructureSave(tile.Cell, tile.Structure.StructureData.Id));
-                }
+                saveable.Save();
             }
 
             string json = JsonConvert.SerializeObject(_gameSave, Formatting.Indented);
             File.WriteAllText(_gameSavePath, json);
         }
 
-        public RaftPlayerSave GetRaftPlayerSave(string guid, GameplayContext context)
+        void IInstantiateManagerListener.OnComponentInstantiated(Component component)
         {
-            if (!_gameSave.Players.ContainsKey(guid))
+            if (component is ISaveable saveable)
             {
-                _gameSave.Players[guid] = new RaftPlayerSave(Vector3.zero, Quaternion.identity);
+                _saveables.Add(saveable);
             }
-
-            return _gameSave.Players[guid];
         }
 
-        public void LoadRaftPlayer(RaftPlayer raftPlayer, RaftPlayerSave save)
+        void IInstantiateManagerListener.OnComponentDestroyed(Component component)
         {
-            raftPlayer.transform.position = save.Position.ToVector3();
-            raftPlayer.transform.rotation = save.Rotation.ToQuaternion();
-
-            raftPlayer.Rigidbody.linearVelocity = Vector3.zero;
-            raftPlayer.Rigidbody.angularVelocity = Vector3.zero;
-        }
-        
-        public void SaveRaftPlayer(string guid, RaftPlayer raftPlayer)
-        {
-            _gameSave.Players[guid] = new RaftPlayerSave(raftPlayer.transform.position, raftPlayer.transform.rotation);
-        }
-
-        void IGameObjectManagerListener.OnGameObjectInstantiated(GameObject gameObject)
-        {
-            Log.Info($"instantiated {gameObject.name}");
-        }
-
-        void IGameObjectManagerListener.OnGameObjectDestroyed(GameObject gameObject)
-        {
-            Log.Info($"destroyed {gameObject.name}");
+            if (component is ISaveable saveable)
+            {
+                _saveables.Remove(saveable);
+            }
         }
     }
 }

@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83e56d3db82e7ab42bda0b9b522f73b2, type: 3}
-  m_Name: GameObjectManagerConfig
+  m_Name: InstantiateManagerConfig
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.GameObjects.GameObjectManagerConfig

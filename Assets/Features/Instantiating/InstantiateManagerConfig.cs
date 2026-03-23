@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace FishFlingers.GameObjects
+namespace FishFlingers.Instantiating
 {
     [CreateAssetMenu(fileName = "GameObjectManagerConfig", menuName = "Configs/Managers/GameObjectManagerConfig")]
-    public class GameObjectManagerConfig : ScriptableObject
+    public class InstantiateManagerConfig : ScriptableObject
     { }
 }

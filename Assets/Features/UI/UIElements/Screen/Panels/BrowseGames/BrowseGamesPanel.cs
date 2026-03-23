@@ -1,4 +1,4 @@
-using FishFlingers.GameObjects;
+using FishFlingers.Instantiating;
 using FishFlingers.Localisation;
 using FishFlingers.Networking;
 using FishFlingers.Pools;
@@ -13,6 +13,8 @@ using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
+using Object = UnityEngine.Object;
+
 namespace FishFlingers.UI
 {
     public class BrowseGamesPanel : Panel
@@ -26,7 +28,6 @@ namespace FishFlingers.UI
 
         private PoolManager _poolManager;
         private LobbyManager _lobbyManager;
-        private GameObjectManager _gameObjectManager;
 
         private Dictionary<ELobbyService, LobbyContainerModel> _serviceModelMap = new();
 
@@ -60,11 +61,10 @@ namespace FishFlingers.UI
 
             _poolManager = GameManager.Instance.Get<PoolManager>();
             _lobbyManager = GameManager.Instance.Get<LobbyManager>();
-            _gameObjectManager = GameManager.Instance.Get<GameObjectManager>();
 
             foreach (LobbyContainerModel model in _lobbyContainerModels)
             {
-                LobbyContainer container = _gameObjectManager.Instantiate(_lobbyContainerPrefab, _scrollRect.content);
+                LobbyContainer container = Object.Instantiate(_lobbyContainerPrefab, _scrollRect.content);
                 container.Setup(model.TitleTerm, 0);
                 container.gameObject.SetActive(false);
 

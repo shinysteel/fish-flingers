@@ -1,12 +1,28 @@
 using FishFlingers.Environments;
 using FishFlingers.Items;
+using FishFlingers.Saving;
+using Newtonsoft.Json;
 using ShinyOwl.Common;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using ShinyOwl.Common.Utils;
 
 namespace FishFlingers.Entities
 {
+    [Serializable]
+    public class TileSave
+    {
+        [JsonProperty] public SerialisableVector2Int Cell { get; private set; }
+        [JsonProperty] public int Health { get; private set; }
+
+        public TileSave(Vector2Int cell, int health)
+        {
+            Cell = new SerialisableVector2Int(cell);
+            Health = health;
+        }
+    }
+
     public class RaftTile : Entity
     {
         [SerializeField] private Transform _visualsContainer;

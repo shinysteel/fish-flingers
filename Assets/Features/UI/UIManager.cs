@@ -10,7 +10,7 @@ using FishFlingers.Cameras;
 using UnityEngine.UI;
 using ShinyOwl.Common.Utils;
 using FishFlingers.States;
-using FishFlingers.GameObjects;
+using FishFlingers.Instantiating;
 
 using Object = UnityEngine.Object;
 
@@ -41,7 +41,6 @@ namespace FishFlingers.UI
     {   
         private CameraManager _cameraManager;
         private StateManager _stateManager;
-        private GameObjectManager _gameObjectManager;
 
         private UIManagerConfig _config;
         public UIManagerConfig Config => _config;
@@ -59,7 +58,6 @@ namespace FishFlingers.UI
         {
             _cameraManager = GameManager.Instance.Get<CameraManager>();
             _stateManager = GameManager.Instance.Get<StateManager>();
-            _gameObjectManager = GameManager.Instance.Get<GameObjectManager>();
 
             _stateManager.AddListener(this);
 
@@ -81,9 +79,9 @@ namespace FishFlingers.UI
         /// </summary>
         private void CreateCanvases()
         {
-            _screenCanvas = _gameObjectManager.Instantiate(_config.ScreenCanvasPrefab);
-            _worldCanvas = _gameObjectManager.Instantiate(_config.WorldCanvasPrefab);
-            _eventSystem = _gameObjectManager.Instantiate(_config.EventSystemPrefab);
+            _screenCanvas = Object.Instantiate(_config.ScreenCanvasPrefab);
+            _worldCanvas = Object.Instantiate(_config.WorldCanvasPrefab);
+            _eventSystem = Object.Instantiate(_config.EventSystemPrefab);
 
             _worldCanvas.worldCamera = _cameraManager.MainCamera;
 
@@ -109,7 +107,7 @@ namespace FishFlingers.UI
 
         private Layer CreateLayer(string name)
         {
-            Layer layer = _gameObjectManager.Instantiate(_config.LayerPrefab, _screenCanvas.transform, false);
+            Layer layer = Object.Instantiate(_config.LayerPrefab, _screenCanvas.transform, false);
             layer.name = name;
             Utils.UI.StretchToParent(layer.RectTransform);
             return layer;
@@ -145,7 +143,7 @@ namespace FishFlingers.UI
                 worldSpace = false
             };
 
-            AsyncOperation op = _gameObjectManager.InstantiateAsync(prefab, parameters);
+            AsyncOperation op = Object.InstantiateAsync(prefab, parameters);
 
             AsyncOperationBridge<T> bridge = new AsyncOperationBridge<T>(op, _ =>
             {
@@ -205,7 +203,7 @@ namespace FishFlingers.UI
             }
 
             ui.Unload();
-            _gameObjectManager.Destroy(ui.gameObject);
+            Object.Destroy(ui.gameObject);
         }
 
         /// <summary>
@@ -256,7 +254,7 @@ namespace FishFlingers.UI
                 return null;
             }
 
-            T ui = _gameObjectManager.Instantiate(prefab, _worldCanvas.transform);
+            T ui = Object.Instantiate(prefab, _worldCanvas.transform);
             ui.Load(_worldCanvas);
             return ui;
         }
@@ -279,7 +277,7 @@ namespace FishFlingers.UI
             }
 
             ui.Unload();
-            _gameObjectManager.Destroy(ui.gameObject);
+            Object.Destroy(ui.gameObject);
         }
 
         void IStateManagerListener.OnStateChanged(EMainState previous, EMainState current)

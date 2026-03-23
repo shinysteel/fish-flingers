@@ -1,5 +1,5 @@
 using FishFlingers.Environments;
-using FishFlingers.GameObjects;
+using FishFlingers.Instantiating;
 using FishFlingers.Scenes;
 using FishFlingers.UI;
 using ShinyOwl.Common;
@@ -40,7 +40,6 @@ namespace FishFlingers.Pools
         private class Pool<T> : IPool where T : Component, IPoolable
         {
             private SceneManager _sceneManager;
-            private GameObjectManager _gameObjectManager;
 
             private T _prefab;
             private Transform _container;
@@ -52,7 +51,6 @@ namespace FishFlingers.Pools
             public Pool(T prefab, Transform container)
             {
                 _sceneManager = GameManager.Instance.Get<SceneManager>();
-                _gameObjectManager = GameManager.Instance.Get<GameObjectManager>();
 
                 _prefab = prefab;
                 _container = container;
@@ -63,7 +61,7 @@ namespace FishFlingers.Pools
             {
                 T obj = _available.Count > 0
                     ? _available.Pop()
-                    : _gameObjectManager.Instantiate(_prefab, _container);
+                    : Object.Instantiate(_prefab, _container);
 
                 _inUse.Add(obj);
 
