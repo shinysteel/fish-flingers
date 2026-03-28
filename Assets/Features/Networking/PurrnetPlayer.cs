@@ -19,20 +19,26 @@ namespace FishFlingers.Networking
 {
     public class PurrnetPlayerSave
     {
-        [JsonProperty] public int ItemInstanceIdCounter { get; private set; }
-        [JsonProperty] public RaftPlayerSave RaftPlayer { get; private set; }
+        [JsonProperty] public int SaveId { get; private set; }
+        [JsonProperty] public int ItemInstanceIdCounter { get; private set; } = 0;
+        [JsonProperty] public RaftPlayerSave RaftPlayer { get; private set; } = new();
 
         public PurrnetPlayerSave()
         {
-            ItemInstanceIdCounter = 0;
-            RaftPlayer = new();
             RaftPlayer.ApplyDefaults();
         }
 
-        public PurrnetPlayerSave(int itemInstanceIdCounter, RaftPlayerSave raftPlayer)
+        public PurrnetPlayerSave(int saveId, int itemInstanceIdCounter, RaftPlayerSave raftPlayer)
         {
+            SaveId = saveId;
             ItemInstanceIdCounter = itemInstanceIdCounter;
             RaftPlayer = raftPlayer;
+        }
+
+        // We can't safely reference any managers in the default constructor, so this exists
+        public void SetSaveId(int id)
+        {
+            SaveId = id;
         }
     }
 
@@ -41,6 +47,7 @@ namespace FishFlingers.Networking
         [SerializeField] private RaftPlayer _raftPlayerPrefab;
 
         private SyncVar<string> _netGuid = new SyncVar<string>(ownerAuth: true);
+        private SyncVar<int> _netSaveId = new SyncVar<int>(ownerAuth: true);
         private SyncVar<int> _netItemInstanceIdCounter = new SyncVar<int>(ownerAuth: true);
         private SyncVar<RaftPlayer> _netRaftPlayer = new SyncVar<RaftPlayer>(ownerAuth: true);
 
@@ -72,7 +79,7 @@ namespace FishFlingers.Networking
         // break if a client stops their application and then rejoins, having their id counter reset to 0
         public string GetNextItemInstanceId()
         {
-            return $"{_networkManager.LocalPlayerId}_{_netItemInstanceIdCounter.value++}";
+            return $"{_netSaveId.value}_{_netItemInstanceIdCounter.value++}";
         }
 
         public RaftPlayer CreateRaftPlayer()
@@ -87,6 +94,7 @@ namespace FishFlingers.Networking
             if (!_saveManager.GameSave.Players.ContainsKey(_netGuid))
             {
                 _saveManager.GameSave.Players[_netGuid] = new();
+                _saveManager.GameSave.Players[_netGuid].SetSaveId(_saveManager.GameSave.Players.Count - 1);
             }
 
             return _saveManager.GameSave.Players[_netGuid];
@@ -96,6 +104,7 @@ namespace FishFlingers.Networking
         {
             PurrnetPlayerSave save = await GetSaveRpc();
 
+            _netSaveId.value = save.SaveId;
             _netItemInstanceIdCounter.value = save.ItemInstanceIdCounter;
 
             await _netRaftPlayer.value.LoadAsync(save.RaftPlayer);
@@ -103,7 +112,7 @@ namespace FishFlingers.Networking
 
         void ISaveable.Save()
         {
-            _saveManager.GameSave.Players[_netGuid] = new PurrnetPlayerSave(_netItemInstanceIdCounter.value, new RaftPlayerSave(_netRaftPlayer.value));
+            _saveManager.GameSave.Players[_netGuid] = new PurrnetPlayerSave(_netSaveId.value, _netItemInstanceIdCounter.value, new RaftPlayerSave(_netRaftPlayer.value));
         }
     }
 }
