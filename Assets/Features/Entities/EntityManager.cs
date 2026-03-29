@@ -178,7 +178,7 @@ namespace FishFlingers.Entities
         {
             DroppedItem item = (DroppedItem)Spawn(EntityId.DroppedItem, parameters);
             
-            item.SetNetItemInstance(netItemInstance);
+            item.Set(netItemInstance, DroppedItemType.Default);
 
             // Launch the item
             item.Rigidbody.AddForce(direction * strength, ForceMode.Impulse);

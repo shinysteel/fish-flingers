@@ -4,10 +4,8 @@ using FishFlingers.Items;
 using FishFlingers.Saving;
 using FishFlingers.States;
 using Newtonsoft.Json;
-using NUnit.Framework;
 using ShinyOwl.Common;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using UnityEngine;
 using EntityId = FishFlingers.Entities.EntityId;
@@ -59,7 +57,7 @@ namespace FishFlingers.Environments
             foreach (DroppedItemSave save in _saveManager.GameSave.Environment.DroppedItems)
             {
                 DroppedItem droppedItem = (DroppedItem)_entityManager.Spawn(EntityId.DroppedItem, new SpawnParams() { Position = save.Position });
-                droppedItem.SetNetItemInstance(NetItemInstance.Create(save));
+                droppedItem.Set(NetItemInstance.Create(save), save.Type);
             }
         }
 

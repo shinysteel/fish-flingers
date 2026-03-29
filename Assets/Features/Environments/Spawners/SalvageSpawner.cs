@@ -72,7 +72,20 @@ namespace FishFlingers.Environments
             Vector3 position = _context.Raft.CellToWorldPosition(new Vector2(x, y));
 
             DroppedItem item = (DroppedItem)_entityManager.Spawn(EntityId.DroppedItem, new SpawnParams() { Position = position });
-            item.SetNetItemInstance(new NetItemInstance(null, ItemId.Driftwood, 1));
+            item.Set(new NetItemInstance(null, ItemId.Driftwood, 1), DroppedItemType.Salvage);
+        }
+
+        void IEntityManagerListener.OnEntitySpawned(IEntity entity)
+        {
+            if (entity is not DroppedItem item)
+            {
+                return;
+            }
+
+            if (item.Type != DroppedItemType.Salvage)
+            {
+                return;
+            }
 
             _salvages.Add(item);
         }
@@ -80,6 +93,11 @@ namespace FishFlingers.Environments
         void IEntityManagerListener.OnEntityDespawned(IEntity entity)
         {
             if (entity is not DroppedItem item)
+            {
+                return;
+            }
+
+            if (item.Type != DroppedItemType.Salvage)
             {
                 return;
             }

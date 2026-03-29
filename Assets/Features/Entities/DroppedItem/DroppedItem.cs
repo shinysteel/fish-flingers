@@ -10,14 +10,21 @@ using System;
 
 namespace FishFlingers.Entities
 {
+    public enum DroppedItemType
+    {
+        Default,
+        Salvage,
+    }
+
     public class DroppedItemSave
     {
+        [JsonProperty] public DroppedItemType Type { get; private set; }
         [JsonProperty] public string InstanceId { get; private set; }
         [JsonProperty] public ItemId ItemId { get; private set; }
         [JsonProperty] public int Count { get; private set; }
 
         [JsonProperty] private SimpleVector3 _position = new();
-
+        
         [JsonIgnore] public Vector3 Position
         {
             get => _position.ToVector3();
@@ -31,6 +38,7 @@ namespace FishFlingers.Entities
         
         public DroppedItemSave(DroppedItem droppedItem)
         {
+            Type = droppedItem.Type;
             InstanceId = droppedItem.NetItemInstance.value.InstanceId;
             ItemId = droppedItem.NetItemInstance.value.ItemId;
             Count = droppedItem.NetItemInstance.value.Count;
@@ -45,9 +53,14 @@ namespace FishFlingers.Entities
         private SyncVar<NetItemInstance> _netItemInstance = new SyncVar<NetItemInstance>(ownerAuth: true);
         public SyncVar<NetItemInstance> NetItemInstance => _netItemInstance;
 
+        private DroppedItemType _type;
+        public DroppedItemType Type => _type;
+
         public DroppedItemData Data => (DroppedItemData)_entityData;
 
         public Vector3 Position => transform.position;
+
+        private const float DespawnDistance = 15f;
 
         protected override void OnSpawned()
         {
@@ -71,14 +84,35 @@ namespace FishFlingers.Entities
             _netItemInstance.onChanged -= HandleNetItemInstanceChanged;
         }
 
-        public void SetNetItemInstance(NetItemInstance netItemInstance)
+        public void Set(NetItemInstance netItemInstance, DroppedItemType type)
         {
             _netItemInstance.value = netItemInstance;
+            _type = type;
         }
 
         private void HandleNetItemInstanceChanged(NetItemInstance netItemInstance)
         {
             _spriteRenderer.sprite = netItemInstance.ItemId != ItemId.None ? _itemManager.GetItemData(netItemInstance.ItemId).Sprite : null;
+        }
+
+        private void Update()
+        {
+            // It seems calling Rpcs is unsafe before isFullySpawned is true, given there's errors if the despawn condition is immediately true on spawn
+            if (isOwner && isFullySpawned)
+            {
+                DespawnUpdate();
+            }
+        }
+
+        // Despawns when too far away from the raft
+        private void DespawnUpdate()
+        {
+            if (Vector3.Distance(transform.position, Vector3.zero) < DespawnDistance)
+            {
+                return;
+            }
+
+            DespawnRpc();
         }
 
         public void Interact()
