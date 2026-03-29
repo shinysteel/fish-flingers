@@ -11,9 +11,7 @@ namespace FishFlingers.Entities
     {
         [SerializeField] private SpriteRenderer _spriteRenderer;
 
-        private SyncVar<string> _instanceId = new SyncVar<string>(ownerAuth: true);
-        private SyncVar<ItemId> _itemId = new SyncVar<ItemId>(ownerAuth: true);
-        private SyncVar<int> _count = new SyncVar<int>(ownerAuth: true);
+        private SyncVar<NetItemInstance> _netItemInstance = new SyncVar<NetItemInstance>(ownerAuth: true);
 
         public DroppedItemData Data => (DroppedItemData)_entityData;
 
@@ -22,41 +20,32 @@ namespace FishFlingers.Entities
         protected override void OnSpawned()
         {
             base.OnSpawned();
-            
-            HandleItemIdChanged(_itemId.value);
 
-            _itemId.onChanged += HandleItemIdChanged;
+            HandleNetItemInstanceChanged(_netItemInstance);
+
+            _netItemInstance.onChanged += HandleNetItemInstanceChanged;
         }
 
         protected override void OnDespawned()
         {
             base.OnDespawned();
-            
-            _itemId.onChanged -= HandleItemIdChanged;
+
+            _netItemInstance.onChanged -= HandleNetItemInstanceChanged;
         }
 
-        private void HandleItemIdChanged(ItemId itemId)
+        private void HandleNetItemInstanceChanged(NetItemInstance netItemInstance)
         {
-            _spriteRenderer.sprite = itemId != ItemId.None ? _itemManager.GetItemData(itemId).Sprite : null;
+            _spriteRenderer.sprite = netItemInstance.ItemId != ItemId.None ? _itemManager.GetItemData(netItemInstance.ItemId).Sprite : null;
         }
 
-        public void SetItem(string instanceId, ItemId itemId, int count)
+        public void SetNetItemInstance(NetItemInstance netItemInstance)
         {
-            _instanceId.value = instanceId;
-            _itemId.value = itemId;
-            _count.value = count;
+            _netItemInstance.value = netItemInstance;
         }
 
         public void Interact()
         {
-            InventoryChangeParams parameters = new InventoryChangeParams()
-            {
-                InstanceId = _instanceId,
-                ItemId = _itemId,
-                Count = _count
-            };
-
-            if (_context.LocalPlayer.Inventory.TryAddItem(parameters, false, out _, out _, out _))
+            if (_context.LocalPlayer.Inventory.TryAddItem(InventoryChangeParams.Create(_netItemInstance), false, out _, out _, out _))
             {
                 _networkManager.Despawn(this);
             }

@@ -8,6 +8,7 @@ using ShinyOwl.Common.Utils;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using FishFlingers.Items;
 
 public class RaftPlayerGrabbedItemLogic
 {
@@ -90,15 +91,15 @@ public class RaftPlayerGrabbedItemLogic
         {
             if (overflow > 0)
             {
-                _grabbedItemView.InventoryWidget.Inventory.NetInventoryItems[_netGrabbedInventoryItem.value.InstanceId].SetCount(overflow);
-                _grabbedItemView.InventoryWidget.Inventory.NetInventoryItems.SetDirty(_netGrabbedInventoryItem.value.InstanceId);
+                _grabbedItemView.InventoryWidget.Inventory.NetInventoryItems[_netGrabbedInventoryItem.value.ItemInstance.InstanceId].ItemInstance.SetCount(overflow);
+                _grabbedItemView.InventoryWidget.Inventory.NetInventoryItems.SetDirty(_netGrabbedInventoryItem.value.ItemInstance.InstanceId);
                 return;
             }
             
             // No overflow and a valid change implies the item has no count left
             if (change.IsValid)
             {
-                _grabbedItemView.InventoryWidget.Inventory.RemoveItem(_netGrabbedInventoryItem.value.InstanceId);
+                _grabbedItemView.InventoryWidget.Inventory.RemoveItem(_netGrabbedInventoryItem.value.ItemInstance.InstanceId);
             }
 
             Release();
@@ -148,7 +149,7 @@ public class RaftPlayerGrabbedItemLogic
             return;
         }
 
-        if (_netGrabbedInventoryItem.value.InstanceId != instanceId)
+        if (_netGrabbedInventoryItem.value.ItemInstance.InstanceId != instanceId)
         {
             return;
         }
@@ -160,7 +161,8 @@ public class RaftPlayerGrabbedItemLogic
         }
 
         // Sync up with any changes that aren't to the pivot or rotations
-        NetInventoryItem netInventoryItem = new NetInventoryItem(newInventoryItem.Cell, _netGrabbedInventoryItem.value.Pivot, _netGrabbedInventoryItem.value.Rotations, newInventoryItem.ItemInstance.InstanceId, newInventoryItem.ItemInstance.Data.ItemId, newInventoryItem.ItemInstance.Count);
+        NetInventoryItem netInventoryItem = new NetInventoryItem(newInventoryItem.Cell, _netGrabbedInventoryItem.value.Pivot, _netGrabbedInventoryItem.value.Rotations, NetItemInstance.Create(newInventoryItem.ItemInstance));
+
         _netGrabbedInventoryItem.value = netInventoryItem;
     }
 }

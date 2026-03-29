@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace FishFlingers.Entities
 {
@@ -193,6 +194,12 @@ namespace FishFlingers.Entities
             {
                 bool place = _inventory.TryPlaceItem(InventoryPlaceParams.Create(itemSave), false, out _, out _, out _);
             }
+        }
+
+        [ServerRpc]
+        public void SpawnDroppedItemRpc(NetItemInstance netItemInstance, Vector3 direction, float strength)
+        {
+            _entityManager.SpawnDroppedItem(new SpawnParams() { Position = transform.position }, netItemInstance, direction, strength);
         }
     }
 }

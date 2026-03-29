@@ -80,6 +80,16 @@ namespace FishFlingers.Inventories
         public string InstanceId { get; set; } = null;
         public ItemId ItemId { get; set; } = default;
         public int Count { get; set; } = 0;
+
+        public static InventoryChangeParams Create(NetItemInstance netItemInstance)
+        {
+            return new InventoryChangeParams()
+            {
+                InstanceId = netItemInstance.InstanceId,
+                ItemId = netItemInstance.ItemId,
+                Count = netItemInstance.Count
+            };
+        }
     }
    
     public class InventoryPlaceParams
@@ -139,104 +149,19 @@ namespace FishFlingers.Inventories
         public Vector2Int Cell { get; private set; }
         public Vector2Int Pivot { get; private set; }
         public int Rotations { get; private set; }
-        public string InstanceId { get; private set; }
-        public ItemId ItemId { get; private set; }
-        public int Count { get; private set; }
+        public NetItemInstance ItemInstance { get; private set; }
 
-        public NetInventoryItem(Vector2Int cell, Vector2Int pivot, int rotations, string instanceId, ItemId itemId, int count)
+        public NetInventoryItem(Vector2Int cell, Vector2Int pivot, int rotations, NetItemInstance itemInstance)
         {
             Cell = cell;
             SetPivot(pivot);
             Rotations = rotations;
-            InstanceId = instanceId;
-            ItemId = itemId;
-            SetCount(count);
+            ItemInstance = itemInstance;
         }
 
         public NetInventoryItem DeepClone()
         {
-            return new NetInventoryItem(Cell, Pivot, Rotations, InstanceId, ItemId, Count);
-        }
-
-        public bool CanAddCount(int count, out int overflow, out NetInventoryItemsChange change)
-        {
-            overflow = count;
-            change = default;
-
-            // Guard against invalid adds
-            if (count <= 0)
-            {
-                return false;
-            }
-
-            ItemManager itemManager = GameManager.Instance.Get<ItemManager>();
-            ItemData data = itemManager.GetItemData(ItemId);
-
-            // Check for remaining space
-            int remainingSpace = data.MaxStack - Count;
-            if (remainingSpace == 0)
-            {
-                return false;
-            }
-
-            int changeAmount;
-
-            // Add in mind of remaining space
-            if (count <= remainingSpace)
-            {
-                changeAmount = count;
-                overflow = 0;
-            }
-            else
-            {
-                changeAmount = remainingSpace;
-                overflow = count - remainingSpace;
-            }
-
-            change = new NetInventoryItemsChange(InstanceId, changeAmount);
-
-            return true;
-        }
-
-        public bool CanRemoveCount(int count, out int remaining, out NetInventoryItemsChange change)
-        {
-            if (count <= 0)
-            {
-                remaining = count;
-                change = default;
-                return false;
-            }
-
-            int changeAmount;
-
-            if (Count > count)
-            {
-                changeAmount = -count;
-                remaining = 0;
-            }
-            else
-            {
-                changeAmount = -Count;
-                remaining = count - Count;
-            }
-
-            change = new NetInventoryItemsChange(InstanceId, changeAmount);
-
-            return true;
-        }
-
-        public void ChangeCount(int amount)
-        {
-            SetCount(Count + amount);
-        }
-
-        public void SetCount(int count)
-        {
-            ItemManager itemManager = GameManager.Instance.Get<ItemManager>();
-            ItemData data = itemManager.GetItemData(ItemId);
-
-            count = Mathf.Clamp(count, 0, data.MaxStack);
-            Count = count;
+            return new NetInventoryItem(Cell, Pivot, Rotations, ItemInstance.DeepClone());
         }
 
         public void SetPivot(Vector2Int pivot)
@@ -332,13 +257,9 @@ namespace FishFlingers.Inventories
             RefreshShape();
         }
 
-        public static InventoryItem Create(NetInventoryItem item)
+        public static InventoryItem Create(NetInventoryItem netInventoryItem)
         {
-            ItemManager itemManager = GameManager.Instance.Get<ItemManager>();
-            ItemData data = itemManager.GetItemData(item.ItemId);
-            ItemInstance instance = new ItemInstance(item.InstanceId, data, item.Count);
-
-            return new InventoryItem(item.Cell, item.Pivot, item.Rotations, instance);
+            return new InventoryItem(netInventoryItem.Cell, netInventoryItem.Pivot, netInventoryItem.Rotations, ItemInstance.Create(netInventoryItem.ItemInstance));
         }
 
         public InventoryItem DeepClone()
@@ -491,12 +412,12 @@ namespace FishFlingers.Inventories
             {
                 case SyncDictionaryOperation.Added:
                 case SyncDictionaryOperation.Set:
-                    _inventoryItems.TryGetValue(change.value.InstanceId, out oldInventoryItem);
+                    _inventoryItems.TryGetValue(change.value.ItemInstance.InstanceId, out oldInventoryItem);
                     InventoryItem newInventoryItem = InventoryItem.Create(change.value);
 
-                    _inventoryItems[change.value.InstanceId] = newInventoryItem;
+                    _inventoryItems[change.value.ItemInstance.InstanceId] = newInventoryItem;
 
-                    OnInventoryItemChanged?.Invoke(change.value.InstanceId, oldInventoryItem, newInventoryItem);
+                    OnInventoryItemChanged?.Invoke(change.value.ItemInstance.InstanceId, oldInventoryItem, newInventoryItem);
                     break;
 
                 case SyncDictionaryOperation.Removed:
@@ -560,7 +481,7 @@ namespace FishFlingers.Inventories
                 return;
             }
 
-            ItemData data = _itemManager.GetItemData(item.ItemId);
+            ItemData data = _itemManager.GetItemData(item.ItemInstance.ItemId);
 
             data.Shape.GetTransformed(item.Pivot, item.Rotations).ForEachTrue((Vector2Int cell) =>
             {
@@ -735,12 +656,12 @@ namespace FishFlingers.Inventories
             {
                 foreach (NetInventoryItem netInventoryItem in _netInventoryItems.Values)
                 {
-                    if (netInventoryItem.ItemId != addParams.ItemId)
+                    if (netInventoryItem.ItemInstance.ItemId != addParams.ItemId)
                     {
                         continue;
                     }
 
-                    if (!netInventoryItem.CanAddCount(overflow, out overflow, out NetInventoryItemsChange change))
+                    if (!netInventoryItem.ItemInstance.CanAddCount(overflow, out overflow, out NetInventoryItemsChange change))
                     {
                         continue;
                     }
@@ -838,7 +759,7 @@ namespace FishFlingers.Inventories
             if (netInventorySlot.ItemInstanceId != null && netInventorySlot.ItemInstanceId != parameters.InstanceId)
             {
                 NetInventoryItem netInventoryItem = _netInventoryItems[netInventorySlot.ItemInstanceId];
-                return netInventoryItem.ItemId == parameters.ItemId && netInventoryItem.CanAddCount(parameters.Count, out overflow, out change);
+                return netInventoryItem.ItemInstance.ItemId == parameters.ItemId && netInventoryItem.ItemInstance.CanAddCount(parameters.Count, out overflow, out change);
             }
 
             BoolGrid placeShape = null;
@@ -908,12 +829,12 @@ namespace FishFlingers.Inventories
 
             foreach (NetInventoryItem netInventoryItem in _netInventoryItems.Values)
             {
-                if (netInventoryItem.ItemId != parameters.ItemId)
+                if (netInventoryItem.ItemInstance.ItemId != parameters.ItemId)
                 {
                     continue;
                 }
 
-                if (!netInventoryItem.CanRemoveCount(remaining, out remaining, out NetInventoryItemsChange change))
+                if (!netInventoryItem.ItemInstance.CanRemoveCount(remaining, out remaining, out NetInventoryItemsChange change))
                 {
                     continue;
                 }
@@ -938,17 +859,17 @@ namespace FishFlingers.Inventories
             }
 
             NetInventoryItem item = _netInventoryItems[change.InstanceId];
-            ItemData data = _itemManager.GetItemData(item.ItemId);
+            ItemData data = _itemManager.GetItemData(item.ItemInstance.ItemId);
 
-            item.ChangeCount(change.Amount);
+            item.ItemInstance.ChangeCount(change.Amount);
 
-            if (item.Count > 0)
+            if (item.ItemInstance.Count > 0)
             {
-                _netInventoryItems.SetDirty(item.InstanceId);
+                _netInventoryItems.SetDirty(item.ItemInstance.InstanceId);
             }
             else
             {
-                RemoveItem(item.InstanceId);
+                RemoveItem(item.ItemInstance.InstanceId);
             }
         }
 
@@ -965,7 +886,7 @@ namespace FishFlingers.Inventories
             // A null place.InstanceId indicates this will be a new item. We validate instanceId here since we know for sure it will be placed
             string instanceId = place.Parameters.InstanceId != null ? place.Parameters.InstanceId : _networkManager.LocalPurrnetPlayer.GetNextItemInstanceId();
 
-            NetInventoryItem item = new NetInventoryItem(place.Parameters.Cell, place.Parameters.Pivot, place.Parameters.RotationParams.Rotations, instanceId, place.Parameters.ItemId, place.Parameters.Count);
+            NetInventoryItem item = new NetInventoryItem(place.Parameters.Cell, place.Parameters.Pivot, place.Parameters.RotationParams.Rotations, new NetItemInstance(instanceId, place.Parameters.ItemId, place.Parameters.Count));
 
             if (!_netInventoryItems.ContainsKey(instanceId))
             {

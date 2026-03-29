@@ -55,6 +55,7 @@ namespace FishFlingers.Networking
 
         public IReadOnlyList<PlayerID> PlayerIds => _purrnetNetworkManager.players;
         public PlayerID LocalPlayerId => _purrnetNetworkManager.localPlayer;
+        public PlayerID ServerPlayerId => PlayerID.Server;
 
         private Dictionary<PlayerID, PurrnetPlayer> _purrnetPlayers = new();
         public IReadOnlyDictionary<PlayerID, PurrnetPlayer> PurrnetPlayers => _purrnetPlayers;

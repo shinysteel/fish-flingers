@@ -27,7 +27,7 @@ namespace FishFlingers.Entities
         /// <summary>
         /// Spawns a DroppedItem at the player and launches it
         /// </summary>
-        public void SpawnDroppedItem(ItemInstance instance, bool towardsMouse)
+        public void SpawnDroppedItem(ItemInstance itemInstance, bool towardsMouse)
         {
             Vector3 direction = _player.transform.forward;
             direction.y = 0f;
@@ -46,7 +46,7 @@ namespace FishFlingers.Entities
 
             direction = Quaternion.AngleAxis(Pitch, Vector3.Cross(Vector3.up, direction)) * direction;
 
-            _entityManager.SpawnDroppedItem(new SpawnParams() { Position = _player.transform.position }, instance, direction, Strength);
+            _player.SpawnDroppedItemRpc(NetItemInstance.Create(itemInstance), direction, Strength);
         }
     }
 }

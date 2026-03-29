@@ -168,10 +168,11 @@ namespace FishFlingers.Entities
         /// <summary>
         /// Spawns a DroppedItem and launches it in a direction
         /// </summary>
-        public void SpawnDroppedItem(SpawnParams parameters, ItemInstance instance, Vector3 direction, float strength)
+        public void SpawnDroppedItem(SpawnParams parameters, NetItemInstance netItemInstance, Vector3 direction, float strength)
         {
             DroppedItem item = (DroppedItem)Spawn(EntityId.DroppedItem, parameters);
-            item.SetItem(instance.InstanceId, instance.Data.ItemId, instance.Count);
+            
+            item.SetNetItemInstance(netItemInstance);
 
             // Launch the item
             item.Rigidbody.AddForce(direction * strength, ForceMode.Impulse);
