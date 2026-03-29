@@ -18,20 +18,20 @@ MonoBehaviour:
   m_Metadata:
     m_Items: []
   m_TableData:
-  - m_Id: 4480208896
-    m_Localized: Tegole a zattera
-    m_Metadata:
-      m_Items: []
-  - m_Id: 164996222976
-    m_Localized: Una tegola sulla zattera
-    m_Metadata:
-      m_Items: []
   - m_Id: 187037290496
     m_Localized: Oggetto lasciato cadere
     m_Metadata:
       m_Items: []
   - m_Id: 212748374016
     m_Localized: Un oggetto che puoi raccogliere
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27104368744820736
+    m_Localized: Piastrella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27104368786763776
+    m_Localized: Una tegola sulla zattera
     m_Metadata:
       m_Items: []
   references:

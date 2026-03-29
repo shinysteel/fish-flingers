@@ -76,7 +76,7 @@ namespace FishFlingers.UI
         {
             // We populate the entries with either tiles or structures depending on the target
             IEnumerable<IBuildable> buildables = _context.LocalPlayer.TargetLogic.Target.Tile == null
-                ? _entityManager.GetEntityDefinitions<RaftTile>().Select(tile => tile.Data)
+                ? _entityManager.GetEntityDefinitions<Tile>().Select(tile => tile.Data)
                 : _entityManager.GetEntityDefinitions<Structure>().Select(structure => structure.StructureData);
 
             Utils.Collections.ResizeList(_blueprintEntries, buildables.Count(),

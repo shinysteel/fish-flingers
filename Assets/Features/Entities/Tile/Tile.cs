@@ -10,7 +10,7 @@ using ShinyOwl.Common.Utils;
 
 namespace FishFlingers.Entities
 {
-    public class RaftTileSave
+    public class TileSave
     {
         [JsonProperty] private SimpleVector2Int _cell = new();
         [JsonProperty] public int Health { get; private set; }
@@ -21,20 +21,20 @@ namespace FishFlingers.Entities
             set => _cell = new SimpleVector2Int(value);
         }
 
-        public RaftTileSave()
+        public TileSave()
         { }
 
-        public RaftTileSave(Vector2Int cell, int health)
+        public TileSave(Vector2Int cell, int health)
         {
             Cell = cell;
             Health = health;
         }
 
-        public RaftTileSave(RaftTile tile) : this(tile.Cell, tile.CurrentHealth)
+        public TileSave(Tile tile) : this(tile.Cell, tile.CurrentHealth)
         { }
     }
 
-    public class RaftTile : Entity
+    public class Tile : Entity
     {
         [SerializeField] private Transform _visualsContainer;
         [SerializeField] private MeshRenderer _meshRenderer;
@@ -46,7 +46,7 @@ namespace FishFlingers.Entities
         private Vector2Int _cell = Vector2Int.one * int.MinValue;
         public Vector2Int Cell => _cell;
         
-        public RaftTileData Data => (RaftTileData)_entityData;
+        public TileData Data => (TileData)_entityData;
 
         private Structure _structure;
         public Structure Structure => _structure;

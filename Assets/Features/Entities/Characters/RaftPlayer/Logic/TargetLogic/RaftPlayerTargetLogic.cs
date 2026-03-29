@@ -17,10 +17,10 @@ namespace FishFlingers.Entities
         private GameplayContext _context;
 
         private Vector2Int _cell;
-        private RaftTile _tile;
+        private Tile _tile;
 
         public Vector2Int Cell => _cell;
-        public RaftTile Tile => _tile;
+        public Tile Tile => _tile;
 
         public event Action OnChanged;
 
@@ -30,14 +30,14 @@ namespace FishFlingers.Entities
 
             _cell = Vector2Int.one * int.MinValue;
 
-            _context.Raft.OnRaftTileChanged += HandleRaftTileChanged;
+            _context.Raft.OnTileChanged += HandleTileChanged;
         }
 
         ~RaftPlayerTarget()
         {
             if (_context.Raft != null)
             {
-                _context.Raft.OnRaftTileChanged -= HandleRaftTileChanged;
+                _context.Raft.OnTileChanged -= HandleTileChanged;
             }
         }
 
@@ -51,11 +51,11 @@ namespace FishFlingers.Entities
             _cell = cell;
 
             // Refresh _tile whenever _cell changes
-            _context.Raft.RaftTiles.TryGetValue(_cell, out RaftTile tile);
-            HandleRaftTileChanged(_cell, tile);
+            _context.Raft.Tiles.TryGetValue(_cell, out Tile tile);
+            HandleTileChanged(_cell, tile);
         }
 
-        private void HandleRaftTileChanged(Vector2Int cell, RaftTile tile)
+        private void HandleTileChanged(Vector2Int cell, Tile tile)
         {
             if (_cell != cell)
             {

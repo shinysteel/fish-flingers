@@ -18,20 +18,20 @@ MonoBehaviour:
   m_Metadata:
     m_Items: []
   m_TableData:
-  - m_Id: 4480208896
-    m_Localized: "\uB5CF\uBAA9 \uD0C0\uC77C"
-    m_Metadata:
-      m_Items: []
-  - m_Id: 164996222976
-    m_Localized: "\uB5CF\uBAA9 \uC704\uC758 \uD0C0\uC77C"
-    m_Metadata:
-      m_Items: []
   - m_Id: 187037290496
     m_Localized: "\uB5A8\uC5B4\uC9C4 \uC544\uC774\uD15C"
     m_Metadata:
       m_Items: []
   - m_Id: 212748374016
-    m_Localized: "\uC9D1\uC5B4\uAC08 \uC218 \uC788\uB294 \uBB3C\uAC74"
+    m_Localized: "\uC9D1\uC5B4 \uB4E4 \uC218 \uC788\uB294 \uBB3C\uAC74"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27104368744820736
+    m_Localized: "\uD0C0\uC77C"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27104368786763776
+    m_Localized: "\uB5CF\uBAA9 \uC704\uC758 \uD0C0\uC77C"
     m_Metadata:
       m_Items: []
   references:

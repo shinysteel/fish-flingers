@@ -30,8 +30,8 @@ namespace FishFlingers.Entities
         public float Speed => _speed;
     }
 
-    [CreateAssetMenu(fileName = "RaftTileData", menuName = "Data/Entities/RaftTileData")]
-    public class RaftTileData : EntityData, IBuildable
+    [CreateAssetMenu(fileName = "TileData", menuName = "Data/Entities/TileData")]
+    public class TileData : EntityData, IBuildable
     {
         [SerializeField] private Recipe _recipe;
         [SerializeField] private BobSettings _bobSettings;

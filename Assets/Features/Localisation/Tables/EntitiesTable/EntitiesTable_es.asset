@@ -18,20 +18,20 @@ MonoBehaviour:
   m_Metadata:
     m_Items: []
   m_TableData:
-  - m_Id: 4480208896
-    m_Localized: Baldosa de balsa
-    m_Metadata:
-      m_Items: []
   - m_Id: 187037290496
     m_Localized: "Objeto ca\xEDdo"
     m_Metadata:
       m_Items: []
-  - m_Id: 164996222976
-    m_Localized: Una baldosa en la balsa
-    m_Metadata:
-      m_Items: []
   - m_Id: 212748374016
     m_Localized: Un objeto que puedes recoger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27104368744820736
+    m_Localized: Teja
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27104368786763776
+    m_Localized: Una baldosa en la balsa
     m_Metadata:
       m_Items: []
   references:

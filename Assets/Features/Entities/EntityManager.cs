@@ -18,7 +18,7 @@ namespace FishFlingers.Entities
     {
         None        = 0   ,
 
-        RaftTile    = 1   ,
+        Tile        = 1   ,
         DroppedItem = 2   ,
 
         // Characters
@@ -62,7 +62,7 @@ namespace FishFlingers.Entities
             }
 
             // Type entities map
-            Type[] types = new Type[] { typeof(RaftTile), typeof(Structure) };
+            Type[] types = new Type[] { typeof(Tile), typeof(Structure) };
 
             foreach (Type type in types)
             {

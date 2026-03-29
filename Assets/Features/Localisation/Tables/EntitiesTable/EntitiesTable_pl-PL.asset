@@ -18,20 +18,20 @@ MonoBehaviour:
   m_Metadata:
     m_Items: []
   m_TableData:
-  - m_Id: 4480208896
-    m_Localized: "P\u0142ytka tratwy"
-    m_Metadata:
-      m_Items: []
-  - m_Id: 164996222976
-    m_Localized: "P\u0142ytka na tratwie"
-    m_Metadata:
-      m_Items: []
   - m_Id: 187037290496
     m_Localized: Upuszczony przedmiot
     m_Metadata:
       m_Items: []
   - m_Id: 212748374016
     m_Localized: "Przedmiot, kt\xF3ry mo\u017Cesz podnie\u015B\u0107"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27104368744820736
+    m_Localized: "P\u0142ytka"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27104368786763776
+    m_Localized: "P\u0142ytka na tratwie"
     m_Metadata:
       m_Items: []
   references:

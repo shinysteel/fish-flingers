@@ -15,12 +15,12 @@ MonoBehaviour:
   m_TableCollectionName: EntitiesTable
   m_TableCollectionNameGuidString: e740bbc75b49c7f4abeb28a9dcbb639a
   m_Entries:
-  - m_Id: 4480208896
-    m_Key: entities.raftTileName
+  - m_Id: 27104368744820736
+    m_Key: entities.tileName
     m_Metadata:
       m_Items: []
-  - m_Id: 164996222976
-    m_Key: entities.raftTileDescription
+  - m_Id: 27104368786763776
+    m_Key: entities.tileDescription
     m_Metadata:
       m_Items: []
   - m_Id: 187037290496

@@ -18,20 +18,20 @@ MonoBehaviour:
   m_Metadata:
     m_Items: []
   m_TableData:
-  - m_Id: 4480208896
-    m_Localized: Raft Tile
-    m_Metadata:
-      m_Items: []
   - m_Id: 187037290496
     m_Localized: Dropped Item
     m_Metadata:
       m_Items: []
-  - m_Id: 164996222976
-    m_Localized: A tile on the raft
-    m_Metadata:
-      m_Items: []
   - m_Id: 212748374016
     m_Localized: An item you can pick up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27104368744820736
+    m_Localized: Tile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27104368786763776
+    m_Localized: A tile on the raft
     m_Metadata:
       m_Items: []
   references:

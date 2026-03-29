@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1b5578235882c140a774104bbe000ca, type: 3}
-  m_Name: RaftTileData
+  m_Name: TileData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.RaftTileData
   _id: 1
-  _nameTerm: 185241601
-  _descriptionTerm: 1787465766
+  _nameTerm: -1635435705
+  _descriptionTerm: -1593492665
   _sprite: {fileID: 21300000, guid: 6f972666f32701e45bbe695d518d3d38, type: 3}
   _health: 3
   _recipe:

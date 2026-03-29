@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2671034648733901122}
   - component: {fileID: 1950879371353287150}
   m_Layer: 7
-  m_Name: RaftTile
+  m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

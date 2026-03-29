@@ -18,20 +18,20 @@ MonoBehaviour:
   m_Metadata:
     m_Items: []
   m_TableData:
-  - m_Id: 4480208896
-    m_Localized: "Flo\xDFziegel"
-    m_Metadata:
-      m_Items: []
-  - m_Id: 164996222976
-    m_Localized: "Eine Fliese auf dem Flo\xDF"
-    m_Metadata:
-      m_Items: []
   - m_Id: 187037290496
     m_Localized: Gefallener Gegenstand
     m_Metadata:
       m_Items: []
   - m_Id: 212748374016
     m_Localized: "Ein Gegenstand, den Sie aufheben k\xF6nnen"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27104368744820736
+    m_Localized: Fliese
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27104368786763776
+    m_Localized: "Eine Fliese auf dem Flo\xDF"
     m_Metadata:
       m_Items: []
   references:
