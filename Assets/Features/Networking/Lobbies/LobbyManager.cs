@@ -129,14 +129,14 @@ namespace FishFlingers.Networking
             return _currentLobbyService.IsLobbyOwner(lobby);
         }
 
-        private void HandleLobbyCreated(Lobby lobby) => Listeners.Dispatch(NotifyLobbyCreated, lobby);
-        private void HandleLobbyEnter(Lobby lobby) => Listeners.Dispatch(NotifyLobbyEnter, lobby);
-        private void HandleLobbyStart(Lobby lobby) => Listeners.Dispatch(NotifyLobbyStart, lobby);
-        private void HandleLobbyLeave() => Listeners.Dispatch(NotifyLobbyLeave);
+        private void HandleLobbyCreated(Lobby lobby) => NotifyLobbyCreated(lobby);
+        private void HandleLobbyEnter(Lobby lobby) => NotifyLobbyEnter(lobby);
+        private void HandleLobbyStart(Lobby lobby) => NotifyLobbyStart(lobby);
+        private void HandleLobbyLeave() => NotifyLobbyLeave();
 
-        private void NotifyLobbyCreated(ILobbyManagerListener listener, Lobby lobby) => listener.OnLobbyCreated(lobby);
-        private void NotifyLobbyEnter(ILobbyManagerListener listener, Lobby lobby) => listener.OnLobbyEnter(lobby);
-        private void NotifyLobbyStart(ILobbyManagerListener listener, Lobby lobby) => listener.OnLobbyStart(lobby);
-        private void NotifyLobbyLeave(ILobbyManagerListener listener) => listener.OnLobbyLeave();
+        private void NotifyLobbyCreated(Lobby lobby) => Listeners.Dispatch(listener => listener.OnLobbyCreated(lobby));
+        private void NotifyLobbyEnter(Lobby lobby) => Listeners.Dispatch(listener => listener.OnLobbyEnter(lobby));
+        private void NotifyLobbyStart(Lobby lobby) => Listeners.Dispatch(listener => listener.OnLobbyStart(lobby));
+        private void NotifyLobbyLeave() => Listeners.Dispatch(listener => listener.OnLobbyLeave());
     }
 }

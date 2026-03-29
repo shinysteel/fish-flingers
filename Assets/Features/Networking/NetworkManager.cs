@@ -147,7 +147,7 @@ namespace FishFlingers.Networking
                 _purrnetPlayers.Add(behaviour.owner.Value, player);
             }
 
-            Listeners.Dispatch(NotifyNetBehaviourSpawned, behaviour);
+            NotifyNetBehaviourSpawned(behaviour);
         }
 
         public void RaiseNetBehaviourDespawned(NetBehaviour behaviour)
@@ -157,7 +157,7 @@ namespace FishFlingers.Networking
                 _purrnetPlayers.Remove(behaviour.owner.Value);
             }
 
-            Listeners.Dispatch(NotifyNetBehaviourDespawned, behaviour);
+            NotifyNetBehaviourDespawned(behaviour);
         }
 
         // Our transport will always be composite, so it is a safe cast
@@ -231,11 +231,11 @@ namespace FishFlingers.Networking
             _purrnetNetworkManager.StopClient();
         }
 
-        private void HandleNetworkStarted(PurrNet.NetworkManager manager, bool asServer) => Listeners.Dispatch(NotifyNetworkStarted, asServer);
+        private void HandleNetworkStarted(PurrNet.NetworkManager manager, bool asServer) => NotifyNetworkStarted(asServer);
 
         private void HandleNetworkShutdown(PurrNet.NetworkManager manager, bool asServer)
         {
-            Listeners.Dispatch(NotifyNetworkShutdown, asServer);
+            NotifyNetworkShutdown(asServer);
 
             if (asServer)
             {
@@ -252,17 +252,17 @@ namespace FishFlingers.Networking
             _ = cleanup();
         }
 
-        private void HandleClientConnectionState(ConnectionState state) => Listeners.Dispatch(NotifyClientConnectionState, state);
-        private void HandlePlayerJoined(PlayerID playerId, bool isReconnect, bool asServer) => Listeners.Dispatch(NotifyPlayerJoined, playerId, isReconnect, asServer);
-        private void HandlePlayerLeft(PlayerID playerId, bool asServer) => Listeners.Dispatch(NotifyPlayerLeft, playerId, asServer);
+        private void HandleClientConnectionState(ConnectionState state) => NotifyClientConnectionState(state);
+        private void HandlePlayerJoined(PlayerID playerId, bool isReconnect, bool asServer) => NotifyPlayerJoined(playerId, isReconnect, asServer);
+        private void HandlePlayerLeft(PlayerID playerId, bool asServer) => NotifyPlayerLeft(playerId, asServer);
         
-        private void NotifyNetworkStarted(INetworkManagerListener listener, bool asServer) => listener.OnNetworkStarted(asServer);
-        private void NotifyNetworkShutdown(INetworkManagerListener listener, bool asServer) => listener.OnNetworkShutdown(asServer);
-        private void NotifyNetBehaviourSpawned(INetworkManagerListener listener, NetBehaviour behaviour) => listener.OnNetBehaviourSpawned(behaviour);
-        private void NotifyNetBehaviourDespawned(INetworkManagerListener listener, NetBehaviour behaviour) => listener.OnNetBehaviourDespawned(behaviour);
-        private void NotifyClientConnectionState(INetworkManagerListener listener, ConnectionState state) => listener.OnClientConnectionState(state);
-        private void NotifyPlayerJoined(INetworkManagerListener listener, PlayerID playerId, bool isReconnect, bool asServer) => listener.OnPlayerJoined(playerId, isReconnect, asServer);
-        private void NotifyPlayerLeft(INetworkManagerListener listener, PlayerID playerId, bool asServer) => listener.OnPlayerLeft(playerId, asServer);
+        private void NotifyNetworkStarted(bool asServer) => Listeners.Dispatch(listener => listener.OnNetworkStarted(asServer));
+        private void NotifyNetworkShutdown(bool asServer) => Listeners.Dispatch(listener => listener.OnNetworkShutdown(asServer));
+        private void NotifyNetBehaviourSpawned(NetBehaviour behaviour) => Listeners.Dispatch(listener => listener.OnNetBehaviourSpawned(behaviour));
+        private void NotifyNetBehaviourDespawned(NetBehaviour behaviour) => Listeners.Dispatch(listener => listener.OnNetBehaviourDespawned(behaviour));
+        private void NotifyClientConnectionState(ConnectionState state) => Listeners.Dispatch(listener => listener.OnClientConnectionState(state));
+        private void NotifyPlayerJoined(PlayerID playerId, bool isReconnect, bool asServer) => Listeners.Dispatch(listener => listener.OnPlayerJoined(playerId, isReconnect, asServer));
+        private void NotifyPlayerLeft(PlayerID playerId, bool asServer) => Listeners.Dispatch(listener => listener.OnPlayerLeft(playerId, asServer));
 
         void ISceneManagerListener.OnPlayerLoadedScene(PlayerID playerId, EScene scene, bool asServer) 
         { 

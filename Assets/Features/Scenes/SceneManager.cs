@@ -234,21 +234,21 @@ namespace FishFlingers.Scenes
             return new AsyncOperationBridge(op);
         }
 
-        private void HandleSceneLoaded(Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) => Listeners.Dispatch(NotifySceneLoaded, GetSceneEnum(scene), (LoadSceneMode)mode);
-        private void HandleSceneUnloaded(Scene scene) => Listeners.Dispatch(NotifySceneUnloaded, GetSceneEnum(scene));
-        private void HandleNetworkedSceneLoaded(SceneID id, bool asServer) => Listeners.Dispatch(NotifyNetworkedSceneLoaded, GetSceneEnum(id), asServer);
-        private void HandleNetworkedSceneUnloaded(SceneID id, bool asServer) => Listeners.Dispatch(NotifyNetworkedSceneUnloaded, GetSceneEnum(id), asServer);
-        private void HandlePlayerLoadedScene(PlayerID playerId, SceneID sceneId, bool asServer) => Listeners.Dispatch(NotifyPlayerLoadedScene, playerId, GetSceneEnum(sceneId), asServer);
-        private void HandlePlayerUnloadedScene(PlayerID playerId, SceneID sceneId, bool asServer) => Listeners.Dispatch(NotifyPlayerUnloadedScene, playerId, GetSceneEnum(sceneId), asServer);
-        private void HandleActiveSceneChanged(Scene previous, Scene current) => Listeners.Dispatch(NotifyActiveSceneChanged, GetSceneEnum(previous), GetSceneEnum(current));
+        private void HandleSceneLoaded(Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) => NotifySceneLoaded(GetSceneEnum(scene), (LoadSceneMode)mode);
+        private void HandleSceneUnloaded(Scene scene) => NotifySceneUnloaded(GetSceneEnum(scene));
+        private void HandleNetworkedSceneLoaded(SceneID id, bool asServer) => NotifyNetworkedSceneLoaded(GetSceneEnum(id), asServer);
+        private void HandleNetworkedSceneUnloaded(SceneID id, bool asServer) => NotifyNetworkedSceneUnloaded(GetSceneEnum(id), asServer);
+        private void HandlePlayerLoadedScene(PlayerID playerId, SceneID sceneId, bool asServer) => NotifyPlayerLoadedScene(playerId, GetSceneEnum(sceneId), asServer);
+        private void HandlePlayerUnloadedScene(PlayerID playerId, SceneID sceneId, bool asServer) => NotifyPlayerUnloadedScene(playerId, GetSceneEnum(sceneId), asServer);
+        private void HandleActiveSceneChanged(Scene previous, Scene current) => NotifyActiveSceneChanged(GetSceneEnum(previous), GetSceneEnum(current));
 
-        private void NotifySceneLoaded(ISceneManagerListener listener, EScene scene, LoadSceneMode mode) => listener.OnSceneLoaded(scene, mode);
-        private void NotifySceneUnloaded(ISceneManagerListener listener, EScene scene) => listener.OnSceneUnloaded(scene);
-        private void NotifyNetworkedSceneLoaded(ISceneManagerListener listener, EScene scene, bool asServer) => listener.OnNetworkedSceneLoaded(scene, asServer);
-        private void NotifyNetworkedSceneUnloaded(ISceneManagerListener listener, EScene scene, bool asServer) => listener.OnNetworkedSceneUnloaded(scene, asServer);
-        private void NotifyPlayerLoadedScene(ISceneManagerListener listener, PlayerID playerId, EScene scene, bool asServer) => listener.OnPlayerLoadedScene(playerId, scene, asServer);
-        private void NotifyPlayerUnloadedScene(ISceneManagerListener listener, PlayerID playerId, EScene scene, bool asServer) => listener.OnPlayerUnloadedScene(playerId, scene, asServer);
-        private void NotifyActiveSceneChanged(ISceneManagerListener listener, EScene previous, EScene current) => listener.OnActiveSceneChanged(previous, current);
+        private void NotifySceneLoaded(EScene scene, LoadSceneMode mode) => Listeners.Dispatch(listener => listener.OnSceneLoaded(scene, mode));
+        private void NotifySceneUnloaded(EScene scene) => Listeners.Dispatch(listener => listener.OnSceneUnloaded(scene));
+        private void NotifyNetworkedSceneLoaded(EScene scene, bool asServer) => Listeners.Dispatch(listener => listener.OnNetworkedSceneLoaded(scene, asServer));
+        private void NotifyNetworkedSceneUnloaded(EScene scene, bool asServer) => Listeners.Dispatch(listener => listener.OnNetworkedSceneUnloaded(scene, asServer));
+        private void NotifyPlayerLoadedScene(PlayerID playerId, EScene scene, bool asServer) => Listeners.Dispatch(listener => listener.OnPlayerLoadedScene(playerId, scene, asServer));
+        private void NotifyPlayerUnloadedScene(PlayerID playerId, EScene scene, bool asServer) => Listeners.Dispatch(listener => listener.OnPlayerUnloadedScene(playerId, scene, asServer));
+        private void NotifyActiveSceneChanged(EScene previous, EScene current) => Listeners.Dispatch(listener => listener.OnActiveSceneChanged(previous, current));
 
         void INetworkManagerListener.OnNetworkStarted(bool asServer)
         {

@@ -71,13 +71,10 @@ namespace FishFlingers.States
         {
             EMainState previous = _stateMachine.CurrentEnum;
             _stateMachine.ChangeState(state);
-            Listeners.Dispatch(NotifyStateChanged, previous, state);
+            NotifyStateChanged(previous, state);
         }
 
-        private void NotifyStateChanged(IStateManagerListener listener, EMainState previous, EMainState current)
-        {
-            listener.OnStateChanged(previous, current);
-        }
+        private void NotifyStateChanged(EMainState previous, EMainState current) => Listeners.Dispatch(listener => listener.OnStateChanged(previous, current));
 
         void ISceneManagerListener.OnSceneUnloaded(EScene scene)
         { 
