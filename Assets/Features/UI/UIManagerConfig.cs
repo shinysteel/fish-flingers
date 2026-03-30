@@ -32,10 +32,12 @@ namespace FishFlingers.UI
 
         [Header("ScreenUI - Panels")]
         [SerializeField] private BrowseGamesPanel _browseGamesPanelPrefab;
+        [SerializeField] private HostGamePanel _hostGamePanelPrefab;
         [SerializeField] private FishingBagPanel _fishingBagPanelPrefab;
         [SerializeField] private BuildingKitPanel _buildingKitPanelPrefab;
 
         public BrowseGamesPanel BrowseGamesPanelPrefab => _browseGamesPanelPrefab;
+        public HostGamePanel HostGamePanelPrefab => _hostGamePanelPrefab;
         public FishingBagPanel FishingBagPanelPrefab => _fishingBagPanelPrefab;
         public BuildingKitPanel BuildingKitPanelPrefab => _buildingKitPanelPrefab;
 

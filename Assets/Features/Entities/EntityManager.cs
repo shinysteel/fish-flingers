@@ -43,7 +43,7 @@ namespace FishFlingers.Entities
         private EntityManagerConfig _config;
 
         private Dictionary<EntityId, IEntity> _idPrefabMap = new();
-        private Dictionary<Type, HashSet<IEntity>> _typeDefinitionMap = new();
+        private Dictionary<Type, HashSet<IEntity>> _typePrefabsMap = new();
 
         private List<IEntity> _entities = new();
         public IReadOnlyList<IEntity> Entities => _entities;
@@ -66,7 +66,7 @@ namespace FishFlingers.Entities
 
             foreach (Type type in types)
             {
-                _typeDefinitionMap.Add(type, new());
+                _typePrefabsMap.Add(type, new());
             }
 
             foreach (EntityMapping mapping in _config.EntityMappings)
@@ -81,7 +81,7 @@ namespace FishFlingers.Entities
                 {
                     if (type.IsAssignableFrom(entity.GetType()))
                     {
-                        _typeDefinitionMap[type].Add(entity);
+                        _typePrefabsMap[type].Add(entity);
                     }
                 }
             }
@@ -92,7 +92,7 @@ namespace FishFlingers.Entities
         /// <summary>
         /// Retrieves a single entity mapped to the type
         /// </summary>
-        public IEntity GetEntityDefinition(EntityId id)
+        public IEntity GetEntityPrefab(EntityId id)
         {
             _idPrefabMap.TryGetValue(id, out IEntity prefab);
             return prefab;
@@ -101,9 +101,9 @@ namespace FishFlingers.Entities
         /// <summary>
         /// Retrieves a registered collection of entities
         /// </summary>
-        public IEnumerable<T> GetEntityDefinitions<T>() where T : IEntity
+        public IEnumerable<T> GetEntityPrefabs<T>() where T : IEntity
         {
-            if (!_typeDefinitionMap.TryGetValue(typeof(T), out HashSet<IEntity> entities))
+            if (!_typePrefabsMap.TryGetValue(typeof(T), out HashSet<IEntity> entities))
             {
                 return Enumerable.Empty<T>();
             }

@@ -20,7 +20,9 @@ namespace FishFlingers.UI
         private UIManager _uiManager;
 
         private BrowseGamesPanel _browseGamesPanel;
+        private HostGamePanel _hostGamePanel;
         private bool _creatingBrowseGames;
+        private bool _creatingHostGame;
 
         public override void Load(Canvas canvas)
         {
@@ -63,7 +65,29 @@ namespace FishFlingers.UI
 
         private void HostGamePressed()
         {
-            _ = _lobbyManager.CreateLobbyAsync();
+            if (_hostGamePanel != null)
+            {
+                _hostGamePanel.SimulateClosePressed();
+                return;
+            }
+
+            if (_uiManager.IsLayerInUse(UILayer.Panels))
+            {
+                return;
+            }
+
+            if (!_creatingHostGame)
+            {
+                _creatingHostGame = true;
+
+                _uiManager.CreateScreenUIAsync(_uiManager.Config.HostGamePanelPrefab, UILayer.Panels).completed += (HostGamePanel panel) =>
+                {
+                    _hostGamePanel = panel;
+                    _hostGamePanel.Show(null);
+
+                    _creatingHostGame = false;
+                };
+            }
         }
 
         private void QuitPressed()

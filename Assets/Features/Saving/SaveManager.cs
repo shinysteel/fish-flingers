@@ -14,6 +14,7 @@ using UnityEngine;
 using FishFlingers.Instantiating;
 using System.Threading.Tasks;
 using UnityEngine.Pool;
+using System.Linq;
 
 namespace FishFlingers.Saving
 {
@@ -39,6 +40,60 @@ namespace FishFlingers.Saving
         [JsonProperty] public GameplayEnvironmentSave Environment { get; private set; } = new();
     }
 
+    public class SaveFile
+    {
+        private SaveManager _saveManager;
+
+        private string _folderPath;
+        private string _gameSavePath;
+        private string _thumbnailPath;
+
+        public string FolderPath => _folderPath;
+        public string GameSavePath => _gameSavePath;
+        public string ThumbnailPath => _thumbnailPath;
+        
+        public SaveFile(string path)
+        {
+            _saveManager = GameManager.Instance.Get<SaveManager>();
+
+            _folderPath = path;
+
+            // Treat null as a new file to save to
+            _folderPath ??= GetNextDefaultGameSaveFolderPath();
+
+            Directory.CreateDirectory(_folderPath);
+
+            _gameSavePath = Path.Combine(_folderPath, $"{_saveManager.Config.GameSaveFileName}.json");
+            _thumbnailPath = Path.Combine(_folderPath, $"{_saveManager.Config.ThumbnailFileName}.png");
+        }
+
+        /// <summary>
+        /// Retrieves the next path available to save a game to. Saves are formatted as 'New Raft', 'New Raft (1)', 'New Raft (2)'...
+        /// </summary>
+        private string GetNextDefaultGameSaveFolderPath()
+        {
+            int index = 0;
+
+            while (true)
+            {
+                string path = Path.Combine(_saveManager.GameSavesFolderPath, _saveManager.Config.DefaultGameSaveFolderName);
+
+                if (index > 0)
+                {
+                    path += $" ({index})";
+                }
+
+                if (Directory.Exists(path))
+                {
+                    index++;
+                    continue;
+                }
+
+                return path;
+            }
+        }
+    }
+
     public interface ISaveManagerListener
     { }
 
@@ -47,16 +102,24 @@ namespace FishFlingers.Saving
         private InstantiateManager _gameObjectManager;
 
         private SaveManagerConfig _config;
+        public SaveManagerConfig Config => _config;
 
-        private string _persistentSavePath;
-        private string _userSavePath;
-        private string _gameSavePath;
+        private string _persistentSaveFolderPath;
+        private string _userSaveFilePath;
+        private string _gameSavesFolderPath;
+
+        public string GameSavesFolderPath => _gameSavesFolderPath;
 
         private UserSave _userSave;
         private GameSave _gameSave;
 
         public UserSave UserSave => _userSave;
         public GameSave GameSave => _gameSave;
+
+        private List<SaveFile> _saveFiles = new();
+        public IReadOnlyList<SaveFile> SaveFiles => _saveFiles;
+
+        private SaveFile _selectedSaveFile;
 
         private List<ISaveable> _saveables = new();
 
@@ -68,10 +131,14 @@ namespace FishFlingers.Saving
 
             _config = config.SaveManagerConfig;
 
-            _persistentSavePath = CreatePersistentSavePath();
+            _persistentSaveFolderPath = CreatePersistentSavePath();
 
-            _userSavePath = Path.Combine(_persistentSavePath, $"{_config.UserSaveFileName}.json");
-            _gameSavePath = Path.Combine(_persistentSavePath, $"{_config.GameSaveFileName}.json");
+            _userSaveFilePath = Path.Combine(_persistentSaveFolderPath, $"{_config.UserSaveFileName}.json");
+            _gameSavesFolderPath = Path.Combine(_persistentSaveFolderPath, _config.GameSavesFolderName);
+
+            Directory.CreateDirectory(_gameSavesFolderPath);
+
+            RefreshSaveFiles();
 
             LoadUser();
 
@@ -85,6 +152,18 @@ namespace FishFlingers.Saving
             base.Shutdown();
         }
 
+        private void RefreshSaveFiles()
+        {
+            _saveFiles.Clear();
+
+            string[] paths = Directory.GetDirectories(_gameSavesFolderPath).OrderBy(path => File.GetCreationTime(path)).ToArray();
+
+            foreach (string path in paths)
+            {
+                _saveFiles.Add(new SaveFile(path));
+            }
+        }
+
         private string CreatePersistentSavePath()
         {
             string path = Application.persistentDataPath;
@@ -92,12 +171,10 @@ namespace FishFlingers.Saving
             if (ClonesManager.IsClone())
             {
                 int cloneNumber = int.Parse(ClonesManager.GetCurrentProjectPath().Split($"{ClonesManager.CloneNameSuffix}_")[1]);
+
                 path += $"{ClonesManager.CloneNameSuffix}_{cloneNumber}";
 
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
+                Directory.CreateDirectory(path);
             }
 
             return path;
@@ -109,17 +186,27 @@ namespace FishFlingers.Saving
         /// </summary>
         private void LoadUser()
         {
-            if (File.Exists(_userSavePath))
+            if (File.Exists(_userSaveFilePath))
             {
-                string json = File.ReadAllText(_userSavePath);
+                string json = File.ReadAllText(_userSaveFilePath);
                 _userSave = JsonConvert.DeserializeObject<UserSave>(json);
             }
             else
             {
                 _userSave = new();
                 string json = JsonConvert.SerializeObject(_userSave);
-                File.WriteAllText(_userSavePath, json);
+                File.WriteAllText(_userSaveFilePath, json);
             }
+        }
+
+        public void AddSaveFile(SaveFile file)
+        {
+            _saveFiles.Add(file);
+        }
+
+        public void SelectSaveFile(SaveFile file)
+        {
+            _selectedSaveFile = file;
         }
 
         /// <summary>
@@ -127,9 +214,9 @@ namespace FishFlingers.Saving
         /// </summary>
         public async Task LoadGameAsync()
         {
-            if (File.Exists(_gameSavePath))
+            if (File.Exists(_selectedSaveFile.GameSavePath))
             {
-                string json = File.ReadAllText(_gameSavePath);
+                string json = File.ReadAllText(_selectedSaveFile.GameSavePath);
                 _gameSave = JsonConvert.DeserializeObject<GameSave>(json);
             }
             else
@@ -161,9 +248,11 @@ namespace FishFlingers.Saving
             {
                 saveable.Save();
             }
-
+            
             string json = JsonConvert.SerializeObject(_gameSave, Formatting.Indented);
-            File.WriteAllText(_gameSavePath, json);
+            File.WriteAllText(_selectedSaveFile.GameSavePath, json);
+
+            ScreenCapture.CaptureScreenshot(_selectedSaveFile.ThumbnailPath);
         }
 
         void IInstantiateManagerListener.OnComponentInstantiated(Component component)

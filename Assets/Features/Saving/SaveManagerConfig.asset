@@ -13,4 +13,7 @@ MonoBehaviour:
   m_Name: SaveManagerConfig
   m_EditorClassIdentifier: Assembly-CSharp::SaveManagerConfig
   _userSaveFileName: user
-  _gameSaveFileName: game
+  _gameSaveFileName: save
+  _thumbnailFileName: thumbnail
+  _gameSavesFolderName: Saves
+  _defaultGameSaveFolderName: New Raft
