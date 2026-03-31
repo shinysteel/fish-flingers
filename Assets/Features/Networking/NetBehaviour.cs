@@ -22,7 +22,7 @@ namespace FishFlingers.Networking
         protected SaveManager _saveManager;
         protected InstantiateManager _instantiateManager;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             _networkManager = GameManager.Instance.Get<NetworkManager>();
             _entityManager = GameManager.Instance.Get<EntityManager>();

@@ -1,5 +1,6 @@
 using FishFlingers.Inventories;
 using FishFlingers.States;
+using ShinyOwl.Common;
 using UnityEngine;
 
 namespace FishFlingers.UI

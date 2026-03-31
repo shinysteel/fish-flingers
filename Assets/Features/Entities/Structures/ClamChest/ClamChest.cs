@@ -1,6 +1,8 @@
 using FishFlingers.Entities;
 using FishFlingers.Inventories;
+using FishFlingers.States;
 using FishFlingers.UI;
+using ShinyOwl.Common;
 using ShinyOwl.Common.Structures;
 using UnityEngine;
 
@@ -14,14 +16,21 @@ namespace FishFlingers.Entities
         private PanelInstance<ClamChestPanel> _clamChestPanelInstance;
 
         public Vector3 Position => transform.position;
-        
-        private void Start()
+
+        protected override void Awake()
         {
+            base.Awake();
+
             _inventory.SetLayout(_inventoryLayout);
+        }
+
+        public override void Initialise(GameplayContext context)
+        {
+            base.Initialise(context);
 
             _clamChestPanelInstance = new PanelInstance<ClamChestPanel>(_uiManager.Config.ClamChestPanel);
         }
-
+        
         public void Interact()
         {
             _clamChestPanelInstance.Toggle((ClamChestPanel panel) => panel.Setup(_context, _inventory));
