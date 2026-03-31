@@ -23,8 +23,7 @@ namespace FishFlingers.UI
 
         private GameplayContext _context;
 
-        private FishingBagPanel _fishingBagPanel;
-        private bool _creatingFishingBag;
+        private PanelInstance<FishingBagPanel> _fishingBagPanelInstance;
 
         public override void Load(Canvas canvas)
         {
@@ -32,6 +31,8 @@ namespace FishFlingers.UI
 
             _networkManager = GameManager.Instance.Get<NetworkManager>();
             _uiManager = GameManager.Instance.Get<UIManager>();
+
+            _fishingBagPanelInstance = new PanelInstance<FishingBagPanel>(_uiManager.Config.FishingBagPanelPrefab);
 
             _settingsButton.onClick.AddListener(SettingsPressed);
             _fishingBagButton.onClick.AddListener(FishingBagPressed);
@@ -75,30 +76,11 @@ namespace FishFlingers.UI
 
         private void FishingBagPressed()
         {
-            if (_fishingBagPanel != null)
+            _fishingBagPanelInstance.Toggle((FishingBagPanel panel) =>
             {
-                _fishingBagPanel.SimulateClosePressed();
-                return;
-            }
-
-            if (_uiManager.IsLayerInUse(UILayer.Panels))
-            {
-                return;
-            }
-
-            if (!_creatingFishingBag)
-            {
-                _creatingFishingBag = true;
-
-                _uiManager.CreateScreenUIAsync(_uiManager.Config.FishingBagPanelPrefab, UILayer.Panels).completed += (FishingBagPanel panel) =>
-                {
-                    _fishingBagPanel = panel;
-                    _fishingBagPanel.Setup(_context);
-                    _fishingBagPanel.Show(null);
-
-                    _creatingFishingBag = false;
-                };
-            }
+                panel.Setup(_context);
+                panel.Show(null);
+            });
         }
     }
 }

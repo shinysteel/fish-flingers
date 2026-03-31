@@ -1,11 +1,54 @@
 using FishFlingers.Networking;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Utils;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace FishFlingers.UI
 {
+    public class PanelInstance<T> where T : Panel
+    {
+        private UIManager _uiManager;
+
+        private T _prefab;
+        private T _panel;
+        private bool _creating;
+
+        public PanelInstance(T prefab)
+        {
+            _uiManager = GameManager.Instance.Get<UIManager>();
+
+            _prefab = prefab;
+        }
+
+        public void Toggle(Action<T> onCreate)
+        {
+            if (_panel != null)
+            {
+                _panel.SimulateClosePressed();
+                return;
+            }
+
+            if (_uiManager.IsLayerInUse(UILayer.Panels))
+            {
+                return;
+            }
+
+            if (!_creating)
+            {
+                _creating = true;
+
+                _uiManager.CreateScreenUIAsync(_prefab, UILayer.Panels).completed += (T panel) =>
+                {
+                    _panel = panel;
+                    _creating = false;
+                    onCreate(_panel);
+                };
+            }
+        }
+    }
+
     public abstract class Panel : ScreenUI
     {
         [SerializeField] protected Button _closeButton;
