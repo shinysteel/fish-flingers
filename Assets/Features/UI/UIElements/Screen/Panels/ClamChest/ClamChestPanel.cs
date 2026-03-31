@@ -1,3 +1,4 @@
+using FishFlingers.Inventories;
 using FishFlingers.States;
 using UnityEngine;
 
@@ -8,10 +9,10 @@ namespace FishFlingers.UI
         [SerializeField] private InventoryWidget _playerInventoryWidget;
         [SerializeField] private InventoryWidget _chestInventoryWidget;
 
-        public void Setup(GameplayContext context)
+        public void Setup(GameplayContext context, Inventory chestInventory)
         {
             _playerInventoryWidget.Setup(context, context.LocalPlayer.Inventory);
-            _chestInventoryWidget.Setup(context, context.LocalPlayer.Inventory);
+            _chestInventoryWidget.Setup(context, chestInventory);
         }
     }
 }

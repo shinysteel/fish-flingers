@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1527361721567410227}
   - component: {fileID: 7094251153933008725}
+  - component: {fileID: 8642959436816952001}
   - component: {fileID: 546813303548270000}
   - component: {fileID: 2790515543759882861}
   - component: {fileID: 6305463116590003927}
@@ -59,6 +60,29 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   _entityData: {fileID: 11400000, guid: 519a91e1e1075dd47a4ac38aed739eac, type: 2}
   _rigidbody: {fileID: 2790515543759882861}
+  _inventory: {fileID: 8642959436816952001}
+  _inventoryLayout: {fileID: 11400000, guid: 28853771c3054d3419707e9d481cf898, type: 2}
+--- !u!114 &8642959436816952001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316740569592169389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0e0c46993dfcd54895147529bf8251b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Inventories.Inventory
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
 --- !u!114 &546813303548270000
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -78,8 +78,6 @@ namespace FishFlingers.UI
         }
 
         public virtual void Refresh()
-        {
-
-        }
+        { }
     }
 }

@@ -39,6 +39,11 @@ namespace FishFlingers.UI
             {
                 return;
             }
+            
+            if (_targetSlotView.InventoryWidget != _inventoryWidget)
+            {
+                return;
+            }
 
             InventoryItem grabbedInventoryItem = _context.LocalPlayer.GrabbedItemLogic.GrabbedInventoryItem;
             if (grabbedInventoryItem == null)
