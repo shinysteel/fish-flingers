@@ -38,6 +38,12 @@ MonoBehaviour:
     m_ReadOnly: 1
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bc9b20d7f8cd0b840aa91970d83515a8
+    m_Address: Assets/Features/Localisation/Tables/ClamChestPanelTable/ClamChestPanel
+      Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d81b3ed4ebb8a774e8572d1461a0acae
     m_Address: Assets/Features/Localisation/Locales/CommonTable Shared Data.asset
     m_ReadOnly: 1

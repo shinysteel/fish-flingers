@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-English (en)
   m_GUID: 7aa84236e4bab9b49b004be256899123
   m_SerializeEntries:
+  - m_GUID: 05859cd5a8c26084cb2bbaab639403ec
+    m_Address: ClamChestPanel_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 24e9ff13bde005345b517ffda5f8e3de
     m_Address: StructuresTable_en
     m_ReadOnly: 1

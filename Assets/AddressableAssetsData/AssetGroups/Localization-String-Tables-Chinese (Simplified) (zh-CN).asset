@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-Chinese (Simplified) (zh-CN)
   m_GUID: 9e75c1d850277724394ad83d4d128e43
   m_SerializeEntries:
+  - m_GUID: 15c385125ca6c48488ca0ddc8599730a
+    m_Address: ClamChestPanel_zh-CN
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh-CN
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 356fb4bab105e6d42b1b8b25e0d0e4fb
     m_Address: BuildingKitPanelTable_zh-CN
     m_ReadOnly: 1

@@ -39,6 +39,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-zh-TW
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 90e98d180fe59e045a71248308cc4c9a
+    m_Address: ClamChestPanel_zh-TW
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh-TW
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 96190bd7b8a90124b83fd3adf192b76d
     m_Address: BrowseGamesPanelTable_zh-TW
     m_ReadOnly: 1

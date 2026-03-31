@@ -45,6 +45,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-de-DE
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c67a76a1dfad2d247b087febe7bfbdd9
+    m_Address: ClamChestPanel_de-DE
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-de-DE
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d0160cbe57b25bd4ea26daabbb0e9eec
     m_Address: EntitiesTable_de-DE
     m_ReadOnly: 1

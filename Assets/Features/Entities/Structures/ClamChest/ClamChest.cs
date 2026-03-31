@@ -20,7 +20,7 @@ namespace FishFlingers.Entities
 
         public void Interact()
         {
-            _clamChestPanelInstance.Toggle(null);
+            _clamChestPanelInstance.Toggle((ClamChestPanel panel) => panel.Setup(_context));
         }
     }
 }

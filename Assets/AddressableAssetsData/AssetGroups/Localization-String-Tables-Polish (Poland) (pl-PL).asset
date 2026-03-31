@@ -27,6 +27,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-pl-PL
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4ed77fd173ef5ce4688f6b3ccaee64f8
+    m_Address: ClamChestPanel_pl-PL
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-pl-PL
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 51d64800774d32b4e95bbd87c2ac1498
     m_Address: FishingBagPanelTable_pl-PL
     m_ReadOnly: 1

@@ -57,6 +57,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-ja-JP
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c03fc9f7ee3ab247a29aff44e67ee49
+    m_Address: ClamChestPanel_ja-JP
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ja-JP
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ce9ffe44a84145947946072507456c1d
     m_Address: MainMenuScreenTable_ja-JP
     m_ReadOnly: 1

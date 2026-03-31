@@ -12,11 +12,28 @@ namespace FishFlingers.Localisation
     public interface ILocalisationManagerListener
     { }
 
+    public class LocalisedStringLookup
+    {
+        private string _table;
+        private string _key;
+
+        public LocalisedStringLookup(string table, string key)
+        {
+            _table = table;
+            _key = key;
+        }
+
+        public string GetString()
+        {
+            return LocalizationSettings.StringDatabase.GetLocalizedString(_table, _key);
+        }
+    }
+
     public class LocalisationManager : GameSystem<ILocalisationManagerListener>
     {
         private LocalisationManagerConfig _config;
 
-        private Dictionary<LocalisationTerm, StringTableEntry> _termEntryMap = new();
+        private Dictionary<LocalisationTerm, LocalisedStringLookup> _termLookupMap = new();
 
         public override void Initialise(GameManagerConfig config)
         {
@@ -30,7 +47,7 @@ namespace FishFlingers.Localisation
                 {
                     foreach (StringTableEntry entry in table.Values)
                     {
-                        _termEntryMap.Add((LocalisationTerm)Utils.Math.HashLongToInt(entry.KeyId), entry);
+                        _termLookupMap.Add((LocalisationTerm)Utils.Math.HashLongToInt(entry.KeyId), new LocalisedStringLookup(table.TableCollectionName, entry.Key));
                     }
                 }
             };
@@ -40,7 +57,7 @@ namespace FishFlingers.Localisation
 
         public string GetString(LocalisationTerm term)
         {
-            return _termEntryMap[term].GetLocalizedString();
+            return _termLookupMap[term].GetString();
         }
     }
 }

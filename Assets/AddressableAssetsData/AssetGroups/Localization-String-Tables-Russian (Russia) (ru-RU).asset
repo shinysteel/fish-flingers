@@ -21,6 +21,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-ru-RU
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4cbca2faca7399141be170633c652d8d
+    m_Address: ClamChestPanel_ru-RU
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru-RU
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 573b31dfac4ee4a41b34f851ed858755
     m_Address: MainMenuScreenTable_ru-RU
     m_ReadOnly: 1
