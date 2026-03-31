@@ -26,6 +26,14 @@ MonoBehaviour:
     m_Localized: "Z\xE4hlt fest, wie viele Wellen Sie \xFCberstanden haben."
     m_Metadata:
       m_Items: []
+  - m_Id: 27724425787174912
+    m_Localized: Muscheltruhe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27724425816535040
+    m_Localized: "Es bewahrt Ihre Gegenst\xE4nde in seinem Maul auf."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

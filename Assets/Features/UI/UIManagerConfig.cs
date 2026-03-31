@@ -1,4 +1,5 @@
 using FishFlingers.UI.Transitions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,11 +36,13 @@ namespace FishFlingers.UI
         [SerializeField] private HostGamePanel _hostGamePanelPrefab;
         [SerializeField] private FishingBagPanel _fishingBagPanelPrefab;
         [SerializeField] private BuildingKitPanel _buildingKitPanelPrefab;
+        [SerializeField] private ClamChestPanel _clamChestPanel;
 
         public BrowseGamesPanel BrowseGamesPanelPrefab => _browseGamesPanelPrefab;
         public HostGamePanel HostGamePanelPrefab => _hostGamePanelPrefab;
         public FishingBagPanel FishingBagPanelPrefab => _fishingBagPanelPrefab;
         public BuildingKitPanel BuildingKitPanelPrefab => _buildingKitPanelPrefab;
+        public ClamChestPanel ClamChestPanel => _clamChestPanel;
 
         [Header("ScreenUI - Cursors")]
         [SerializeField] private CursorsUI _cursorsUIPrefab;

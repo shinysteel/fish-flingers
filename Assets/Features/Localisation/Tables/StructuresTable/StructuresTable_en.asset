@@ -26,6 +26,14 @@ MonoBehaviour:
     m_Localized: Keeps track of how many waves you've survived
     m_Metadata:
       m_Items: []
+  - m_Id: 27724425787174912
+    m_Localized: Clam Chest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27724425816535040
+    m_Localized: Stores your items inside its mouth
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

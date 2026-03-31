@@ -26,6 +26,14 @@ MonoBehaviour:
     m_Localized: "Permet de suivre le nombre de vagues auxquelles vous avez surv\xE9cu."
     m_Metadata:
       m_Items: []
+  - m_Id: 27724425787174912
+    m_Localized: "Coffre \xE0 palourdes"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27724425816535040
+    m_Localized: "Range vos objets \xE0 l'int\xE9rieur de sa bouche"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

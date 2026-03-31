@@ -17,7 +17,7 @@ namespace FishFlingers.Entities
     public enum EntityId
     {
         None        = 0   ,
-
+        
         Tile        = 1   ,
         DroppedItem = 2   ,
 
@@ -27,6 +27,7 @@ namespace FishFlingers.Entities
 
         // Structures
         WaveSign    = 200 ,
+        ClamChest   = 201 ,
     }
 
     public interface IEntityManagerListener
