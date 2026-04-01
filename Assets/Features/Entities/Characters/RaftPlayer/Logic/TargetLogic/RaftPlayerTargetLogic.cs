@@ -158,6 +158,7 @@ namespace FishFlingers.Entities
 
             if (_showingTarget)
             {
+                RefreshVisualColor();
                 _targetVisual.gameObject.SetActive(true);    
             }
             else
