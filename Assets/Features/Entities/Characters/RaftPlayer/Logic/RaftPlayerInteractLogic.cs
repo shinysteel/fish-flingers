@@ -202,6 +202,15 @@ namespace FishFlingers.Entities
             _uiStateMachine.AddState(EState.Destroy, destroyState);
         }
 
+        public void Cleanup()
+        {
+            if (_interactPromptUI != null)
+            {
+                _uiManager.DestroyWorldUI(_interactPromptUI);
+                _interactPromptUI = null;
+            }
+        }
+        
         public void Interact()
         {
             if (_targetInteractable as Object == null)

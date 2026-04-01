@@ -135,6 +135,13 @@ namespace FishFlingers.Entities
             }
         }
 
+        protected override void OnDespawned()
+        {
+            base.OnDespawned();
+
+            _interactLogic.Cleanup();
+        }
+
         private void Update()
         {
             if (!isFullySpawned)
