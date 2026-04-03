@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace FishFlingers.Entities
 {
@@ -42,23 +43,25 @@ namespace FishFlingers.Entities
 
         public RaftPlayerSave()
         { }
-        
-        private RaftPlayerSave(Vector3 position, Quaternion rotation, Inventory inventory)
-        {
-            Position = Utils.Math.RoundVector3(position, Precision);
-            Rotation = Utils.Math.RoundQuaternion(rotation, Precision);
 
-            if (inventory != null)
-            {
-                foreach (InventoryItem item in inventory.InventoryItems.Values)
-                {
-                    Inventory.Items.Add(new InventoryItemSave(item));
-                }
-            }
+        public async Task LoadToAsync(RaftPlayer player)
+        {
+            player.transform.position = Position;
+            player.transform.rotation = Rotation;
+
+            player.Rigidbody.linearVelocity = Vector3.zero;
+            player.Rigidbody.angularVelocity = Vector3.zero;
+
+            await Inventory.LoadToAsync(player.Inventory);
         }
 
-        public RaftPlayerSave(RaftPlayer player) : this(player.transform.position, player.transform.rotation, player.Inventory)
-        { }
+        public void SaveFrom(RaftPlayer player)
+        {
+            Position = Utils.Math.RoundVector3(player.transform.position, Precision);
+            Rotation = Utils.Math.RoundQuaternion(player.transform.rotation, Precision);
+
+            Inventory.SaveFrom(player.Inventory);
+        }
 
         public void ApplyDefaults()
         {
@@ -183,25 +186,6 @@ namespace FishFlingers.Entities
             _netMousePositionNormalised.value = new Vector2(Mathf.Clamp01(_inputLogic.Mouse.x / Screen.width), Mathf.Clamp01(_inputLogic.Mouse.y / Screen.height));
         }
 
-        public async Task LoadAsync(RaftPlayerSave save)
-        {
-            transform.position = save.Position;
-            transform.rotation = save.Rotation;
-
-            _rigidbody.linearVelocity = Vector3.zero;
-            _rigidbody.angularVelocity = Vector3.zero;
-
-            while (!_inventory.IsReady)
-            {
-                await Task.Yield();
-            }
-
-            foreach (InventoryItemSave itemSave in save.Inventory.Items)
-            {
-                bool place = _inventory.TryPlaceItem(InventoryPlaceParams.Create(itemSave), false, out _, out _, out _);
-            }
-        }
-
         [TargetRpc]
         public async Task<NetInventoryItem> GrabRpc(PlayerID playerId, Inventory inventory, string instanceId, Vector2Int cell)
         {
@@ -221,7 +205,7 @@ namespace FishFlingers.Entities
             // The slot we grabbed at becomes the pivot
             grabbedNetInventoryItem.SetPivot(InventoryItemUtils.RecalculatePivot(grabbedNetInventoryItem.Cell, cell, grabbedNetInventoryItem.Pivot, grabbedNetInventoryItem.Rotations));
 
-            inventory.SetItemIsGrabbed(instanceId, true);
+            inventory.SetNetItemIsGrabbed(instanceId, true);
 
             return grabbedNetInventoryItem;
         }
@@ -238,7 +222,7 @@ namespace FishFlingers.Entities
             // No overflow indicates the item has no count left
             if (count > 0)
             {
-                inventory.SetItemCount(instanceId, count);
+                inventory.SetNetItemCount(instanceId, count);
                 return;
             }
 
@@ -260,7 +244,7 @@ namespace FishFlingers.Entities
             // There's scenarios where you release an item, and it no longer exists in the inventory since it was moved to another
             if (inventory.InventoryItems.ContainsKey(instanceId))
             {
-                inventory.SetItemIsGrabbed(instanceId, false);
+                inventory.SetNetItemIsGrabbed(instanceId, false);
             }
         }
     }

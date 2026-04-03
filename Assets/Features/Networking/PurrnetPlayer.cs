@@ -34,6 +34,27 @@ namespace FishFlingers.Networking
             RaftPlayer = raftPlayer;
         }
 
+        public async Task LoadToAsync(PurrnetPlayer purrnetPlayer)
+        {
+            // The raft player may not be created yet
+            while (purrnetPlayer.GetNetRaftPlayer() == null)
+            {
+                await Task.Yield();
+            }
+
+            purrnetPlayer.SetNetSaveId(SaveId);
+            purrnetPlayer.SetNetItemInstanceIdCounter(ItemInstanceIdCounter);
+
+            await RaftPlayer.LoadToAsync(purrnetPlayer.GetNetRaftPlayer());
+        }
+
+        public void SaveFrom(PurrnetPlayer purrnetPlayer)
+        {
+            SaveId = purrnetPlayer.GetNetSaveId();
+            ItemInstanceIdCounter = purrnetPlayer.GetNetItemInstanceIdCounter();
+            RaftPlayer.SaveFrom(purrnetPlayer.GetNetRaftPlayer());
+        }
+
         public void ApplyDefaults()
         {
             RaftPlayer.ApplyDefaults();
@@ -77,9 +98,9 @@ namespace FishFlingers.Networking
             }
         }
 
-        // This solution is alright for making sure all items are unique across the session, but it will
-        // break if a client stops their application and then rejoins, having their id counter reset to 0
-        public string GetNextItemInstanceId()
+        // Every instance of an inventory item needs a unique id, and we can guarantee this by combining the
+        // player's id with a local counter
+        public string GetNextNetItemInstanceId()
         {
             return $"{_netSaveId.value}_{_netItemInstanceIdCounter.value++}";
         }
@@ -88,6 +109,31 @@ namespace FishFlingers.Networking
         {
             _netRaftPlayer.value = (RaftPlayer)_entityManager.Spawn(EntityId.RaftPlayer, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
             return _netRaftPlayer;
+        }
+
+        public RaftPlayer GetNetRaftPlayer()
+        {
+            return _netRaftPlayer.value;
+        }
+
+        public int GetNetSaveId()
+        {
+            return _netSaveId.value;
+        }
+
+        public void SetNetSaveId(int id)
+        {
+            _netSaveId.value = id;
+        }
+
+        public int GetNetItemInstanceIdCounter()
+        {
+            return _netItemInstanceIdCounter.value;
+        }
+
+        public void SetNetItemInstanceIdCounter(int counter)
+        {
+            _netItemInstanceIdCounter.value = counter;
         }
 
         [ServerRpc]
@@ -120,21 +166,12 @@ namespace FishFlingers.Networking
 
             PurrnetPlayerSave save = await GetSaveRpc();
 
-            // The raft player may not be created yet
-            while (_netRaftPlayer.value == null)
-            {
-                await Task.Yield();
-            }
-
-            _netSaveId.value = save.SaveId;
-            _netItemInstanceIdCounter.value = save.ItemInstanceIdCounter;
-
-            await _netRaftPlayer.value.LoadAsync(save.RaftPlayer);
+            await save.LoadToAsync(this);
         }
 
         void ISaveable.Save()
         {
-            _saveManager.GameSave.Players[_netGuid] = new PurrnetPlayerSave(_netSaveId.value, _netItemInstanceIdCounter.value, new RaftPlayerSave(_netRaftPlayer.value));
+            _saveManager.GameSave.Players[_netGuid.value].SaveFrom(this);
         }
     }
 }

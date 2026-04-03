@@ -24,6 +24,38 @@ namespace FishFlingers.Environments
         [JsonProperty] public List<TileSave> Tiles { get; private set; } = new();
         [JsonProperty] public List<StructureSave> Structures { get; private set; } = new();
 
+        public void LoadTo(Raft raft)
+        {
+            foreach (TileSave save in Tiles)
+            {
+                raft.AddNetTileRpc(save.Cell, save.Health);
+            }
+
+            foreach (StructureSave save in Structures)
+            {
+                raft.AddStructureRpc(save.Cell, save.StructureId);
+
+                // Since we are the server, we can assume it exists straight away
+                raft.Tiles[save.Cell].Structure.LoadJsonData(save.JsonData);
+            }
+        }
+
+        public void SaveFrom(Raft raft)
+        {
+            Tiles.Clear();
+            Structures.Clear();
+
+            foreach (Tile tile in raft.Tiles.Values)
+            {
+                Tiles.Add(new TileSave(tile));
+
+                if (tile.Structure != null)
+                {
+                    Structures.Add(new StructureSave(tile.Structure));
+                }
+            }
+        }
+
         public void ApplyDefaults()
         {
             // Start with a 3x3 grid
@@ -44,7 +76,7 @@ namespace FishFlingers.Environments
             }
 
             // Start with a wave sign
-            Structures.Add(new StructureSave(new Vector2Int(0, 1), EntityId.WaveSign));
+            Structures.Add(new StructureSave(new Vector2Int(0, 1), EntityId.WaveSign, string.Empty));
         }
     }
 
@@ -194,8 +226,9 @@ namespace FishFlingers.Environments
             }
 
             Structure structure = (Structure)_entityManager.Spawn(structureId, new SpawnParams() { Parent = tile.transform, Position = new Vector3(tile.transform.position.x, tile.GetSurfaceY(), tile.transform.position.z) });
+            structure.SetCell(cell);
+            
             netTile.SetStructure(structure);
-
             _netTiles.SetDirty(cell);
         }
 
@@ -315,39 +348,6 @@ namespace FishFlingers.Environments
             if (_leftmostColumn == cell.x && !_columnToRowsMap.ContainsKey(cell.x))
             {
                 _leftmostColumn = _columnToRowsMap.Count > 0 ? _columnToRowsMap.Keys.Min() : 0;
-            }
-        }
-
-        public void Load()
-        {
-            foreach (TileSave save in _saveManager.GameSave.Environment.Raft.Tiles)
-            {
-                AddNetTileRpc(save.Cell, save.Health);
-            }
-
-            foreach (StructureSave save in _saveManager.GameSave.Environment.Raft.Structures)
-            {
-                AddStructureRpc(save.Cell, save.StructureId);
-            }
-        }
-
-        public void Save()
-        {
-            _saveManager.GameSave.Environment.Raft.Tiles.Clear();
-
-            foreach (Tile tile in _tiles.Values)
-            {
-                _saveManager.GameSave.Environment.Raft.Tiles.Add(new TileSave(tile));
-            }
-
-            _saveManager.GameSave.Environment.Raft.Structures.Clear();
-
-            foreach (Tile tile in _tiles.Values)
-            {
-                if (tile.Structure != null)
-                {
-                    _saveManager.GameSave.Environment.Raft.Structures.Add(new StructureSave(tile.Cell, tile.Structure.StructureData.Id));
-                }
             }
         }
     }

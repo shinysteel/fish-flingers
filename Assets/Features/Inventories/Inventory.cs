@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Threading.Tasks;
 
 namespace FishFlingers.Inventories
 {
@@ -32,6 +33,39 @@ namespace FishFlingers.Inventories
     public class InventorySave
     {
         [JsonProperty] public List<InventoryItemSave> Items { get; private set; } = new();
+
+        public InventorySave()
+        { }
+
+        public InventorySave(Inventory inventory)
+        {
+            SaveFrom(inventory);
+        }
+
+        public async Task LoadToAsync(Inventory inventory)
+        {
+            while (!inventory.IsReady)
+            {
+                await Task.Yield();
+            }
+
+            inventory.ClearNetInventoryItems();
+
+            foreach (InventoryItemSave itemSave in Items)
+            {
+                inventory.TryPlaceItem(InventoryPlaceParams.Create(itemSave), false, out _, out _, out _);
+            }
+        }
+
+        public void SaveFrom(Inventory inventory)
+        {
+            Items.Clear();
+
+            foreach (InventoryItem item in inventory.InventoryItems.Values)
+            {
+                Items.Add(new InventoryItemSave(item));
+            }
+        }
     }
 
     public class InventoryItemSave
@@ -490,7 +524,7 @@ namespace FishFlingers.Inventories
 
             data.Shape.GetTransformed(item.Pivot, item.Rotations).ForEachTrue((Vector2Int cell) =>
             {
-                SetSlotItemInstanceId(item.Cell + cell, null);
+                SetNetSlotItemInstanceId(item.Cell + cell, null);
             });
         }
 
@@ -897,7 +931,7 @@ namespace FishFlingers.Inventories
             ItemData data = _itemManager.GetItemData(place.Parameters.ItemId);
 
             // A null place.InstanceId indicates this will be a new item. We validate instanceId here since we know for sure it will be placed
-            string instanceId = place.Parameters.InstanceId != null ? place.Parameters.InstanceId : _networkManager.LocalPurrnetPlayer.GetNextItemInstanceId();
+            string instanceId = place.Parameters.InstanceId != null ? place.Parameters.InstanceId : _networkManager.LocalPurrnetPlayer.GetNextNetItemInstanceId();
 
             NetInventoryItem item = new NetInventoryItem(place.Parameters.Cell, place.Parameters.Pivot, place.Parameters.RotationParams.Rotations, new NetItemInstance(instanceId, place.Parameters.ItemId, place.Parameters.Count));
 
@@ -916,7 +950,7 @@ namespace FishFlingers.Inventories
             // Place the items
             place.Shape.ForEachTrue((Vector2Int cell) =>
             {
-                SetSlotItemInstanceId(place.Parameters.Cell + cell, instanceId);
+                SetNetSlotItemInstanceId(place.Parameters.Cell + cell, instanceId);
             });
         }
 
@@ -925,19 +959,24 @@ namespace FishFlingers.Inventories
             return _netInventoryItems[instanceId].DeepClone();
         }
         
-        public void SetSlotItemInstanceId(Vector2Int cell, string instanceId)
+        public void ClearNetInventoryItems()
+        {
+            _netInventoryItems.Clear();
+        }
+
+        public void SetNetSlotItemInstanceId(Vector2Int cell, string instanceId)
         {
             _netInventorySlots[cell].SetItemInstanceId(instanceId);
             _netInventorySlots.SetDirty(cell);
         }
 
-        public void SetItemCount(string instanceId, int count)
+        public void SetNetItemCount(string instanceId, int count)
         {
             _netInventoryItems[instanceId].ItemInstance.SetCount(count);
             _netInventoryItems.SetDirty(instanceId);
         }
 
-        public void SetItemIsGrabbed(string instanceId, bool isGrabbed)
+        public void SetNetItemIsGrabbed(string instanceId, bool isGrabbed)
         {
             _netInventoryItems[instanceId].SetIsGrabbed(isGrabbed);
             _netInventoryItems.SetDirty(instanceId);
