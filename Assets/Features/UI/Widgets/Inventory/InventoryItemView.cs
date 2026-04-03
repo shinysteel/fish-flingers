@@ -17,6 +17,10 @@ namespace FishFlingers.UI
 
         public InventoryItem InventoryItem => _view.InventoryItem;
 
+        // When an item is 'grabbed', it's alpha is modified until the grab is resolved
+        private const float GrabbedAlpha = 0.5f;
+        private const float DefaultAlpha = 1f;
+
         public void Setup(InventoryWidget inventoryWidget, InventoryItem inventoryItem)
         {
             _inventoryWidget = inventoryWidget;
@@ -34,6 +38,7 @@ namespace FishFlingers.UI
             _view.Refresh();
 
             RefreshRect();
+            RefreshAlpha();
         }
 
         private void RefreshRect()
@@ -43,14 +48,11 @@ namespace FishFlingers.UI
             _view.RectTransform.anchoredPosition = slotView.RectTransform.anchoredPosition;
         }
 
-        public void SetAlpha(float alpha)
+        private void RefreshAlpha()
         {
+            // Alpha
+            float alpha = _view.InventoryItem.IsGrabbed ? GrabbedAlpha : DefaultAlpha;
             _view.SetAlpha(alpha);
-        }
-
-        public void ResetAlpha()
-        {
-            _view.ResetAlpha();
         }
         
         public void SetSlotSize(Vector2 size)

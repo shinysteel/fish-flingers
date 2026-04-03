@@ -3339,10 +3339,16 @@ namespace AmplifyShaderEditor
 			UndoUtils.RecordObjects( selectedNodes, Constants.UndoDeleteNodeId );
 			UndoUtils.RecordObjects( extraNodes.ToArray(), Constants.UndoDeleteNodeId );
 
-			//Record deleting connections
-			for( int i = 0; i < selectedNodes.Length; i++ )
+
+			// @diogo: unalive all selected nodes first, so we can check against that to prevent double-deleting nodes
+			for ( int i = 0; i < selectedNodes.Length; i++ )
 			{
 				selectedNodes[ i ].Alive = false;
+			}
+
+			//Record deleting connections
+			for ( int i = 0; i < selectedNodes.Length; i++ )
+			{
 				m_mainGraphInstance.DeleteAllConnectionFromNode( selectedNodes[ i ], false, true, true );
 			}
 			//Delete
@@ -4046,7 +4052,6 @@ namespace AmplifyShaderEditor
 												else
 													newNode.ReadFromString( ref parameters );
 
-
 												if( oldType == type )
 												{
 													newNode.ReadInputDataFromString( ref parameters );
@@ -4375,7 +4380,6 @@ namespace AmplifyShaderEditor
 												}
 												else
 													newNode.ReadFromString( ref parameters );
-
 
 												if( oldType == type )
 												{
@@ -5536,7 +5540,12 @@ namespace AmplifyShaderEditor
 
 		public void UpdateNodePreviewListAndTime()
 		{
-			if( UIUtils.CurrentWindow != this )
+		#if UNITY_2020_1_OR_NEWER
+			bool hasFocus = UIUtils.CurrentWindow.hasFocus;
+		#else
+			bool hasFocus = ( EditorWindow.focusedWindow == UIUtils.CurrentWindow );
+		#endif
+			if( UIUtils.CurrentWindow != this || !hasFocus )
 				return;
 
 			double deltaTime = Time.realtimeSinceStartup - m_time;
@@ -5606,12 +5615,26 @@ namespace AmplifyShaderEditor
 			if( RenderSettings.sun != null )
 			{
 				Vector3 lightdir = -RenderSettings.sun.transform.forward;//.rotation.eulerAngles;
+				Color lightColor = RenderSettings.sun.color.linear;
+				float lightIntensity = RenderSettings.sun.intensity;
 
+				// Deprecated
 				Shader.SetGlobalVector( "_EditorWorldLightPos", new Vector4( lightdir.x, lightdir.y, lightdir.z, 0 ) );
-				Shader.SetGlobalColor( "_EditorLightColor", RenderSettings.sun.color.linear );
+				Shader.SetGlobalVector( "_EditorLightColor", new Vector4( lightColor.r, lightColor.g, lightColor.b, lightIntensity ) );
+
+				// New
+				Shader.SetGlobalVector( "preview_EditorLightDirection", lightdir.normalized );
+				Shader.SetGlobalVector( "preview_EditorLightColor", new Vector3( lightColor.r, lightColor.g, lightColor.b ) );
+				Shader.SetGlobalFloat( "preview_EditorLightIntensity", lightIntensity );
 			}
+
+			// Deprecated
 			Shader.SetGlobalFloat( "_EditorTime", (float)m_time );
 			Shader.SetGlobalFloat( "_EditorDeltaTime", (float)deltaTime );
+
+			// New
+			Shader.SetGlobalFloat( "preview_EditorTime", (float)m_time );
+			Shader.SetGlobalFloat( "preview_EditorDeltaTime", (float)deltaTime );
 
 			// @diogo: limit preview update frequency to keep the CPU usage under control
 			m_previewUpdateLimiterTime += deltaTime;
@@ -5621,27 +5644,30 @@ namespace AmplifyShaderEditor
 			}
 			m_previewUpdateLimiterTime = 0;
 
-			/////////// UPDATE PREVIEWS //////////////
-			UIUtils.CheckNullMaterials();
-			UIUtils.SetPreviewShaderConstants();
-			//CurrentGraph.AllNodes.Sort( ( x, y ) => { return x.Depth.CompareTo( y.Depth ); } );
-			int nodeCount = CurrentGraph.AllNodes.Count;
-			for( int i = nodeCount - 1; i >= 0; i-- )
+			if ( !Preferences.User.DisablePreviews )
 			{
-				ParentNode node = CurrentGraph.AllNodes[ i ];
-				if( node != null && !VisitedChanged.ContainsKey( node.OutputId ) )
+				/////////// UPDATE PREVIEWS //////////////
+				UIUtils.CheckNullMaterials();
+				UIUtils.SetPreviewShaderConstants();
+				//CurrentGraph.AllNodes.Sort( ( x, y ) => { return x.Depth.CompareTo( y.Depth ); } );
+				int nodeCount = CurrentGraph.AllNodes.Count;
+				for( int i = nodeCount - 1; i >= 0; i-- )
 				{
-					bool result = node.RecursivePreviewUpdate();
-					if( result )
-						m_repaintIsDirty = true;
+					ParentNode node = CurrentGraph.AllNodes[ i ];
+					if( node != null && !VisitedChanged.ContainsKey( node.OutputId ) )
+					{
+						bool result = node.RecursivePreviewUpdate();
+						if( result )
+							m_repaintIsDirty = true;
+					}
 				}
-			}
 
-			VisitedChanged.Clear();
-			if( m_repaintIsDirty )
-			{
-				m_repaintIsDirty = false;
-				Repaint();
+				VisitedChanged.Clear();
+				if( m_repaintIsDirty )
+				{
+					m_repaintIsDirty = false;
+					Repaint();
+				}
 			}
 		}
 
@@ -5774,6 +5800,11 @@ namespace AmplifyShaderEditor
 		public void SetOutdatedShaderFromTemplate()
 		{
 			m_outdatedShaderFromTemplateLoaded = true;
+		}
+
+		public void DelayedReplaceMasterNode( TemplateMultiPassMasterNode masterNode, string newTemplateGUID )
+		{
+			ReplaceMasterNode( new MasterNodeCategoriesData( AvailableShaderTypes.Template, newTemplateGUID ), false );
 		}
 
 		public void ReplaceMasterNode( MasterNodeCategoriesData data, bool cacheMasterNodes )

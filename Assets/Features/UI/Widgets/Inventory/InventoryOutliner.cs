@@ -63,7 +63,7 @@ namespace FishFlingers.UI
                 CellOutline.EColor color = _inventoryWidget.Inventory.CanPlaceItem(InventoryPlaceParams.Create(_targetSlotView.Cell, grabbedInventoryItem), out _, out _, out _)
                     ? CellOutline.EColor.Positive
                     : CellOutline.EColor.Negative;
-
+                
                 grabbedInventoryItem.Shape.ForEachTrue((Vector2Int cell) =>
                 {
                     if (_inventoryWidget.InventorySlotViews.TryGetValue(_targetSlotView.Cell + cell, out InventorySlotView slotView))

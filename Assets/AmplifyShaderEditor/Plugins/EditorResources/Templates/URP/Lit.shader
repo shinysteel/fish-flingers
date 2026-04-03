@@ -23,7 +23,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 		[ToggleOff(_SPECULARHIGHLIGHTS_OFF)] _SpecularHighlights("Specular Highlights", Float) = 1.0
 		[ToggleOff] _EnvironmentReflections("Environment Reflections", Float) = 1.0
-		[ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
+		[HideInInspector][ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
 
 		[HideInInspector] _QueueOffset("_QueueOffset", Float) = 0
         [HideInInspector] _QueueControl("_QueueControl", Float) = -1
@@ -35,6 +35,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 		[HideInInspector][ToggleUI] _AddPrecomputedVelocity("Add Precomputed Velocity", Float) = 1
 
 		[HideInInspector] _XRMotionVectorsPass("_XRMotionVectorsPass", Float) = 1
+
+		[HideInInspector] _AlphaClip("__clip", Float) = 0.0
 	}
 
 	SubShader
@@ -123,17 +125,22 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				On:SetPropertyOnSubShader:CullMode,Off
 				Cull Back:SetPropertyOnSubShader:CullMode,Back
 				Cull Front:SetPropertyOnSubShader:CullMode,Front
-			Option:Alpha Clipping:false,true:true
-				true:ShowPort:Forward:Alpha Clip Threshold
-				true?Cast Shadows=true:ShowOption:  Use Shadow Threshold
-				true?Surface=Opaque:SetPropertyOnSubShader:RenderType,TransparentCutout
-				true?Surface=Opaque:SetPropertyOnSubShader:RenderQueue,AlphaTest
-				true:SetDefine:_ALPHATEST_ON
-				false:HidePort:Forward:Alpha Clip Threshold
-				false:SetOption:  Use Shadow Threshold,0
-				false:HideOption:  Use Shadow Threshold
-				false:RefreshOption:Surface
-				false:RemoveDefine:_ALPHATEST_ON
+			Option:Alpha Clipping,InvertActionOnDeselection:Force Off,Force On,Material Toggle:Force Off
+				Force Off,disable:HideOption:  Use Shadow Threshold
+				Force Off,disable:HidePort:Alpha Clip Threshold
+				Force Off,disable:SetShaderProperty:_AlphaClip,//[HideInInspector] _AlphaClip("__clip", Float) = 0.0
+				Force Off,disable:RefreshOption:Surface
+				Force On:ShowPort:Alpha Clip Threshold
+				Force On?Cast Shadows=true:ShowOption:  Use Shadow Threshold
+				Force On?Surface=Opaque:SetPropertyOnSubShader:RenderType,TransparentCutout
+				Force On?Surface=Opaque:SetPropertyOnSubShader:RenderQueue,AlphaTest
+				Force On:SetDefine:_ALPHATEST_ON
+				Material Toggle:ShowOption:  Use Shadow Threshold
+				Material Toggle:ShowPort:Alpha Clip Threshold
+				Material Toggle:SetShaderProperty:_AlphaClip,[HideInInspector] _AlphaClip("__clip", Float) = 1.0
+				Material Toggle?Surface=Opaque:SetPropertyOnSubShader:RenderType,TransparentCutout
+				Material Toggle?Surface=Opaque:SetPropertyOnSubShader:RenderQueue,AlphaTest
+				Material Toggle:SetDefine:pragma shader_feature_local _ALPHATEST_ON
 			Option:  Use Shadow Threshold:false,true:false
 				true:ShowPort:Forward:Alpha Clip Threshold Shadow
 				true:SetDefine:_ALPHATEST_SHADOW_ON 1
@@ -220,15 +227,15 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				Force On:RemoveDefine:_RECEIVE_SHADOWS_OFF
 				Force On:RemoveDefine:Forward:pragma shader_feature_local_fragment _RECEIVE_SHADOWS_OFF
 				Force On:RemoveDefine:GBuffer:pragma shader_feature_local_fragment _RECEIVE_SHADOWS_OFF
-				Force On:SetShaderProperty:_ReceiveShadows,//[ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
+				Force On:SetShaderProperty:_ReceiveShadows,//[HideInInspector][ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
 				Force Off:RemoveDefine:Forward:pragma shader_feature_local_fragment _RECEIVE_SHADOWS_OFF
 				Force Off:RemoveDefine:GBuffer:pragma shader_feature_local_fragment _RECEIVE_SHADOWS_OFF
 				Force Off:SetDefine:_RECEIVE_SHADOWS_OFF
-				Force Off:SetShaderProperty:_ReceiveShadows,//[ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
+				Force Off:SetShaderProperty:_ReceiveShadows,//[HideInInspector][ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
 				Material Toggle:SetDefine:Forward:pragma shader_feature_local_fragment _RECEIVE_SHADOWS_OFF
 				Material Toggle:SetDefine:GBuffer:pragma shader_feature_local_fragment _RECEIVE_SHADOWS_OFF
 				Material Toggle:RemoveDefine:_RECEIVE_SHADOWS_OFF
-				Material Toggle:SetShaderProperty:_ReceiveShadows,[ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
+				Material Toggle:SetShaderProperty:_ReceiveShadows,[HideInInspector][ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
 			Option:Specular Highlights:Force Off,Force On,Material Toggle:Material Toggle
 				Force On:RemoveDefine:_SPECULARHIGHLIGHTS_OFF
 				Force On:RemoveDefine:Forward:pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
@@ -390,9 +397,11 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			Option:Write Depth:false,true:false
 				true:SetDefine:ASE_DEPTH_WRITE_ON
 				true:ShowOption:  Early Z
+				true:ShowPort:ExtraPrePass:Depth
 				true:ShowPort:Forward:Depth
 				false,disable:RemoveDefine:ASE_DEPTH_WRITE_ON
 				false,disable:HideOption:  Early Z
+				false,disable:HidePort:ExtraPrePass:Depth
 				false,disable:HidePort:Forward:Depth
 			Option:  Early Z:false,true:false
 				true:SetDefine:ASE_EARLY_Z_DEPTH_OPTIMIZE
@@ -623,6 +632,14 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 			/*ase_pragma*/
 
+			#if defined(ASE_EARLY_Z_DEPTH_OPTIMIZE) && (SHADER_TARGET >= 45)
+				#define ASE_SV_DEPTH SV_DepthLessEqual
+				#define ASE_SV_POSITION_QUALIFIERS linear noperspective centroid
+			#else
+				#define ASE_SV_DEPTH SV_Depth
+				#define ASE_SV_POSITION_QUALIFIERS
+			#endif
+
 			struct Attributes
 			{
 				float4 positionOS : POSITION;
@@ -645,6 +662,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float _AlphaClip;
+			float _Cutoff;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -806,7 +825,11 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			}
 			#endif
 
-			half4 frag ( PackedVaryings input /*ase_frag_input*/ ) : SV_Target
+			half4 frag ( PackedVaryings input /*ase_frag_input*/
+						#if defined( ASE_DEPTH_WRITE_ON )
+						,out float outputDepth : ASE_SV_DEPTH
+						#endif
+			) : SV_Target
 			{
 				UNITY_SETUP_INSTANCE_ID( input );
 				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( input );
@@ -835,7 +858,13 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 				float3 Color = /*ase_frag_out:Color;Float3;0;-1;_ColorP*/float3( 0, 0, 0 )/*end*/;
 				float Alpha = /*ase_frag_out:Alpha;Float;1;-1;_AlphaP*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;2;-1;_AlphaClipP*/0.5/*end*/;
+				#if defined( _ALPHATEST_ON )
+					float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/_Cutoff/*end*/;
+				#endif
+
+				#if defined( ASE_DEPTH_WRITE_ON )
+					input.positionCS.z = /*ase_frag_out:Depth;Float;17;-1;_DepthP*/input.positionCS.z/*end*/;
+				#endif
 
 				#if defined( _ALPHATEST_ON )
 					AlphaDiscard( Alpha, AlphaClipThreshold );
@@ -843,7 +872,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 				InputData inputData = (InputData)0;
 				inputData.positionWS = PositionWS;
-				inputData.positionCS = float4( input.positionCS.xy, ClipPos.zw / ClipPos.w );
+				inputData.positionCS = input.positionCS;
 				inputData.normalizedScreenSpaceUV = ScreenPosNorm.xy;
 				inputData.viewDirectionWS = ViewDirWS;
 
@@ -865,6 +894,10 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 				#if defined(LOD_FADE_CROSSFADE)
 					LODFadeCrossFade( input.positionCS );
+				#endif
+
+				#if defined( ASE_DEPTH_WRITE_ON )
+					outputDepth = input.positionCS.z;
 				#endif
 
 				#if defined( ASE_OPAQUE_KEEP_ALPHA )
@@ -1006,6 +1039,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float _AlphaClip;
+			float _Cutoff;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1259,8 +1294,10 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				float Occlusion = /*ase_frag_out:Occlusion;Float;5;-1;_Occlusion*/1/*end*/;
 				float3 Emission = /*ase_frag_out:Emission;Float3;2;-1;_Emission*/0/*end*/;
 				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
-				float AlphaClipThresholdShadow = /*ase_frag_out:Alpha Clip Threshold Shadow;Float;16;-1;_AlphaClipShadow*/0.5/*end*/;
+				#if defined( _ALPHATEST_ON )
+					float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/_Cutoff/*end*/;
+					float AlphaClipThresholdShadow = /*ase_frag_out:Alpha Clip Threshold Shadow;Float;16;-1;_AlphaClipShadow*/0.5/*end*/;
+				#endif
 				float3 BakedGI = /*ase_frag_out:Baked GI;Float3;11;-1;_BakedGI*/0/*end*/;
 				float3 RefractionColor = /*ase_frag_out:Refraction Color;Float3;12;-1;_RefractionColor*/1/*end*/;
 				float RefractionIndex = /*ase_frag_out:Refraction Index;Float;13;-1;_RefractionIndex*/1/*end*/;
@@ -1268,7 +1305,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				float3 Translucency = /*ase_frag_out:Translucency;Float3;15;-1;_Translucency*/1/*end*/;
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/ClipPos.z/*end*/;
+					input.positionCS.z = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
 				#endif
 
 				#ifdef _CLEARCOAT
@@ -1286,7 +1323,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 				InputData inputData = (InputData)0;
 				inputData.positionWS = PositionWS;
-				inputData.positionCS = float4( input.positionCS.xy, ClipPos.zw / ClipPos.w );
+				inputData.positionCS = input.positionCS;
 				inputData.normalizedScreenSpaceUV = ScreenPosNorm.xy;
 				inputData.viewDirectionWS = ViewDirWS;
 				inputData.shadowCoord = ShadowCoord;
@@ -1492,7 +1529,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					outputDepth = DeviceDepth;
+					outputDepth = input.positionCS.z;
 				#endif
 
 				#ifdef _WRITE_RENDERING_LAYERS
@@ -1586,6 +1623,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float _AlphaClip;
+			float _Cutoff;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1774,11 +1813,13 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				/*ase_frag_code:input=PackedVaryings*/
 
 				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
-				float AlphaClipThresholdShadow = /*ase_frag_out:Alpha Clip Threshold Shadow;Float;16;-1;_AlphaClipShadow*/0.5/*end*/;
+				#if defined( _ALPHATEST_ON )
+					float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/_Cutoff/*end*/;
+					float AlphaClipThresholdShadow = /*ase_frag_out:Alpha Clip Threshold Shadow;Float;16;-1;_AlphaClipShadow*/0.5/*end*/;
+				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+					input.positionCS.z = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
 				#endif
 
 				#if defined( _ALPHATEST_ON )
@@ -1794,7 +1835,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					outputDepth = DeviceDepth;
+					outputDepth = input.positionCS.z;
 				#endif
 
 				return 0;
@@ -1877,6 +1918,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float _AlphaClip;
+			float _Cutoff;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2051,10 +2094,10 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				/*ase_frag_code:input=PackedVaryings*/
 
 				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/_Cutoff/*end*/;
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+					input.positionCS.z = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
 				#endif
 
 				#if defined( _ALPHATEST_ON )
@@ -2066,7 +2109,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					outputDepth = DeviceDepth;
+					outputDepth = input.positionCS.z;
 				#endif
 
 				return 0;
@@ -2143,6 +2186,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float _AlphaClip;
+			float _Cutoff;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2327,7 +2372,9 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				float3 BaseColor = /*ase_frag_out:Base Color;Float3;0;-1;_BaseColor*/float3(0.5, 0.5, 0.5)/*end*/;
 				float3 Emission = /*ase_frag_out:Emission;Float3;2;-1;_Emission*/0/*end*/;
 				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+				#if defined( _ALPHATEST_ON )
+					float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/_Cutoff/*end*/;
+				#endif
 
 				#if defined( _ALPHATEST_ON )
 					AlphaDiscard( Alpha, AlphaClipThreshold );
@@ -2410,6 +2457,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float _AlphaClip;
+			float _Cutoff;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2578,7 +2627,9 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 				float3 BaseColor = /*ase_frag_out:Base Color;Float3;0;-1;_BaseColor*/float3(0.5, 0.5, 0.5)/*end*/;
 				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+				#if defined( _ALPHATEST_ON )
+					float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/_Cutoff/*end*/;
+				#endif
 
 				half4 color = half4(BaseColor, Alpha );
 
@@ -2676,6 +2727,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float _AlphaClip;
+			float _Cutoff;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2878,10 +2931,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 				float3 Normal = /*ase_frag_out:Normal;Float3;1;-1;_FragNormal*/float3(0, 0, 1)/*end*/;
 				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+				#if defined( _ALPHATEST_ON )
+					float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/_Cutoff/*end*/;
+				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+					input.positionCS.z = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
 				#endif
 
 				#if defined( _ALPHATEST_ON )
@@ -2893,7 +2948,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					outputDepth = DeviceDepth;
+					outputDepth = input.positionCS.z;
 				#endif
 
 				#if defined(_GBUFFER_NORMALS_OCT)
@@ -3053,6 +3108,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float _AlphaClip;
+			float _Cutoff;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3299,8 +3356,10 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				float Occlusion = /*ase_frag_out:Occlusion;Float;5;-1;_Occlusion*/1/*end*/;
 				float3 Emission = /*ase_frag_out:Emission;Float3;2;-1;_Emission*/0/*end*/;
 				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
-				float AlphaClipThresholdShadow = /*ase_frag_out:Alpha Clip Threshold Shadow;Float;16;-1;_AlphaClipShadow*/0.5/*end*/;
+				#if defined( _ALPHATEST_ON )
+					float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/_Cutoff/*end*/;
+					float AlphaClipThresholdShadow = /*ase_frag_out:Alpha Clip Threshold Shadow;Float;16;-1;_AlphaClipShadow*/0.5/*end*/;
+				#endif
 				float3 BakedGI = /*ase_frag_out:Baked GI;Float3;11;-1;_BakedGI*/0/*end*/;
 				float3 RefractionColor = /*ase_frag_out:Refraction Color;Float3;12;-1;_RefractionColor*/1/*end*/;
 				float RefractionIndex = /*ase_frag_out:Refraction Index;Float;13;-1;_RefractionIndex*/1/*end*/;
@@ -3308,7 +3367,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				float3 Translucency = /*ase_frag_out:Translucency;Float3;15;-1;_Translucency*/1/*end*/;
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/ClipPos.z/*end*/;
+					input.positionCS.z = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
 				#endif
 
 				#if defined( _ALPHATEST_ON )
@@ -3321,7 +3380,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 
 				InputData inputData = (InputData)0;
 				inputData.positionWS = PositionWS;
-				inputData.positionCS = float4( input.positionCS.xy, ClipPos.zw / ClipPos.w );
+				inputData.positionCS = input.positionCS;
 				inputData.normalizedScreenSpaceUV = ScreenPosNorm.xy;
 				inputData.shadowCoord = ShadowCoord;
 
@@ -3417,7 +3476,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					outputDepth = DeviceDepth;
+					outputDepth = input.positionCS.z;
 				#endif
 
 				return PackGBuffersBRDFData(brdfData, inputData, Smoothness, Emission + color.rgb, Occlusion);
@@ -3500,6 +3559,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float _AlphaClip;
+			float _Cutoff;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3672,10 +3733,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				/*ase_frag_code:input=PackedVaryings*/
 
 				surfaceDescription.Alpha = /*ase_frag_out:Alpha;Float;0;-1;_Alpha*/1/*end*/;
-				surfaceDescription.AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+				#if defined( _ALPHATEST_ON )
+					surfaceDescription.AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/_Cutoff/*end*/;
+				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+					input.positionCS.z = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
 				#endif
 
 				#ifdef _ALPHATEST_ON
@@ -3683,7 +3746,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					outputDepth = DeviceDepth;
+					outputDepth = input.positionCS.z;
 				#endif
 
 				return half4( _ObjectId, _PassValue, 1.0, 1.0 );
@@ -3765,6 +3828,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float _AlphaClip;
+			float _Cutoff;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3937,10 +4002,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				/*ase_frag_code:input=PackedVaryings*/
 
 				surfaceDescription.Alpha = /*ase_frag_out:Alpha;Float;0;-1;_Alpha*/1/*end*/;
-				surfaceDescription.AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+				#if defined( _ALPHATEST_ON )
+					surfaceDescription.AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/_Cutoff/*end*/;
+				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+					input.positionCS.z = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
 				#endif
 
 				#ifdef _ALPHATEST_ON
@@ -3948,7 +4015,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					outputDepth = DeviceDepth;
+					outputDepth = input.positionCS.z;
 				#endif
 
 				return unity_SelectionID;
@@ -4038,6 +4105,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float _AlphaClip;
+			float _Cutoff;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -4142,10 +4211,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				/*ase_frag_code:input=PackedVaryings*/
 
 				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+				#if defined( _ALPHATEST_ON )
+					float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/_Cutoff/*end*/;
+				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+					input.positionCS.z = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
 				#endif
 
 				#ifdef _ALPHATEST_ON
@@ -4164,7 +4235,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					outputDepth = DeviceDepth;
+					outputDepth = input.positionCS.z;
 				#endif
 
 				#if defined(APPLICATION_SPACE_WARP_MOTION)
@@ -4268,6 +4339,8 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float _AlphaClip;
+			float _Cutoff;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -4372,10 +4445,12 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				/*ase_frag_code:input=PackedVaryings*/
 
 				float Alpha = /*ase_frag_out:Alpha;Float;6;-1;_Alpha*/1/*end*/;
-				float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/0.5/*end*/;
+				#if defined( _ALPHATEST_ON )
+					float AlphaClipThreshold = /*ase_frag_out:Alpha Clip Threshold;Float;7;-1;_AlphaClip*/_Cutoff/*end*/;
+				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					float DeviceDepth = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
+					input.positionCS.z = /*ase_frag_out:Depth;Float;17;-1;_DepthValue*/input.positionCS.z/*end*/;
 				#endif
 
 				#ifdef _ALPHATEST_ON
@@ -4394,7 +4469,7 @@ Shader /*ase_name*/ "Hidden/Universal/Lit" /*end*/
 				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
-					outputDepth = DeviceDepth;
+					outputDepth = input.positionCS.z;
 				#endif
 
 				#if defined(APPLICATION_SPACE_WARP_MOTION)

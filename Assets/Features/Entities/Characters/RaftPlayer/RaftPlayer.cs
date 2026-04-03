@@ -201,5 +201,67 @@ namespace FishFlingers.Entities
                 bool place = _inventory.TryPlaceItem(InventoryPlaceParams.Create(itemSave), false, out _, out _, out _);
             }
         }
+
+        [TargetRpc]
+        public async Task<NetInventoryItem> GrabRpc(PlayerID playerId, Inventory inventory, string instanceId, Vector2Int cell)
+        {
+            if (!inventory.InventoryItems.TryGetValue(instanceId, out InventoryItem inventoryItem))
+            {
+                return null;
+            }
+
+            if (inventoryItem.IsGrabbed)
+            {
+                return null;
+            }
+
+            // The item needs to be a clone so that rotating it doesn't affect the original
+            NetInventoryItem grabbedNetInventoryItem = inventory.GetNetInventoryItemDeepClone(instanceId);
+
+            // The slot we grabbed at becomes the pivot
+            grabbedNetInventoryItem.SetPivot(InventoryItemUtils.RecalculatePivot(grabbedNetInventoryItem.Cell, cell, grabbedNetInventoryItem.Pivot, grabbedNetInventoryItem.Rotations));
+
+            inventory.SetItemIsGrabbed(instanceId, true);
+
+            return grabbedNetInventoryItem;
+        }
+
+        [TargetRpc]
+        public async Task<int?> PlaceRpc(PlayerID playerId, Inventory inventory, InventoryPlaceParams placeParams)
+        {
+            return inventory.TryPlaceItem(placeParams, true, out int overflow, out _, out _) ? overflow : null;
+        }
+
+        [TargetRpc]
+        public async Task SetRpc(PlayerID playerId, Inventory inventory, string instanceId, int count, bool canRemove)
+        {
+            // No overflow indicates the item has no count left
+            if (count > 0)
+            {
+                inventory.SetItemCount(instanceId, count);
+                return;
+            }
+
+            if (canRemove)
+            {
+                inventory.RemoveItem(instanceId);
+            }
+        }
+
+        [TargetRpc]
+        public async Task DropRpc(PlayerID playerId, Inventory inventory, string instanceId)
+        {
+            inventory.RemoveItem(instanceId);
+        }
+
+        [TargetRpc]
+        public async Task ReleaseRpc(PlayerID playerId, Inventory inventory, string instanceId)
+        {
+            // There's scenarios where you release an item, and it no longer exists in the inventory since it was moved to another
+            if (inventory.InventoryItems.ContainsKey(instanceId))
+            {
+                inventory.SetItemIsGrabbed(instanceId, false);
+            }
+        }
     }
 }

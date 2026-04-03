@@ -148,7 +148,7 @@ namespace AmplifyShaderEditor
 
 		static void WaitForPackageListBeforeUpdating()
 		{
-			if ( m_packageListRequest.IsCompleted )
+			if ( !Application.isPlaying && m_packageListRequest.IsCompleted && m_packageListRequest.Status == StatusCode.Success )
 			{
 				Update();
 				EditorApplication.update -= WaitForPackageListBeforeUpdating;
@@ -157,7 +157,7 @@ namespace AmplifyShaderEditor
 
 		public static void RequestInfo( bool updateWhileWaiting = false )
 		{
-			if ( !m_requireUpdateList && m_importingPackage == ASEImportFlags.None )
+			if ( !Application.isPlaying && !m_requireUpdateList && m_importingPackage == ASEImportFlags.None )
 			{
 				m_requireUpdateList = true;
 				m_packageListRequest = UnityEditor.PackageManager.Client.List( true );
@@ -243,7 +243,6 @@ namespace AmplifyShaderEditor
 			AssetDatabase.importPackageCompleted += CompletedPackageImport;
 			AssetDatabase.importPackageFailed += FailedPackageImport;
 			AssetDatabase.ImportPackage( packagePath, false );
-
 			return true;
 		}
 
@@ -467,9 +466,9 @@ namespace AmplifyShaderEditor
 		{
 			CheckLatePackageImport();
 
-			if ( m_requireUpdateList && m_importingPackage == ASEImportFlags.None )
+			if ( !Application.isPlaying && m_requireUpdateList && m_importingPackage == ASEImportFlags.None )
 			{
-				if ( m_packageListRequest != null && m_packageListRequest.IsCompleted && m_packageListRequest.Result != null )
+				if ( m_packageListRequest != null && m_packageListRequest.IsCompleted && m_packageListRequest.Status == StatusCode.Success && m_packageListRequest.Result != null )
 				{
 					m_requireUpdateList = false;
 					foreach ( UnityEditor.PackageManager.PackageInfo package in m_packageListRequest.Result )

@@ -455,6 +455,7 @@ namespace AmplifyShaderEditor
 
 				ASEPackageManagerHelper.Initialize();
 				TemplatesManager.CheckCreateInstance();
+				TemplateTracker.Initialize();
 			}
 		}
 

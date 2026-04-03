@@ -364,6 +364,7 @@ Shader /*ase_name*/ "Hidden/Built-In/Lit" /*end*/
 
 		CGINCLUDE
 			#pragma target 3.5
+			#pragma exclude_renderers d3d9 // ensure rendering platforms toggle list is visible
 
 			float4 FixedTess( float tessValue )
 			{
@@ -2772,7 +2773,7 @@ Shader /*ase_name*/ "Hidden/Built-In/Lit" /*end*/
 		{
 			/*ase_hide_pass*/
 			Name "ScenePickingPass"
-			Tags{ "LightMode" = "ScenePickingPass" }
+			Tags{ "LightMode" = "Picking" }
 
 			ZWrite On
 

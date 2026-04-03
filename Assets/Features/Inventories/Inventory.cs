@@ -150,6 +150,7 @@ namespace FishFlingers.Inventories
         public Vector2Int Pivot { get; private set; }
         public int Rotations { get; private set; }
         public NetItemInstance ItemInstance { get; private set; }
+        public bool IsGrabbed { get; private set; }
 
         public NetInventoryItem(Vector2Int cell, Vector2Int pivot, int rotations, NetItemInstance itemInstance)
         {
@@ -178,6 +179,11 @@ namespace FishFlingers.Inventories
         {
             rotations = Utils.Math.EuclideanModulo(rotations, 4);
             Rotations = rotations;
+        }
+
+        public void SetIsGrabbed(bool isGrabbed)
+        {
+            IsGrabbed = isGrabbed;
         }
     }
 
@@ -246,25 +252,27 @@ namespace FishFlingers.Inventories
         public int Rotations { get; private set; }
         public ItemInstance ItemInstance { get; private set; }
         public BoolGrid Shape { get; private set; }
+        public bool IsGrabbed { get; private set; }
 
-        private InventoryItem(Vector2Int cell, Vector2Int pivot, int rotations, ItemInstance instance)
+        private InventoryItem(Vector2Int cell, Vector2Int pivot, int rotations, ItemInstance instance, bool isGrabbed)
         {
             Cell = cell;
             Pivot = pivot;
             Rotations = rotations;
             ItemInstance = instance;
+            IsGrabbed = isGrabbed;
 
             RefreshShape();
         }
 
         public static InventoryItem Create(NetInventoryItem netInventoryItem)
         {
-            return new InventoryItem(netInventoryItem.Cell, netInventoryItem.Pivot, netInventoryItem.Rotations, ItemInstance.Create(netInventoryItem.ItemInstance));
+            return new InventoryItem(netInventoryItem.Cell, netInventoryItem.Pivot, netInventoryItem.Rotations, ItemInstance.Create(netInventoryItem.ItemInstance), netInventoryItem.IsGrabbed);
         }
 
         public InventoryItem DeepClone()
         {
-            return new InventoryItem(Cell, Pivot, Rotations, ItemInstance.DeepClone());
+            return new InventoryItem(Cell, Pivot, Rotations, ItemInstance.DeepClone(), false);
         }
         
         public void SetPivot(Vector2Int pivot)
@@ -302,9 +310,6 @@ namespace FishFlingers.Inventories
     {
         private SyncDictionaryWrapper<Vector2Int, NetInventorySlot> _netInventorySlots = new SyncDictionaryWrapper<Vector2Int, NetInventorySlot>(ownerAuth: true);
         private SyncDictionaryWrapper<string, NetInventoryItem> _netInventoryItems = new SyncDictionaryWrapper<string, NetInventoryItem>(ownerAuth: true);
-
-        public SyncDictionaryWrapper<Vector2Int, NetInventorySlot> NetInventorySlots => _netInventorySlots;
-        public SyncDictionaryWrapper<string, NetInventoryItem> NetInventoryItems => _netInventoryItems;
 
         private Dictionary<Vector2Int, InventorySlot> _inventorySlots = new();
         private Dictionary<string, InventoryItem> _inventoryItems = new();
@@ -485,7 +490,7 @@ namespace FishFlingers.Inventories
 
             data.Shape.GetTransformed(item.Pivot, item.Rotations).ForEachTrue((Vector2Int cell) =>
             {
-                _netInventorySlots[item.Cell + cell].SetItemInstanceId(null);
+                SetSlotItemInstanceId(item.Cell + cell, null);
             });
         }
 
@@ -759,7 +764,15 @@ namespace FishFlingers.Inventories
             if (netInventorySlot.ItemInstanceId != null && netInventorySlot.ItemInstanceId != parameters.InstanceId)
             {
                 NetInventoryItem netInventoryItem = _netInventoryItems[netInventorySlot.ItemInstanceId];
-                return netInventoryItem.ItemInstance.ItemId == parameters.ItemId && netInventoryItem.ItemInstance.CanAddCount(parameters.Count, out overflow, out change);
+
+                if (netInventoryItem.IsGrabbed)
+                {
+                    return false;
+                }
+                else if (netInventoryItem.ItemInstance.ItemId == parameters.ItemId)
+                {
+                    return netInventoryItem.ItemInstance.CanAddCount(parameters.Count, out overflow, out change);
+                }
             }
 
             BoolGrid placeShape = null;
@@ -903,8 +916,31 @@ namespace FishFlingers.Inventories
             // Place the items
             place.Shape.ForEachTrue((Vector2Int cell) =>
             {
-                _netInventorySlots[place.Parameters.Cell + cell].SetItemInstanceId(instanceId);
+                SetSlotItemInstanceId(place.Parameters.Cell + cell, instanceId);
             });
+        }
+
+        public NetInventoryItem GetNetInventoryItemDeepClone(string instanceId)
+        {
+            return _netInventoryItems[instanceId].DeepClone();
+        }
+        
+        public void SetSlotItemInstanceId(Vector2Int cell, string instanceId)
+        {
+            _netInventorySlots[cell].SetItemInstanceId(instanceId);
+            _netInventorySlots.SetDirty(cell);
+        }
+
+        public void SetItemCount(string instanceId, int count)
+        {
+            _netInventoryItems[instanceId].ItemInstance.SetCount(count);
+            _netInventoryItems.SetDirty(instanceId);
+        }
+
+        public void SetItemIsGrabbed(string instanceId, bool isGrabbed)
+        {
+            _netInventoryItems[instanceId].SetIsGrabbed(isGrabbed);
+            _netInventoryItems.SetDirty(instanceId);
         }
 
         public IEnumerator<KeyValuePair<Vector2Int, NetInventorySlot>> GetEnumerator()

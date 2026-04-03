@@ -61,7 +61,7 @@ namespace AmplifyShaderEditor
 
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
-			if ( !dataCollector.IsSRP || !dataCollector.TemplateDataCollectorInstance.IsLWRP )
+			if ( !dataCollector.IsSRP || !dataCollector.TemplateDataCollectorInstance.IsURP )
 			{
 				UIUtils.ShowMessage( ErrorOnCompilationMsg, MessageSeverity.Error );
 				return GenerateErrorValue();

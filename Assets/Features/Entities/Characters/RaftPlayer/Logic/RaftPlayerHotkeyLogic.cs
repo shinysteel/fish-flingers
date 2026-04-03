@@ -138,7 +138,7 @@ namespace FishFlingers.Entities
             }
 
             // Since the item is linked to the slot, grab it
-            _context.LocalPlayer.GrabbedItemLogic.Grab(itemView, inventorySlot);
+            _ = _context.LocalPlayer.GrabbedItemLogic.GrabAsync(itemView, inventorySlot);
         }
 
         /// <summary>
@@ -154,11 +154,11 @@ namespace FishFlingers.Entities
             }
             else if (inventorySlot != null)
             {
-                _context.LocalPlayer.GrabbedItemLogic.Place(inventorySlot);
+                _ = _context.LocalPlayer.GrabbedItemLogic.PlaceAsync(inventorySlot);
             }
             else if (panel == null)
             {
-                _context.LocalPlayer.GrabbedItemLogic.Drop();
+                _ = _context.LocalPlayer.GrabbedItemLogic.DropAsync();
             }
         }
 
