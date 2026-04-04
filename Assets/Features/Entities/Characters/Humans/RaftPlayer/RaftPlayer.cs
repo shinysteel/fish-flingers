@@ -87,6 +87,7 @@ namespace FishFlingers.Entities
         private RaftPlayerInteractLogic _interactLogic;
         private RaftPlayerGrabbedInventoryItemLogic _grabbedInventoryItemLogic;
         private RaftPlayerDropInventoryItemLogic _dropInventoryItemLogic;
+        private RaftPlayerAnimateLogic _animateLogic;
         private RaftPlayerHotkeyLogic _hotkeyLogic;
         private RaftPlayerTargetLogic _targetLogic;
 
@@ -113,6 +114,7 @@ namespace FishFlingers.Entities
             _interactLogic = new RaftPlayerInteractLogic(this);
             _grabbedInventoryItemLogic = new RaftPlayerGrabbedInventoryItemLogic(this, _netGrabbedInventoryItem);
             _dropInventoryItemLogic = new RaftPlayerDropInventoryItemLogic(this);
+            _animateLogic = new RaftPlayerAnimateLogic(this, _characterModel);
 
             if (isOwner)
             {
@@ -160,6 +162,7 @@ namespace FishFlingers.Entities
             _inputLogic.Tick();
             _physicsLogic.Tick();
             _interactLogic.Tick();
+            _animateLogic.Tick();
             _hotkeyLogic.Tick();
             _targetLogic.Tick();
 

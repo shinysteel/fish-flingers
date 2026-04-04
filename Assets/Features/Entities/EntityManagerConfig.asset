@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EntityManagerConfig
   _entityMappings:
   - _id: 1
-    _prefab: {fileID: 306983958439356140, guid: 72d695ec81811d244a31903d59c3b391, type: 3}
+    _prefab: {fileID: 8420347017716335235, guid: 1b7d8d28308257248ae096c188eb6202, type: 3}
   - _id: 2
-    _prefab: {fileID: 6868536614404603871, guid: a0eec514e324f184c8c17ccb5d270e3b, type: 3}
+    _prefab: {fileID: 460405706589029815, guid: 617cb5a1fe2e3d449986e7c9d9d1b3b5, type: 3}
   - _id: 100
-    _prefab: {fileID: 9019304176509047894, guid: 71eceeaf6ef081647ba1fb60c9f9d30b, type: 3}
+    _prefab: {fileID: 5307296185850863616, guid: 3a289d142bf1ffe4e9934264ef072cac, type: 3}
   - _id: 101
-    _prefab: {fileID: 6836093845605017386, guid: 8cf8eb5f50a62dc4eb3cd8122b32e6d4, type: 3}
+    _prefab: {fileID: 7018228068551982755, guid: 376b91b1dc84a854b9823d399a2cf16c, type: 3}
   - _id: 200
-    _prefab: {fileID: 1316740569592169389, guid: b612829cb70809a4c9588f0fedd756be, type: 3}
+    _prefab: {fileID: 8779905312493133191, guid: 4c1365dbe752c184ab2ce8dfa6df3ed0, type: 3}
   - _id: 201
-    _prefab: {fileID: 1316740569592169389, guid: dda8785ad233d4748b4266e69cd7008b, type: 3}
+    _prefab: {fileID: 8718114211947278667, guid: 42d59979e5484f3438b01c31cca380d4, type: 3}

@@ -4,6 +4,8 @@ namespace FishFlingers.Entities
 {
     public abstract class Character : NetEntity
     {
+        [SerializeField] protected CharacterModel _characterModel;
+
         public CharacterData CharacterData => (CharacterData)_entityData;
     }
 
