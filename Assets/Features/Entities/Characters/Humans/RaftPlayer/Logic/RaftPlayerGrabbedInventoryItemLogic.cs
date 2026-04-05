@@ -26,6 +26,20 @@ namespace FishFlingers.Entities
 
         public event Action<InventoryItem> OnGrabbedInventoryItemChanged;
 
+        public class PlaceResponse
+        {
+            public bool Success { get; private set; }
+            public int Overflow { get; private set; }
+            public bool WasChange { get; private set; }
+
+            public PlaceResponse(bool success, int overflow, bool wasChange)
+            {
+                Success = success;
+                Overflow = overflow;
+                WasChange = wasChange;
+            }
+        }
+
         public RaftPlayerGrabbedInventoryItemLogic(RaftPlayer player, SyncVar<NetInventoryItem> netGrabbedInventoryItem)
         {
             _player = player;
@@ -91,17 +105,20 @@ namespace FishFlingers.Entities
                 Count = _grabbedInventoryItem.ItemInstance.Count
             };
 
-            int? overflow = await _player.PlaceRpc(slotView.InventoryWidget.Inventory.owner.Value, slotView.InventoryWidget.Inventory, placeParams);
+            PlaceResponse response = await _player.PlaceRpc(slotView.InventoryWidget.Inventory.owner.Value, slotView.InventoryWidget.Inventory, placeParams);
 
-            if (overflow == null)
+            if (response.Success == false)
             {
                 return;
             }
 
-            await _player.SetRpc(_grabbedItemView.InventoryWidget.Inventory.owner.Value, _grabbedItemView.InventoryWidget.Inventory,
-                _grabbedInventoryItem.ItemInstance.InstanceId, overflow.Value, _grabbedItemView.InventoryWidget.Inventory != slotView.InventoryWidget.Inventory);
+            // When placing an item, it's previous instance can be removed if the place action was a change, or if it is moving to another inventory
+            bool canRemove = response.WasChange || _grabbedItemView.InventoryWidget.Inventory != slotView.InventoryWidget.Inventory;
 
-            if (overflow == 0)
+            await _player.SetRpc(_grabbedItemView.InventoryWidget.Inventory.owner.Value, _grabbedItemView.InventoryWidget.Inventory, 
+                _grabbedInventoryItem.ItemInstance.InstanceId, response.Overflow, canRemove);
+
+            if (response.Overflow == 0)
             {
                 await ReleaseAsync();
             }

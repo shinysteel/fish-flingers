@@ -17,6 +17,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static FishFlingers.Entities.RaftPlayerGrabbedInventoryItemLogic;
 
 namespace FishFlingers.Entities
 {
@@ -214,9 +215,10 @@ namespace FishFlingers.Entities
         }
 
         [TargetRpc]
-        public async Task<int?> PlaceRpc(PlayerID playerId, Inventory inventory, InventoryPlaceParams placeParams)
+        public async Task<PlaceResponse> PlaceRpc(PlayerID playerId, Inventory inventory, InventoryPlaceParams placeParams)
         {
-            return inventory.TryPlaceItem(placeParams, true, out int overflow, out _, out _) ? overflow : null;
+            bool success = inventory.TryPlaceItem(placeParams, true, out int overflow, out _, out NetInventoryItemsChange change);
+            return new PlaceResponse(success, overflow, change.IsValid);
         }
 
         [TargetRpc]
