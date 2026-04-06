@@ -1,5 +1,6 @@
 using FishFlingers.Items;
 using FishFlingers.Networking;
+using FishFlingers.Saving;
 using FishFlingers.States;
 using FishFlingers.UI.Transitions;
 using ShinyOwl.Common;
@@ -20,6 +21,7 @@ namespace FishFlingers.UI
         
         private NetworkManager _networkManager;
         private UIManager _uiManager;
+        private SaveManager _saveManager;
 
         private GameplayContext _context;
 
@@ -31,6 +33,7 @@ namespace FishFlingers.UI
 
             _networkManager = GameManager.Instance.Get<NetworkManager>();
             _uiManager = GameManager.Instance.Get<UIManager>();
+            _saveManager = GameManager.Instance.Get<SaveManager>();
 
             _fishingBagPanelInstance = new PanelInstance<FishingBagPanel>(_uiManager.Config.FishingBagPanelPrefab);
 
@@ -66,8 +69,14 @@ namespace FishFlingers.UI
                 return;
             }
 
+            _ = SettingsPressedAsync();
+        }
+
+        private async Task SettingsPressedAsync()
+        {
             if (_networkManager.IsServer)
             {
+                await _saveManager.SaveGameAsync();
                 _networkManager.StopServer();
             }
 

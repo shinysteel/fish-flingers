@@ -242,7 +242,7 @@ namespace FishFlingers.Saving
             }
         }
 
-        public void SaveGame()
+        public async Task SaveGameAsync()
         {
             foreach (ISaveable saveable in _saveables)
             {
@@ -253,6 +253,9 @@ namespace FishFlingers.Saving
             File.WriteAllText(_selectedSaveFile.GameSavePath, json);
 
             ScreenCapture.CaptureScreenshot(_selectedSaveFile.ThumbnailPath);
+
+            // Screenshots are queued to happen at the end of the frame
+            await Task.Yield();
         }
 
         void IInstantiateManagerListener.OnComponentInstantiated(Component component)

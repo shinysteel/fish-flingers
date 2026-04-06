@@ -224,20 +224,6 @@ namespace FishFlingers.States
             _transitionManager.CoverScreen(() => _stateManager.ChangeState(EMainState.Gameplay));
         }
 
-        void INetworkManagerListener.OnNetworkShutdown(bool asServer)
-        {
-            if (_parentStateMachine.CurrentState != this)
-            {
-                return;
-            }
-
-            // This would get called twice on the server, as they act as both the server and a client
-            if (asServer)
-            {
-                _saveManager.SaveGame();
-            }
-        }
-
         void INetworkManagerListener.OnClientConnectionState(ConnectionState state)
         {
             if (_parentStateMachine.CurrentState != this)
