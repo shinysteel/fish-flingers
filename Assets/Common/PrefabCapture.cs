@@ -9,6 +9,7 @@ namespace ShinyOwl.Common
     {
         [SerializeField] private GameObject _prefab;
         [SerializeField] private string _destination = "Assets";
+        [SerializeField] private string _suffix = "Icon";
         [SerializeField] private int _resolution = 256;
         [SerializeField] private Vector3 _cameraOffset = new Vector3(0.025f, 0.35f, -0.75f);
         [SerializeField] private Vector3 _cameraRotation = new Vector3(25f, -25f, 0f);
@@ -31,6 +32,7 @@ namespace ShinyOwl.Common
 
             _prefab = (GameObject)EditorGUILayout.ObjectField("Prefab", _prefab, typeof(GameObject), false);
             _destination = EditorGUILayout.TextField("Destination", _destination);
+            _suffix = EditorGUILayout.TextField("Suffix", _suffix);
             _resolution = EditorGUILayout.IntField("Resolution", _resolution);
             _cameraOffset = EditorGUILayout.Vector3Field("Camera Offset", _cameraOffset);
             _cameraRotation = EditorGUILayout.Vector3Field("Camera Rotation", _cameraRotation);
@@ -96,7 +98,7 @@ namespace ShinyOwl.Common
             texture2D.Apply();
 
             byte[] bytes = texture2D.EncodeToPNG();
-            string path = Path.Combine(_destination, $"{_prefab.name}.png");
+            string path = Path.Combine(_destination, $"{_prefab.name}{_suffix}.png");
             File.WriteAllBytes(path, bytes);
 
             // Cleanup temporary objects
