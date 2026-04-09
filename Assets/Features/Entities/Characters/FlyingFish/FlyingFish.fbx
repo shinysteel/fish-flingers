@@ -11,11 +11,11 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2026
 		Month: 4
-		Day: 6
-		Hour: 12
-		Minute: 30
-		Second: 24
-		Millisecond: 197
+		Day: 9
+		Hour: 19
+		Minute: 1
+		Second: 48
+		Millisecond: 744
 	}
 	Creator: "Blockbench 5.1.3"
 	SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
@@ -49,7 +49,7 @@ FBXHeaderExtension:  {
 	}
 }
 FileId: "iVFoobar"
-CreationTime: "2026-04-06 02:30:24:197"
+CreationTime: "2026-04-09 09:01:48:744"
 Creator: "Made with Blockbench"
 GlobalSettings:  {
 	Version: 1000
@@ -78,7 +78,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 2136047263 {
+	Document: 1444039340 {
 		Scene: "Scene"
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
@@ -98,12 +98,12 @@ References:
 
 Definitions:  {
 	Version: 100
-	Count: 26
+	Count: 32
 	ObjectType: "GlobalSettings" {
 		Count: 1
 	}
 	ObjectType: "Model" {
-		Count: 15
+		Count: 19
 		PropertyTemplate: "FbxNode" {
 			Properties70:  {
 				P: "QuaternionInterpolate", "enum", "", "",0
@@ -181,7 +181,7 @@ Definitions:  {
 		}
 	}
 	ObjectType: "Geometry" {
-		Count: 7
+		Count: 9
 		PropertyTemplate: "FbxMesh" {
 			Properties70:  {
 				P: "Color", "ColorRGB", "Color", "",0.8,0.8,0.8
@@ -268,7 +268,7 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	Model: 77911362, "Model::flying_fish", "Null" {
+	Model: 77849209, "Model::flying_fish", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -282,7 +282,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 79171759, "Model::wing_right", "Null" {
+	Model: 73231884, "Model::wing_right", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -296,7 +296,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 75717664, "Model::wing_left", "Null" {
+	Model: 79628540, "Model::wing_left", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -310,7 +310,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 79104825, "Model::wing_right2", "Null" {
+	Model: 78007716, "Model::wing_right2", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -324,7 +324,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 76478124, "Model::wing_left2", "Null" {
+	Model: 79427080, "Model::wing_left2", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -338,7 +338,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 72989054, "Model::body", "Null" {
+	Model: 78561466, "Model::body", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -352,7 +352,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 76691350, "Model::tail", "Null" {
+	Model: 77233763, "Model::tail", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -366,7 +366,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 75727063, "Model::tail2", "Null" {
+	Model: 76333181, "Model::tail2", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -380,7 +380,35 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 76639398, "Model::torso", "Mesh" {
+	Model: 79935285, "Model::eyelid_right", "Null" {
+		Version: 232
+		Properties70:  {
+			P: "RotationActive", "bool", "", "",1
+			P: "InheritType", "enum", "", "",1
+			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
+			P: "Lcl Translation", "Lcl Translation", "", "A",5.625,-3.125,-31.25
+			P: "RotationPivot", "Vector3D", "Vector", "",0,0,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
+			P: "RotationOrder", "enum", "", "",0
+		}
+		Shading: Y
+		Culling: "CullingOff"
+	}
+	Model: 70850385, "Model::eyelid_left", "Null" {
+		Version: 232
+		Properties70:  {
+			P: "RotationActive", "bool", "", "",1
+			P: "InheritType", "enum", "", "",1
+			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
+			P: "Lcl Translation", "Lcl Translation", "", "A",-5.625,-3.125,-31.25
+			P: "RotationPivot", "Vector3D", "Vector", "",0,0,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
+			P: "RotationOrder", "enum", "", "",0
+		}
+		Shading: Y
+		Culling: "CullingOff"
+	}
+	Model: 79200681, "Model::torso", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -395,7 +423,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 75351937, "Geometry::torso", "Mesh" {
+	Geometry: 79280489, "Geometry::torso", "Mesh" {
 		Vertices: *24 {
 			a: 12.5,31.25,12.5,12.5,31.25,-43.75,12.5,0,12.5,12.5,0,-43.75,-12.5,31.25,-43.75,-12.5,31.25,12.5,-12.5,0,-43.75,-12.5,0,12.5
 		}
@@ -446,7 +474,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 73305623, "Model::wing_left1", "Mesh" {
+	Model: 79494372, "Model::wing_left_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -461,7 +489,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 77445617, "Geometry::wing_left1", "Mesh" {
+	Geometry: 79609341, "Geometry::wing_left_1", "Mesh" {
 		Vertices: *24 {
 			a: 6.25,0,18.75,6.25,0,-6.25,6.25,0,18.75,6.25,0,-6.25,-50,0,-6.25,-50,0,18.75,-50,0,-6.25,-50,0,18.75
 		}
@@ -512,7 +540,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 71445565, "Model::wing_right1", "Mesh" {
+	Model: 74469844, "Model::wing_right_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -527,7 +555,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 71087036, "Geometry::wing_right1", "Mesh" {
+	Geometry: 70029905, "Geometry::wing_right_1", "Mesh" {
 		Vertices: *24 {
 			a: 6.25,0,18.75,6.25,0,-6.25,6.25,0,18.75,6.25,0,-6.25,-50,0,-6.25,-50,0,18.75,-50,0,-6.25,-50,0,18.75
 		}
@@ -578,7 +606,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 71410542, "Model::wing_right2_1", "Mesh" {
+	Model: 79529958, "Model::wing_right2_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -593,7 +621,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 77611484, "Geometry::wing_right2_1", "Mesh" {
+	Geometry: 77841476, "Geometry::wing_right2_1", "Mesh" {
 		Vertices: *24 {
 			a: -25,0,12.5,-25,0,-6.25,-25,0,12.5,-25,0,-6.25,-50,0,-6.25,-50,0,12.5,-50,0,-6.25,-50,0,12.5
 		}
@@ -644,7 +672,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 79122229, "Model::wing_left2_1", "Mesh" {
+	Model: 75846918, "Model::wing_left2_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -659,7 +687,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 79649931, "Geometry::wing_left2_1", "Mesh" {
+	Geometry: 78575530, "Geometry::wing_left2_1", "Mesh" {
 		Vertices: *24 {
 			a: 6.25,0,12.5,6.25,0,-6.25,6.25,0,12.5,6.25,0,-6.25,-18.75,0,-6.25,-18.75,0,12.5,-18.75,0,-6.25,-18.75,0,12.5
 		}
@@ -710,7 +738,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 79095153, "Model::tail2_1", "Mesh" {
+	Model: 76338993, "Model::tail2_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -725,7 +753,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 73873445, "Geometry::tail2_1", "Mesh" {
+	Geometry: 79303990, "Geometry::tail2_1", "Mesh" {
 		Vertices: *24 {
 			a: 0,18.75,68.75,0,18.75,37.5,0,-18.75,68.75,0,-18.75,37.5,0,18.75,37.5,0,18.75,68.75,0,-18.75,37.5,0,-18.75,68.75
 		}
@@ -776,7 +804,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 70906117, "Model::tail_1", "Mesh" {
+	Model: 77503436, "Model::tail_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -791,7 +819,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 78313346, "Geometry::tail_1", "Mesh" {
+	Geometry: 78866614, "Geometry::tail_1", "Mesh" {
 		Vertices: *24 {
 			a: 9.375,28.125,37.5,9.375,28.125,6.25,9.375,3.125,37.5,9.375,3.125,6.25,-9.375,28.125,6.25,-9.375,28.125,37.5,-9.375,3.125,6.25,-9.375,3.125,37.5
 		}
@@ -842,7 +870,139 @@ Objects:  {
 			}
 		}
 	}
-	Material: 79180751, "Material::FlyingFish.png", "" {
+	Model: 75053284, "Model::eyelid_right_1", "Mesh" {
+		Version: 232
+		Properties70:  {
+			P: "RotationActive", "bool", "", "",1
+			P: "InheritType", "enum", "", "",1
+			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,0,0
+			P: "RotationPivot", "Vector3D", "Vector", "",0,0,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
+			P: "RotationOrder", "enum", "", "",0
+			P: "DefaultAttributeIndex", "int", "Integer", "",0
+		}
+		Shading: Y
+		Culling: "CullingOff"
+	}
+	Geometry: 76067323, "Geometry::eyelid_right_1", "Mesh" {
+		Vertices: *24 {
+			a: 6.374999999999997,12.562499999999998,6.874999999999997,6.374999999999997,12.562499999999998,-5.749999999999999,6.374999999999997,-0.06250000000000006,6.874999999999997,6.374999999999997,-0.06250000000000006,-5.749999999999999,-6.249999999999999,12.562499999999998,-5.749999999999999,-6.249999999999999,12.562499999999998,6.874999999999997,-6.249999999999999,-0.06250000000000006,-5.749999999999999,-6.249999999999999,-0.06250000000000006,6.874999999999997
+		}
+		PolygonVertexIndex: *24 {
+			a: 3,6,4,-2,2,3,1,-1,7,2,0,-6,6,7,5,-5,5,0,1,-5,6,3,2,-8
+		}
+		GeometryVersion: 124
+		LayerElementNormal: 0 {
+			Version: 101
+			Name: ""
+			MappingInformationType: "ByPolygon"
+			ReferenceInformationType: "Direct"
+			Normals: *18 {
+				a: 0,0,-1,1,0,0,0,0,1,-1,0,0,0,1,0,0,-1,0
+			}
+		}
+		LayerElementUV: 0 {
+			Version: 101
+			Name: ""
+			MappingInformationType: "ByPolygonVertex"
+			ReferenceInformationType: "Direct"
+			UV: *48 {
+				a: 0.03125,0.484375,0.0625,0.484375,0.0625,0.515625,0.03125,0.515625,0,0.484375,0.03125,0.484375,0.03125,0.515625,0,0.515625,0.09375,0.484375,0.125,0.484375,0.125,0.515625,0.09375,0.515625,0.0625,0.484375,0.09375,0.484375,0.09375,0.515625,0.0625,0.515625,0.0625,0.546875,0.03125,0.546875,0.03125,0.515625,0.0625,0.515625,0.09375,0.515625,0.0625,0.515625,0.0625,0.546875,0.09375,0.546875
+			}
+		}
+		LayerElementMaterial: 0 {
+			Version: 101
+			Name: ""
+			MappingInformationType: "AllSame"
+			ReferenceInformationType: "IndexToDirect"
+			Materials: *1 {
+				a: 0
+			}
+		}
+		Layer: 0 {
+			Version: 100
+			LayerElement:  {
+				Type: "LayerElementNormal"
+				TypedIndex: 0
+			}
+			LayerElement:  {
+				Type: "LayerElementMaterial"
+				TypedIndex: 0
+			}
+			LayerElement:  {
+				Type: "LayerElementUV"
+				TypedIndex: 0
+			}
+		}
+	}
+	Model: 74300090, "Model::eyelid_left_1", "Mesh" {
+		Version: 232
+		Properties70:  {
+			P: "RotationActive", "bool", "", "",1
+			P: "InheritType", "enum", "", "",1
+			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,0,0
+			P: "RotationPivot", "Vector3D", "Vector", "",0,0,0
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
+			P: "RotationOrder", "enum", "", "",0
+			P: "DefaultAttributeIndex", "int", "Integer", "",0
+		}
+		Shading: Y
+		Culling: "CullingOff"
+	}
+	Geometry: 70065443, "Geometry::eyelid_left_1", "Mesh" {
+		Vertices: *24 {
+			a: 6.25,12.562499999999998,6.874999999999997,6.25,12.562499999999998,-5.749999999999999,6.25,-0.06250000000000006,6.874999999999997,6.25,-0.06250000000000006,-5.749999999999999,-6.374999999999997,12.562499999999998,-5.749999999999999,-6.374999999999997,12.562499999999998,6.874999999999997,-6.374999999999997,-0.06250000000000006,-5.749999999999999,-6.374999999999997,-0.06250000000000006,6.874999999999997
+		}
+		PolygonVertexIndex: *24 {
+			a: 3,6,4,-2,2,3,1,-1,7,2,0,-6,6,7,5,-5,5,0,1,-5,6,3,2,-8
+		}
+		GeometryVersion: 124
+		LayerElementNormal: 0 {
+			Version: 101
+			Name: ""
+			MappingInformationType: "ByPolygon"
+			ReferenceInformationType: "Direct"
+			Normals: *18 {
+				a: 0,0,-1,1,0,0,0,0,1,-1,0,0,0,1,0,0,-1,0
+			}
+		}
+		LayerElementUV: 0 {
+			Version: 101
+			Name: ""
+			MappingInformationType: "ByPolygonVertex"
+			ReferenceInformationType: "Direct"
+			UV: *48 {
+				a: 0.1875,0.484375,0.15625,0.484375,0.15625,0.515625,0.1875,0.515625,0.21875,0.484375,0.1875,0.484375,0.1875,0.515625,0.21875,0.515625,0.25,0.484375,0.21875,0.484375,0.21875,0.515625,0.25,0.515625,0.15625,0.484375,0.125,0.484375,0.125,0.515625,0.15625,0.515625,0.15625,0.546875,0.1875,0.546875,0.1875,0.515625,0.15625,0.515625,0.1875,0.515625,0.21875,0.515625,0.21875,0.546875,0.1875,0.546875
+			}
+		}
+		LayerElementMaterial: 0 {
+			Version: 101
+			Name: ""
+			MappingInformationType: "AllSame"
+			ReferenceInformationType: "IndexToDirect"
+			Materials: *1 {
+				a: 0
+			}
+		}
+		Layer: 0 {
+			Version: 100
+			LayerElement:  {
+				Type: "LayerElementNormal"
+				TypedIndex: 0
+			}
+			LayerElement:  {
+				Type: "LayerElementMaterial"
+				TypedIndex: 0
+			}
+			LayerElement:  {
+				Type: "LayerElementUV"
+				TypedIndex: 0
+			}
+		}
+	}
+	Material: 70749142, "Material::FlyingFish.png", "" {
 		Version: 102
 		ShadingModel: "lambert"
 		MultiLayer: 0
@@ -853,7 +1013,7 @@ Objects:  {
 			P: "Opacity", "double", "Number", "",1
 		}
 	}
-	Texture: 70072612, "Texture::FlyingFish.png", "" {
+	Texture: 72764616, "Texture::FlyingFish.png", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::FlyingFish.png"
@@ -865,7 +1025,7 @@ Objects:  {
 		Texture_Alpha_Source: "None"
 		Cropping: 0,0,0,0
 	}
-	Video: 72103865, "Video::FlyingFish.png", "Clip" {
+	Video: 74656005, "Video::FlyingFish.png", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "C:\Users\User\OneDrive\Desktop\GitHub Projects\fish-flingers\Assets\Features\Entities\Characters\FlyingFish\FlyingFish.png"
@@ -882,97 +1042,121 @@ Objects:  {
 Connections:  {
 
 	;Model::flying_fish, Model::RootNode
-	C: "OO",77911362,0
+	C: "OO",77849209,0
 
 	;Model::wing_right, Model::body
-	C: "OO",79171759,72989054
+	C: "OO",73231884,78561466
 
 	;Model::wing_left, Model::body
-	C: "OO",75717664,72989054
+	C: "OO",79628540,78561466
 
 	;Model::wing_right2, Model::body
-	C: "OO",79104825,72989054
+	C: "OO",78007716,78561466
 
 	;Model::wing_left2, Model::body
-	C: "OO",76478124,72989054
+	C: "OO",79427080,78561466
 
 	;Model::body, Model::flying_fish
-	C: "OO",72989054,77911362
+	C: "OO",78561466,77849209
 
 	;Model::tail, Model::body
-	C: "OO",76691350,72989054
+	C: "OO",77233763,78561466
 
 	;Model::tail2, Model::tail
-	C: "OO",75727063,76691350
+	C: "OO",76333181,77233763
+
+	;Model::eyelid_right, Model::body
+	C: "OO",79935285,78561466
+
+	;Model::eyelid_left, Model::body
+	C: "OO",70850385,78561466
 
 	;Model::torso, Model::body
-	C: "OO",76639398,72989054
+	C: "OO",79200681,78561466
 
 	;Geometry::torso, Model::torso
-	C: "OO",75351937,76639398
+	C: "OO",79280489,79200681
 
 	;Material::FlyingFish.png, Model::torso
-	C: "OO",79180751,76639398
+	C: "OO",70749142,79200681
 
-	;Model::wing_left1, Model::wing_left
-	C: "OO",73305623,75717664
+	;Model::wing_left_1, Model::wing_left
+	C: "OO",79494372,79628540
 
-	;Geometry::wing_left1, Model::wing_left1
-	C: "OO",77445617,73305623
+	;Geometry::wing_left_1, Model::wing_left_1
+	C: "OO",79609341,79494372
 
-	;Material::FlyingFish.png, Model::wing_left1
-	C: "OO",79180751,73305623
+	;Material::FlyingFish.png, Model::wing_left_1
+	C: "OO",70749142,79494372
 
-	;Model::wing_right1, Model::wing_right
-	C: "OO",71445565,79171759
+	;Model::wing_right_1, Model::wing_right
+	C: "OO",74469844,73231884
 
-	;Geometry::wing_right1, Model::wing_right1
-	C: "OO",71087036,71445565
+	;Geometry::wing_right_1, Model::wing_right_1
+	C: "OO",70029905,74469844
 
-	;Material::FlyingFish.png, Model::wing_right1
-	C: "OO",79180751,71445565
+	;Material::FlyingFish.png, Model::wing_right_1
+	C: "OO",70749142,74469844
 
 	;Model::wing_right2_1, Model::wing_right2
-	C: "OO",71410542,79104825
+	C: "OO",79529958,78007716
 
 	;Geometry::wing_right2_1, Model::wing_right2_1
-	C: "OO",77611484,71410542
+	C: "OO",77841476,79529958
 
 	;Material::FlyingFish.png, Model::wing_right2_1
-	C: "OO",79180751,71410542
+	C: "OO",70749142,79529958
 
 	;Model::wing_left2_1, Model::wing_left2
-	C: "OO",79122229,76478124
+	C: "OO",75846918,79427080
 
 	;Geometry::wing_left2_1, Model::wing_left2_1
-	C: "OO",79649931,79122229
+	C: "OO",78575530,75846918
 
 	;Material::FlyingFish.png, Model::wing_left2_1
-	C: "OO",79180751,79122229
+	C: "OO",70749142,75846918
 
 	;Model::tail2_1, Model::tail2
-	C: "OO",79095153,75727063
+	C: "OO",76338993,76333181
 
 	;Geometry::tail2_1, Model::tail2_1
-	C: "OO",73873445,79095153
+	C: "OO",79303990,76338993
 
 	;Material::FlyingFish.png, Model::tail2_1
-	C: "OO",79180751,79095153
+	C: "OO",70749142,76338993
 
 	;Model::tail_1, Model::tail
-	C: "OO",70906117,76691350
+	C: "OO",77503436,77233763
 
 	;Geometry::tail_1, Model::tail_1
-	C: "OO",78313346,70906117
+	C: "OO",78866614,77503436
 
 	;Material::FlyingFish.png, Model::tail_1
-	C: "OO",79180751,70906117
+	C: "OO",70749142,77503436
+
+	;Model::eyelid_right_1, Model::eyelid_right
+	C: "OO",75053284,79935285
+
+	;Geometry::eyelid_right_1, Model::eyelid_right_1
+	C: "OO",76067323,75053284
+
+	;Material::FlyingFish.png, Model::eyelid_right_1
+	C: "OO",70749142,75053284
+
+	;Model::eyelid_left_1, Model::eyelid_left
+	C: "OO",74300090,70850385
+
+	;Geometry::eyelid_left_1, Model::eyelid_left_1
+	C: "OO",70065443,74300090
+
+	;Material::FlyingFish.png, Model::eyelid_left_1
+	C: "OO",70749142,74300090
 
 	;Texture::FlyingFish.png, Material::FlyingFish.png
-	C: "OP",70072612,79180751, "DiffuseColor"
+	C: "OP",72764616,70749142, "DiffuseColor"
 
 	;Video::FlyingFish.png, Texture::FlyingFish.png
-	C: "OO",72103865,70072612
+	C: "OO",74656005,72764616
 }
 
 ; Takes section
