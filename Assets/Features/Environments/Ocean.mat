@@ -106,8 +106,11 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _HorizonEmission: 0.5
+    - _HorizonPower: 3
     - _Metallic: 0
     - _OcclusionStrength: 1
+    - _OceanRadius: 50
     - _Parallax: 0.005
     - _PixelDensity: 1500
     - _Pixels: 1000
@@ -136,6 +139,7 @@ Material:
     - _DepthColor: {r: 0.7746884, g: 0.87478125, b: 0.8867924, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FoamColor: {r: 0.59607846, g: 0.84313726, b: 0.81442237, a: 0}
+    - _HorizonColor: {r: 0.9098039, g: 1, b: 0.5803921, a: 0}
     - _ShadowColor: {r: 0.3127447, g: 0.5783885, b: 0.6603774, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _WaterColor: {r: 0.39215684, g: 0.7294118, b: 0.7686275, a: 0}
