@@ -5,21 +5,21 @@ namespace FishFlingers.Entities
     public class RaftPlayerAnimateLogic
     {
         private RaftPlayer _player;
-        private CharacterModel _characterModel;
+        private CharacterModel _model;
 
         private const string IsMovingName = "IsMoving";
 
-        public RaftPlayerAnimateLogic(RaftPlayer player, CharacterModel characterModel)
+        public RaftPlayerAnimateLogic(RaftPlayer player, CharacterModel model)
         {
             _player = player;
-            _characterModel = characterModel;
+            _model = model;
         }
 
         public void Tick()
         {
             bool isMoving = _player.InputLogic.MoveDirection != Vector3.zero;
 
-            _characterModel.Animator.SetBool(IsMovingName, isMoving);
+            _model.Animator.SetBool(IsMovingName, isMoving);
         }
     }
 }

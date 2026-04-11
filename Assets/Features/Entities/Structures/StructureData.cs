@@ -13,7 +13,7 @@ namespace FishFlingers.Entities
         public EntityData EntityData => this;
         public Recipe Recipe => _recipe;
 
-        public bool TryBuild(GameplayContext context, RaftPlayerTarget target)
+        public bool TryBuild(GameplayContext context, RaftPlayerTileTarget target)
         {
             if (!target.CanBuildStructure())
             {

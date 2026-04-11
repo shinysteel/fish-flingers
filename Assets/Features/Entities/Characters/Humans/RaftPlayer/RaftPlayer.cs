@@ -79,7 +79,7 @@ namespace FishFlingers.Entities
         [SerializeField] private BoolGrid _inventoryLayout;
         public Inventory Inventory => _inventory;
 
-        [SerializeField] private RaftPlayerTargetLogicSettings _targetLogicSettings;
+        [SerializeField] private RaftPlayerTileTargetLogicSettings _targetLogicSettings;
 
         private Hotbar _hotbar;
         public Hotbar Hotbar => _hotbar;
@@ -91,13 +91,14 @@ namespace FishFlingers.Entities
         private RaftPlayerDropInventoryItemLogic _dropInventoryItemLogic;
         private RaftPlayerAnimateLogic _animateLogic;
         private RaftPlayerHotkeyLogic _hotkeyLogic;
-        private RaftPlayerTargetLogic _targetLogic;
+        private RaftPlayerTileTargetLogic _tileTargetLogic;
+        private RaftPlayerHeldInventoryItemLogic _heldInventoryItemLogic;
 
         public RaftPlayerInputLogic InputLogic => _inputLogic;
         public RaftPlayerInteractLogic InteractLogic => _interactLogic;
         public RaftPlayerGrabbedInventoryItemLogic GrabbedInventoryItemLogic => _grabbedInventoryItemLogic;
         public RaftPlayerDropInventoryItemLogic DropInventoryItemLogic => _dropInventoryItemLogic;
-        public RaftPlayerTargetLogic TargetLogic => _targetLogic;
+        public RaftPlayerTileTargetLogic TileTargetLogic => _tileTargetLogic;
 
         public bool CanAct => !_uiManager.IsLayerInUse(UILayer.Panels);
 
@@ -138,7 +139,8 @@ namespace FishFlingers.Entities
                 _hotbar = new Hotbar(context);
 
                 _hotkeyLogic = new RaftPlayerHotkeyLogic(context, _netGrabbedInventoryItem);
-                _targetLogic = new RaftPlayerTargetLogic(context, _targetLogicSettings);
+                _tileTargetLogic = new RaftPlayerTileTargetLogic(context, _targetLogicSettings);
+                _heldInventoryItemLogic = new RaftPlayerHeldInventoryItemLogic(this, _characterModel);
             }
         }
 
@@ -166,7 +168,7 @@ namespace FishFlingers.Entities
             _interactLogic.Tick();
             _animateLogic.Tick();
             _hotkeyLogic.Tick();
-            _targetLogic.Tick();
+            _tileTargetLogic.Tick();
 
             SyncVarsUpdate();
         }

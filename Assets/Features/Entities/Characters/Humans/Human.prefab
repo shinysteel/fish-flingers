@@ -64,6 +64,11 @@ PrefabInstance:
       insertIndex: 1
       addedObject: {fileID: 6553454853354933199}
   m_SourcePrefab: {fileID: 100100000, guid: dcce5f66836872c419c02ddb8ee00a64, type: 3}
+--- !u!4 &1505038301571278480 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8526085441536064709, guid: dcce5f66836872c419c02ddb8ee00a64, type: 3}
+  m_PrefabInstance: {fileID: 7111260593987885653}
+  m_PrefabAsset: {fileID: 0}
 --- !u!95 &3736528074840287172 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: dcce5f66836872c419c02ddb8ee00a64, type: 3}
@@ -87,3 +92,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.CharacterModel
   _animator: {fileID: 3736528074840287172}
+  _itemLocator: {fileID: 1505038301571278480}

@@ -12,7 +12,7 @@ using Object = UnityEngine.Object;
 
 namespace FishFlingers.Entities
 {
-    public class RaftPlayerTarget
+    public class RaftPlayerTileTarget
     {
         private GameplayContext _context;
 
@@ -24,7 +24,7 @@ namespace FishFlingers.Entities
 
         public event Action OnChanged;
 
-        public RaftPlayerTarget(GameplayContext context)
+        public RaftPlayerTileTarget(GameplayContext context)
         {
             _context = context;
 
@@ -33,7 +33,7 @@ namespace FishFlingers.Entities
             _context.Raft.OnTileChanged += HandleTileChanged;
         }
 
-        ~RaftPlayerTarget()
+        ~RaftPlayerTileTarget()
         {
             if (_context.Raft != null)
             {
@@ -83,22 +83,22 @@ namespace FishFlingers.Entities
         }
     }
 
-    public class RaftPlayerTargetLogic
+    public class RaftPlayerTileTargetLogic
     {
         private GameplayContext _context;
 
-        private RaftPlayerTargetLogicSettings _settings;
+        private RaftPlayerTileTargetLogicSettings _settings;
 
-        private RaftPlayerTargetVisual _targetVisual;
+        private RaftPlayerTileTargetVisual _targetVisual;
 
-        private RaftPlayerTarget _target;
-        public RaftPlayerTarget Target => _target;
+        private RaftPlayerTileTarget _target;
+        public RaftPlayerTileTarget Target => _target;
 
         private bool _showingTarget;
 
         private const float Range = 1f;
 
-        public event Action<RaftPlayerTarget> OnTargetChanged;
+        public event Action<RaftPlayerTileTarget> OnTargetChanged;
 
         // Scales for the target depending on context
         private static readonly Vector3 StructureVisualScale = new Vector3(0.75f, 0.25f, 0.75f);
@@ -109,7 +109,7 @@ namespace FishFlingers.Entities
 
         private const float VisualMaxAlpha = 0.4f; // Equivalent to ~102 in color32
 
-        public RaftPlayerTargetLogic(GameplayContext context, RaftPlayerTargetLogicSettings settings)
+        public RaftPlayerTileTargetLogic(GameplayContext context, RaftPlayerTileTargetLogicSettings settings)
         {
             _context = context;
 
@@ -117,14 +117,14 @@ namespace FishFlingers.Entities
 
             _targetVisual = Object.Instantiate(_settings.TargetVisualPrefab);
 
-            _target = new RaftPlayerTarget(context);
+            _target = new RaftPlayerTileTarget(context);
             _target.OnChanged += HandleTargetChanged;
 
             HandleHotbarSelectedItemChanged(_context.LocalPlayer.Hotbar.SelectedIndex, _context.LocalPlayer.Hotbar.SelectedItem);
             _context.LocalPlayer.Hotbar.OnSelectedChanged += HandleHotbarSelectedItemChanged;
         }
 
-        ~RaftPlayerTargetLogic()
+        ~RaftPlayerTileTargetLogic()
         { 
             if (_context.LocalPlayer != null)
             {

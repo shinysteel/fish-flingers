@@ -67,7 +67,7 @@ namespace FishFlingers.UI
                 return;
             }
 
-            if (!_buildable.TryBuild(_context, _context.LocalPlayer.TargetLogic.Target))
+            if (!_buildable.TryBuild(_context, _context.LocalPlayer.TileTargetLogic.Target))
             {
                 return;
             }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace FishFlingers.Entities
 {
-    public class RaftPlayerTargetVisual : MonoBehaviour
+    public class RaftPlayerTileTargetVisual : MonoBehaviour
     {
         [SerializeField] private Transform _visualTransform;
         [SerializeField] private MeshRenderer _visualMeshRenderer;

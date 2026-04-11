@@ -37,7 +37,7 @@ namespace FishFlingers.UI
             _context = context;
 
             RefreshEntries();
-            _context.LocalPlayer.TargetLogic.OnTargetChanged += HandleRaftPlayerTargetChanged;
+            _context.LocalPlayer.TileTargetLogic.OnTargetChanged += HandleRaftPlayerTileTargetChanged;
 
             _context.LocalPlayer.Hotbar.OnSelectedChanged += HandleHotbarSelectedChanged;
         }
@@ -46,7 +46,7 @@ namespace FishFlingers.UI
         {
             if (_context.LocalPlayer != null)
             {
-                _context.LocalPlayer.TargetLogic.OnTargetChanged -= HandleRaftPlayerTargetChanged;
+                _context.LocalPlayer.TileTargetLogic.OnTargetChanged -= HandleRaftPlayerTileTargetChanged;
 
                 _context.LocalPlayer.Hotbar.OnSelectedChanged -= HandleHotbarSelectedChanged;
             }
@@ -57,7 +57,7 @@ namespace FishFlingers.UI
             }
         }
 
-        private void HandleRaftPlayerTargetChanged(RaftPlayerTarget target)
+        private void HandleRaftPlayerTileTargetChanged(RaftPlayerTileTarget target)
         {
             if (!target.CanBuild())
             {
@@ -75,7 +75,7 @@ namespace FishFlingers.UI
         private void RefreshEntries()
         {
             // We populate the entries with either tiles or structures depending on the target
-            IEnumerable<IBuildable> buildables = _context.LocalPlayer.TargetLogic.Target.Tile == null
+            IEnumerable<IBuildable> buildables = _context.LocalPlayer.TileTargetLogic.Target.Tile == null
                 ? _entityManager.GetEntityPrefabs<Tile>().Select(tile => tile.Data)
                 : _entityManager.GetEntityPrefabs<Structure>().Select(structure => structure.StructureData);
 
