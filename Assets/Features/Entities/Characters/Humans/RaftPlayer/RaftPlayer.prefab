@@ -379,6 +379,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4308314301107375625, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7248786603650612437}
+    - targetCorrespondingSourceObject: {fileID: 4308314301107375625, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4126412385647280965}
   m_SourcePrefab: {fileID: 100100000, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
 --- !u!54 &5014095360961662962 stripped
 Rigidbody:
@@ -417,6 +420,7 @@ MonoBehaviour:
   _capsuleCollider: {fileID: 6033468316738205443}
   _inventory: {fileID: 7248786603650612437}
   _inventoryLayout: {fileID: 11400000, guid: cfd8c0c5e490b4a47aa4e9b24205efd8, type: 2}
+  _hotbar: {fileID: 4126412385647280965}
   _targetLogicSettings: {fileID: 11400000, guid: d2166457d28785d4c8783f82e70233f6, type: 2}
 --- !u!136 &6033468316738205443
 CapsuleCollider:
@@ -462,6 +466,28 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
+--- !u!114 &4126412385647280965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5307296185850863616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b23a1813bbdb32f4c8f6a84ef8f9c68d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.Hotbar
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _inventory: {fileID: 7248786603650612437}
 --- !u!4 &6498867310661887597 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2908733436539095140, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}

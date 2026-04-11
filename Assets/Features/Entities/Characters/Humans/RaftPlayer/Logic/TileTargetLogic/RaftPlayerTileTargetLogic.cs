@@ -120,15 +120,15 @@ namespace FishFlingers.Entities
             _target = new RaftPlayerTileTarget(context);
             _target.OnChanged += HandleTargetChanged;
 
-            HandleHotbarSelectedItemChanged(_context.LocalPlayer.Hotbar.SelectedIndex, _context.LocalPlayer.Hotbar.SelectedItem);
-            _context.LocalPlayer.Hotbar.OnSelectedChanged += HandleHotbarSelectedItemChanged;
+            HandleHotbarSelectedSlotChanged(_context.LocalPlayer.Hotbar.SelectedSlot);
+            _context.LocalPlayer.Hotbar.OnSelectedChanged += HandleHotbarSelectedSlotChanged;
         }
 
         ~RaftPlayerTileTargetLogic()
         { 
             if (_context.LocalPlayer != null)
             {
-                _context.LocalPlayer.Hotbar.OnSelectedChanged -= HandleHotbarSelectedItemChanged;
+                _context.LocalPlayer.Hotbar.OnSelectedChanged -= HandleHotbarSelectedSlotChanged;
             }
         }
 
@@ -143,9 +143,9 @@ namespace FishFlingers.Entities
             OnTargetChanged?.Invoke(_target);
         }
 
-        private void HandleHotbarSelectedItemChanged(int index, InventoryItem item)
+        private void HandleHotbarSelectedSlotChanged(HotbarSlot slot)
         {
-            _showingTarget = item?.ItemInstance.Data.ShowsTarget ?? false;
+            _showingTarget = slot.InventoryItem?.ItemInstance.Data.ShowsTarget ?? false;
 
             _fadeTween.Stop();
 

@@ -100,12 +100,12 @@ namespace FishFlingers.Entities
 
         private void ExecuteItemLeftClick()
         {
-            if (_context.LocalPlayer.Hotbar.SelectedItem == null)
+            if (_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem == null)
             {
                 return;
             }
 
-            _context.LocalPlayer.Hotbar.SelectedItem.ItemInstance.Data.LeftClickAction?.Execute(_context);
+            _context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem.ItemInstance.Data.LeftClickAction?.Execute(_context);
         }
 
         /// <summary>
@@ -174,12 +174,12 @@ namespace FishFlingers.Entities
 
         private void ExecuteItemRightClick()
         {
-            if (_context.LocalPlayer.Hotbar.SelectedItem == null)
+            if (_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem == null)
             {
                 return;
             }
 
-            _context.LocalPlayer.Hotbar.SelectedItem.ItemInstance.Data.RightClickAction?.Execute(_context);
+            _context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem.ItemInstance.Data.RightClickAction?.Execute(_context);
         }
 
         /// <summary>
@@ -271,13 +271,13 @@ namespace FishFlingers.Entities
 
         private void DropSelectedItem()
         {
-            if (_context.LocalPlayer.Hotbar.SelectedItem == null)
+            if (_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem == null)
             {
                 return;
             }
 
-            _context.LocalPlayer.DropInventoryItemLogic.SpawnDroppedItem(_context.LocalPlayer.Hotbar.SelectedItem.ItemInstance, true);
-            _context.LocalPlayer.Inventory.RemoveItem(_context.LocalPlayer.Hotbar.SelectedItem.ItemInstance.InstanceId);
+            _context.LocalPlayer.DropInventoryItemLogic.SpawnDroppedItem(_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem.ItemInstance, true);
+            _context.LocalPlayer.Inventory.RemoveItem(_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem.ItemInstance.InstanceId);
         }
 
         private void Interact()
@@ -351,7 +351,7 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            _context.LocalPlayer.Hotbar.SetSlot(number - 1, itemView.InventoryItem);
+            _context.LocalPlayer.Hotbar.SetSlot(number - 1, itemView.InventoryItem.ItemInstance.InstanceId);
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace FishFlingers.UI
 {
-    public class HotbarSlot : MonoBehaviour
+    public class HotbarSlotView : MonoBehaviour
     {
         [SerializeField] private RectTransform _rectTransform;
 

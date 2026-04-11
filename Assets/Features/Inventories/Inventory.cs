@@ -340,7 +340,7 @@ namespace FishFlingers.Inventories
         }
     }
 
-    public class Inventory : GameplayBehaviour, IEnumerable<KeyValuePair<Vector2Int, NetInventorySlot>>
+    public class Inventory : NetBehaviour, IEnumerable<KeyValuePair<Vector2Int, NetInventorySlot>>
     {
         private SyncDictionaryWrapper<Vector2Int, NetInventorySlot> _netInventorySlots = new SyncDictionaryWrapper<Vector2Int, NetInventorySlot>(ownerAuth: true);
         private SyncDictionaryWrapper<string, NetInventoryItem> _netInventoryItems = new SyncDictionaryWrapper<string, NetInventoryItem>(ownerAuth: true);

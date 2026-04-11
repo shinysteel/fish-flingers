@@ -5,6 +5,7 @@ using ShinyOwl.Common;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using FishFlingers.Entities;
 
 namespace FishFlingers.UI
 {
@@ -32,10 +33,10 @@ namespace FishFlingers.UI
 
             _slots = new HotbarWidgetSlot[_hotbar.Slots.Count];
 
-            for (int i = 0; i < _hotbar.Slots.Count; i++)
+            foreach (HotbarSlot slot in _hotbar.Slots)
             {
-                _slots[i] = _poolManager.GetPoolable<HotbarWidgetSlot>(new SpawnParams() { Parent = transform });
-                _slots[i].Setup(context, i);
+                _slots[slot.Index] = _poolManager.GetPoolable<HotbarWidgetSlot>(new SpawnParams() { Parent = transform });
+                _slots[slot.Index].Setup(context, slot.Index);
             }
 
             _hotbarOutliner = new HotbarOutliner(context, this);
@@ -46,9 +47,9 @@ namespace FishFlingers.UI
                 await Task.Yield();
             }
             
-            for (int i = 0; i < _hotbar.Slots.Count; i++)
+            foreach (HotbarSlot slot in _hotbar.Slots)
             {
-                HandleSlotChanged(i, _hotbar.Slots[i]);
+                HandleSlotChanged(slot);
             }
 
             _hotbar.OnSlotChanged += HandleSlotChanged;
@@ -75,9 +76,9 @@ namespace FishFlingers.UI
             _hotbarOutliner.Tick();
         }
 
-        private void HandleSlotChanged(int index, InventoryItem item)
+        private void HandleSlotChanged(HotbarSlot slot)
         {
-            _slots[index].SetInventoryItem(item);
+            _slots[slot.Index].SetInventoryItem(slot.InventoryItem);
 
             _hotbarOutliner.Refresh();
         }

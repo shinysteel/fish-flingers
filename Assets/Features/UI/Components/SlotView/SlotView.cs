@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using FishFlingers.Entities;
 namespace FishFlingers.UI
 {
     public interface ISlotView
@@ -50,7 +51,7 @@ namespace FishFlingers.UI
             RefreshColor();
         }
 
-        private void HandleHotbarSlotChanged(int index, InventoryItem item)
+        private void HandleHotbarSlotChanged(HotbarSlot slot)
         {
             if (_inventoryItem == null)
             {
@@ -60,12 +61,12 @@ namespace FishFlingers.UI
             int newIndex = _hotbarIndex;
 
             // If we are linked to the assigned item, keep the index up to date
-            if (_inventoryItem.ItemInstance.InstanceId == item?.ItemInstance.InstanceId)
+            if (_inventoryItem.ItemInstance.InstanceId == slot.InventoryItem?.ItemInstance.InstanceId)
             {
-                newIndex = index;
+                newIndex = slot.Index;
             }
             // If our linked item has become null, reflect that
-            else if (_hotbarIndex == index)
+            else if (_hotbarIndex == slot.Index)
             {
                 newIndex = -1;
             }
@@ -88,8 +89,10 @@ namespace FishFlingers.UI
 
             if (item != null)
             {
-                _context.LocalPlayer.Hotbar.IsItemAssigned(item, out int index);
-                HandleHotbarSlotChanged(index, item);
+                if (_context.LocalPlayer.Hotbar.IsItemAssigned(item, out int index))
+                {
+                    HandleHotbarSlotChanged(_context.LocalPlayer.Hotbar.Slots[index]);
+                }
             }
             else
             {

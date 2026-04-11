@@ -22,7 +22,7 @@ namespace FishFlingers.Entities
             _player = player;
             _playerModel = playerModel;
 
-            HandleHotbarSelectedChanged(_player.Hotbar.SelectedIndex, _player.Hotbar.SelectedItem);
+            HandleHotbarSelectedChanged(_player.Hotbar.SelectedSlot);
 
             _player.Hotbar.OnSelectedChanged += HandleHotbarSelectedChanged;
         }
@@ -35,17 +35,17 @@ namespace FishFlingers.Entities
             }
         }
 
-        private void HandleHotbarSelectedChanged(int index, InventoryItem item)
+        private void HandleHotbarSelectedChanged(HotbarSlot slot)
         {
-            if (_heldModel != null && _heldModel.ItemId != item?.ItemInstance.Data.ItemId)
+            if (_heldModel != null && _heldModel.ItemId != slot.InventoryItem?.ItemInstance.Data.ItemId)
             {
                 _poolManager.ReturnItemModel(_heldModel);
                 _heldModel = null;
             }
             
-            if (_heldModel == null && item != null)
+            if (_heldModel == null && slot.InventoryItem != null)
             {
-                _heldModel = _poolManager.GetItemModel(item.ItemInstance.Data.ItemId, new SpawnParams() { Parent = _playerModel.ItemLocator });
+                _heldModel = _poolManager.GetItemModel(slot.InventoryItem.ItemInstance.Data.ItemId, new SpawnParams() { Parent = _playerModel.ItemLocator });
             }
         }
     }

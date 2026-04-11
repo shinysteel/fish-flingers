@@ -19,7 +19,7 @@ namespace FishFlingers.Entities
         public void Tick()
         {
             bool isMoving = _player.InputLogic.MoveDirection != Vector3.zero;
-            bool isHoldingItem = _player.Hotbar.SelectedItem != null;
+            bool isHoldingItem = _player.Hotbar.SelectedSlot.InventoryItem != null;
             
             _model.Animator.SetBool(IsMovingName, isMoving);
             _model.Animator.SetBool(IsHoldingItemName, isHoldingItem);

@@ -1,3 +1,4 @@
+using FishFlingers.Entities;
 using FishFlingers.Inventories;
 using FishFlingers.States;
 using PrimeTween;
@@ -65,7 +66,7 @@ namespace FishFlingers.UI
         {
             _context = context;
 
-            HandleHotbarSelectedChanged(_context.LocalPlayer.Hotbar.SelectedIndex, _context.LocalPlayer.Hotbar.SelectedItem);
+            HandleHotbarSelectedChanged(_context.LocalPlayer.Hotbar.SelectedSlot);
             _context.LocalPlayer.Hotbar.OnSelectedChanged += HandleHotbarSelectedChanged;
 
             _leftClickActionView.Setup();
@@ -83,13 +84,13 @@ namespace FishFlingers.UI
             }
         }
 
-        private void HandleHotbarSelectedChanged(int index, InventoryItem item)
+        private void HandleHotbarSelectedChanged(HotbarSlot slot)
         {
             // _selectedItem denotes what actions can be executed
-            _selectedItem = item;
+            _selectedItem = slot.InventoryItem;
 
-            _leftClickActionView.Show(item?.ItemInstance.Data.LeftClickAction != null);
-            _rightClickActionView.Show(item?.ItemInstance.Data.RightClickAction != null);
+            _leftClickActionView.Show(slot.InventoryItem?.ItemInstance.Data.LeftClickAction != null);
+            _rightClickActionView.Show(slot.InventoryItem?.ItemInstance.Data.RightClickAction != null);
         }
 
         private void Update()

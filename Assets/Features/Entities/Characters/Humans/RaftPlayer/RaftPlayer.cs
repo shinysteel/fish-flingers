@@ -77,12 +77,12 @@ namespace FishFlingers.Entities
 
         [SerializeField] private Inventory _inventory;
         [SerializeField] private BoolGrid _inventoryLayout;
+        [SerializeField] private Hotbar _hotbar;
+
         public Inventory Inventory => _inventory;
+        public Hotbar Hotbar => _hotbar;
 
         [SerializeField] private RaftPlayerTileTargetLogicSettings _targetLogicSettings;
-
-        private Hotbar _hotbar;
-        public Hotbar Hotbar => _hotbar;
 
         private RaftPlayerInputLogic _inputLogic;
         private RaftPlayerPhysicsLogic _physicsLogic;
@@ -90,9 +90,9 @@ namespace FishFlingers.Entities
         private RaftPlayerGrabbedInventoryItemLogic _grabbedInventoryItemLogic;
         private RaftPlayerDropInventoryItemLogic _dropInventoryItemLogic;
         private RaftPlayerAnimateLogic _animateLogic;
+        private RaftPlayerHeldInventoryItemLogic _heldInventoryItemLogic;
         private RaftPlayerHotkeyLogic _hotkeyLogic;
         private RaftPlayerTileTargetLogic _tileTargetLogic;
-        private RaftPlayerHeldInventoryItemLogic _heldInventoryItemLogic;
 
         public RaftPlayerInputLogic InputLogic => _inputLogic;
         public RaftPlayerInteractLogic InteractLogic => _interactLogic;
@@ -118,6 +118,7 @@ namespace FishFlingers.Entities
             _grabbedInventoryItemLogic = new RaftPlayerGrabbedInventoryItemLogic(this, _netGrabbedInventoryItem);
             _dropInventoryItemLogic = new RaftPlayerDropInventoryItemLogic(this);
             _animateLogic = new RaftPlayerAnimateLogic(this, _characterModel);
+            _heldInventoryItemLogic = new RaftPlayerHeldInventoryItemLogic(this, _characterModel);
 
             if (isOwner)
             {
@@ -136,11 +137,8 @@ namespace FishFlingers.Entities
 
             if (isOwner)
             {
-                _hotbar = new Hotbar(context);
-
                 _hotkeyLogic = new RaftPlayerHotkeyLogic(context, _netGrabbedInventoryItem);
                 _tileTargetLogic = new RaftPlayerTileTargetLogic(context, _targetLogicSettings);
-                _heldInventoryItemLogic = new RaftPlayerHeldInventoryItemLogic(this, _characterModel);
             }
         }
 

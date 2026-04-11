@@ -85,7 +85,7 @@ namespace FishFlingers.Entities
         /// </summary>
         public void Assign(HotbarWidgetSlot slot)
         {
-            _player.Hotbar.SetSlot(slot.Index, _grabbedInventoryItem);
+            _player.Hotbar.SetSlot(slot.Index, _grabbedInventoryItem.ItemInstance.InstanceId);
 
             _ = ReleaseAsync();
         }

@@ -85,10 +85,10 @@ namespace FishFlingers.UI
                 processElement: (BlueprintEntry entry, int index) => entry.Setup(_context, buildables.ElementAt(index)));
         }
         
-        private void HandleHotbarSelectedChanged(int index, InventoryItem item)
+        private void HandleHotbarSelectedChanged(HotbarSlot slot)
         {
             // There's a scenario where you aren't holding a hammer anymore while this is open
-            if (item?.ItemInstance.Data.ItemId != ItemId.Hammer)
+            if (slot.InventoryItem?.ItemInstance.Data.ItemId != ItemId.Hammer)
             {
                 ClosePressed();
             }

@@ -149,7 +149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Hotbar
   _backgroundTransform: {fileID: 8401491683237386405}
   _backgroundImage: {fileID: 6209390956311104573}
-  _slotPrefab: {fileID: 8373277002671529977, guid: ebc19d4b961b69e4da47e9b39cdcc24c, type: 3}
+  _slotViewPrefab: {fileID: 8373277002671529977, guid: ebc19d4b961b69e4da47e9b39cdcc24c, type: 3}
 --- !u!114 &6973463875577750320
 MonoBehaviour:
   m_ObjectHideFlags: 0
