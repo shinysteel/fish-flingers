@@ -17,7 +17,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static FishFlingers.Entities.RaftPlayerGrabbedInventoryItemLogic;
 
 namespace FishFlingers.Entities
 {
@@ -39,6 +38,7 @@ namespace FishFlingers.Entities
         }
 
         [JsonProperty] public InventorySave Inventory { get; private set; } = new();
+        [JsonProperty] public HotbarSave Hotbar { get; private set; } = new();
 
         private const int Precision = 1;
 
@@ -54,6 +54,8 @@ namespace FishFlingers.Entities
             player.Rigidbody.angularVelocity = Vector3.zero;
 
             await Inventory.LoadToAsync(player.Inventory);
+
+            Hotbar.LoadTo(player.Hotbar);
         }
 
         public void SaveFrom(RaftPlayer player)
@@ -62,6 +64,8 @@ namespace FishFlingers.Entities
             Rotation = Utils.Math.RoundQuaternion(player.transform.rotation, Precision);
 
             Inventory.SaveFrom(player.Inventory);
+
+            Hotbar.SaveFrom(player.Hotbar);
         }
 
         public void ApplyDefaults()
@@ -216,10 +220,10 @@ namespace FishFlingers.Entities
         }
 
         [TargetRpc]
-        public async Task<PlaceResponse> PlaceRpc(PlayerID playerId, Inventory inventory, InventoryPlaceParams placeParams)
+        public async Task<RaftPlayerGrabbedInventoryItemLogic.PlaceResponse> PlaceRpc(PlayerID playerId, Inventory inventory, InventoryPlaceParams placeParams)
         {
             bool success = inventory.TryPlaceItem(placeParams, true, out int overflow, out _, out NetInventoryItemsChange change);
-            return new PlaceResponse(success, overflow, change.IsValid);
+            return new RaftPlayerGrabbedInventoryItemLogic.PlaceResponse(success, overflow, change.IsValid);
         }
 
         [TargetRpc]

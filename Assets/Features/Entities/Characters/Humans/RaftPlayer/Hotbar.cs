@@ -1,6 +1,7 @@
 using FishFlingers.Inventories;
 using FishFlingers.Networking;
 using FishFlingers.States;
+using Newtonsoft.Json;
 using PurrNet;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Utils;
@@ -12,6 +13,32 @@ using UnityEngine;
 
 namespace FishFlingers.Entities
 {
+    public class HotbarSave
+    {
+        [JsonProperty] public List<string> Slots { get; private set; } = new();
+
+        public HotbarSave()
+        { }
+
+        public void LoadTo(Hotbar hotbar)
+        {
+            for (int i = 0; i < Slots.Count; i++)
+            {
+                hotbar.SetSlot(i, Slots[i]);
+            }
+        }
+
+        public void SaveFrom(Hotbar hotbar)
+        {
+            Slots.Clear();
+
+            foreach (HotbarSlot slot in hotbar.Slots)
+            {
+                Slots.Add(slot.InstanceId);
+            }
+        }
+    }
+    
     public class HotbarSlot
     {
         private Hotbar _hotbar;
@@ -22,6 +49,7 @@ namespace FishFlingers.Entities
         private InventoryItem _inventoryItem;
 
         public int Index => _index;
+        public string InstanceId => _instanceId;
         public InventoryItem InventoryItem => _inventoryItem;
 
         public HotbarSlot(Hotbar hotbar, Inventory inventory, int index)
