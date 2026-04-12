@@ -13,8 +13,8 @@ namespace ShinyOwl.Common
         [SerializeField] private string _suffix = "Icon";
         [SerializeField] private Vector2Int _resolution = Vector2Int.one * 256;
         [SerializeField] private Vector3 _cameraOffset = new Vector3(0f, 0f, -10f);
-        [SerializeField] private Vector3 _cameraRotation = new Vector3(25f, -25f, 0f);
-        [SerializeField] private Vector3 _lightRotation = new Vector3(45f, -45f, 0f);
+        [SerializeField] private Vector3 _cameraRotation = new Vector3(25f, 155f, 0f);
+        [SerializeField] private Vector3 _lightRotation = new Vector3(45f, 135f, 0f);
         [SerializeField] private float _cameraFOV = 20f;
         [SerializeField] private int _outlineThickness = 10;
         [SerializeField] private Color _outlineColor = new Color32(14, 57, 84, 255);

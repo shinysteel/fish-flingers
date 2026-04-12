@@ -24,6 +24,7 @@ namespace FishFlingers.Entities
         // Characters
         RaftPlayer  = 100 ,
         FlyingFish  = 101 ,
+        Shark       = 102 ,
 
         // Structures
         WaveSign    = 200 ,

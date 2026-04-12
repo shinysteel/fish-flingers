@@ -34,6 +34,7 @@ namespace FishFlingers.Entities
             }
         }
 
+        // Surface and scout a tile on the raft
         private class ScoutState : State
         {
             private float _scoutTimer;
@@ -45,32 +46,31 @@ namespace FishFlingers.Entities
             {
                 _scoutTimer = 0f;
 
-                // Choose a tile to target
-                if (!_flyingFish._context.Raft.TryGetRandomTile(out _flyingFish._targetTile))
+                // Choose a tile to target and a position to scout from
+                if (!_flyingFish._context.Raft.Queries.TryGetRandomTile(out _flyingFish._targetTile) 
+                    || !_flyingFish._context.Raft.Queries.TryGetClosestEdge(_flyingFish._targetTile.Cell, out RaftEdge edge))
                 {
                     _flyingFish._entityManager.Despawn(_flyingFish);
                     return;
                 }
 
-                // Choose a position to scout from
                 int scoutOffset = 3;
-                if (!_flyingFish._context.Raft.TryGetClosestEdge(_flyingFish._targetTile.Cell, out RaftEdge edge))
-                {
-                    _flyingFish._entityManager.Despawn(_flyingFish);
-                    return;
-                }
+                _flyingFish.transform.position = _flyingFish._context.Raft.Queries.CellToWorldPosition(edge.Tile.Cell + edge.CellDirection * scoutOffset);
 
-                _flyingFish.transform.position = _flyingFish._context.Raft.CellToWorldPosition(edge.Tile.Cell + edge.Direction2D * scoutOffset);
-
+                // Rest slightly in the water
+                float restDistance = 0.05f;
+                _flyingFish.transform.position += Vector3.down * restDistance;
+                
                 // Face towards the raft, with a slight tilt up
                 float scoutTilt = 15f;
-                _flyingFish.transform.rotation = Quaternion.LookRotation(edge.Direction3D);
+                _flyingFish.transform.rotation = Quaternion.LookRotation(edge.WorldDirection);
                 _flyingFish.transform.rotation = Quaternion.AngleAxis(scoutTilt, _flyingFish.transform.right) * _flyingFish.transform.rotation;
 
                 // Animate from underwater to surface
                 float surfaceDuration = 0.5f;
-                _flyingFish.transform.position += Vector3.down;
-                Tween.Position(_flyingFish.transform, _flyingFish.transform.position + Vector3.up, surfaceDuration, Ease.OutBack);
+                float surfaceDistance = 0.5f;
+                _flyingFish.transform.position += Vector3.down * surfaceDistance;
+                Tween.Position(_flyingFish.transform, _flyingFish.transform.position + Vector3.up * surfaceDistance, surfaceDuration, Ease.OutBack);
             }
 
             public override void Tick()
@@ -87,6 +87,7 @@ namespace FishFlingers.Entities
             }
         }
 
+        // Fly into a tile on the raft
         private class FlyState : State
         {
             private Vector3 _anticipatePosition;
@@ -147,9 +148,9 @@ namespace FishFlingers.Entities
             }
         }
 
-        protected override void OnInitializeModules()
+        protected override void Awake()
         {
-            base.OnInitializeModules();
+            base.Awake();
 
             _stateMachine = new();
 

@@ -52,6 +52,13 @@ namespace FishFlingers.Entities
         {
             _cell = cell;
         }
+
+        protected override void OnSpawned()
+        {
+            base.OnSpawned();
+
+            transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
+        }
     }
 
     public abstract class Structure<T> : Structure where T : StructureData

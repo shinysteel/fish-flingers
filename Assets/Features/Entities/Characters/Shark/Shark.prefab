@@ -1,40 +1,44 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &1768815731624705206
+--- !u!1001 &3626858166568147677
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 8282702041294059726}
+    m_TransformParent: {fileID: 5177111992665349817}
     m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 5b646de26b1d7654e8ec45df46a3f049, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 5b646de26b1d7654e8ec45df46a3f049, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
+    - target: {fileID: -8679921383154817045, guid: 5b646de26b1d7654e8ec45df46a3f049, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
+    - target: {fileID: 919132149155446097, guid: 5b646de26b1d7654e8ec45df46a3f049, type: 3}
       propertyPath: m_Name
-      value: FlyingFish
+      value: Shark
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 5b646de26b1d7654e8ec45df46a3f049, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 85883bda634291147be562c1d184c406, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
---- !u!4 &2235652335221185373 stripped
+  m_SourcePrefab: {fileID: 100100000, guid: 5b646de26b1d7654e8ec45df46a3f049, type: 3}
+--- !u!4 &3881972260847336758 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
-  m_PrefabInstance: {fileID: 1768815731624705206}
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5b646de26b1d7654e8ec45df46a3f049, type: 3}
+  m_PrefabInstance: {fileID: 3626858166568147677}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &6534710111205257386
+--- !u!1001 &8035880012891379421
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -60,39 +64,44 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4308314301107375625, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
       propertyPath: m_Name
-      value: FlyingFish
+      value: Shark
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2908733436539095140, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2235652335221185373}
+      addedObject: {fileID: 3881972260847336758}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4308314301107375625, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
       insertIndex: 1
-      addedObject: {fileID: 5801466337614864078}
+      addedObject: {fileID: 5924475881420196102}
     - targetCorrespondingSourceObject: {fileID: 4308314301107375625, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7502424701398164475}
+      addedObject: {fileID: 4975119389212087691}
   m_SourcePrefab: {fileID: 100100000, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
---- !u!1 &7018228068551982755 stripped
+--- !u!4 &5177111992665349817 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2908733436539095140, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
+  m_PrefabInstance: {fileID: 8035880012891379421}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6075104437459802324 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4308314301107375625, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
-  m_PrefabInstance: {fileID: 6534710111205257386}
+  m_PrefabInstance: {fileID: 8035880012891379421}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5801466337614864078
+--- !u!114 &5924475881420196102
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7018228068551982755}
+  m_GameObject: {fileID: 6075104437459802324}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55ca2558a9bbf82499d399bd0c7af455, type: 3}
+  m_Script: {fileID: 11500000, guid: 78007505862bfaf48ad8eccbb6945a51, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.FlyingFish
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.Shark
   _isSetup: 0
   _prefabId: -2147483648
   _componentIndex: -2147483648
@@ -102,16 +111,16 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  _entityData: {fileID: 11400000, guid: 349370ccaeb9e5548b6d4002c5167571, type: 2}
-  _rigidbody: {fileID: 7878812079687700817}
+  _entityData: {fileID: 11400000, guid: 7a69f78e97e2eb4409da57692cd4d9f2, type: 2}
+  _rigidbody: {fileID: 6376520538752300838}
   _characterModel: {fileID: 0}
---- !u!65 &7502424701398164475
+--- !u!65 &4975119389212087691
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7018228068551982755}
+  m_GameObject: {fileID: 6075104437459802324}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -124,15 +133,10 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.125, y: 0.15, z: 0.45}
-  m_Center: {x: 0, y: 0.075, z: 0}
---- !u!54 &7878812079687700817 stripped
+  m_Size: {x: 0.4, y: 0.325, z: 1.5}
+  m_Center: {x: 0, y: 0.175, z: 0.1}
+--- !u!54 &6376520538752300838 stripped
 Rigidbody:
   m_CorrespondingSourceObject: {fileID: 4033217484698771963, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
-  m_PrefabInstance: {fileID: 6534710111205257386}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &8282702041294059726 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2908733436539095140, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
-  m_PrefabInstance: {fileID: 6534710111205257386}
+  m_PrefabInstance: {fileID: 8035880012891379421}
   m_PrefabAsset: {fileID: 0}

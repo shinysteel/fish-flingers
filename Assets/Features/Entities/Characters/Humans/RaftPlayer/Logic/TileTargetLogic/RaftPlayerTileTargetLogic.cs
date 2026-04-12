@@ -208,7 +208,7 @@ namespace FishFlingers.Entities
         private void TransformVisualTick()
         {
             Vector3 scale;
-            Vector3 position = _context.Raft.CellToWorldPosition(_target.Cell);
+            Vector3 position = _context.Raft.Queries.CellToWorldPosition(_target.Cell);
 
             if (_target.Tile != null)
             {

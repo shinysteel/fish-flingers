@@ -52,6 +52,8 @@ namespace FishFlingers.Entities
         private Structure _structure;
         public Structure Structure => _structure;
 
+        public const float Size = 1f;
+
         protected override void Awake()
         {
             base.Awake();
@@ -83,7 +85,7 @@ namespace FishFlingers.Entities
 
             _cell = cell;
 
-            transform.position = _context.Raft.CellToWorldPosition(cell);
+            transform.position = _context.Raft.Queries.CellToWorldPosition(cell);
         }
 
         public void SetStructure(Structure structure)

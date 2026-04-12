@@ -66,10 +66,16 @@ namespace FishFlingers.Environments
         private void Spawn()
         {
             int minSpread = 3;
-            float x = Random.Range((float)Mathf.Min(-minSpread, _context.Raft.LeftmostColumn), Mathf.Max(minSpread, _context.Raft.RightmostColumn));
+
+            float x = Random.Range(
+                (float)Mathf.Min(-minSpread, _context.Raft.Queries.Axes[ERaftAxis.Horizontal].MinAnchor), 
+                Mathf.Max(minSpread, _context.Raft.Queries.Axes[ERaftAxis.Horizontal].MaxAnchor));
+
             int forwardDist = 10;
-            int y = _context.Raft.ForwardmostRow + forwardDist;
-            Vector3 position = _context.Raft.CellToWorldPosition(new Vector2(x, y));
+
+            int y = _context.Raft.Queries.Axes[ERaftAxis.Vertical].MaxAnchor + forwardDist;
+
+            Vector3 position = _context.Raft.Queries.CellToWorldPosition(new Vector2(x, y));
 
             DroppedItem item = (DroppedItem)_entityManager.Spawn(EntityId.DroppedItem, new SpawnParams() { Position = position });
             item.Set(new NetItemInstance(null, ItemId.Driftwood, 1), DroppedItemType.Salvage);
