@@ -61,8 +61,6 @@ namespace FishFlingers.Saving
             // Treat null as a new file to save to
             _folderPath ??= GetNextDefaultGameSaveFolderPath();
 
-            Directory.CreateDirectory(_folderPath);
-
             _gameSavePath = Path.Combine(_folderPath, $"{_saveManager.Config.GameSaveFileName}.json");
             _thumbnailPath = Path.Combine(_folderPath, $"{_saveManager.Config.ThumbnailFileName}.png");
         }
@@ -244,6 +242,8 @@ namespace FishFlingers.Saving
 
         public async Task SaveGameAsync()
         {
+            Directory.CreateDirectory(_selectedSaveFile.FolderPath);
+            
             foreach (ISaveable saveable in _saveables)
             {
                 saveable.Save();
