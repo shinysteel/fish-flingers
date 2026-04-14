@@ -38,7 +38,7 @@ namespace FishFlingers.Environments
 
         private void Spawn()
         {
-            _entityManager.Spawn(EntityId.Shark, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
+            _entityManager.Spawn(EntityId.FlyingFish, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
         }
     }
 }

@@ -30,10 +30,18 @@ namespace FishFlingers.Environments
 
         public IReadOnlyDictionary<int, RaftLine> Lines => _lines;
 
+        private const int DefaultLines = 20;
+
         public RaftAxis(Raft raft, ERaftAxis type)
         {
             _raft = raft;
             _type = type;
+
+            for (int i = 0; i < DefaultLines; i++)
+            {
+                int anchor = i - DefaultLines / 2;
+                _lines.Add(anchor, new RaftLine(_raft, _type, anchor));
+            }
 
             _raft.OnTileChanged += HandleTileChanged;
         }
@@ -58,13 +66,14 @@ namespace FishFlingers.Environments
             int anchor = _type == ERaftAxis.Horizontal ? cell.y : cell.x;
             int index = _type == ERaftAxis.Horizontal ? cell.x : cell.y;
 
+            if (!_lines.ContainsKey(anchor))
+            {
+                Log.Error($"No line exists for the cell {cell}");
+                return;
+            }
+
             if (tile != null)
             {
-                if (!_lines.ContainsKey(anchor))
-                {
-                    _lines.Add(anchor, new RaftLine(_raft, _type, anchor));
-                }
-
                 _lines[anchor].AddTile(tile);
             }
             else
@@ -251,20 +260,42 @@ namespace FishFlingers.Environments
             return true;
         }
 
-        public bool TryGetRandomLine(out RaftLine line)
+        public bool TryGetRandomLine(out RaftLine randomLine)
         {
-            line = null;
+            List<RaftLine> lines = ListPool<RaftLine>.Get();
+            List<RaftLine> candidates = ListPool<RaftLine>.Get();
 
-            // Horizontal is always equivalent to vertical
-            if (_axes[ERaftAxis.Horizontal].Lines.Count == 0)
+            randomLine = null;
+
+            foreach (RaftAxis axis in _axes.Values)
             {
-                return false;
+                lines.AddRange(axis.Lines.Values);
             }
 
-            RaftAxis axis = _axes.ElementAt(Random.Range(0, _axes.Count)).Value;
-            line = axis.Lines.ElementAt(Random.Range(0, axis.Lines.Count)).Value;
+            foreach (RaftLine line in lines)
+            {
+                if (line.Tiles.Count > 0)
+                {
+                    candidates.Add(line);
+                }
+            }
 
-            return true;
+            try
+            {
+                if (candidates.Count == 0)
+                {
+                    return false;
+                }
+
+                randomLine = candidates[Random.Range(0, candidates.Count)];
+
+                return true;
+            }
+            finally
+            {
+                ListPool<RaftLine>.Release(lines);
+                ListPool<RaftLine>.Release(candidates);
+            }
         }
 
         /// <summary>

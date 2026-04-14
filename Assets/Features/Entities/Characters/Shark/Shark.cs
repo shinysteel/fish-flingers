@@ -10,8 +10,10 @@ namespace FishFlingers.Entities
     {
         private StateMachine<EState> _stateMachine;
 
-        private Vector3 _swimDirection;
         private RaftLine _targetLine;
+        private Vector2Int _lineDirection;
+
+        private Vector3 _swimDirection;
 
         private enum EState
         {
@@ -50,6 +52,7 @@ namespace FishFlingers.Entities
                 }
 
                 RaftEdge edge = Random.value < 0.5f ? line.MinEdge : line.MaxEdge;
+                _shark._lineDirection = -edge.CellDirection;
 
                 // Start away from the edge
                 float edgeDistance = Tile.Size * 8;
