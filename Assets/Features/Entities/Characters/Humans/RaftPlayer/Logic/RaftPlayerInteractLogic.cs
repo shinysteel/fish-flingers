@@ -128,7 +128,11 @@ namespace FishFlingers.Entities
                 {
                     if (_interactLogic._interactPromptUI.IsShowing)
                     {
-                        _interactLogic._interactPromptUI.Hide(() => _interactLogic.SetCurrentInteractable(_interactLogic._targetInteractable));
+                        _interactLogic._interactPromptUI.Hide(() =>
+                        {
+                            _interactLogic.SetCurrentInteractable(_interactLogic._targetInteractable);
+                            Tick();
+                        });
                     }
 
                     return;
@@ -223,6 +227,8 @@ namespace FishFlingers.Entities
 
         public void Tick()
         {
+            Log.Info($"State: {_uiStateMachine.CurrentEnum}");
+
             _targetInteractable = FindTarget();
 
             _uiStateMachine.Tick();

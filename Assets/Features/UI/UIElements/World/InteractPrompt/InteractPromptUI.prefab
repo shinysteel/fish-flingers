@@ -92,7 +92,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: InteractPromptUI
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 132160939576911845, guid: aed9fb2fbe0b19845812ff366b54284d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 3206367382060075856, guid: aed9fb2fbe0b19845812ff366b54284d, type: 3}
@@ -103,23 +104,15 @@ PrefabInstance:
       insertIndex: 1
       addedObject: {fileID: 4809291724522747272}
     - targetCorrespondingSourceObject: {fileID: 6818615869069319518, guid: aed9fb2fbe0b19845812ff366b54284d, type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 8611847211842360761}
+    - targetCorrespondingSourceObject: {fileID: 6818615869069319518, guid: aed9fb2fbe0b19845812ff366b54284d, type: 3}
       insertIndex: -1
       addedObject: {fileID: -159350866015385609}
     - targetCorrespondingSourceObject: {fileID: 6818615869069319518, guid: aed9fb2fbe0b19845812ff366b54284d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3992901613027331862}
   m_SourcePrefab: {fileID: 100100000, guid: aed9fb2fbe0b19845812ff366b54284d, type: 3}
---- !u!114 &245798257624196801 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 132160939576911845, guid: aed9fb2fbe0b19845812ff366b54284d, type: 3}
-  m_PrefabInstance: {fileID: 197251948618989860}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6637268580558150778}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f5533f75ddf46c46a435768440ac0a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.UI.FadeUIAnimation
 --- !u!224 &3369688401575365236 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3206367382060075856, guid: aed9fb2fbe0b19845812ff366b54284d, type: 3}
@@ -142,10 +135,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7da5f84e60382a7468b06972a1e7c229, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.UI.InteractPromptUI
-  _uiAnimation: {fileID: 245798257624196801}
+  _uiAnimation: {fileID: 8611847211842360761}
   _rectTransform: {fileID: 3369688401575365236}
   _canvasGroup: {fileID: 8380455813808849554}
   _text: {fileID: 5229148254527452820}
+--- !u!114 &8611847211842360761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6637268580558150778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cefc8acff722413449cd2b93b91bed7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.UI.InstantUIAnimation
 --- !u!222 &-159350866015385609
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -166,7 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 63ef3867228c6f84abcbce5b087d9cb2, type: 2}
   m_Color: {r: 0.3137255, g: 0.7490196, b: 0.77254903, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -216,7 +221,7 @@ PrefabInstance:
     - target: {fileID: 4898527889385909063, guid: dfffba3074a50d94f97a3f2fb6ae8a69, type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: 2100000, guid: cb429558fea6cd242847fc013f15eebe, type: 2}
+      objectReference: {fileID: 2100000, guid: fba3ff338acb3c841ad7981b89d6a17b, type: 2}
     - target: {fileID: 6722119670988573049, guid: dfffba3074a50d94f97a3f2fb6ae8a69, type: 3}
       propertyPath: m_Name
       value: Text
