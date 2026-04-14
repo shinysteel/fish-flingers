@@ -124,6 +124,16 @@ namespace FishFlingers.Inventories
                 Count = netItemInstance.Count
             };
         }
+
+        public static InventoryChangeParams Create(ItemInstance itemInstance)
+        {
+            return new InventoryChangeParams()
+            {
+                InstanceId = itemInstance.InstanceId,
+                ItemId = itemInstance.Data.ItemId,
+                Count = itemInstance.Count
+            };
+        }
     }
    
     public class InventoryPlaceParams
@@ -184,6 +194,7 @@ namespace FishFlingers.Inventories
         public Vector2Int Pivot { get; private set; }
         public int Rotations { get; private set; }
         public NetItemInstance ItemInstance { get; private set; }
+        public bool IsLocked { get; private set; }
         public bool IsGrabbed { get; private set; }
 
         public NetInventoryItem(Vector2Int cell, Vector2Int pivot, int rotations, NetItemInstance itemInstance)
@@ -213,6 +224,11 @@ namespace FishFlingers.Inventories
         {
             rotations = Utils.Math.EuclideanModulo(rotations, 4);
             Rotations = rotations;
+        }
+
+        public void SetIsLocked(bool isLocked)
+        {
+            IsLocked = isLocked;
         }
 
         public void SetIsGrabbed(bool isGrabbed)
@@ -286,14 +302,18 @@ namespace FishFlingers.Inventories
         public int Rotations { get; private set; }
         public ItemInstance ItemInstance { get; private set; }
         public BoolGrid Shape { get; private set; }
+        public bool IsLocked { get; private set; }
         public bool IsGrabbed { get; private set; }
 
-        private InventoryItem(Vector2Int cell, Vector2Int pivot, int rotations, ItemInstance instance, bool isGrabbed)
+        public bool IsAvailable => !IsLocked && !IsGrabbed;
+
+        private InventoryItem(Vector2Int cell, Vector2Int pivot, int rotations, ItemInstance instance, bool isLocked, bool isGrabbed)
         {
             Cell = cell;
             Pivot = pivot;
             Rotations = rotations;
             ItemInstance = instance;
+            IsLocked = isLocked;
             IsGrabbed = isGrabbed;
 
             RefreshShape();
@@ -301,12 +321,12 @@ namespace FishFlingers.Inventories
 
         public static InventoryItem Create(NetInventoryItem netInventoryItem)
         {
-            return new InventoryItem(netInventoryItem.Cell, netInventoryItem.Pivot, netInventoryItem.Rotations, ItemInstance.Create(netInventoryItem.ItemInstance), netInventoryItem.IsGrabbed);
+            return new InventoryItem(netInventoryItem.Cell, netInventoryItem.Pivot, netInventoryItem.Rotations, ItemInstance.Create(netInventoryItem.ItemInstance), netInventoryItem.IsLocked, netInventoryItem.IsGrabbed);
         }
 
         public InventoryItem DeepClone()
         {
-            return new InventoryItem(Cell, Pivot, Rotations, ItemInstance.DeepClone(), false);
+            return new InventoryItem(Cell, Pivot, Rotations, ItemInstance.DeepClone(), false, false);
         }
         
         public void SetPivot(Vector2Int pivot)
@@ -484,22 +504,24 @@ namespace FishFlingers.Inventories
         /// <summary>
         /// Removes an item from the inventory
         /// </summary>
-        public void RemoveItem(string instanceId)
+        public bool TryRemoveItem(string instanceId)
         { 
             if (!isOwner)
             {
                 Log.Error("Tried to remove items without being the owner");
-                return;
+                return false;
             }
 
             if (!_netInventoryItems.ContainsKey(instanceId))
             {
                 Log.Error($"Inventory does not contain an item instance with id: {instanceId}");
-                return;
+                return false;
             }
 
             ClearSlots(instanceId);
             _netInventoryItems.Remove(instanceId);
+
+            return true;
         }
 
         /// <summary>
@@ -916,7 +938,7 @@ namespace FishFlingers.Inventories
             }
             else
             {
-                RemoveItem(item.ItemInstance.InstanceId);
+                TryRemoveItem(item.ItemInstance.InstanceId);
             }
         }
 
@@ -973,6 +995,12 @@ namespace FishFlingers.Inventories
         public void SetNetItemCount(string instanceId, int count)
         {
             _netInventoryItems[instanceId].ItemInstance.SetCount(count);
+            _netInventoryItems.SetDirty(instanceId);
+        }
+
+        public void SetNetItemIsLocked(string instanceId, bool isLocked)
+        {
+            _netInventoryItems[instanceId].SetIsLocked(isLocked);
             _netInventoryItems.SetDirty(instanceId);
         }
 

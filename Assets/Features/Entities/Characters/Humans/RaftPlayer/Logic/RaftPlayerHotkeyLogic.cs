@@ -6,6 +6,7 @@ using FishFlingers.UI;
 using PurrNet;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Utils;
+using System.Threading.Tasks;
 using UnityEngine;
 using NetworkManager = FishFlingers.Networking.NetworkManager;
 
@@ -129,6 +130,9 @@ namespace FishFlingers.Entities
             }
         }
 
+        /// <summary>
+        /// Moves an item from one inventory to another using auto fit
+        /// </summary>
         private void MoveItem(InventoryItemView itemView)
         {
             if (itemView == null)
@@ -141,21 +145,21 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            //Inventory inventory = itemView.InventoryWidget.Inventory == _context.LocalPlayer.Inventory
-            //    ? hasInventory.Inventory
-            //    : _context.LocalPlayer.Inventory;
+            Inventory fromInventory;
+            Inventory toInventory;
+            
+            if (itemView.InventoryWidget.Inventory == _context.LocalPlayer.Inventory)
+            {
+                fromInventory = _context.LocalPlayer.Inventory;
+                toInventory = hasInventory.Inventory;
+            }
+            else
+            {
+                fromInventory = hasInventory.Inventory;
+                toInventory = _context.LocalPlayer.Inventory;
+            }
 
-            // scenario a: move item from our inventory to open inventory
-
-            // scenario b: move item from open inventory to our inventory
-            // ensure the destination can fit the item
-            // reserve that space for this operation
-            // request to remove item
-            // listen to response
-            // if accepted, apply that item to the reservation
-            // if rejected, release that reservation
-
-            // if a slot is reserved, you can't place anything into it
+            _ = _context.LocalPlayer.MoveInventoryItemRpc(fromInventory.owner.Value, fromInventory, toInventory, itemView.InventoryItem.ItemInstance.InstanceId);
         }
 
         private void GrabItem(InventoryItemView itemView, InventorySlotView inventorySlot)
@@ -298,7 +302,7 @@ namespace FishFlingers.Entities
             void Drop(ItemInstance instance, Inventory inventory)
             {
                 _context.LocalPlayer.DropInventoryItemLogic.SpawnDroppedItem(instance, false);
-                inventory.RemoveItem(instance.InstanceId);
+                inventory.TryRemoveItem(instance.InstanceId);
             }
         }
 
@@ -310,7 +314,7 @@ namespace FishFlingers.Entities
             }
 
             _context.LocalPlayer.DropInventoryItemLogic.SpawnDroppedItem(_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem.ItemInstance, true);
-            _context.LocalPlayer.Inventory.RemoveItem(_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem.ItemInstance.InstanceId);
+            _context.LocalPlayer.Inventory.TryRemoveItem(_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem.ItemInstance.InstanceId);
         }
 
         private void Interact()

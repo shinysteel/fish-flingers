@@ -8,8 +8,8 @@ using ShinyOwl.Common;
 using ShinyOwl.Common.Utils;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace FishFlingers.Entities
 {
@@ -25,20 +25,6 @@ namespace FishFlingers.Entities
         public InventoryItem GrabbedInventoryItem => _grabbedInventoryItem;
 
         public event Action<InventoryItem> OnGrabbedInventoryItemChanged;
-
-        public class PlaceResponse
-        {
-            public bool Success { get; private set; }
-            public int Overflow { get; private set; }
-            public bool WasChange { get; private set; }
-
-            public PlaceResponse(bool success, int overflow, bool wasChange)
-            {
-                Success = success;
-                Overflow = overflow;
-                WasChange = wasChange;
-            }
-        }
 
         public RaftPlayerGrabbedInventoryItemLogic(RaftPlayer player, SyncVar<NetInventoryItem> netGrabbedInventoryItem)
         {
@@ -61,7 +47,7 @@ namespace FishFlingers.Entities
         /// </summary>
         public async Task GrabAsync(InventoryItemView itemView, InventorySlotView slotView)
         {
-            NetInventoryItem grabbedNetInventoryItem = await _player.GrabRpc(itemView.InventoryWidget.Inventory.owner.Value, itemView.InventoryWidget.Inventory, itemView.InventoryItem.ItemInstance.InstanceId, slotView.Cell);
+            NetInventoryItem grabbedNetInventoryItem = await _player.GrabInventoryItemRpc(itemView.InventoryWidget.Inventory.owner.Value, itemView.InventoryWidget.Inventory, itemView.InventoryItem.ItemInstance.InstanceId, slotView.Cell);
             if (grabbedNetInventoryItem == null)
             {
                 return;
@@ -105,7 +91,7 @@ namespace FishFlingers.Entities
                 Count = _grabbedInventoryItem.ItemInstance.Count
             };
 
-            PlaceResponse response = await _player.PlaceRpc(slotView.InventoryWidget.Inventory.owner.Value, slotView.InventoryWidget.Inventory, placeParams);
+            RaftPlayer.PlaceInventoryItemResponse response = await _player.PlaceInventoryItemRpc(slotView.InventoryWidget.Inventory.owner.Value, slotView.InventoryWidget.Inventory, placeParams);
 
             if (response.Success == false)
             {
@@ -115,7 +101,7 @@ namespace FishFlingers.Entities
             // When placing an item, it's previous instance can be removed if the place action was a change, or if it is moving to another inventory
             bool canRemove = response.WasChange || _grabbedItemView.InventoryWidget.Inventory != slotView.InventoryWidget.Inventory;
 
-            await _player.SetRpc(_grabbedItemView.InventoryWidget.Inventory.owner.Value, _grabbedItemView.InventoryWidget.Inventory, 
+            await _player.SetInventoryItemCountRpc(_grabbedItemView.InventoryWidget.Inventory.owner.Value, _grabbedItemView.InventoryWidget.Inventory, 
                 _grabbedInventoryItem.ItemInstance.InstanceId, response.Overflow, canRemove);
 
             if (response.Overflow == 0)
@@ -129,7 +115,10 @@ namespace FishFlingers.Entities
         /// </summary>
         public async Task DropAsync()
         {
-            await _player.DropRpc(_grabbedItemView.InventoryWidget.Inventory.owner.Value, _grabbedItemView.InventoryWidget.Inventory, _grabbedInventoryItem.ItemInstance.InstanceId);
+            if (!await _player.RemoveInventoryItemRpc(_grabbedItemView.InventoryWidget.Inventory.owner.Value, _grabbedItemView.InventoryWidget.Inventory, _grabbedInventoryItem.ItemInstance.InstanceId))
+            {
+                return;
+            }
 
             _player.DropInventoryItemLogic.SpawnDroppedItem(_grabbedInventoryItem.ItemInstance, true);
 
@@ -141,7 +130,7 @@ namespace FishFlingers.Entities
         /// </summary>
         private async Task ReleaseAsync()
         {
-            await _player.ReleaseRpc(_grabbedItemView.InventoryWidget.Inventory.owner.Value, _grabbedItemView.InventoryWidget.Inventory, _grabbedItemView.InventoryItem.ItemInstance.InstanceId);
+            await _player.ReleaseInventoryItemRpc(_grabbedItemView.InventoryWidget.Inventory.owner.Value, _grabbedItemView.InventoryWidget.Inventory, _grabbedItemView.InventoryItem.ItemInstance.InstanceId);
 
             _grabbedItemView.InventoryWidget.Inventory.OnInventoryItemChanged -= HandleInventoryItemChanged;
 

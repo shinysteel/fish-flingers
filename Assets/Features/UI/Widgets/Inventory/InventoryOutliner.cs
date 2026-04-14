@@ -53,7 +53,7 @@ namespace FishFlingers.UI
                 if (_targetSlotView.InventoryItem != null)
                 {
                     // Color the target item white or red
-                    CellOutline.EColor color = _targetSlotView.InventoryItem.IsGrabbed == false 
+                    CellOutline.EColor color = _targetSlotView.InventoryItem.IsAvailable 
                         ? CellOutline.EColor.Highlighted 
                         : CellOutline.EColor.Negative;
 

@@ -117,6 +117,32 @@ namespace FishFlingers.Entities
 
         public bool IsLocalPlayer => this == _context.LocalPlayer;
 
+        public class PlaceInventoryItemResponse
+        {
+            public bool Success { get; private set; }
+            public int Overflow { get; private set; }
+            public bool WasChange { get; private set; }
+
+            public PlaceInventoryItemResponse(bool success, int overflow, bool wasChange)
+            {
+                Success = success;
+                Overflow = overflow;
+                WasChange = wasChange;
+            }
+        }
+
+        public class AddInventoryItemResponse
+        {
+            public bool Success { get; private set; }
+            public int Overflow { get; private set; }
+
+            public AddInventoryItemResponse(bool success, int overflow)
+            {
+                Success = success;
+                Overflow = overflow;
+            }
+        }
+
         protected override void OnSpawned()
         {
             _inputLogic = new RaftPlayerInputLogic(this);
@@ -210,14 +236,85 @@ namespace FishFlingers.Entities
         }
 
         [TargetRpc]
-        public async Task<NetInventoryItem> GrabRpc(PlayerID playerId, Inventory inventory, string instanceId, Vector2Int cell)
+        public async Task<AddInventoryItemResponse> AddInventoryItemRpc(PlayerID playerId, Inventory inventory, InventoryChangeParams parameters)
+        {
+            bool success = inventory.TryAddItem(parameters, true, out int overflow, out _, out _);
+            return new AddInventoryItemResponse(success, overflow);
+        }
+
+        [TargetRpc]
+        public async Task<PlaceInventoryItemResponse> PlaceInventoryItemRpc(PlayerID playerId, Inventory inventory, InventoryPlaceParams placeParams)
+        {
+            bool success = inventory.TryPlaceItem(placeParams, true, out int overflow, out _, out NetInventoryItemsChange change);
+            return new PlaceInventoryItemResponse(success, overflow, change.IsValid);
+        }
+
+        [TargetRpc]
+        public async Task SetInventoryItemCountRpc(PlayerID playerId, Inventory inventory, string instanceId, int count, bool canRemove)
+        {
+            // No overflow indicates the item has no count left
+            if (count > 0)
+            {
+                inventory.SetNetItemCount(instanceId, count);
+                return;
+            }
+
+            if (canRemove)
+            {
+                inventory.TryRemoveItem(instanceId);
+            }
+        }
+
+        [TargetRpc]
+        public async Task<bool> RemoveInventoryItemRpc(PlayerID playerId, Inventory inventory, string instanceId)
+        {
+            return inventory.TryRemoveItem(instanceId);
+        }
+
+        [TargetRpc]
+        public async Task MoveInventoryItemRpc(PlayerID playerId, Inventory fromInventory, Inventory toInventory, string instanceId)
+        {
+            if (!fromInventory.InventoryItems.TryGetValue(instanceId, out InventoryItem inventoryItem))
+            {
+                return;
+            }
+
+            if (!inventoryItem.IsAvailable)
+            {
+                return;
+            }
+
+            InventoryChangeParams parameters = InventoryChangeParams.Create(inventoryItem.ItemInstance);
+
+            if (!toInventory.CanAddItem(parameters, out _, out _, out _))
+            {
+                return;
+            }
+
+            fromInventory.SetNetItemIsLocked(instanceId, true);
+
+            AddInventoryItemResponse response = await AddInventoryItemRpc(toInventory.owner.Value, toInventory, parameters);
+
+            if (response.Success)
+            {
+                await SetInventoryItemCountRpc(fromInventory.owner.Value, fromInventory, instanceId, response.Overflow, true);
+            }
+
+            if (response.Overflow > 0)
+            {
+                fromInventory.SetNetItemIsLocked(instanceId, false);
+            }
+        }
+
+        [TargetRpc]
+        public async Task<NetInventoryItem> GrabInventoryItemRpc(PlayerID playerId, Inventory inventory, string instanceId, Vector2Int cell)
         {
             if (!inventory.InventoryItems.TryGetValue(instanceId, out InventoryItem inventoryItem))
             {
                 return null;
             }
 
-            if (inventoryItem.IsGrabbed)
+            if (!inventoryItem.IsAvailable)
             {
                 return null;
             }
@@ -234,36 +331,7 @@ namespace FishFlingers.Entities
         }
 
         [TargetRpc]
-        public async Task<RaftPlayerGrabbedInventoryItemLogic.PlaceResponse> PlaceRpc(PlayerID playerId, Inventory inventory, InventoryPlaceParams placeParams)
-        {
-            bool success = inventory.TryPlaceItem(placeParams, true, out int overflow, out _, out NetInventoryItemsChange change);
-            return new RaftPlayerGrabbedInventoryItemLogic.PlaceResponse(success, overflow, change.IsValid);
-        }
-
-        [TargetRpc]
-        public async Task SetRpc(PlayerID playerId, Inventory inventory, string instanceId, int count, bool canRemove)
-        {
-            // No overflow indicates the item has no count left
-            if (count > 0)
-            {
-                inventory.SetNetItemCount(instanceId, count);
-                return;
-            }
-
-            if (canRemove)
-            {
-                inventory.RemoveItem(instanceId);
-            }
-        }
-
-        [TargetRpc]
-        public async Task DropRpc(PlayerID playerId, Inventory inventory, string instanceId)
-        {
-            inventory.RemoveItem(instanceId);
-        }
-
-        [TargetRpc]
-        public async Task ReleaseRpc(PlayerID playerId, Inventory inventory, string instanceId)
+        public async Task ReleaseInventoryItemRpc(PlayerID playerId, Inventory inventory, string instanceId)
         {
             // There's scenarios where you release an item, and it no longer exists in the inventory since it was moved to another
             if (inventory.InventoryItems.ContainsKey(instanceId))

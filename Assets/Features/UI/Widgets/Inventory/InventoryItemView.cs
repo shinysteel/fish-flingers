@@ -18,7 +18,7 @@ namespace FishFlingers.UI
         public InventoryItem InventoryItem => _view.InventoryItem;
 
         // When an item is 'grabbed', it's alpha is modified until the grab is resolved
-        private const float GrabbedAlpha = 0.5f;
+        private const float UnavailableAlpha = 0.5f;
         private const float DefaultAlpha = 1f;
 
         public void Setup(InventoryWidget inventoryWidget, InventoryItem inventoryItem)
@@ -51,7 +51,7 @@ namespace FishFlingers.UI
         private void RefreshAlpha()
         {
             // Alpha
-            float alpha = _view.InventoryItem.IsGrabbed ? GrabbedAlpha : DefaultAlpha;
+            float alpha = _view.InventoryItem.IsAvailable ? DefaultAlpha : UnavailableAlpha;
             _view.SetAlpha(alpha);
         }
         
