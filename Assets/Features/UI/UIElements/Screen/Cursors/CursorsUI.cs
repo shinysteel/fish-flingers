@@ -104,6 +104,11 @@ namespace FishFlingers.UI
         {
             foreach (Cursor cursor in _cursors)
             {
+                if (cursor.Owner.IsLocalPlayer)
+                {
+                    continue;
+                }
+
                 cursor.SetVisualsActive(false);
             }
 

@@ -23,7 +23,8 @@ namespace FishFlingers.UI
 
         private UIManager _uiManager;
 
-        private RaftPlayer _ownerRaftPlayer;
+        private RaftPlayer _owner;
+        public RaftPlayer Owner => _owner;
 
         private PointerEventData _pointerEventData;
         private List<RaycastResult> _raycastResults = new();
@@ -102,24 +103,27 @@ namespace FishFlingers.UI
 
         public void SetOwner(RaftPlayer owner)
         {
-            if (_ownerRaftPlayer == owner)
+            if (_owner == owner)
             {
                 return;
             }
             
-            if (_ownerRaftPlayer != null)
+            if (_owner != null)
             {
-                _ownerRaftPlayer.GrabbedInventoryItemLogic.OnGrabbedInventoryItemChanged -= HandleGrabbedInventoryItemChanged;
+                _owner.GrabbedInventoryItemLogic.OnGrabbedInventoryItemChanged -= HandleGrabbedInventoryItemChanged;
             }
 
-            _ownerRaftPlayer = owner;
+            _owner = owner;
 
-            if (_ownerRaftPlayer != null)
+            if (_owner != null)
             {
-                _ownerRaftPlayer.GrabbedInventoryItemLogic.OnGrabbedInventoryItemChanged += HandleGrabbedInventoryItemChanged;
+                _owner.GrabbedInventoryItemLogic.OnGrabbedInventoryItemChanged += HandleGrabbedInventoryItemChanged;
             }
 
-            HandleGrabbedInventoryItemChanged(_ownerRaftPlayer?.GrabbedInventoryItemLogic.GrabbedInventoryItem);
+            HandleGrabbedInventoryItemChanged(_owner?.GrabbedInventoryItemLogic.GrabbedInventoryItem);
+
+            // No need to show the hand image for the local client
+            _handImage.gameObject.SetActive(!_owner?.IsLocalPlayer ?? false);
         }
 
         private void HandleGrabbedInventoryItemChanged(InventoryItem item)
