@@ -8,5 +8,6 @@ namespace FishFlingers.Items
         Driftwood = 1,
         Paddle    = 2,
         Hammer    = 3,
+        Scrap     = 4,
     }
 }
