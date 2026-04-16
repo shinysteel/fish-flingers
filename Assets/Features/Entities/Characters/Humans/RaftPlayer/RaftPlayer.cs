@@ -96,6 +96,7 @@ namespace FishFlingers.Entities
         private RaftPlayerAnimateLogic _animateLogic;
         private RaftPlayerHeldInventoryItemLogic _heldInventoryItemLogic;
         private RaftPlayerOpenNetBehaviourLogic _openNetBehaviourLogic;
+        private RaftPlayerAttackLogic _attackLogic;
         private RaftPlayerHotkeyLogic _hotkeyLogic;
         private RaftPlayerTileTargetLogic _tileTargetLogic;
 
@@ -103,7 +104,9 @@ namespace FishFlingers.Entities
         public RaftPlayerInteractLogic InteractLogic => _interactLogic;
         public RaftPlayerGrabbedInventoryItemLogic GrabbedInventoryItemLogic => _grabbedInventoryItemLogic;
         public RaftPlayerDropInventoryItemLogic DropInventoryItemLogic => _dropInventoryItemLogic;
+        public RaftPlayerAnimateLogic AnimateLogic => _animateLogic;
         public RaftPlayerOpenNetBehaviourLogic OpenNetBehaviourLogic => _openNetBehaviourLogic;
+        public RaftPlayerAttackLogic AttackLogic => _attackLogic;
         public RaftPlayerTileTargetLogic TileTargetLogic => _tileTargetLogic;
 
         public bool CanAct => !_uiManager.IsLayerInUse(UILayer.Panels);
@@ -153,6 +156,7 @@ namespace FishFlingers.Entities
             _animateLogic = new RaftPlayerAnimateLogic(this, _characterModel);
             _heldInventoryItemLogic = new RaftPlayerHeldInventoryItemLogic(this, _characterModel);
             _openNetBehaviourLogic = new RaftPlayerOpenNetBehaviourLogic(_netOpenNetworkId);
+            _attackLogic = new RaftPlayerAttackLogic(this);
 
             if (isOwner)
             {

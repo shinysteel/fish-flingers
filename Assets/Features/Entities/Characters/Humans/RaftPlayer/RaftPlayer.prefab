@@ -140,6 +140,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 6553454853354933199, guid: 88341467ba6ee3c47abb050464ab011b, type: 3}
+      propertyPath: _networkAnimator
+      value: 
+      objectReference: {fileID: 5983625492937891104}
     - target: {fileID: 6638959655095620313, guid: 88341467ba6ee3c47abb050464ab011b, type: 3}
       propertyPath: m_Layer
       value: 6

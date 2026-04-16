@@ -91,5 +91,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4efe20aa95fa10e4eb3d9f4219fb46cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.CharacterModel
-  _animator: {fileID: 3736528074840287172}
   _itemLocator: {fileID: 1505038301571278480}
+  _animator: {fileID: 3736528074840287172}
