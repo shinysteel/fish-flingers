@@ -18,7 +18,7 @@ namespace FishFlingers.Entities
     [Serializable]
     public class LookSettings
     {
-        [SerializeField] private float _speed = 10f;
+        [SerializeField] private float _speed = 7.5f;
 
         public float Speed => _speed;
     }

@@ -1,3 +1,4 @@
+using FishFlingers.Cameras;
 using FishFlingers.Instantiating;
 using FishFlingers.Inventories;
 using FishFlingers.States;
@@ -85,6 +86,8 @@ namespace FishFlingers.Entities
 
     public class RaftPlayerTileTargetLogic
     {
+        private CameraManager _cameraManager;
+
         private GameplayContext _context;
 
         private RaftPlayerTileTargetLogicSettings _settings;
@@ -96,7 +99,7 @@ namespace FishFlingers.Entities
 
         private bool _showingTarget;
 
-        private const float Range = 1f;
+        private const float MaxRange = 1f;
 
         public event Action<RaftPlayerTileTarget> OnTargetChanged;
 
@@ -111,6 +114,8 @@ namespace FishFlingers.Entities
 
         public RaftPlayerTileTargetLogic(GameplayContext context, RaftPlayerTileTargetLogicSettings settings)
         {
+            _cameraManager = GameManager.Instance.Get<CameraManager>();
+
             _context = context;
 
             _settings = settings;
@@ -184,15 +189,24 @@ namespace FishFlingers.Entities
 
         private void DetermineTargetTick()
         {
-            Vector3 forward = _context.LocalPlayer.transform.forward;
-            forward.y = 0f;
-            forward.Normalize();
+            Ray ray = _cameraManager.MainCamera.ScreenPointToRay(_context.LocalPlayer.InputLogic.GameplayMouse);
+
+            // Have the plane sit at the player's origin so that y does not influence the target
+            Plane plane = new Plane(Vector3.up, _context.LocalPlayer.transform.position);
+
+            // Face the cursor
+            if (!plane.Raycast(ray, out float distance))
+            {
+                return;
+            }
+
+            Vector3 toPoint = (ray.GetPoint(distance) - _context.LocalPlayer.transform.position);
 
             // Target the cell x units away from us in the direction we are facing
-            Vector3 position = _context.LocalPlayer.transform.position + forward * Range;
+            Vector3 position = _context.LocalPlayer.transform.position + toPoint.normalized * Mathf.Min(toPoint.magnitude, MaxRange);
 
             Vector2Int cell = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
-
+            
             // We only care if the cell has changed
             if (_target.Cell == cell)
             {

@@ -83,28 +83,18 @@ namespace FishFlingers.Entities
 
         private void LookFixedTick()
         {
-            Ray ray = _cameraManager.MainCamera.ScreenPointToRay(_player.InputLogic.GameplayMouse);
+            Vector3 direction = _player.InputLogic.MoveDirection;
 
-            // Have the plane sit at the player's origin so that y does not influence the target
-            Plane plane = new Plane(Vector3.up, _player.transform.position);
-
-            // Face the cursor
-            if (!plane.Raycast(ray, out float distance))
+            if (direction == Vector3.zero)
             {
                 return;
             }
-
-            Vector3 direction = (ray.GetPoint(distance) - _player.transform.position).normalized;
 
             Quaternion targetRotation = Quaternion.LookRotation(direction);
 
             float speed = _player.Data.LookSettings.Speed;
 
-            if (_player.AttackLogic.AttackState == RaftPlayerAttackState.Windup)
-            {
-                speed *= 0.5f;
-            }
-            else if (_player.AttackLogic.AttackState == RaftPlayerAttackState.Impact)
+            if (_player.AttackLogic.AttackState == RaftPlayerAttackState.Impact)
             {
                 speed *= 0.25f;
             }
