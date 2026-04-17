@@ -16,6 +16,7 @@ namespace FishFlingers.Entities
     public class HotbarSave
     {
         [JsonProperty] public List<string> Slots { get; private set; } = new();
+        [JsonProperty] public int SelectedIndex { get; private set; } = 0;
 
         public HotbarSave()
         { }
@@ -26,6 +27,8 @@ namespace FishFlingers.Entities
             {
                 hotbar.SetSlot(i, Slots[i]);
             }
+
+            hotbar.SetSelectedIndex(SelectedIndex);
         }
 
         public void SaveFrom(Hotbar hotbar)
@@ -36,6 +39,8 @@ namespace FishFlingers.Entities
             {
                 Slots.Add(slot.InstanceId);
             }
+
+            SelectedIndex = hotbar.SelectedSlot.Index;
         }
     }
     
