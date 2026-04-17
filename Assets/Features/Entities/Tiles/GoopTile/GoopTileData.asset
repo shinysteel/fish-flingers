@@ -19,7 +19,7 @@ MonoBehaviour:
   _health: 2
   _recipe:
     _requirements:
-    - _itemId: 1
+    - _itemId: 5
       _count: 3
   _bobSettings:
     _amplitude: 0.125

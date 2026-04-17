@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GoopData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Inventories.ItemData
   _itemId: 5
-  _spriteAssetName: Goop
+  _spriteAssetName: item_goop
   _maxStack: 3
   _sprite: {fileID: 21300000, guid: 46b216f431950a94e8246a8e62d12397, type: 3}
   _shape: {fileID: 11400000, guid: b87a2e1f7cd586940af0f1731cbf0e20, type: 2}
