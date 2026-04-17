@@ -45,7 +45,12 @@ namespace FishFlingers.Entities
             
             if (_heldModel == null && slot.InventoryItem != null)
             {
-                _heldModel = _poolManager.GetItemModel(slot.InventoryItem.ItemInstance.Data.ItemId, new SpawnParams() { Parent = _playerModel.ItemLocator });
+                // Items need to be corrected by 90 degrees on the y-axis when held
+                _heldModel = _poolManager.GetItemModel(slot.InventoryItem.ItemInstance.Data.ItemId, new SpawnParams() 
+                { 
+                    Rotation = Quaternion.AngleAxis(90f, Vector3.up),
+                    Parent = _playerModel.ItemLocator
+                });
             }
         }
     }
