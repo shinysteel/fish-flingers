@@ -7,6 +7,7 @@ namespace FishFlingers.Entities
     public class TileSave
     {
         [JsonProperty] private SimpleVector2Int _cell = new();
+        [JsonProperty] public EntityId TileId { get; private set; }
         [JsonProperty] public int Health { get; private set; }
 
         [JsonIgnore]
@@ -19,13 +20,14 @@ namespace FishFlingers.Entities
         public TileSave()
         { }
 
-        public TileSave(Vector2Int cell, int health)
+        public TileSave(Vector2Int cell, EntityId tileId, int health)
         {
             Cell = cell;
+            TileId = tileId;
             Health = health;
         }
 
-        public TileSave(Tile tile) : this(tile.Cell, tile.CurrentHealth)
+        public TileSave(Tile tile) : this(tile.Cell, tile.Data.Id, tile.CurrentHealth)
         { }
     }
 }

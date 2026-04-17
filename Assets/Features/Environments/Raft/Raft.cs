@@ -21,14 +21,16 @@ namespace FishFlingers.Environments
 {
     public class NetTile
     {
+        public EntityId TileId { get; private set; }
         public int Health { get; private set; }
 
         public const int MaxHealth = 3;
 
         public Structure Structure { get; private set; }
 
-        public NetTile(int health)
+        public NetTile(EntityId tileId, int health)
         {
+            TileId = tileId;
             SetHealth(health);
         }
 
@@ -86,9 +88,9 @@ namespace FishFlingers.Environments
         }
 
         [ServerRpc(requireOwnership: false)]
-        public void AddNetTileRpc(Vector2Int cell, int health)
+        public void AddNetTileRpc(Vector2Int cell, EntityId tileId, int health)
         {
-            _netTiles.TryAdd(cell, new NetTile(health));
+            _netTiles.TryAdd(cell, new NetTile(tileId, health));
         }
 
         [ServerRpc(requireOwnership: false)]
@@ -182,7 +184,7 @@ namespace FishFlingers.Environments
             // Retrieve from pool
             if (!_tiles.ContainsKey(cell))
             {
-                _tiles[cell] = (Tile)_entityManager.Spawn(EntityId.Tile, new SpawnParams() { Parent = _tilesContainer });
+                _tiles[cell] = (Tile)_entityManager.Spawn(netTile.TileId, new SpawnParams() { Parent = _tilesContainer });
                 _tiles[cell].Initialise(_context);
             }
 

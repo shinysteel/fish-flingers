@@ -18,9 +18,11 @@ namespace FishFlingers.Entities
     {
         None        = 0   ,
         
-        Tile        = 1   ,
-        DroppedItem = 2   ,
-
+        GoopTile    = 1   ,
+        WoodenTile  = 2   ,
+        MetalTile   = 3   ,
+        DroppedItem = 4   ,
+        
         // Characters
         RaftPlayer  = 100 ,
         FlyingFish  = 101 ,

@@ -15,10 +15,10 @@ namespace FishFlingers.Environments
         {
             foreach (TileSave save in Tiles)
             {
-                raft.AddNetTileRpc(save.Cell, save.Health);
+                raft.AddNetTileRpc(save.Cell, save.TileId, save.Health);
             }
 
-            foreach (Entities.StructureSave save in Structures)
+            foreach (StructureSave save in Structures)
             {
                 raft.AddStructureRpc(save.Cell, save.StructureId);
 
@@ -38,7 +38,7 @@ namespace FishFlingers.Environments
 
                 if (tile.Structure != null)
                 {
-                    Structures.Add(new Entities.StructureSave(tile.Structure));
+                    Structures.Add(new StructureSave(tile.Structure));
                 }
             }
         }
@@ -58,7 +58,7 @@ namespace FishFlingers.Environments
                         health--;
                     }
 
-                    Tiles.Add(new TileSave(new Vector2Int(x, y), health));
+                    Tiles.Add(new TileSave(new Vector2Int(x, y), EntityId.WoodenTile, health));
                 }
             }
 

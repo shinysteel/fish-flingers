@@ -61,9 +61,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2393181450438531784, guid: 7e94ee0314840e64ca6dd1e0a45ae1d9, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 514062706158927866}
-    - targetCorrespondingSourceObject: {fileID: 2393181450438531784, guid: 7e94ee0314840e64ca6dd1e0a45ae1d9, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 3216605046608801568}
     - targetCorrespondingSourceObject: {fileID: 2393181450438531784, guid: 7e94ee0314840e64ca6dd1e0a45ae1d9, type: 3}
       insertIndex: -1
@@ -79,22 +76,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2393181450438531784, guid: 7e94ee0314840e64ca6dd1e0a45ae1d9, type: 3}
   m_PrefabInstance: {fileID: 6191707482926209099}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &514062706158927866
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8420347017716335235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3fc49879ec296149bab8254b2a720c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.Tile
-  _entityData: {fileID: 11400000, guid: ab01bfd23c3274e4899bd81079252d9c, type: 2}
-  _rigidbody: {fileID: 3216605046608801568}
-  _meshRenderer: {fileID: 3541544350305941869}
-  _damagedColor: {r: 0.5396226, g: 0.5396226, b: 0.5396226, a: 1}
 --- !u!54 &3216605046608801568
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -200,11 +181,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2ed8ca52c04eca4c90b72ab787b6802, type: 3}
---- !u!23 &3541544350305941869 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 7850819463255936417, guid: a2ed8ca52c04eca4c90b72ab787b6802, type: 3}
-  m_PrefabInstance: {fileID: 6761487876289017036}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6511950091348890407 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a2ed8ca52c04eca4c90b72ab787b6802, type: 3}

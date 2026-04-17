@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1b5578235882c140a774104bbe000ca, type: 3}
-  m_Name: TileData
+  m_Name: WoodenTileData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.RaftTileData
-  _id: 1
-  _nameTerm: -1635435705
-  _descriptionTerm: -1593492665
+  _id: 2
+  _nameTerm: -1596126557
+  _descriptionTerm: -1596126560
   _sprite: {fileID: 21300000, guid: 6f972666f32701e45bbe695d518d3d38, type: 3}
   _health: 3
   _recipe:
     _requirements:
     - _itemId: 1
-      _count: 2
+      _count: 3
   _bobSettings:
     _amplitude: 0.125
     _noiseScale: 0.5
