@@ -51,14 +51,12 @@ namespace FishFlingers.Entities
         {
             base.OnSpawned();
 
-            _entityManager.RaiseNetEntitySpawned(this);
-
-            if (!isServer)
+            if (isServer)
             {
-                return;
+                SetHealth(_entityData.Health);
             }
-
-            SetHealth(_entityData.Health);
+            
+            _entityManager.RaiseNetEntitySpawned(this);
         }
 
         protected override void OnDespawned()

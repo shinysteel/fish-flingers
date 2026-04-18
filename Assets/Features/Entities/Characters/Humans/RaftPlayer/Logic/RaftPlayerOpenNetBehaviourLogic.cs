@@ -12,11 +12,13 @@ namespace FishFlingers.Entities
         private NetBehaviour _behaviour;
         public NetBehaviour Behaviour => _behaviour;
 
-        public event Action<NetBehaviour> OnBehaviourChanged;
-
+        public event Action<NetBehaviour, NetBehaviour> OnBehaviourChanged;
+        
         public RaftPlayerOpenNetBehaviourLogic(SyncVar<NetBehaviour> netBehaviour)
         {
             _netBehaviour = netBehaviour;
+
+            HandleNetBehaviourChanged(_netBehaviour);
 
             _netBehaviour.onChanged += HandleNetBehaviourChanged;
         }
@@ -27,9 +29,10 @@ namespace FishFlingers.Entities
 
         private void HandleNetBehaviourChanged(NetBehaviour behaviour)
         {
+            NetBehaviour oldBehaviour = _behaviour;
             _behaviour = behaviour;
 
-            OnBehaviourChanged?.Invoke(_behaviour);
+            OnBehaviourChanged?.Invoke(oldBehaviour, _behaviour);
         }
     }
 }

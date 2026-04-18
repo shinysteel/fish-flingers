@@ -142,7 +142,12 @@ namespace FishFlingers.States
                 // As the client, Any behaviours that spawned before we joined will need to be manually initialised
                 if (!_networkManager.IsServer)
                 {
-                    foreach (GameplayBehaviour behaviour in Object.FindObjectsByType<GameplayBehaviour>(FindObjectsSortMode.None).ToList())
+                    // Have RaftPlayers initialise first so that context.Players is up to date for other behaviours
+                    List<GameplayBehaviour> behaviours = Object.FindObjectsByType<GameplayBehaviour>(FindObjectsSortMode.None)
+                        .OrderByDescending(behaviour => behaviour is RaftPlayer)
+                        .ToList();
+
+                    foreach (GameplayBehaviour behaviour in behaviours)
                     {
                         // No need to initialise the localPlayer here. Spawn is async and we are listening for it
                         if (behaviour != localPlayer)

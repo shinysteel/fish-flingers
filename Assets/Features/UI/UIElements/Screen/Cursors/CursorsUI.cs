@@ -83,7 +83,7 @@ namespace FishFlingers.UI
             
             SyncCursors();
 
-            HandleOpenNetBehaviourChanged(player.OpenNetBehaviourLogic.Behaviour);
+            HandleOpenNetBehaviourChanged(null, player.OpenNetBehaviourLogic.Behaviour);
 
             player.OpenNetBehaviourLogic.OnBehaviourChanged += HandleOpenNetBehaviourChanged;
         }
@@ -100,7 +100,7 @@ namespace FishFlingers.UI
             player.OpenNetBehaviourLogic.OnBehaviourChanged -= HandleOpenNetBehaviourChanged;
         }
 
-        private void HandleOpenNetBehaviourChanged(NetBehaviour behaviour)
+        private void HandleOpenNetBehaviourChanged(NetBehaviour oldBehaviour, NetBehaviour newBehaviour)
         {
             // Cursors besides the local player have all visuals off by default
             foreach (Cursor cursor in _cursors)
