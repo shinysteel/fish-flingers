@@ -11,11 +11,11 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2026
 		Month: 4
-		Day: 9
-		Hour: 19
-		Minute: 1
-		Second: 48
-		Millisecond: 744
+		Day: 18
+		Hour: 17
+		Minute: 20
+		Second: 56
+		Millisecond: 282
 	}
 	Creator: "Blockbench 5.1.3"
 	SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
@@ -49,7 +49,7 @@ FBXHeaderExtension:  {
 	}
 }
 FileId: "iVFoobar"
-CreationTime: "2026-04-09 09:01:48:744"
+CreationTime: "2026-04-18 07:20:56:282"
 Creator: "Made with Blockbench"
 GlobalSettings:  {
 	Version: 1000
@@ -78,7 +78,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 1444039340 {
+	Document: 1291025442 {
 		Scene: "Scene"
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
@@ -98,7 +98,7 @@ References:
 
 Definitions:  {
 	Version: 100
-	Count: 32
+	Count: 42
 	ObjectType: "GlobalSettings" {
 		Count: 1
 	}
@@ -262,13 +262,52 @@ Definitions:  {
 			}
 		}
 	}
+	ObjectType: "AnimationStack" {
+		Count: 1
+		PropertyTemplate: "FbxAnimStack" {
+			Properties70:  {
+				P: "Description", "KString", "", "", ""
+				P: "LocalStart", "KTime", "Time", "",0
+				P: "LocalStop", "KTime", "Time", "",0
+				P: "ReferenceStart", "KTime", "Time", "",0
+				P: "ReferenceStop", "KTime", "Time", "",0
+			}
+		}
+	}
+	ObjectType: "AnimationLayer" {
+		Count: 1
+		PropertyTemplate: "FbxAnimLayer" {
+			Properties70:  {
+				P: "Weight", "Number", "", "A",100
+				P: "Mute", "bool", "", "",0
+				P: "Solo", "bool", "", "",0
+				P: "Lock", "bool", "", "",0
+				P: "Color", "ColorRGB", "Color", "",0.8,0.8,0.8
+				P: "BlendMode", "enum", "", "",0
+				P: "RotationAccumulationMode", "enum", "", "",0
+				P: "ScaleAccumulationMode", "enum", "", "",0
+				P: "BlendModeBypass", "ULongLong", "", "",0
+			}
+		}
+	}
+	ObjectType: "AnimationCurveNode" {
+		Count: 2
+		PropertyTemplate: "FbxAnimCurveNode" {
+			Properties70:  {
+				P: "d", "Compound", "", ""
+			}
+		}
+	}
+	ObjectType: "AnimationCurve" {
+		Count: 6
+	}
 }
 
 ; Object properties
 ;------------------------------------------------------------------
 
 Objects:  {
-	Model: 77849209, "Model::flying_fish", "Null" {
+	Model: 78207091, "Model::flying_fish", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -282,7 +321,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 73231884, "Model::wing_right", "Null" {
+	Model: 73025707, "Model::wing_right", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -296,7 +335,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 79628540, "Model::wing_left", "Null" {
+	Model: 76141256, "Model::wing_left", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -310,7 +349,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 78007716, "Model::wing_right2", "Null" {
+	Model: 74940136, "Model::wing_right2", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -324,7 +363,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 79427080, "Model::wing_left2", "Null" {
+	Model: 75379688, "Model::wing_left2", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -338,7 +377,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 78561466, "Model::body", "Null" {
+	Model: 75648631, "Model::body", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -352,7 +391,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 77233763, "Model::tail", "Null" {
+	Model: 70761404, "Model::tail", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -366,7 +405,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 76333181, "Model::tail2", "Null" {
+	Model: 74100018, "Model::tail2", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -380,13 +419,13 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 79935285, "Model::eyelid_right", "Null" {
+	Model: 75802659, "Model::eyelid_right", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
-			P: "Lcl Translation", "Lcl Translation", "", "A",5.625,-3.125,-31.25
+			P: "Lcl Translation", "Lcl Translation", "", "A",5.625,-3.125,-31.874999999999996
 			P: "RotationPivot", "Vector3D", "Vector", "",0,0,0
 			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
 			P: "RotationOrder", "enum", "", "",0
@@ -394,13 +433,13 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 70850385, "Model::eyelid_left", "Null" {
+	Model: 79785950, "Model::eyelid_left", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
-			P: "Lcl Translation", "Lcl Translation", "", "A",-5.625,-3.125,-31.25
+			P: "Lcl Translation", "Lcl Translation", "", "A",-5.625,-3.125,-31.874999999999996
 			P: "RotationPivot", "Vector3D", "Vector", "",0,0,0
 			P: "Lcl Rotation", "Lcl Rotation", "", "A",0,0,0
 			P: "RotationOrder", "enum", "", "",0
@@ -408,7 +447,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 79200681, "Model::torso", "Mesh" {
+	Model: 72576728, "Model::torso", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -423,7 +462,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 79280489, "Geometry::torso", "Mesh" {
+	Geometry: 70118810, "Geometry::torso", "Mesh" {
 		Vertices: *24 {
 			a: 12.5,31.25,12.5,12.5,31.25,-43.75,12.5,0,12.5,12.5,0,-43.75,-12.5,31.25,-43.75,-12.5,31.25,12.5,-12.5,0,-43.75,-12.5,0,12.5
 		}
@@ -474,7 +513,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 79494372, "Model::wing_left_1", "Mesh" {
+	Model: 73763507, "Model::wing_left_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -489,7 +528,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 79609341, "Geometry::wing_left_1", "Mesh" {
+	Geometry: 72242147, "Geometry::wing_left_1", "Mesh" {
 		Vertices: *24 {
 			a: 6.25,0,18.75,6.25,0,-6.25,6.25,0,18.75,6.25,0,-6.25,-50,0,-6.25,-50,0,18.75,-50,0,-6.25,-50,0,18.75
 		}
@@ -540,7 +579,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 74469844, "Model::wing_right_1", "Mesh" {
+	Model: 78166389, "Model::wing_right_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -555,7 +594,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 70029905, "Geometry::wing_right_1", "Mesh" {
+	Geometry: 79739367, "Geometry::wing_right_1", "Mesh" {
 		Vertices: *24 {
 			a: 6.25,0,18.75,6.25,0,-6.25,6.25,0,18.75,6.25,0,-6.25,-50,0,-6.25,-50,0,18.75,-50,0,-6.25,-50,0,18.75
 		}
@@ -606,7 +645,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 79529958, "Model::wing_right2_1", "Mesh" {
+	Model: 75009505, "Model::wing_right2_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -621,7 +660,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 77841476, "Geometry::wing_right2_1", "Mesh" {
+	Geometry: 71332079, "Geometry::wing_right2_1", "Mesh" {
 		Vertices: *24 {
 			a: -25,0,12.5,-25,0,-6.25,-25,0,12.5,-25,0,-6.25,-50,0,-6.25,-50,0,12.5,-50,0,-6.25,-50,0,12.5
 		}
@@ -672,7 +711,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 75846918, "Model::wing_left2_1", "Mesh" {
+	Model: 78847058, "Model::wing_left2_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -687,7 +726,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 78575530, "Geometry::wing_left2_1", "Mesh" {
+	Geometry: 71715683, "Geometry::wing_left2_1", "Mesh" {
 		Vertices: *24 {
 			a: 6.25,0,12.5,6.25,0,-6.25,6.25,0,12.5,6.25,0,-6.25,-18.75,0,-6.25,-18.75,0,12.5,-18.75,0,-6.25,-18.75,0,12.5
 		}
@@ -738,7 +777,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 76338993, "Model::tail2_1", "Mesh" {
+	Model: 79996759, "Model::tail2_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -753,7 +792,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 79303990, "Geometry::tail2_1", "Mesh" {
+	Geometry: 71785515, "Geometry::tail2_1", "Mesh" {
 		Vertices: *24 {
 			a: 0,18.75,68.75,0,18.75,37.5,0,-18.75,68.75,0,-18.75,37.5,0,18.75,37.5,0,18.75,68.75,0,-18.75,37.5,0,-18.75,68.75
 		}
@@ -804,7 +843,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 77503436, "Model::tail_1", "Mesh" {
+	Model: 72881680, "Model::tail_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -819,7 +858,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 78866614, "Geometry::tail_1", "Mesh" {
+	Geometry: 77904512, "Geometry::tail_1", "Mesh" {
 		Vertices: *24 {
 			a: 9.375,28.125,37.5,9.375,28.125,6.25,9.375,3.125,37.5,9.375,3.125,6.25,-9.375,28.125,6.25,-9.375,28.125,37.5,-9.375,3.125,6.25,-9.375,3.125,37.5
 		}
@@ -870,7 +909,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 75053284, "Model::eyelid_right_1", "Mesh" {
+	Model: 73127903, "Model::eyelid_right_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -885,9 +924,9 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 76067323, "Geometry::eyelid_right_1", "Mesh" {
+	Geometry: 72057863, "Geometry::eyelid_right_1", "Mesh" {
 		Vertices: *24 {
-			a: 6.374999999999997,12.562499999999998,6.874999999999997,6.374999999999997,12.562499999999998,-5.749999999999999,6.374999999999997,-0.06250000000000006,6.874999999999997,6.374999999999997,-0.06250000000000006,-5.749999999999999,-6.249999999999999,12.562499999999998,-5.749999999999999,-6.249999999999999,12.562499999999998,6.874999999999997,-6.249999999999999,-0.06250000000000006,-5.749999999999999,-6.249999999999999,-0.06250000000000006,6.874999999999997
+			a: 6.312500000000001,12.562499999999998,6.9374999999999964,6.312500000000001,12.562499999999998,-5.687500000000001,6.312500000000001,-0.06250000000000006,6.9374999999999964,6.312500000000001,-0.06250000000000006,-5.687500000000001,-6.3125,12.562499999999998,-5.687500000000001,-6.3125,12.562499999999998,6.9374999999999964,-6.3125,-0.06250000000000006,-5.687500000000001,-6.3125,-0.06250000000000006,6.9374999999999964
 		}
 		PolygonVertexIndex: *24 {
 			a: 3,6,4,-2,2,3,1,-1,7,2,0,-6,6,7,5,-5,5,0,1,-5,6,3,2,-8
@@ -936,7 +975,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 74300090, "Model::eyelid_left_1", "Mesh" {
+	Model: 76592365, "Model::eyelid_left_1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -951,9 +990,9 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Geometry: 70065443, "Geometry::eyelid_left_1", "Mesh" {
+	Geometry: 73486636, "Geometry::eyelid_left_1", "Mesh" {
 		Vertices: *24 {
-			a: 6.25,12.562499999999998,6.874999999999997,6.25,12.562499999999998,-5.749999999999999,6.25,-0.06250000000000006,6.874999999999997,6.25,-0.06250000000000006,-5.749999999999999,-6.374999999999997,12.562499999999998,-5.749999999999999,-6.374999999999997,12.562499999999998,6.874999999999997,-6.374999999999997,-0.06250000000000006,-5.749999999999999,-6.374999999999997,-0.06250000000000006,6.874999999999997
+			a: 6.312500000000001,12.562499999999998,6.9374999999999964,6.312500000000001,12.562499999999998,-5.687500000000001,6.312500000000001,-0.06250000000000006,6.9374999999999964,6.312500000000001,-0.06250000000000006,-5.687500000000001,-6.312499999999998,12.562499999999998,-5.687500000000001,-6.312499999999998,12.562499999999998,6.9374999999999964,-6.312499999999998,-0.06250000000000006,-5.687500000000001,-6.312499999999998,-0.06250000000000006,6.9374999999999964
 		}
 		PolygonVertexIndex: *24 {
 			a: 3,6,4,-2,2,3,1,-1,7,2,0,-6,6,7,5,-5,5,0,1,-5,6,3,2,-8
@@ -1002,7 +1041,7 @@ Objects:  {
 			}
 		}
 	}
-	Material: 70749142, "Material::FlyingFish.png", "" {
+	Material: 70236767, "Material::FlyingFish.png", "" {
 		Version: 102
 		ShadingModel: "lambert"
 		MultiLayer: 0
@@ -1013,7 +1052,7 @@ Objects:  {
 			P: "Opacity", "double", "Number", "",1
 		}
 	}
-	Texture: 72764616, "Texture::FlyingFish.png", "" {
+	Texture: 77325183, "Texture::FlyingFish.png", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::FlyingFish.png"
@@ -1025,7 +1064,7 @@ Objects:  {
 		Texture_Alpha_Source: "None"
 		Cropping: 0,0,0,0
 	}
-	Video: 74656005, "Video::FlyingFish.png", "Clip" {
+	Video: 70207141, "Video::FlyingFish.png", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "C:\Users\User\OneDrive\Desktop\GitHub Projects\fish-flingers\Assets\Features\Entities\Characters\FlyingFish\FlyingFish.png"
@@ -1033,6 +1072,142 @@ Objects:  {
 		UseMipMap: 0
 		Filename: "C:\Users\User\OneDrive\Desktop\GitHub Projects\fish-flingers\Assets\Features\Entities\Characters\FlyingFish\FlyingFish.png"
 		RelativeFilename: "FlyingFish.png"
+	}
+	AnimationStack: 77279484, "AnimStack::FlyingFish_Blink", "" {
+		Properties70:  {
+			P: "LocalStop", "KTime", "Time", "",7697693000
+			P: "ReferenceStop", "KTime", "Time", "",7697693000
+		}
+	}
+	AnimationLayer: 71346366, "AnimLayer::FlyingFish_Blink", "" {
+	}
+	AnimationCurveNode: 70273411, "AnimCurveNode::FlyingFish_Blink.P", "" {
+		Properties70:  {
+			P: "d|X", "Number", "", "A",1
+			P: "d|Y", "Number", "", "A",1
+			P: "d|Z", "Number", "", "A",1
+		}
+	}
+	AnimationCurve: 71994346, "AnimCurve::FlyingFish_Blink.PX", "" {
+		Default: 0
+		KeyVer: 4008
+		KeyTime: *3 {
+			a: 0,5773269504,7697693184
+		}
+		KeyValueFloat: *3 {
+			a: 6.25,6.25,5.625
+		}
+		KeyAttrFlags: *1 {
+			a: 24836
+		}
+		KeyAttrDataFloat: *4 {
+			a: 0,0,255790911,0
+		}
+		KeyAttrRefCount: *1 {
+			a: 3
+		}
+	}
+	AnimationCurve: 70571944, "AnimCurve::FlyingFish_Blink.PY", "" {
+		Default: 0
+		KeyVer: 4008
+		KeyTime: *3 {
+			a: 0,5773269504,7697693184
+		}
+		KeyValueFloat: *3 {
+			a: -3.125,-3.125,-3.125
+		}
+		KeyAttrFlags: *1 {
+			a: 24836
+		}
+		KeyAttrDataFloat: *4 {
+			a: 0,0,255790911,0
+		}
+		KeyAttrRefCount: *1 {
+			a: 3
+		}
+	}
+	AnimationCurve: 73169340, "AnimCurve::FlyingFish_Blink.PZ", "" {
+		Default: 0
+		KeyVer: 4008
+		KeyTime: *3 {
+			a: 0,5773269504,7697693184
+		}
+		KeyValueFloat: *3 {
+			a: -31.875,-31.875,-31.875
+		}
+		KeyAttrFlags: *1 {
+			a: 24836
+		}
+		KeyAttrDataFloat: *4 {
+			a: 0,0,255790911,0
+		}
+		KeyAttrRefCount: *1 {
+			a: 3
+		}
+	}
+	AnimationCurveNode: 78388286, "AnimCurveNode::FlyingFish_Blink.P", "" {
+		Properties70:  {
+			P: "d|X", "Number", "", "A",1
+			P: "d|Y", "Number", "", "A",1
+			P: "d|Z", "Number", "", "A",1
+		}
+	}
+	AnimationCurve: 70527201, "AnimCurve::FlyingFish_Blink.PX", "" {
+		Default: 0
+		KeyVer: 4008
+		KeyTime: *3 {
+			a: 0,5773269504,7697693184
+		}
+		KeyValueFloat: *3 {
+			a: -6.25,-6.25,-5.625
+		}
+		KeyAttrFlags: *1 {
+			a: 24836
+		}
+		KeyAttrDataFloat: *4 {
+			a: 0,0,255790911,0
+		}
+		KeyAttrRefCount: *1 {
+			a: 3
+		}
+	}
+	AnimationCurve: 73432829, "AnimCurve::FlyingFish_Blink.PY", "" {
+		Default: 0
+		KeyVer: 4008
+		KeyTime: *3 {
+			a: 0,5773269504,7697693184
+		}
+		KeyValueFloat: *3 {
+			a: -3.125,-3.125,-3.125
+		}
+		KeyAttrFlags: *1 {
+			a: 24836
+		}
+		KeyAttrDataFloat: *4 {
+			a: 0,0,255790911,0
+		}
+		KeyAttrRefCount: *1 {
+			a: 3
+		}
+	}
+	AnimationCurve: 70285054, "AnimCurve::FlyingFish_Blink.PZ", "" {
+		Default: 0
+		KeyVer: 4008
+		KeyTime: *3 {
+			a: 0,5773269504,7697693184
+		}
+		KeyValueFloat: *3 {
+			a: -31.875,-31.875,-31.875
+		}
+		KeyAttrFlags: *1 {
+			a: 24836
+		}
+		KeyAttrDataFloat: *4 {
+			a: 0,0,255790911,0
+		}
+		KeyAttrRefCount: *1 {
+			a: 3
+		}
 	}
 }
 
@@ -1042,121 +1217,154 @@ Objects:  {
 Connections:  {
 
 	;Model::flying_fish, Model::RootNode
-	C: "OO",77849209,0
+	C: "OO",78207091,0
 
 	;Model::wing_right, Model::body
-	C: "OO",73231884,78561466
+	C: "OO",73025707,75648631
 
 	;Model::wing_left, Model::body
-	C: "OO",79628540,78561466
+	C: "OO",76141256,75648631
 
 	;Model::wing_right2, Model::body
-	C: "OO",78007716,78561466
+	C: "OO",74940136,75648631
 
 	;Model::wing_left2, Model::body
-	C: "OO",79427080,78561466
+	C: "OO",75379688,75648631
 
 	;Model::body, Model::flying_fish
-	C: "OO",78561466,77849209
+	C: "OO",75648631,78207091
 
 	;Model::tail, Model::body
-	C: "OO",77233763,78561466
+	C: "OO",70761404,75648631
 
 	;Model::tail2, Model::tail
-	C: "OO",76333181,77233763
+	C: "OO",74100018,70761404
 
 	;Model::eyelid_right, Model::body
-	C: "OO",79935285,78561466
+	C: "OO",75802659,75648631
 
 	;Model::eyelid_left, Model::body
-	C: "OO",70850385,78561466
+	C: "OO",79785950,75648631
 
 	;Model::torso, Model::body
-	C: "OO",79200681,78561466
+	C: "OO",72576728,75648631
 
 	;Geometry::torso, Model::torso
-	C: "OO",79280489,79200681
+	C: "OO",70118810,72576728
 
 	;Material::FlyingFish.png, Model::torso
-	C: "OO",70749142,79200681
+	C: "OO",70236767,72576728
 
 	;Model::wing_left_1, Model::wing_left
-	C: "OO",79494372,79628540
+	C: "OO",73763507,76141256
 
 	;Geometry::wing_left_1, Model::wing_left_1
-	C: "OO",79609341,79494372
+	C: "OO",72242147,73763507
 
 	;Material::FlyingFish.png, Model::wing_left_1
-	C: "OO",70749142,79494372
+	C: "OO",70236767,73763507
 
 	;Model::wing_right_1, Model::wing_right
-	C: "OO",74469844,73231884
+	C: "OO",78166389,73025707
 
 	;Geometry::wing_right_1, Model::wing_right_1
-	C: "OO",70029905,74469844
+	C: "OO",79739367,78166389
 
 	;Material::FlyingFish.png, Model::wing_right_1
-	C: "OO",70749142,74469844
+	C: "OO",70236767,78166389
 
 	;Model::wing_right2_1, Model::wing_right2
-	C: "OO",79529958,78007716
+	C: "OO",75009505,74940136
 
 	;Geometry::wing_right2_1, Model::wing_right2_1
-	C: "OO",77841476,79529958
+	C: "OO",71332079,75009505
 
 	;Material::FlyingFish.png, Model::wing_right2_1
-	C: "OO",70749142,79529958
+	C: "OO",70236767,75009505
 
 	;Model::wing_left2_1, Model::wing_left2
-	C: "OO",75846918,79427080
+	C: "OO",78847058,75379688
 
 	;Geometry::wing_left2_1, Model::wing_left2_1
-	C: "OO",78575530,75846918
+	C: "OO",71715683,78847058
 
 	;Material::FlyingFish.png, Model::wing_left2_1
-	C: "OO",70749142,75846918
+	C: "OO",70236767,78847058
 
 	;Model::tail2_1, Model::tail2
-	C: "OO",76338993,76333181
+	C: "OO",79996759,74100018
 
 	;Geometry::tail2_1, Model::tail2_1
-	C: "OO",79303990,76338993
+	C: "OO",71785515,79996759
 
 	;Material::FlyingFish.png, Model::tail2_1
-	C: "OO",70749142,76338993
+	C: "OO",70236767,79996759
 
 	;Model::tail_1, Model::tail
-	C: "OO",77503436,77233763
+	C: "OO",72881680,70761404
 
 	;Geometry::tail_1, Model::tail_1
-	C: "OO",78866614,77503436
+	C: "OO",77904512,72881680
 
 	;Material::FlyingFish.png, Model::tail_1
-	C: "OO",70749142,77503436
+	C: "OO",70236767,72881680
 
 	;Model::eyelid_right_1, Model::eyelid_right
-	C: "OO",75053284,79935285
+	C: "OO",73127903,75802659
 
 	;Geometry::eyelid_right_1, Model::eyelid_right_1
-	C: "OO",76067323,75053284
+	C: "OO",72057863,73127903
 
 	;Material::FlyingFish.png, Model::eyelid_right_1
-	C: "OO",70749142,75053284
+	C: "OO",70236767,73127903
 
 	;Model::eyelid_left_1, Model::eyelid_left
-	C: "OO",74300090,70850385
+	C: "OO",76592365,79785950
 
 	;Geometry::eyelid_left_1, Model::eyelid_left_1
-	C: "OO",70065443,74300090
+	C: "OO",73486636,76592365
 
 	;Material::FlyingFish.png, Model::eyelid_left_1
-	C: "OO",70749142,74300090
+	C: "OO",70236767,76592365
 
 	;Texture::FlyingFish.png, Material::FlyingFish.png
-	C: "OP",72764616,70749142, "DiffuseColor"
+	C: "OP",77325183,70236767, "DiffuseColor"
 
 	;Video::FlyingFish.png, Texture::FlyingFish.png
-	C: "OO",74656005,72764616
+	C: "OO",70207141,77325183
+
+	;AnimLayer::FlyingFish_Blink, AnimStack::FlyingFish_Blink
+	C: "OO",71346366,77279484
+
+	;AnimCurveNode::FlyingFish_Blink.P, Model::eyelid_right
+	C: "OP",70273411,75802659, "Lcl Translation"
+
+	;AnimCurveNode::FlyingFish_Blink.P, AnimLayer::FlyingFish_Blink
+	C: "OO",70273411,71346366
+
+	;AnimCurve::FlyingFish_Blink.PX, AnimCurveNode::FlyingFish_Blink.P
+	C: "OP",71994346,70273411, "d|X"
+
+	;AnimCurve::FlyingFish_Blink.PY, AnimCurveNode::FlyingFish_Blink.P
+	C: "OP",70571944,70273411, "d|Y"
+
+	;AnimCurve::FlyingFish_Blink.PZ, AnimCurveNode::FlyingFish_Blink.P
+	C: "OP",73169340,70273411, "d|Z"
+
+	;AnimCurveNode::FlyingFish_Blink.P, Model::eyelid_left
+	C: "OP",78388286,79785950, "Lcl Translation"
+
+	;AnimCurveNode::FlyingFish_Blink.P, AnimLayer::FlyingFish_Blink
+	C: "OO",78388286,71346366
+
+	;AnimCurve::FlyingFish_Blink.PX, AnimCurveNode::FlyingFish_Blink.P
+	C: "OP",70527201,78388286, "d|X"
+
+	;AnimCurve::FlyingFish_Blink.PY, AnimCurveNode::FlyingFish_Blink.P
+	C: "OP",73432829,78388286, "d|Y"
+
+	;AnimCurve::FlyingFish_Blink.PZ, AnimCurveNode::FlyingFish_Blink.P
+	C: "OP",70285054,78388286, "d|Z"
 }
 
 ; Takes section
@@ -1164,4 +1372,9 @@ Connections:  {
 
 Takes:  {
 	Current: ""
+	Take: "FlyingFish_Blink" {
+		FileName: "FlyingFish_Blink.tak"
+		LocalTime: 0,7697693000
+		ReferenceTime: 0,7697693000
+	}
 }

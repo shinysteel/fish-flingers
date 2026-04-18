@@ -7,7 +7,7 @@ namespace FishFlingers.Entities
 {
     public class EntityModel : MonoBehaviour
     {
-        [SerializeField] private Animator _animator;
+        [SerializeField] protected Animator _animator;
         [SerializeField] private NetworkAnimator _networkAnimator;
 
         private GameplayContext _context;
