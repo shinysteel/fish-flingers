@@ -19,14 +19,14 @@ namespace FishFlingers.Entities
 
         private SyncVar<int> _currentHealth;
 
-        protected HealthModule _healthModule;
+        protected EntityHealthModule _entityHealthModule;
 
-        public int CurrentHealth => _healthModule.Current;
-        public int MaxHealth => _healthModule.Max;
+        public int CurrentHealth => _entityHealthModule.Current;
+        public int MaxHealth => _entityHealthModule.Max;
 
         public void SetHealth(int health)
         {
-            _healthModule.SetHealth(health);
+            _entityHealthModule.SetHealth(health);
         }
 
         protected virtual void OnHealthChanged(int previous, int current) { }
@@ -41,7 +41,7 @@ namespace FishFlingers.Entities
         {
             _currentHealth = new SyncVar<int>(_entityData.Health);
 
-            _healthModule = new HealthModule(_entityData.Health,
+            _entityHealthModule = new EntityHealthModule(_entityData.Health,
                 getter: () => _currentHealth.value,
                 setter: (int health) => _currentHealth.value = health,
                 onChanged: OnHealthChanged);

@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace FishFlingers.Entities
 {
-    public class HealthModule
+    public class EntityHealthModule
     {
         private Func<int> _getter;
         private Action<int> _setter;
@@ -16,7 +16,7 @@ namespace FishFlingers.Entities
         public int Current => _getter();
 
         /// <param name="setter">Does not require clamping - we do that for you</param>
-        public HealthModule(int max, Func<int> getter, Action<int> setter, Action<int, int> onChanged)
+        public EntityHealthModule(int max, Func<int> getter, Action<int> setter, Action<int, int> onChanged)
         {
             Max = max;
 

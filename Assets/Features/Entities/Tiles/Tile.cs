@@ -45,7 +45,7 @@ namespace FishFlingers.Entities
 
         protected override void OnHealthChanged(int previous, int current)
         {
-            _material.color = Color.Lerp(Color.white, _damagedColor, 1f - ((float)_healthModule.Current / _healthModule.Max));
+            _material.color = Color.Lerp(Color.white, _damagedColor, 1f - ((float)_entityHealthModule.Current / _entityHealthModule.Max));
 
             if (current < previous)
             {

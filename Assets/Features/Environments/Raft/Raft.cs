@@ -53,7 +53,7 @@ namespace FishFlingers.Environments
         private Dictionary<Vector2Int, Tile> _tiles = new();
         public IReadOnlyDictionary<Vector2Int, Tile> Tiles => _tiles;
 
-        public event Action<Vector2Int, Tile> OnTileChanged;
+        public event Action<Vector2Int,  Tile> OnTileChanged;
 
         private RaftQueries _queries;
         public RaftQueries Queries => _queries;
@@ -204,6 +204,11 @@ namespace FishFlingers.Environments
                 return;
             }
 
+            if (tile.Structure != null)
+            {
+                _entityManager.Despawn(tile.Structure);
+            }
+                
             // Return to pool
             _entityManager.Despawn(tile);
 

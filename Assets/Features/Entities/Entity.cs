@@ -22,14 +22,14 @@ namespace FishFlingers.Entities
 
         private int _currentHealth;
 
-        protected HealthModule _healthModule;
+        protected EntityHealthModule _entityHealthModule;
 
-        public int CurrentHealth => _healthModule.Current;
-        public int MaxHealth => _healthModule.Max;
+        public int CurrentHealth => _entityHealthModule.Current;
+        public int MaxHealth => _entityHealthModule.Max;
 
         public virtual void SetHealth(int health)
         {
-            _healthModule.SetHealth(health);
+            _entityHealthModule.SetHealth(health);
         }
 
         protected virtual void OnHealthChanged(int previous, int current) { }
@@ -51,7 +51,7 @@ namespace FishFlingers.Entities
 
         public virtual void OnTakenFromPool()
         {
-            _healthModule = new HealthModule(_entityData.Health,
+            _entityHealthModule = new EntityHealthModule(_entityData.Health,
                 getter: () => _currentHealth,
                 setter: (int health) => _currentHealth = health,
                 onChanged: OnHealthChanged);
@@ -70,7 +70,7 @@ namespace FishFlingers.Entities
 
             _context = null;
 
-            _healthModule = null;
+            _entityHealthModule = null;
         }
     }
 }
