@@ -25,6 +25,8 @@ namespace FishFlingers.UI
         {
             _context.LocalPlayer.SetNetOpenObjectNetworkId(null);
 
+            _context = null;
+
             base.Hide(onComplete);
         }
     }

@@ -2,6 +2,7 @@ using FishFlingers.Cameras;
 using FishFlingers.Entities;
 using FishFlingers.Inventories;
 using FishFlingers.Items;
+using FishFlingers.Networking;
 using FishFlingers.UI;
 using PurrNet;
 using ShinyOwl.Common;
@@ -13,8 +14,10 @@ using UnityEngine;
 
 namespace FishFlingers.Entities
 {
-    public class RaftPlayerGrabbedInventoryItemLogic
+    public class RaftPlayerGrabbedInventoryItemLogic : IUIManagerListener
     {
+        private UIManager _uiManager;
+
         private RaftPlayer _player;
 
         private SyncVar<NetInventoryItem> _netGrabbedInventoryItem;
@@ -28,6 +31,10 @@ namespace FishFlingers.Entities
 
         public RaftPlayerGrabbedInventoryItemLogic(RaftPlayer player, SyncVar<NetInventoryItem> netGrabbedInventoryItem)
         {
+            _uiManager = GameManager.Instance.Get<UIManager>();
+
+            _uiManager.AddListener(this);
+
             _player = player;
 
             _netGrabbedInventoryItem = netGrabbedInventoryItem;
@@ -36,10 +43,9 @@ namespace FishFlingers.Entities
 
         ~RaftPlayerGrabbedInventoryItemLogic()
         {
-            if (_netGrabbedInventoryItem != null)
-            {
-                _netGrabbedInventoryItem.onChanged -= HandleNetGrabbedInventoryItemChanged;
-            }
+            _uiManager?.RemoveListener(this);
+
+            _netGrabbedInventoryItem.onChanged -= HandleNetGrabbedInventoryItemChanged;   
         }
 
         /// <summary>
@@ -174,6 +180,22 @@ namespace FishFlingers.Entities
             NetInventoryItem netInventoryItem = new NetInventoryItem(newInventoryItem.Cell, _netGrabbedInventoryItem.value.Pivot, _netGrabbedInventoryItem.value.Rotations, NetItemInstance.Create(newInventoryItem.ItemInstance));
 
             _netGrabbedInventoryItem.value = netInventoryItem;
+        }
+
+        /// <summary>
+        /// Releases a potential grabbed item when no panels are open
+        /// </summary>
+        void IUIManagerListener.OnLayerChanged(UILayer layer, int childCount)
+        {
+            if (layer != UILayer.Panels)
+            {
+                return;
+            }
+
+            if (childCount == 0 && _grabbedInventoryItem != null)
+            {
+                _ = ReleaseAsync();
+            }
         }
     }
 }

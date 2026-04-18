@@ -13,11 +13,14 @@ using FishFlingers.States;
 using FishFlingers.Instantiating;
 
 using Object = UnityEngine.Object;
+using System.Threading.Tasks;
 
 namespace FishFlingers.UI
 {
     public interface IUIManagerListener
-    { }
+    {
+        void OnLayerChanged(UILayer layer, int childCount) { }
+    }
 
     public enum UILayer
     {
@@ -174,6 +177,8 @@ namespace FishFlingers.UI
                     ui.Load(_screenCanvas);
                     ui.gameObject.SetActive(false);
 
+                    NotifyLayerChanged(uiLayer);
+
                     return ui;
                 }
                 finally
@@ -204,6 +209,16 @@ namespace FishFlingers.UI
 
             ui.Unload();
             Object.Destroy(ui.gameObject);
+
+            _ = notifyAsync();
+
+            async Task notifyAsync()
+            {
+                // Destroy is deffered to end of frame
+                await Task.Yield();
+
+                NotifyLayerChanged(uiLayer);
+            }
         }
 
         /// <summary>
@@ -279,6 +294,8 @@ namespace FishFlingers.UI
             ui.Unload();
             Object.Destroy(ui.gameObject);
         }
+
+        private void NotifyLayerChanged(UILayer uiLayer) => Listeners.Dispatch(listener => listener.OnLayerChanged(uiLayer, _layers[(int)uiLayer].RectTransform.childCount));
 
         void IStateManagerListener.OnStateChanged(EMainState previous, EMainState current)
         {
