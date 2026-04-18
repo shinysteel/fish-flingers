@@ -208,7 +208,6 @@ namespace FishFlingers.Networking
             _networkManager.StartClient();
 
             RaiseLobbyEnter(lobby);
-
             RaiseLobbyEvents(null, lobby);
 
             return Task.FromResult((Lobby)lobby);

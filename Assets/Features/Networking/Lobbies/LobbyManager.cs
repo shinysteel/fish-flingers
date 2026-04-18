@@ -45,14 +45,18 @@ namespace FishFlingers.Networking
             _lobbyServices.Add(ELobbyService.LAN, _lanLobbyService);
             _lobbyServices.Add(ELobbyService.Steam, _steamLobbyService);
 
-            SetLobbyService(ELobbyService.LAN);
+            SetLobbyService(ELobbyService.Steam);
 
             base.Initialise(config);
         }
 
         public override void Shutdown()
         {
-            _currentLobbyService.Shutdown();
+            foreach (LobbyService service in _lobbyServices.Values)
+            {
+                service?.Shutdown();
+            }
+
             SetLobbyService(ELobbyService.None);
 
             base.Shutdown();

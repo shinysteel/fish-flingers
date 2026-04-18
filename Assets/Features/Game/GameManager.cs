@@ -1,3 +1,4 @@
+using FishFlingers.Networking;
 using FishFlingers.Scenes;
 using NUnit.Framework;
 using PrimeTween;

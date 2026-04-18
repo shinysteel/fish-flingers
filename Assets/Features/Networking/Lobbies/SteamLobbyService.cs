@@ -1,8 +1,11 @@
 using PurrLobby;
+using PurrNet.Steam;
+using PurrNet.Transports;
 using ShinyOwl.Common;
 using Steamworks;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -10,6 +13,8 @@ namespace FishFlingers.Networking
 {
     public class SteamLobbyService : LobbyService
     {
+        private NetworkManager _networkManager;
+
         private CallResult<LobbyMatchList_t> _lobbyMatchListListener;
         private CallResult<LobbyCreated_t> _lobbyCreatedListener;
         private CallResult<LobbyEnter_t> _lobbyEnterListener;
@@ -18,6 +23,11 @@ namespace FishFlingers.Networking
         private const ELobbyType DefaultLobbyType = ELobbyType.k_ELobbyTypePublic;
 
         private const string NameKey = "name";
+
+        public SteamLobbyService()
+        {
+            _networkManager = GameManager.Instance.Get<NetworkManager>();
+        }
 
         public override void Shutdown()
         {
@@ -129,8 +139,16 @@ namespace FishFlingers.Networking
                 Properties = GetLobbyProperties(lobbyId)
             });
 
+            _networkManager.SetClientTransport<SteamTransport>();
+            _networkManager.TryGetClientTransport(out SteamTransport transport);
+            transport.address = CurrentLobby.OwnerId;
+
+            _networkManager.StartServer();
+            _networkManager.StartClient();
+            
             RaiseLobbyCreated(CurrentLobby);
             RaiseLobbyEnter(CurrentLobby);
+
             return CurrentLobby;
         }
 
@@ -170,7 +188,14 @@ namespace FishFlingers.Networking
                 Properties = GetLobbyProperties(cLobbyId)
             });
 
+            _networkManager.SetClientTransport<SteamTransport>();
+            _networkManager.TryGetClientTransport(out SteamTransport transport);
+            transport.address = CurrentLobby.OwnerId;
+
+            _networkManager.StartClient();
+
             RaiseLobbyEnter(CurrentLobby);
+            
             return CurrentLobby;
         }
 
@@ -211,7 +236,7 @@ namespace FishFlingers.Networking
 
         public override bool IsLobbyOwner(Lobby lobby)
         {
-            return lobby.LobbyId == SteamUser.GetSteamID().ToString();
+            return lobby.OwnerId == SteamUser.GetSteamID().ToString();
         }
 
         private List<LobbyMember> GetLobbyMembers(CSteamID lobbyId)
