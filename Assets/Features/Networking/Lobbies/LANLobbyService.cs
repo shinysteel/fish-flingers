@@ -169,7 +169,8 @@ namespace FishFlingers.Networking
                 OwnerId = ownerId,
                 MemberLimit = DefaultMemberLimit,
                 Members = new List<LobbyMember>() { new LobbyMember(ownerId, ownerId) },
-                Properties = new Dictionary<string, string>() { { AddressKey, address }, { StartedKey, false.ToString() } }
+                Properties = new Dictionary<string, string>() { { AddressKey, address }, { StartedKey, false.ToString() } },
+                Service = ELobbyService.LAN
             });
 
             _networkManager.SetClientTransport<UDPTransport>();

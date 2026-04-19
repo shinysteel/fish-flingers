@@ -92,7 +92,7 @@ namespace FishFlingers.Networking
                         MemberLimit = SteamMatchmaking.GetLobbyMemberLimit(lobbyId),
                         Members = GetLobbyMembers(lobbyId),
                         Properties = GetLobbyProperties(lobbyId),
-                        Service = ELobbyService.LAN
+                        Service = ELobbyService.Steam
                     });
                 }
 
