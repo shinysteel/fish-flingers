@@ -47,6 +47,7 @@ namespace FishFlingers.Networking
         public int MemberLimit;
         public List<LANLobbyMemberPacket> Members;
         public Dictionary<string, string> Properties;
+        public ELobbyService Service;
 
         public static LANLobbyPacket FromLobby(LANLobby lobby)
         {
@@ -57,7 +58,8 @@ namespace FishFlingers.Networking
                 OwnerId = lobby.OwnerId,
                 MemberLimit = lobby.MemberLimit,
                 Members = lobby.Members.Select(member => LANLobbyMemberPacket.FromMember(member)).ToList(),
-                Properties = lobby.Properties
+                Properties = lobby.Properties,
+                Service = lobby.Service
             };
         }
 
@@ -70,7 +72,8 @@ namespace FishFlingers.Networking
                 OwnerId = packet.OwnerId,
                 MemberLimit = packet.MemberLimit,
                 Members = packet.Members.Select(member => LANLobbyMemberPacket.ToMember(member)).ToList(),
-                Properties = packet.Properties
+                Properties = packet.Properties,
+                Service = packet.Service
             });
         }
     }
