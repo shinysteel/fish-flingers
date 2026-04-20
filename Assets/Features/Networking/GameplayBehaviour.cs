@@ -15,8 +15,6 @@ namespace FishFlingers.Networking
 
         public virtual void Initialise(GameplayContext context)
         {
-            Log.Info($"{name} is initialised");
-
             _context = context;
 
             _isInitialised = true;

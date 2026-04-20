@@ -117,7 +117,11 @@ namespace FishFlingers.Entities
                 Sequence.Create()
                     .Group(Tween.Position(_flyingFish.transform, _anticipatePosition, anticipateDuration, Ease.OutQuad))
                     .Group(TweenExtensions.Rotate(_flyingFish.transform, _anticipateRotation, anticipateDuration, Ease.OutQuad))
-                    .OnComplete(() => _isAnticipating = false);
+                    .OnComplete(() =>
+                    {
+                        _isAnticipating = false;
+                        _flyingFish._characterModel.Animator.SetBool(IsFlyingBoolName, true);
+                    });
 
                 _landPosition = _flyingFish._targetTile.transform.position;
 
@@ -147,6 +151,8 @@ namespace FishFlingers.Entities
                 }
             }
         }
+
+        private const string IsFlyingBoolName = "IsFlying";
 
         protected override void Awake()
         {
@@ -186,6 +192,8 @@ namespace FishFlingers.Entities
             }
 
             _targetTile = null;
+
+            _characterModel.Animator.SetBool(IsFlyingBoolName, false);
 
             _stateMachine.ChangeState(EState.None);
         }

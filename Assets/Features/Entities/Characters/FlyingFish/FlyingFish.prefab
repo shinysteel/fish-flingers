@@ -24,14 +24,74 @@ PrefabInstance:
       propertyPath: m_Name
       value: FlyingFish
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: f48b09ca63271524a86e305b4576e232, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 6309225596531950667}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8777966547093219605}
   m_SourcePrefab: {fileID: 100100000, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
+--- !u!1 &1462950079564464615 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
+  m_PrefabInstance: {fileID: 1768815731624705206}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6309225596531950667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1462950079564464615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4efe20aa95fa10e4eb3d9f4219fb46cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.CharacterModel
+  _animator: {fileID: 5325098781066936615}
+  _networkAnimator: {fileID: 8777966547093219605}
+  _itemLocator: {fileID: 0}
+--- !u!114 &8777966547093219605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1462950079564464615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7b598b9d8509d64abb9fdaf07fa3f6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PurrNet.Runtime::PurrNet.NetworkAnimator
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  _animator: {fileID: 5325098781066936615}
+  _ownerAuth: 1
+  _autoSyncParameters: 1
+  _dontSyncParameters: []
 --- !u!4 &2235652335221185373 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
+  m_PrefabInstance: {fileID: 1768815731624705206}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &5325098781066936615 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: aa8e3698c7371c84dbf87e51e0ee26a9, type: 3}
   m_PrefabInstance: {fileID: 1768815731624705206}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6534710111205257386
@@ -104,7 +164,7 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   _entityData: {fileID: 11400000, guid: 349370ccaeb9e5548b6d4002c5167571, type: 2}
   _rigidbody: {fileID: 7878812079687700817}
-  _characterModel: {fileID: 0}
+  _characterModel: {fileID: 6309225596531950667}
 --- !u!65 &7502424701398164475
 BoxCollider:
   m_ObjectHideFlags: 0
