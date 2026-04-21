@@ -14,6 +14,7 @@ using FishFlingers.Entities;
 using FishFlingers.Saving;
 using FishFlingers.Instantiating;
 using FishFlingers.Effects;
+using FishFlingers.Hitboxes;
 
 [CreateAssetMenu(fileName = "GameManagerConfig", menuName = "Configs/Managers/GameManagerConfig")]
 public class GameManagerConfig : ScriptableObject
@@ -34,6 +35,7 @@ public class GameManagerConfig : ScriptableObject
     [SerializeField] private ItemManagerConfig _itemManagerConfig;
     [SerializeField] private EntityManagerConfig _entityManagerConfig;
     [SerializeField] private EffectManagerConfig _effectManagerConfig;
+    [SerializeField] private HitboxManagerConfig _hitboxManagerConfig;
 
     public SaveManagerConfig SaveManagerConfig => _saveManagerConfig;
     public InstantiateManagerConfig InstantiateManagerConfig => _instantiateManagerConfig;
@@ -51,4 +53,5 @@ public class GameManagerConfig : ScriptableObject
     public ItemManagerConfig ItemManagerConfig => _itemManagerConfig;
     public EntityManagerConfig EntityManagerConfig => _entityManagerConfig;
     public EffectManagerConfig EffectManagerConfig => _effectManagerConfig;
+    public HitboxManagerConfig HitboxManagerConfig => _hitboxManagerConfig;
 }
