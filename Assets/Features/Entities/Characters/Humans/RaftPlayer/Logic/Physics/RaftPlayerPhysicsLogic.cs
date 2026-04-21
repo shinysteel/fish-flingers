@@ -30,7 +30,7 @@ namespace FishFlingers.Entities
             _player = player;
             _capsuleCollider = capsuleCollider;
 
-            _settings = _player.Data.PhysicsSettings;
+            _settings = _player.Data.RaftPlayerPhysicsSettings;
         }
 
         public void Tick()

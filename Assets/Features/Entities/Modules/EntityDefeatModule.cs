@@ -46,7 +46,7 @@ namespace FishFlingers.Entities
 
         private async Task DespawnAsync()
         {
-            await Task.Delay(Mathf.RoundToInt(_entity.EntityData.DefeatTime * 1000f));
+            await Task.Delay(Mathf.RoundToInt(_entity.EntityData.EntityDefeatSettings.Duration * 1000f));
 
             _entityManager.Despawn(_entity);
         }

@@ -4,18 +4,16 @@ using UnityEngine;
 namespace FishFlingers.Entities
 {
     [CreateAssetMenu(fileName = "RaftPlayerPhysicsSettings", menuName = "Settings/Entities/RaftPlayerPhysicsSettings")]
-    public class RaftPlayerPhysicsSettings : ScriptableObject
+    public class RaftPlayerPhysicsSettings : EntityPhysicsSettings
     {
         [SerializeField] private RaftPlayerMoveSettings _move;
         [SerializeField] private RaftPlayerLookSettings _look;
         [SerializeField] private RaftPlayerJumpSettings _jump;
-        [SerializeField] private RaftPlayerGroundDetectionSettings _groundDetection;
         [SerializeField] private RaftPlayerSwimSettings _swim;
 
         public RaftPlayerMoveSettings Move => _move;
         public RaftPlayerLookSettings Look => _look;
         public RaftPlayerJumpSettings Jump => _jump;
-        public RaftPlayerGroundDetectionSettings GroundDetection => _groundDetection;
         public RaftPlayerSwimSettings Swim => _swim;
     }
 
@@ -53,18 +51,6 @@ namespace FishFlingers.Entities
 
         public float Strength => _strength;
         public float Cooldown => _cooldown;
-    }
-
-    [Serializable]
-    public class RaftPlayerGroundDetectionSettings
-    {
-        [SerializeField] private LayerMask _mask;
-        [SerializeField] private float _castRadius = 0.125f;
-        [SerializeField] private float _castDist = 0.05f;
-
-        public LayerMask Mask => _mask;
-        public float CastRadius => _castRadius;
-        public float CastDist => _castDist;
     }
 
     [Serializable]
