@@ -6,26 +6,30 @@ namespace FishFlingers.Entities
 {
     public class EntityHealthModule
     {
-        private int _max;
+        private IEntity _entity;
         private Func<int> _getter;
         private Action<int> _setter;
 
+        private int _max;
         public int Max => _max;
+
         public int Current => _getter();
 
         public event Action<int, int> OnChanged;
 
         /// <param name="setter">Does not require clamping - we do that for you</param>
-        public EntityHealthModule(int max, Func<int> getter, Action<int> setter)
+        public EntityHealthModule(IEntity entity, Func<int> getter, Action<int> setter)
         {
-            _max = max;
+            _entity = entity;
             _getter = getter;
             _setter = setter;
+
+            _max = _entity.EntityData.Health;
         }
 
         public void SetHealth(int health)
         {
-            health = Mathf.Clamp(health, 0, Max);
+            health = Mathf.Clamp(health, 0, _max);
 
             if (Current == health)
             {

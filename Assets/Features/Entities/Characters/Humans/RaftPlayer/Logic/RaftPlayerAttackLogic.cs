@@ -52,6 +52,7 @@ namespace FishFlingers.Entities
                         if (distance <= 2.5f)
                         {
                             entity.HealthModule.ChangeHealth(-1);
+                            entity.Rigidbody.AddForce((entity.Rigidbody.transform.position - _player.transform.position).normalized * 5f, ForceMode.Impulse);
                         }
                     }
                 }),

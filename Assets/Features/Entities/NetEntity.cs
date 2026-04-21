@@ -17,6 +17,9 @@ namespace FishFlingers.Entities
         [SerializeField] protected EntityData _entityData;
         public EntityData EntityData => _entityData;
 
+        [SerializeField] protected EntityModel _entityModel;
+        public EntityModel EntityModel => _entityModel;
+
         private SyncVar<int> _currentHealth;
 
         protected EntityHealthModule _healthModule;
@@ -27,8 +30,9 @@ namespace FishFlingers.Entities
         public EntityDefeatModule DefeatModule => _defeatModule;
         public EntityRagdollModule RagdollModule => _ragdollModule;
 
-        [SerializeField] protected Rigidbody _rigidbody;
+        public Transform Transform => transform;
 
+        [SerializeField] protected Rigidbody _rigidbody;
         public Rigidbody Rigidbody => _rigidbody;
 
         // End of IEntity
@@ -37,13 +41,13 @@ namespace FishFlingers.Entities
         {
             _currentHealth = new SyncVar<int>(_entityData.Health);
 
-            _healthModule = new EntityHealthModule(_entityData.Health,
+            _healthModule = new EntityHealthModule(this,
                 getter: () => _currentHealth.value,
                 setter: (int health) => _currentHealth.value = health);
 
-            _defeatModule = new EntityDefeatModule(this, _entityData.DefeatTime);
+            _defeatModule = new EntityDefeatModule(this);
 
-            _ragdollModule = new EntityRagdollModule(_rigidbody);
+            _ragdollModule = new EntityRagdollModule(this);
         }
 
         protected override void OnSpawned()

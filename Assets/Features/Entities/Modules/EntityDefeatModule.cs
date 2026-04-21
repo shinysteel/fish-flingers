@@ -9,18 +9,16 @@ namespace FishFlingers.Entities
         private EntityManager _entityManager;
 
         private IEntity _entity;
-        private float _defeatTime;
 
         private bool _isDefeated;
 
         public event Action OnDefeated;
 
-        public EntityDefeatModule(IEntity entity, float defeatTime)
+        public EntityDefeatModule(IEntity entity)
         {
             _entityManager = GameManager.Instance.Get<EntityManager>();
 
             _entity = entity;
-            _defeatTime = defeatTime;
         }
 
         public void Defeat()
@@ -39,7 +37,7 @@ namespace FishFlingers.Entities
 
         private async Task DespawnAsync()
         {
-            await Task.Delay(Mathf.RoundToInt(_defeatTime * 1000f));
+            await Task.Delay(Mathf.RoundToInt(_entity.EntityData.DefeatTime * 1000f));
 
             _entityManager.Despawn(_entity);
         }

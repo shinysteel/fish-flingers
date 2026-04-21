@@ -11,11 +11,13 @@ namespace FishFlingers.Entities
         void Initialise(GameplayContext context);
 
         EntityData EntityData { get; }
+        EntityModel EntityModel { get; }
 
         EntityHealthModule HealthModule { get; }
         EntityDefeatModule DefeatModule { get; }
         EntityRagdollModule RagdollModule { get; }
 
+        Transform Transform { get; }
         Rigidbody Rigidbody { get; }
     }
 }

@@ -5,25 +5,30 @@ namespace FishFlingers.Entities
 {
     public class EntityRagdollModule
     {
-        private Rigidbody _rigidbody;
-        private RigidbodyConstraints _constraints;
+        private IEntity _entity;
+        private RigidbodyConstraints _rigidbodyConstraints;
 
-        public Rigidbody Rigidbody => _rigidbody;
-
-        public EntityRagdollModule(Rigidbody rigidbody)
+        public EntityRagdollModule(IEntity entity)
         {
-            _rigidbody = rigidbody;
-            _constraints = _rigidbody.constraints;
+            _entity = entity;
+
+            _rigidbodyConstraints = _entity.Rigidbody.constraints;
         }
 
         public void SetEnabled(bool enabled)
         {
-            _rigidbody.isKinematic = !enabled;
-            _rigidbody.constraints = enabled ? RigidbodyConstraints.None : _constraints;
+            _entity.Rigidbody.isKinematic = !enabled;
+            _entity.Rigidbody.constraints = enabled ? RigidbodyConstraints.None : _rigidbodyConstraints;
+
+            // Some entities do not have an animator
+            if (_entity.EntityModel != null)
+            {
+                _entity.EntityModel.Animator.enabled = !enabled;
+            }
 
             if (!enabled)
             {
-                Tween.StopAll(_rigidbody.transform);
+                Tween.StopAll(_entity.Rigidbody.transform);
             }
         }
     }

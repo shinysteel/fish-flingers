@@ -10,14 +10,7 @@ namespace FishFlingers.Entities
         [SerializeField] protected Animator _animator;
         [SerializeField] private NetworkAnimator _networkAnimator;
 
-        private GameplayContext _context;
-
         public Animator Animator => _animator;
-
-        public void Initialise(GameplayContext context)
-        {
-            _context = context;
-        }
 
         public void SetTrigger(string name)
         {

@@ -17,31 +17,8 @@ MonoBehaviour:
   _descriptionTerm: 1347063821
   _sprite: {fileID: 21300000, guid: 4d5437e4103caf0479f3fe3a36805b12, type: 3}
   _health: 3
-  _moveSettings:
-    _speed: 2
-    _acceleration: 10
-    _deceleration: 7.5
-  _lookSettings:
-    _speed: 7.5
-  _jumpSettings:
-    _strength: 4
-    _cooldown: 0.1
-  _groundDetectionSettings:
-    _mask:
-      serializedVersion: 2
-      m_Bits: 193
-    _castRadius: 0.125
-    _castDist: 0.05
-  _swimSettings:
-    _mask:
-      serializedVersion: 2
-      m_Bits: 16
-    _ascendStrength: 30
-    _ascendDepthThreshold: 0.25
-  _interactSettings:
-    _mask:
-      serializedVersion: 2
-      m_Bits: 128
-    _radius: 1
-    _maxDistance: 0.5
-    _maxAngle: 45
+  _alliance: 0
+  _defeatTime: 1
+  _physicsSettings: {fileID: 11400000, guid: 44ee6932f3efbe04a915bef2bbe7b84f, type: 2}
+  _interactSettings: {fileID: 11400000, guid: 8966df7ec833795439e0afc8f5d815cc, type: 2}
+  _tileTargetSettings: {fileID: 11400000, guid: e9b6f001bfa077a43b32d931c858c66c, type: 2}

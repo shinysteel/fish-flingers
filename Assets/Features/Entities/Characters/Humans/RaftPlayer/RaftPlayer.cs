@@ -31,7 +31,7 @@ namespace FishFlingers.Entities
         public Inventory Inventory => _inventory;
         public Hotbar Hotbar => _hotbar;
 
-        [SerializeField] private RaftPlayerTileTargetLogicSettings _targetLogicSettings;
+        [SerializeField] private RaftPlayerTileTargetSettings _targetLogicSettings;
 
         private RaftPlayerInputLogic _inputLogic;
         private RaftPlayerPhysicsLogic _physicsLogic;
@@ -98,8 +98,8 @@ namespace FishFlingers.Entities
             _interactLogic = new RaftPlayerInteractLogic(this);
             _grabbedInventoryItemLogic = new RaftPlayerGrabbedInventoryItemLogic(this, _netGrabbedInventoryItem);
             _dropInventoryItemLogic = new RaftPlayerDropInventoryItemLogic(this);
-            _animateLogic = new RaftPlayerAnimateLogic(this, _characterModel);
-            _heldInventoryItemLogic = new RaftPlayerHeldInventoryItemLogic(this, _characterModel);
+            _animateLogic = new RaftPlayerAnimateLogic(this, CharacterModel);
+            _heldInventoryItemLogic = new RaftPlayerHeldInventoryItemLogic(this, CharacterModel);
             _openNetBehaviourLogic = new RaftPlayerOpenNetBehaviourLogic(_netOpenNetworkId);
             _attackLogic = new RaftPlayerAttackLogic(this);
 
@@ -121,7 +121,7 @@ namespace FishFlingers.Entities
             if (isOwner)
             {
                 _hotkeyLogic = new RaftPlayerHotkeyLogic(context, _netGrabbedInventoryItem);
-                _tileTargetLogic = new RaftPlayerTileTargetLogic(context, _targetLogicSettings);
+                _tileTargetLogic = new RaftPlayerTileTargetLogic(context);
             }
         }
 

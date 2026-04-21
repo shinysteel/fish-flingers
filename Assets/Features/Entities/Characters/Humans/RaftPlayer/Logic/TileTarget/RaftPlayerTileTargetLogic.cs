@@ -13,6 +13,18 @@ using Object = UnityEngine.Object;
 
 namespace FishFlingers.Entities
 {
+    [CreateAssetMenu(fileName = "RaftPlayerTargetSettings", menuName = "Settings/Entities/RaftPlayerTargetSettings")]
+    public class RaftPlayerTileTargetSettings : ScriptableObject
+    {
+        [SerializeField] private RaftPlayerTileTargetVisual _targetVisualPrefab;
+        [SerializeField] private Color _validColor;
+        [SerializeField] private Color _invalidColor;
+
+        public RaftPlayerTileTargetVisual TargetVisualPrefab => _targetVisualPrefab;
+        public Color ValidColor => _validColor;
+        public Color InvalidColor => _invalidColor;
+    }
+
     public class RaftPlayerTileTarget
     {
         private GameplayContext _context;
@@ -90,7 +102,7 @@ namespace FishFlingers.Entities
 
         private GameplayContext _context;
 
-        private RaftPlayerTileTargetLogicSettings _settings;
+        private RaftPlayerTileTargetSettings _settings;
 
         private RaftPlayerTileTargetVisual _targetVisual;
 
@@ -112,13 +124,13 @@ namespace FishFlingers.Entities
 
         private const float VisualMaxAlpha = 0.4f; // Equivalent to ~102 in color32
 
-        public RaftPlayerTileTargetLogic(GameplayContext context, RaftPlayerTileTargetLogicSettings settings)
+        public RaftPlayerTileTargetLogic(GameplayContext context)
         {
             _cameraManager = GameManager.Instance.Get<CameraManager>();
 
             _context = context;
 
-            _settings = settings;
+            _settings = _context.LocalPlayer.Data.TileTargetSettings;
 
             _targetVisual = Object.Instantiate(_settings.TargetVisualPrefab);
 
