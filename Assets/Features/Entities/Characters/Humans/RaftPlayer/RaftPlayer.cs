@@ -31,8 +31,6 @@ namespace FishFlingers.Entities
         public Inventory Inventory => _inventory;
         public Hotbar Hotbar => _hotbar;
 
-        [SerializeField] private RaftPlayerTileTargetSettings _targetLogicSettings;
-
         private RaftPlayerInputLogic _inputLogic;
         private RaftPlayerPhysicsLogic _physicsLogic;
         private RaftPlayerInteractLogic _interactLogic;

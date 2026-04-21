@@ -17,8 +17,13 @@ namespace FishFlingers.Entities
         public EntityDefeatModule(IEntity entity)
         {
             _entityManager = GameManager.Instance.Get<EntityManager>();
-
+            
             _entity = entity;
+
+            if (_entity.EntityModel != null)
+            {
+                _entity.EntityModel.Material.SetFloat(EntityModel.DefeatBlendName, 0f);
+            }
         }
 
         public void Defeat()
@@ -29,6 +34,10 @@ namespace FishFlingers.Entities
             }
 
             _isDefeated = true;
+
+            _entity.RagdollModule.SetEnabled(true);
+
+            _entity.EntityModel.Material.SetFloat(EntityModel.DefeatBlendName, 1f);
 
             OnDefeated?.Invoke();
 

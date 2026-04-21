@@ -113,6 +113,8 @@ namespace FishFlingers.Entities
 
             public override void Enter()
             {
+                _flyTimer = 0f;
+                
                 _isAnticipating = true;
                 Vector3 anticipateOffset = Vector3.down * 0.2f;
                 float anticipateDuration = 0.2f;

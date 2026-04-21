@@ -59,6 +59,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4033217484698771963, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
+      propertyPath: m_Mass
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4033217484698771963, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
       propertyPath: m_IsKinematic
       value: 1
       objectReference: {fileID: 0}
@@ -112,8 +116,8 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   _entityData: {fileID: 11400000, guid: 7a69f78e97e2eb4409da57692cd4d9f2, type: 2}
+  _entityModel: {fileID: 0}
   _rigidbody: {fileID: 6376520538752300838}
-  _characterModel: {fileID: 0}
 --- !u!65 &4975119389212087691
 BoxCollider:
   m_ObjectHideFlags: 0

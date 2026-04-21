@@ -12,6 +12,26 @@ namespace FishFlingers.Entities
 
         public Animator Animator => _animator;
 
+        private Material _material;
+        public Material Material => _material;
+
+        public const string DefeatBlendName = "_DefeatBlend";
+
+        private void Awake()
+        {
+            foreach (MeshRenderer meshRenderer in transform.GetComponentsInChildren<MeshRenderer>())
+            {
+                if (_material == null)
+                {
+                    _material = meshRenderer.material;
+                }
+                else
+                {
+                    meshRenderer.material = _material;
+                }
+            }
+        }
+
         public void SetTrigger(string name)
         {
             if (_networkAnimator == null)

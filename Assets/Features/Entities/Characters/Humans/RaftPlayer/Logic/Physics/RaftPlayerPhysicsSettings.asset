@@ -22,7 +22,7 @@ MonoBehaviour:
     _speed: 7.5
     _attackImpactMultiplier: 0.25
   _jump:
-    _strength: 4
+    _strength: 40
     _cooldown: 0.1
   _groundDetection:
     _mask:
@@ -34,5 +34,5 @@ MonoBehaviour:
     _mask:
       serializedVersion: 2
       m_Bits: 16
-    _ascendStrength: 30
+    _ascendStrength: 300
     _ascendDepthThreshold: 0.25

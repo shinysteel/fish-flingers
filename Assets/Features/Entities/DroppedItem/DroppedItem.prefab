@@ -96,6 +96,7 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   _entityData: {fileID: 11400000, guid: 1a9ed0623542a76478eeabfe1fcb2609, type: 2}
+  _entityModel: {fileID: 0}
   _rigidbody: {fileID: 5765823416808486095}
 --- !u!114 &1596470918788293711
 MonoBehaviour:
@@ -136,7 +137,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 460405706589029815}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 2
   m_LinearDamping: 1
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}

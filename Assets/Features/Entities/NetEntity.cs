@@ -56,9 +56,6 @@ namespace FishFlingers.Entities
 
             if (isServer)
             {
-                _healthModule.OnChanged += HandleHealthChanged;
-                _defeatModule.OnDefeated += HandleDefeated;
-
                 _healthModule.SetHealth(_entityData.Health);
             }
             
@@ -73,9 +70,6 @@ namespace FishFlingers.Entities
 
             if (isServer)
             {
-                _healthModule.OnChanged -= HandleHealthChanged;
-                _defeatModule.OnDefeated -= HandleDefeated;
-
                 _ragdollModule.SetEnabled(false);
             }
 
@@ -84,19 +78,6 @@ namespace FishFlingers.Entities
             _healthModule = null;
             _defeatModule = null;
             _ragdollModule = null;
-        }
-
-        private void HandleHealthChanged(int previous, int current)
-        {
-            if (current == 0)
-            {
-                _defeatModule.Defeat();
-            }
-        }
-
-        private void HandleDefeated()
-        {
-            _ragdollModule.SetEnabled(true);
         }
     }
 }

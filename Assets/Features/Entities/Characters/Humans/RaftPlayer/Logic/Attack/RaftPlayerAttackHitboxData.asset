@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: RaftPlayerAttackHitboxData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Hitboxes.HitboxData
   _damage: 1
-  _knockbackForceStrength: 5
-  _knockbackTorqueStrength: 0.1
+  _knockbackForceStrength: 20
+  _knockbackTorqueStrength: 0.25
   _alliance: 0
   _steps:
   - _shape: 1
