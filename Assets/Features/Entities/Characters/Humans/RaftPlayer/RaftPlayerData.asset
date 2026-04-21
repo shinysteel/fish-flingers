@@ -21,4 +21,5 @@ MonoBehaviour:
   _defeatTime: 1
   _physicsSettings: {fileID: 11400000, guid: 44ee6932f3efbe04a915bef2bbe7b84f, type: 2}
   _interactSettings: {fileID: 11400000, guid: 8966df7ec833795439e0afc8f5d815cc, type: 2}
+  _attackSettings: {fileID: 11400000, guid: 3c42f117f4bcec84e8ab8a4a5c755237, type: 2}
   _tileTargetSettings: {fileID: 11400000, guid: e9b6f001bfa077a43b32d931c858c66c, type: 2}

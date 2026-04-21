@@ -255,9 +255,9 @@ namespace FishFlingers.Entities
         private IInteractable FindTarget()
         {
             // Detect nearby interactables
-            int overlap = Physics.OverlapSphereNonAlloc(_player.transform.position, _settings.Radius, _collidersNonAlloc, _settings.Mask);
+            int overlaps = Physics.OverlapSphereNonAlloc(_player.transform.position, _settings.Radius, _collidersNonAlloc, _settings.Mask);
 
-            if (overlap == 0)
+            if (overlaps == 0)
             {
                 return null;
             }
@@ -265,7 +265,7 @@ namespace FishFlingers.Entities
             _nearbyInteractables.Clear();
 
             // Store any that we are able to interact with
-            for (int i = 0; i < overlap; i++)
+            for (int i = 0; i < overlaps; i++)
             {
                 Collider collider = _collidersNonAlloc[i];
 

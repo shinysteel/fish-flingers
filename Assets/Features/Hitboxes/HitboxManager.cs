@@ -14,6 +14,8 @@ namespace FishFlingers.Hitboxes
 
         private HitboxManagerConfig _config;
 
+        public HitboxManagerConfig Config => _config;
+
         public override void Initialise(GameManagerConfig config)
         {
             _poolManager = GameManager.Instance.Get<PoolManager>();
@@ -23,10 +25,10 @@ namespace FishFlingers.Hitboxes
             base.Initialise(config);
         }
 
-        public void CreateHitbox(HitboxParams parameters)
+        public void CreateHitbox(Vector3 position, Quaternion rotation, HitboxData data)
         {
             Hitbox hitbox = _poolManager.GetPoolable<Hitbox>(new());
-            hitbox.Initialise(parameters);
+            hitbox.Initialise(position, rotation, data);
         }
     }
 }

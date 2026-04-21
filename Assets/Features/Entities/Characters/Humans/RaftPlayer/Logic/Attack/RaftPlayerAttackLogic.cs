@@ -6,6 +6,16 @@ using FishFlingers.Hitboxes;
 
 namespace FishFlingers.Entities
 {
+    [CreateAssetMenu(fileName = "RaftPlayerAttackSettings", menuName = "Settings/Entities/RaftPlayerAttackSettings")]
+    public class RaftPlayerAttackSettings : ScriptableObject
+    {
+        [SerializeField] private HitboxData _hitboxData;
+        [SerializeField] private float _lungeStrength;
+
+        public HitboxData HitboxData => _hitboxData;
+        public float LungeStrength => _lungeStrength;
+    }
+
     public enum RaftPlayerAttackState
     {
         None,
@@ -19,6 +29,8 @@ namespace FishFlingers.Entities
 
         private RaftPlayer _player;
 
+        private RaftPlayerAttackSettings _settings;
+
         private RaftPlayerAttackState _attackState;
         public RaftPlayerAttackState AttackState => _attackState;
         
@@ -27,6 +39,8 @@ namespace FishFlingers.Entities
             _hitboxManager = GameManager.Instance.Get<HitboxManager>();
 
             _player = player;
+
+            _settings = _player.Data.AttackSettings;
         }
 
         public async Task AttackAsync()
@@ -42,10 +56,11 @@ namespace FishFlingers.Entities
             {
                 new AnimateEvent(0.5f, () =>
                 {
-                    _player.Rigidbody.AddForce(_player.transform.forward, ForceMode.Impulse);
+                    _player.Rigidbody.AddForce(_player.transform.forward * _settings.LungeStrength, ForceMode.Impulse);
+
                     _attackState = RaftPlayerAttackState.Impact;
 
-                    _hitboxManager.CreateHitbox(new HitboxParams(_player.transform.position, 2.5f, 1, 2.5f, 0.5f, EntityAlliance.Ally));
+                    _hitboxManager.CreateHitbox(_player.transform.position, _player.transform.rotation, _settings.HitboxData);
                 }),
             };
 
