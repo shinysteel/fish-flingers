@@ -6,20 +6,22 @@ namespace FishFlingers.Entities
     [CreateAssetMenu(fileName = "CharacterPhysicsSettings", menuName = "Settings/Entities/CharacterPhysicsSettings")]
     public class CharacterPhysicsSettings : ScriptableObject
     {
-        [SerializeField] private CharacterGroundDetectionSettings _groundDetection;
+        [SerializeField] private CharacterContactDetectionSettings _contactDetection;
 
-        public CharacterGroundDetectionSettings GroundDetection => _groundDetection;
+        public CharacterContactDetectionSettings ContactDetection => _contactDetection;
     }
 
     [Serializable]
-    public class CharacterGroundDetectionSettings
+    public class CharacterContactDetectionSettings
     {
-        [SerializeField] private LayerMask _mask;
         [SerializeField] private float _castRadius = 0.125f;
-        [SerializeField] private float _castDist = 0.05f;
+        [SerializeField] private float _castDistance = 0.05f;
+        [SerializeField] private LayerMask _groundedMask;
+        [SerializeField] private LayerMask _floatingMask;
 
-        public LayerMask Mask => _mask;
         public float CastRadius => _castRadius;
-        public float CastDist => _castDist;
+        public float CastDistance => _castDistance;
+        public LayerMask GroundedMask => _groundedMask;
+        public LayerMask FloatingMask => _floatingMask;
     }
 }

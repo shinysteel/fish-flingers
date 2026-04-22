@@ -7,42 +7,35 @@ using UnityEngine;
 
 namespace FishFlingers.Entities
 {
-    public class RaftPlayerPhysicsLogic
+    public class RaftPlayerPhysicsLogic : CharacterPhysicsLogic
     {
-        private CameraManager _cameraManager;
-
         private RaftPlayer _player;
-        private CapsuleCollider _capsuleCollider;
 
         private RaftPlayerPhysicsSettings _settings;
 
         private float _jumpTimer;
         private bool _jumpRequest;
-        private bool _isGrounded;
-
-        private RaycastHit[] _groundedHitsNonAlloc = new RaycastHit[2];
+        
         private Collider[] _swimCollidersNonAlloc = new Collider[1];
 
-        public RaftPlayerPhysicsLogic(RaftPlayer player, CapsuleCollider capsuleCollider)
+        public RaftPlayerPhysicsLogic(RaftPlayer player) : base(player)
         {
-            _cameraManager = GameManager.Instance.Get<CameraManager>();
-
             _player = player;
-            _capsuleCollider = capsuleCollider;
 
             _settings = _player.Data.RaftPlayerPhysicsSettings;
         }
 
-        public void Tick()
+        public override void Tick()
         {
             JumpTick();
         }
 
-        public void FixedTick()
+        public override void FixedTick()
         {
+            base.FixedTick();
+
             MoveFixedTick();
             LookFixedTick();
-            GroundDetectionFixedTick();
             JumpFixedTick();
             SwimFixedTick();
         }
@@ -111,27 +104,6 @@ namespace FishFlingers.Entities
             _player.Rigidbody.MoveRotation(Quaternion.Slerp(_player.Rigidbody.rotation, targetRotation, speed * Time.fixedDeltaTime));
         }
 
-        private void GroundDetectionFixedTick()
-        {
-            Vector3 origin = _player.Rigidbody.position + Vector3.up * _settings.GroundDetection.CastRadius;
-
-            int hits = Physics.SphereCastNonAlloc(origin, _settings.GroundDetection.CastRadius, Vector3.down, _groundedHitsNonAlloc, _settings.GroundDetection.CastDist, _settings.GroundDetection.Mask);
-
-            bool grounded = false;
-
-            for (int i = 0; i < hits; i++)
-            {
-                // Since we include the player layer to jump on other player's heads, we need to ignore our own collider here
-                if (_groundedHitsNonAlloc[i].collider != _capsuleCollider)
-                {
-                    grounded = true;
-                    break;
-                }
-            }
-
-            _isGrounded = grounded;
-        }
-
         private void JumpFixedTick()
         {
             if (!_jumpRequest)
@@ -162,14 +134,14 @@ namespace FishFlingers.Entities
             }
 
             // If we are overlapping a collider on the swim mask, we are swimming
-            if (Physics.OverlapCapsuleNonAlloc(_capsuleCollider.bounds.min, _capsuleCollider.bounds.max, _capsuleCollider.radius, _swimCollidersNonAlloc, _settings.Swim.Mask) == 0)
+            if (Physics.OverlapCapsuleNonAlloc(_player.CapsuleCollider.bounds.min, _player.CapsuleCollider.bounds.max, _player.CapsuleCollider.radius, _swimCollidersNonAlloc, _settings.Swim.Mask) == 0)
             {
                 return;
             }
 
             Collider waterCollider = _swimCollidersNonAlloc[0];
 
-            Physics.ComputePenetration(_capsuleCollider, _player.Rigidbody.position, _player.Rigidbody.rotation, waterCollider, waterCollider.transform.position, waterCollider.transform.rotation, out _, out float depth);
+            Physics.ComputePenetration(_player.CapsuleCollider, _player.Rigidbody.position, _player.Rigidbody.rotation, waterCollider, waterCollider.transform.position, waterCollider.transform.rotation, out _, out float depth);
 
             float ascendFactor = Mathf.Clamp01(depth / _settings.Swim.AscendDepthThreshold);
             Vector3 ascendForce = Vector3.up * _settings.Swim.AscendStrength * ascendFactor;

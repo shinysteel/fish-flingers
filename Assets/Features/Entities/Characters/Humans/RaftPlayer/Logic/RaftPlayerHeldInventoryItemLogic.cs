@@ -11,16 +11,14 @@ namespace FishFlingers.Entities
         private PoolManager _poolManager;
 
         private RaftPlayer _player;
-        private CharacterModel _playerModel;
 
         private ItemModel _heldModel;
 
-        public RaftPlayerHeldInventoryItemLogic(RaftPlayer player, CharacterModel playerModel)
+        public RaftPlayerHeldInventoryItemLogic(RaftPlayer player)
         {
             _poolManager = GameManager.Instance.Get<PoolManager>();
 
             _player = player;
-            _playerModel = playerModel;
 
             HandleHotbarSelectedChanged(_player.Hotbar.SelectedSlot);
 
@@ -49,7 +47,7 @@ namespace FishFlingers.Entities
                 _heldModel = _poolManager.GetItemModel(slot.InventoryItem.ItemInstance.Data.ItemId, new SpawnParams() 
                 { 
                     Rotation = Quaternion.AngleAxis(90f, Vector3.up),
-                    Parent = _playerModel.ItemLocator
+                    Parent = _player.CharacterModel.ItemLocator
                 });
             }
         }

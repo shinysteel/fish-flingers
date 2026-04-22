@@ -22,7 +22,7 @@ namespace FishFlingers.Entities
 {
     public class RaftPlayer : Character<RaftPlayerData>
     {
-        [SerializeField] private CapsuleCollider _capsuleCollider;
+        public CapsuleCollider CapsuleCollider => (CapsuleCollider)_characterCollider;
 
         [SerializeField] private Inventory _inventory;
         [SerializeField] private BoolGrid _inventoryLayout;
@@ -32,7 +32,6 @@ namespace FishFlingers.Entities
         public Hotbar Hotbar => _hotbar;
 
         private RaftPlayerInputLogic _inputLogic;
-        private RaftPlayerPhysicsLogic _physicsLogic;
         private RaftPlayerInteractLogic _interactLogic;
         private RaftPlayerGrabbedInventoryItemLogic _grabbedInventoryItemLogic;
         private RaftPlayerDropInventoryItemLogic _dropInventoryItemLogic;
@@ -92,12 +91,12 @@ namespace FishFlingers.Entities
         protected override void OnSpawned()
         {
             _inputLogic = new RaftPlayerInputLogic(this);
-            _physicsLogic = new RaftPlayerPhysicsLogic(this, _capsuleCollider);
+            _physicsLogic = new RaftPlayerPhysicsLogic(this);
             _interactLogic = new RaftPlayerInteractLogic(this);
             _grabbedInventoryItemLogic = new RaftPlayerGrabbedInventoryItemLogic(this, _netGrabbedInventoryItem);
             _dropInventoryItemLogic = new RaftPlayerDropInventoryItemLogic(this);
-            _animateLogic = new RaftPlayerAnimateLogic(this, CharacterModel);
-            _heldInventoryItemLogic = new RaftPlayerHeldInventoryItemLogic(this, CharacterModel);
+            _animateLogic = new RaftPlayerAnimateLogic(this);
+            _heldInventoryItemLogic = new RaftPlayerHeldInventoryItemLogic(this);
             _openNetBehaviourLogic = new RaftPlayerOpenNetBehaviourLogic(_netOpenNetworkId);
             _attackLogic = new RaftPlayerAttackLogic(this);
 
@@ -130,8 +129,10 @@ namespace FishFlingers.Entities
             _interactLogic.Cleanup();
         }
 
-        private void Update()
+        protected override void Update()
         {
+            base.Update();
+
             if (!isFullySpawned)
             {
                 return;
@@ -143,28 +144,12 @@ namespace FishFlingers.Entities
             }
 
             _inputLogic.Tick();
-            _physicsLogic.Tick();
             _interactLogic.Tick();
             _animateLogic.Tick();
             _hotkeyLogic.Tick();
             _tileTargetLogic.Tick();
 
             SyncVarsUpdate();
-        }
-
-        private void FixedUpdate()
-        {
-            if (!isFullySpawned)
-            {
-                return;
-            }
-
-            if (!isOwner)
-            {
-                return;
-            }
-
-            _physicsLogic.FixedTick();
         }
 
         private void SyncVarsUpdate()

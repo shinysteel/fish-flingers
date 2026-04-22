@@ -1,6 +1,6 @@
 using UnityEngine;
 using System;
-using System.Threading.Tasks;
+using ShinyOwl.Common;
 
 namespace FishFlingers.Entities
 {
@@ -11,6 +11,8 @@ namespace FishFlingers.Entities
         private Character _character;
 
         private bool _isDefeated;
+
+        private float _defeatTimer;
 
         public event Action OnDefeated;
 
@@ -33,6 +35,30 @@ namespace FishFlingers.Entities
             }
         }
 
+        public void Tick()
+        {
+            if (!_isDefeated)
+            {
+                return;
+            }
+
+            if (!_character.PhysicsLogic.IsGrounded && !_character.PhysicsLogic.IsFloating)
+            {
+                return;
+            }
+            
+            _defeatTimer += Time.deltaTime;
+
+            if (_defeatTimer < _character.CharacterData.CharacterDefeatSettings.Duration)
+            {
+                return;
+            }
+
+            _character.RagdollLogic.SetEnabled(false);
+
+            _entityManager.Despawn(_character);
+        }
+
         private void HandleHealthChanged(int previous, int current)
         {
             if (_isDefeated)
@@ -52,22 +78,13 @@ namespace FishFlingers.Entities
         {
             _isDefeated = true;
 
+            _defeatTimer = 0f;
+
             _character.RagdollLogic.SetEnabled(true);
 
             _character.CharacterModel.Material.SetFloat(EntityModel.DefeatBlendName, 1f);
 
             OnDefeated?.Invoke();
-
-            _ = DespawnAsync();
-        }
-
-        private async Task DespawnAsync()
-        {
-            await Task.Delay(Mathf.RoundToInt(_character.CharacterData.CharacterDefeatSettings.Duration * 1000f));
-
-            _character.RagdollLogic.SetEnabled(false);
-
-            _entityManager.Despawn(_character);
         }
     }
 }

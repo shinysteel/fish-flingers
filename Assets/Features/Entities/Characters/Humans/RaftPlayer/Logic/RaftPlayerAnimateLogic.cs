@@ -8,7 +8,6 @@ namespace FishFlingers.Entities
     public class RaftPlayerAnimateLogic
     {
         private RaftPlayer _player;
-        private CharacterModel _model;
 
         private const string IsMovingBoolName = "IsMoving";
         private const string IsHoldingItemBoolName = "IsHoldingItem";
@@ -21,10 +20,9 @@ namespace FishFlingers.Entities
             RightArm
         }
 
-        public RaftPlayerAnimateLogic(RaftPlayer player, CharacterModel model)
+        public RaftPlayerAnimateLogic(RaftPlayer player)
         {
             _player = player;
-            _model = model;
         }
 
         public void Tick()
@@ -32,28 +30,28 @@ namespace FishFlingers.Entities
             bool isMoving = _player.InputLogic.MoveDirection != Vector3.zero;
             bool isHoldingItem = _player.Hotbar.SelectedSlot.InventoryItem != null;
             
-            _model.Animator.SetBool(IsMovingBoolName, isMoving);
-            _model.Animator.SetBool(IsHoldingItemBoolName, isHoldingItem);
+            _player.CharacterModel.Animator.SetBool(IsMovingBoolName, isMoving);
+            _player.CharacterModel.Animator.SetBool(IsHoldingItemBoolName, isHoldingItem);
         }
 
         public async Task AttackAsync(AnimateEvents events)
         {
-            _ = events.PlayAsync(_model.Animator, (int)Layer.Base, AttackStateName);
-            
+            _ = events.PlayAsync(_player.CharacterModel.Animator, (int)Layer.Base, AttackStateName);
+
             // Mark IsAttacking as true until we are transitioning out of the attack state
-            _model.Animator.SetBool(IsAttackingBoolName, true);
+            _player.CharacterModel.Animator.SetBool(IsAttackingBoolName, true);
             
-            while (!_model.Animator.GetCurrentAnimatorStateInfo((int)Layer.Base).IsName(AttackStateName))
+            while (!_player.CharacterModel.Animator.GetCurrentAnimatorStateInfo((int)Layer.Base).IsName(AttackStateName))
             {
                 await Task.Yield();
             }
 
-            while (_model.Animator.GetCurrentAnimatorStateInfo((int)Layer.Base).IsName(AttackStateName))
+            while (_player.CharacterModel.Animator.GetCurrentAnimatorStateInfo((int)Layer.Base).IsName(AttackStateName))
             {
                 await Task.Yield();
             }
 
-            _model.Animator.SetBool(IsAttackingBoolName, false);
+            _player.CharacterModel.Animator.SetBool(IsAttackingBoolName, false);
         }
     }
 }

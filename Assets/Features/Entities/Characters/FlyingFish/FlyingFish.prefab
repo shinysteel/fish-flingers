@@ -169,6 +169,7 @@ MonoBehaviour:
   _entityData: {fileID: 11400000, guid: 349370ccaeb9e5548b6d4002c5167571, type: 2}
   _entityModel: {fileID: 6309225596531950667}
   _rigidbody: {fileID: 7878812079687700817}
+  _characterCollider: {fileID: 7502424701398164475}
 --- !u!65 &7502424701398164475
 BoxCollider:
   m_ObjectHideFlags: 0

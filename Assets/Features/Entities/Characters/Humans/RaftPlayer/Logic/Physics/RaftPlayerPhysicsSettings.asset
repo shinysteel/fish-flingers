@@ -12,6 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5700e29a1e1b4546949edf5435aacd6, type: 3}
   m_Name: RaftPlayerPhysicsSettings
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.RaftPlayerPhysicsSettings
+  _contactDetection:
+    _castRadius: 0.125
+    _castDistance: 0.05
+    _groundedMask:
+      serializedVersion: 2
+      m_Bits: 193
+    _floatingMask:
+      serializedVersion: 2
+      m_Bits: 16
   _move:
     _speed: 2
     _acceleration: 10
@@ -24,12 +33,6 @@ MonoBehaviour:
   _jump:
     _strength: 40
     _cooldown: 0.1
-  _groundDetection:
-    _mask:
-      serializedVersion: 2
-      m_Bits: 193
-    _castRadius: 0.125
-    _castDist: 0.05
   _swim:
     _mask:
       serializedVersion: 2
