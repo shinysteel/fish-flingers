@@ -1,5 +1,6 @@
 using ShinyOwl.Common;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FishFlingers.Entities
 {
@@ -12,10 +13,11 @@ namespace FishFlingers.Entities
         protected bool _isGrounded;
         public bool IsGrounded => _isGrounded;
 
-        private bool _isFloating;
-        public bool IsFloating => _isFloating;
+        protected bool _inWater;
+        public bool InWater => _inWater;
 
-        private RaycastHit[] _hitsNonAlloc = new RaycastHit[2];
+        private RaycastHit[] _isGroundedHitsNonAlloc = new RaycastHit[2];
+        protected Collider[] _inWaterCollidersNonAlloc = new Collider[1];
 
         public CharacterPhysicsLogic(Character character)
         {
@@ -29,31 +31,39 @@ namespace FishFlingers.Entities
 
         public virtual void FixedTick()
         {
-            _isGrounded = DetectContact(_settings.ContactDetection.GroundedMask);
-            _isFloating = DetectContact(_settings.ContactDetection.FloatingMask);
+            IsGroundedFixedTick();
+            InWaterFixedTick();
         }
 
-        private bool DetectContact(LayerMask mask)
+        private void IsGroundedFixedTick()
         {
             Vector3 origin = _character.CharacterCollider.bounds.center;
             origin.y = _character.CharacterCollider.bounds.min.y;
-            origin += Vector3.up * _settings.ContactDetection.CastRadius;
+            origin += Vector3.up * _settings.ContactDetection.GroundCastRadius;
 
-            int hits = Physics.SphereCastNonAlloc(origin, _settings.ContactDetection.CastRadius, Vector3.down, _hitsNonAlloc, _settings.ContactDetection.CastDistance, mask);
+            int hits = Physics.SphereCastNonAlloc(origin, _settings.ContactDetection.GroundCastRadius, Vector3.down, _isGroundedHitsNonAlloc, _settings.ContactDetection.GroundCastDistance, _settings.ContactDetection.GroundMask);
 
-            bool success = false;
+            bool isGrounded = false;
 
             for (int i = 0; i < hits; i++)
             {
                 // Since we include the player layer to jump on other player's heads, we need to ignore our own collider here
-                if (_hitsNonAlloc[i].collider.gameObject != _character.gameObject)
+                if (_isGroundedHitsNonAlloc[i].collider.gameObject != _character.gameObject)
                 {
-                    success = true;
+                    isGrounded = true;
                     break;
                 }
             }
 
-            return success;
+            _isGrounded = isGrounded;
+        }
+        
+        private void InWaterFixedTick()
+        {
+            float radius = Vector3.Distance(_character.CharacterCollider.bounds.center, _character.CharacterCollider.bounds.min);
+
+            // If we are overlapping a collider on the water mask, we are in water
+            _inWater = Physics.OverlapSphereNonAlloc(_character.CharacterCollider.bounds.center, radius, _inWaterCollidersNonAlloc, _settings.ContactDetection.WaterMask) > 0;
         }
     }
 }

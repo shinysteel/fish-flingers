@@ -16,8 +16,6 @@ namespace FishFlingers.Entities
         private float _jumpTimer;
         private bool _jumpRequest;
         
-        private Collider[] _swimCollidersNonAlloc = new Collider[1];
-
         public RaftPlayerPhysicsLogic(RaftPlayer player) : base(player)
         {
             _player = player;
@@ -127,19 +125,18 @@ namespace FishFlingers.Entities
 
         private void SwimFixedTick()
         {
-            // While swimming, the player can hold spacebar to propel themselves up
+            // While in water, the player can hold spacebar to propel themselves up
             if (!_player.InputLogic.Ascend)
             {
                 return;
             }
 
-            // If we are overlapping a collider on the swim mask, we are swimming
-            if (Physics.OverlapCapsuleNonAlloc(_player.CapsuleCollider.bounds.min, _player.CapsuleCollider.bounds.max, _player.CapsuleCollider.radius, _swimCollidersNonAlloc, _settings.Swim.Mask) == 0)
+            if (!_inWater)
             {
                 return;
             }
 
-            Collider waterCollider = _swimCollidersNonAlloc[0];
+            Collider waterCollider = _inWaterCollidersNonAlloc[0];
 
             Physics.ComputePenetration(_player.CapsuleCollider, _player.Rigidbody.position, _player.Rigidbody.rotation, waterCollider, waterCollider.transform.position, waterCollider.transform.rotation, out _, out float depth);
 

@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: CharacterPhysicsSettings
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.CharacterPhysicsSettings
   _contactDetection:
-    _castRadius: 0.125
-    _castDistance: 0.05
-    _groundedMask:
+    _groundCastRadius: 0.125
+    _groundCastDistance: 0.05
+    _groundMask:
       serializedVersion: 2
       m_Bits: 193
-    _floatingMask:
+    _waterMask:
       serializedVersion: 2
       m_Bits: 16

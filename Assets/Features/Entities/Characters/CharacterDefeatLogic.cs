@@ -42,7 +42,7 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            if (!_character.PhysicsLogic.IsGrounded && !_character.PhysicsLogic.IsFloating)
+            if (!_character.PhysicsLogic.IsGrounded && !_character.PhysicsLogic.InWater)
             {
                 return;
             }

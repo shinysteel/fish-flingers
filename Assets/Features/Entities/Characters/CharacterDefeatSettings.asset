@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa95b993c30fe434692099e26f67a99e, type: 3}
   m_Name: CharacterDefeatSettings
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.CharacterDefeatSettings
-  _duration: 1
+  _duration: 2

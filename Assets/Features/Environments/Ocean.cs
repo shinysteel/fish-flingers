@@ -8,8 +8,8 @@ namespace FishFlingers.Environments
         [SerializeField] private BoxCollider _boxCollider;
 
         [SerializeField, Range(0f, 1f)] private float _submergePercent = 0.5f;
-        [SerializeField] private float _verticalDrag = 1f;
-        [SerializeField] private float _horizontalDrag = 5f;
+        [SerializeField] private Vector3 _linearDrag = new Vector3(5f, 1f, 5f);
+        [SerializeField] private float _angularDrag = 2.5f;
         [SerializeField] private float _currentSpeed = 0.25f;
 
         private void OnTriggerStay(Collider collider)
@@ -55,12 +55,8 @@ namespace FishFlingers.Environments
         {
             // Drag stops the entity being 'launched' from buoyancy, and
             // slows it down on the XZ plane
-
-            float vertical = -entity.Rigidbody.linearVelocity.y * _verticalDrag;
-            Vector3 horizontal = -entity.Rigidbody.linearVelocity * _horizontalDrag;
-            Vector3 force = new Vector3(horizontal.x, vertical, horizontal.z);
-
-            entity.Rigidbody.AddForce(force, ForceMode.Acceleration);
+            entity.Rigidbody.AddForce(Vector3.Scale(-entity.Rigidbody.linearVelocity, _linearDrag), ForceMode.Acceleration);
+            entity.Rigidbody.AddTorque(-entity.Rigidbody.angularVelocity * _angularDrag, ForceMode.Acceleration);
         }
     }
 }

@@ -14,14 +14,14 @@ namespace FishFlingers.Entities
     [Serializable]
     public class CharacterContactDetectionSettings
     {
-        [SerializeField] private float _castRadius = 0.125f;
-        [SerializeField] private float _castDistance = 0.05f;
-        [SerializeField] private LayerMask _groundedMask;
-        [SerializeField] private LayerMask _floatingMask;
+        [SerializeField] private float _groundCastRadius = 0.125f;
+        [SerializeField] private float _groundCastDistance = 0.05f;
+        [SerializeField] private LayerMask _groundMask;
+        [SerializeField] private LayerMask _waterMask;
 
-        public float CastRadius => _castRadius;
-        public float CastDistance => _castDistance;
-        public LayerMask GroundedMask => _groundedMask;
-        public LayerMask FloatingMask => _floatingMask;
+        public float GroundCastRadius => _groundCastRadius;
+        public float GroundCastDistance => _groundCastDistance;
+        public LayerMask GroundMask => _groundMask;
+        public LayerMask WaterMask => _waterMask;
     }
 }
