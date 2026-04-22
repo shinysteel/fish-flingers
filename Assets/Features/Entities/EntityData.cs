@@ -1,4 +1,6 @@
+using FishFlingers.Items;
 using FishFlingers.Localisation;
+using ShinyOwl.Common;
 using UnityEngine;
 
 namespace FishFlingers.Entities
@@ -12,6 +14,7 @@ namespace FishFlingers.Entities
         [SerializeField] private Sprite _sprite;
         [SerializeField] protected int _health = 1;
         [SerializeField] private EntityAlliance _alliance;
+        [SerializeField] private DropTable[] _dropTables;
 
         public EntityId Id => _id;
         public LocalisationTerm NameTerm => _nameTerm;
@@ -19,5 +22,6 @@ namespace FishFlingers.Entities
         public Sprite Sprite => _sprite;
         public int Health => _health;
         public EntityAlliance Alliance => _alliance;
+        public DropTable[] DropTables => _dropTables;
     }
 }

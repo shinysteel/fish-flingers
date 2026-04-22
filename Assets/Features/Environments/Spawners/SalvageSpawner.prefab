@@ -54,8 +54,4 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   _spawnInterval: 5
-  _weightedEntries:
-  - _value: 1
-    _weight: 5
-  - _value: 4
-    _weight: 1
+  _dropTable: {fileID: 11400000, guid: 9517acabb23255a4799bab42ae284706, type: 2}

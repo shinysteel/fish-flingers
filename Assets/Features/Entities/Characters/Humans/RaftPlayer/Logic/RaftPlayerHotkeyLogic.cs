@@ -301,7 +301,7 @@ namespace FishFlingers.Entities
 
             void Drop(ItemInstance instance, Inventory inventory)
             {
-                _context.LocalPlayer.DropInventoryItemLogic.SpawnDroppedItem(instance);
+                _context.LocalPlayer.DropInventoryItemLogic.DropItem(instance);
                 inventory.TryRemoveItem(instance.InstanceId);
             }
         }
@@ -313,7 +313,7 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            _context.LocalPlayer.DropInventoryItemLogic.SpawnDroppedItem(_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem.ItemInstance);
+            _context.LocalPlayer.DropInventoryItemLogic.DropItem(_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem.ItemInstance);
             _context.LocalPlayer.Inventory.TryRemoveItem(_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem.ItemInstance.InstanceId);
         }
 

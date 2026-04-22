@@ -1,26 +1,36 @@
-using UnityEngine;
-using System;
+using FishFlingers.Items;
+using PrimeTween;
 using ShinyOwl.Common;
+using System;
+using UnityEngine;
 
 namespace FishFlingers.Entities
 {
     public class CharacterDefeatLogic
     {
         private EntityManager _entityManager;
+        private ItemManager _itemManager;
 
         private Character _character;
+
+        private CharacterDefeatSettings _settings;
 
         private bool _isDefeated;
 
         private float _defeatTimer;
+
+        private Tween _defeatTween;
 
         public event Action OnDefeated;
 
         public CharacterDefeatLogic(Character character)
         {
             _entityManager = GameManager.Instance.Get<EntityManager>();
+            _itemManager = GameManager.Instance.Get<ItemManager>();
 
             _character = character;
+
+            _settings = _character.CharacterData.CharacterDefeatSettings;
 
             _character.HealthModule.OnChanged += HandleHealthChanged;
         }
@@ -40,6 +50,11 @@ namespace FishFlingers.Entities
                 return;
             }
 
+            if (_defeatTween.isAlive)
+            {
+                return;
+            }
+
             if (!_character.PhysicsLogic.IsGrounded && !_character.PhysicsLogic.InWater)
             {
                 return;
@@ -47,21 +62,26 @@ namespace FishFlingers.Entities
             
             _defeatTimer += Time.deltaTime;
 
-            if (_defeatTimer < _character.CharacterData.CharacterDefeatSettings.Duration)
+            if (_defeatTimer < _settings.DefeatDuration)
             {
                 return;
             }
 
-            _character.RagdollLogic.SetEnabled(false);
+            _defeatTween = Tween.Scale(_character.transform, endValue: Vector3.zero, duration: _settings.TweenDuration, ease: Ease.InBack).OnComplete(() =>
+            {
+                _character.RagdollLogic.SetEnabled(false);
 
-            _character.CharacterModel.Material.SetFloat(CharacterModel.DefeatBlendShaderPropertyName, 0f);
+                _character.CharacterModel.Material.SetFloat(CharacterModel.DefeatBlendShaderPropertyName, 0f);
 
-            _character.CharacterModel.Animator.SetBool(CharacterModel.IsDefeatedAnimatorBoolName, false);
+                _character.CharacterModel.Animator.SetBool(CharacterModel.IsDefeatedAnimatorBoolName, false);
 
-            // Simulate 1 second to have the character unblink
-            _character.CharacterModel.Animator.Update(1f);
+                // Simulate 1 second to have the character unblink
+                _character.CharacterModel.Animator.Update(1f);
 
-            _entityManager.Despawn(_character);
+                _itemManager.SpawnDrops(_character.transform.position, _character.CharacterData.DropTables);
+
+                _entityManager.Despawn(_character);
+            });
         }
 
         private void HandleHealthChanged(int previous, int current)

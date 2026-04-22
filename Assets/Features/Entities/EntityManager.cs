@@ -175,19 +175,6 @@ namespace FishFlingers.Entities
             _poolManager.ReturnPoolable(entity);
         }
 
-        /// <summary>
-        /// Spawns a DroppedItem and launches it in a direction
-        /// </summary>
-        public void SpawnDroppedItem(SpawnParams parameters, NetItemInstance netItemInstance, Vector3 direction, float strength)
-        {
-            DroppedItem item = (DroppedItem)Spawn(EntityId.DroppedItem, parameters);
-            
-            item.Set(netItemInstance, DroppedItemType.Default);
-
-            // Launch the item
-            item.Rigidbody.AddForce(direction * strength, ForceMode.Impulse);
-        }
-
         // Since NetEntity lifecycle is controlled by Purrnet, we need to manually raise these events
         public void RaiseNetEntitySpawned(IEntity entity) => NotifyNetEntitySpawned(entity);
         public void RaiseNetEntityDespawned(IEntity entity) => NotifyNetEntityDespawned(entity);

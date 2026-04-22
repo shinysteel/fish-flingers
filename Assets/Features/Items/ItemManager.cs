@@ -1,10 +1,13 @@
-
+using FishFlingers.Entities;
 using FishFlingers.Inventories;
 using FishFlingers.Networking;
 using ShinyOwl.Common;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
+using static UnityEditor.Progress;
+using EntityId = FishFlingers.Entities.EntityId;
 
 namespace FishFlingers.Items
 {
@@ -13,7 +16,7 @@ namespace FishFlingers.Items
 
     public class ItemManager : GameSystem<IItemManagerListener>
     {
-        private NetworkManager _networkManager;
+        private EntityManager _entityManager;
 
         private ItemManagerConfig _config;
 
@@ -21,7 +24,7 @@ namespace FishFlingers.Items
 
         public override void Initialise(GameManagerConfig config)
         {
-            _networkManager = GameManager.Instance.Get<NetworkManager>();
+            _entityManager = GameManager.Instance.Get<EntityManager>();
 
             _config = config.ItemManagerConfig;
 
@@ -36,6 +39,58 @@ namespace FishFlingers.Items
         public ItemData GetItemData(ItemId id)
         {
             return _idDataMap[id];
+        }
+
+        public void SpawnDrops(Vector3 position, DropTable[] tables)
+        {
+            List<WeightedPick<ItemId>> picks = ListPool<WeightedPick<ItemId>>.Get();
+            List<NetItemInstance> netItemInstances = ListPool<NetItemInstance>.Get();
+
+            try
+            {
+                // Pick each table
+                foreach (DropTable table in tables)
+                {
+                    WeightedPicker<ItemId> picker = new();
+                    picker.Set(table.Entries);
+                    WeightedPick<ItemId> pick = picker.Pick();
+
+                    if (pick.Value != ItemId.None)
+                    {
+                        picks.Add(pick);
+                    }
+                }
+
+                if (picks.Count == 0)
+                {
+                    return;
+                }
+                
+                // Enforce max stack for each pick
+                foreach (WeightedPick<ItemId> pick in picks)
+                {
+                    ItemData data = GetItemData(pick.Value);
+                    int pickCount = pick.Count;
+
+                    while (pickCount > 0)
+                    {
+                        int itemCount = Mathf.Min(pickCount, data.MaxStack);
+                        netItemInstances.Add(new NetItemInstance(null, pick.Value, itemCount));
+                        pickCount -= itemCount;
+                    }
+                }
+
+                foreach (NetItemInstance netItemInstance in netItemInstances)
+                {
+                    DroppedItem droppedItem = (DroppedItem)_entityManager.Spawn(EntityId.DroppedItem, new SpawnParams() { Position = position });
+                    droppedItem.Set(netItemInstance, DroppedItemType.Default);
+                }   
+            }
+            finally
+            {
+                ListPool<WeightedPick<ItemId>>.Release(picks);
+                ListPool<NetItemInstance>.Release(netItemInstances);
+            }
         }
     }
 }

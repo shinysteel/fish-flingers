@@ -126,7 +126,7 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            _player.DropInventoryItemLogic.SpawnDroppedItem(_grabbedInventoryItem.ItemInstance);
+            _player.DropInventoryItemLogic.DropItem(_grabbedInventoryItem.ItemInstance);
 
             await ReleaseAsync();
         }

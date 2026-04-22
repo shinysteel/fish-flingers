@@ -15,7 +15,7 @@ namespace FishFlingers.Environments
     public class SalvageSpawner : GameplayBehaviour, IEntityManagerListener
     {
         [SerializeField] private float _spawnInterval = 5f;
-        [SerializeField] private List<WeightedEntry<ItemId>> _weightedEntries = new();
+        [SerializeField] private DropTable _dropTable;
 
         private float _spawnTimer;
         private WeightedPicker<ItemId> _weightedPicker = new();
@@ -28,7 +28,7 @@ namespace FishFlingers.Environments
         {
             base.Awake();
 
-            _weightedPicker.Set(_weightedEntries);
+            _weightedPicker.Set(_dropTable.Entries);
         }
 
         protected override void OnSpawned()
@@ -87,9 +87,13 @@ namespace FishFlingers.Environments
 
             Vector3 position = _context.Raft.Queries.CellToWorldPosition(new Vector2(x, y));
 
-            DroppedItem item = (DroppedItem)_entityManager.Spawn(EntityId.DroppedItem, new SpawnParams() { Position = position });
+            WeightedPick<ItemId> pick = _weightedPicker.Pick();
 
-            item.Set(new NetItemInstance(null, _weightedPicker.Pick(), 1), DroppedItemType.Salvage);
+            for (int i = 0; i < pick.Count; i++)
+            {
+                DroppedItem item = (DroppedItem)_entityManager.Spawn(EntityId.DroppedItem, new SpawnParams() { Position = position });
+                item.Set(new NetItemInstance(null, pick.Value, 1), DroppedItemType.Salvage);
+            }
         }
 
         void IEntityManagerListener.OnEntitySpawned(IEntity entity)
