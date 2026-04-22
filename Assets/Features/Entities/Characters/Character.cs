@@ -10,22 +10,21 @@ namespace FishFlingers.Entities
         [SerializeField] protected Collider _characterCollider;
         public Collider CharacterCollider => _characterCollider;
 
-
-        protected CharacterDefeatLogic _defeatLogic;
-        protected CharacterPhysicsLogic _physicsLogic;
         private CharacterRagdollLogic _ragdollLogic;
+        protected CharacterPhysicsLogic _physicsLogic;
+        protected CharacterDefeatLogic _defeatLogic;
 
-        public CharacterPhysicsLogic PhysicsLogic => _physicsLogic;
         public CharacterRagdollLogic RagdollLogic => _ragdollLogic;
+        public CharacterPhysicsLogic PhysicsLogic => _physicsLogic;
 
         protected override void OnSpawned()
         {
-            _defeatLogic = new CharacterDefeatLogic(this);
+            _ragdollLogic = new CharacterRagdollLogic(this);
 
             // Some characters setup their own inherited logic script
             _physicsLogic ??= new CharacterPhysicsLogic(this);
-            
-            _ragdollLogic = new CharacterRagdollLogic(this);
+
+            _defeatLogic = new CharacterDefeatLogic(this);
 
             base.OnSpawned();
         }

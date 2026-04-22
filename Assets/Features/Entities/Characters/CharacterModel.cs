@@ -13,7 +13,12 @@ namespace FishFlingers.Entities
 
         public Transform ItemLocator => _itemLocator;
 
-        private const string BlinkTriggerName = "Blink";
+        // Animator
+        private const string BlinkAnimatorTriggerName = "Blink";
+        public const string IsDefeatedAnimatorBoolName = "IsDefeated";
+
+        // Shader
+        public const string DefeatBlendShaderPropertyName = "_DefeatBlend";
 
         private void Start()
         {
@@ -34,7 +39,7 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            _animator.SetTrigger(BlinkTriggerName);
+            _animator.SetTrigger(BlinkAnimatorTriggerName);
 
             ResetBlinkTimer();
         }

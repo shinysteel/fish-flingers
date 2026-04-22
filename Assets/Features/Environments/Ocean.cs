@@ -42,7 +42,7 @@ namespace FishFlingers.Environments
             entity.Rigidbody.AddForce(force);
         }
 
-        // Current is refering to motion in water
+        // Current is referring to motion in water
         private void CurrentOnTriggerStay(IEntity entity)
         {
             if (!entity.Rigidbody.isKinematic)

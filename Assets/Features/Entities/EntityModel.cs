@@ -15,8 +15,6 @@ namespace FishFlingers.Entities
         private Material _material;
         public Material Material => _material;
 
-        public const string DefeatBlendName = "_DefeatBlend";
-
         private void Awake()
         {
             foreach (MeshRenderer meshRenderer in transform.GetComponentsInChildren<MeshRenderer>())
