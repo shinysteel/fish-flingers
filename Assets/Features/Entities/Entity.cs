@@ -49,7 +49,12 @@ namespace FishFlingers.Entities
         {
             _healthModule = new EntityHealthModule(this,
                 getter: () => _currentHealth,
-                setter: (int health) => _currentHealth = health);
+                setter: (int health) =>
+                {
+                    int previous = _currentHealth;
+                    _currentHealth = health;
+                    _healthModule.RaiseChanged(previous, _currentHealth);
+                });
 
             if (_networkManager.IsServer)
             {

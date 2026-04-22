@@ -20,7 +20,7 @@ namespace FishFlingers.Entities
         [SerializeField] protected EntityModel _entityModel;
         public EntityModel EntityModel => _entityModel;
 
-        private SyncVar<int> _currentHealth;
+        private SyncVar<int> _netCurrentHealth;
 
         protected EntityHealthModule _healthModule;
 
@@ -35,11 +35,13 @@ namespace FishFlingers.Entities
 
         protected override void OnInitializeModules()
         {
-            _currentHealth = new SyncVar<int>(_entityData.Health);
+            _netCurrentHealth = new SyncVar<int>(_entityData.Health);
+
+            _netCurrentHealth.onChangedWithOld += HandleNetCurrentHealthChanged;
 
             _healthModule = new EntityHealthModule(this,
-                getter: () => _currentHealth.value,
-                setter: (int health) => _currentHealth.value = health);
+                getter: () => _netCurrentHealth.value,
+                setter: SetHealthRpc);
         }
 
         protected override void OnSpawned()
@@ -60,9 +62,22 @@ namespace FishFlingers.Entities
 
             _entityManager?.RaiseNetEntityDespawned(this);
 
+            _netCurrentHealth.onChangedWithOld -= HandleNetCurrentHealthChanged;
+
             _context = null;
 
             _healthModule = null;
+        }
+
+        [ServerRpc]
+        private void SetHealthRpc(int health)
+        {
+            _netCurrentHealth.value = health;
+        }
+
+        private void HandleNetCurrentHealthChanged(int previous, int current)
+        {
+            _healthModule.RaiseChanged(previous, current);
         }
     }
 }
