@@ -212,7 +212,7 @@ namespace FishFlingers.Environments
             // Return to pool
             _entityManager.Despawn(tile);
 
-            _tiles.Remove(tile.Cell);
+            _tiles.Remove(cell);
 
             OnTileChanged?.Invoke(cell, null);
         }

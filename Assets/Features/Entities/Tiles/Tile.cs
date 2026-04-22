@@ -42,11 +42,15 @@ namespace FishFlingers.Entities
         {
             base.OnTakenFromPool();
 
+            HandleHealthChanged(0, _healthModule.Current);
+
             _healthModule.OnChanged += HandleHealthChanged;
         }
 
         public override void OnReturnedToPool()
         {
+            _cell = Vector2Int.one * int.MinValue;
+
             _healthModule.OnChanged -= HandleHealthChanged;
 
             base.OnReturnedToPool();
@@ -93,7 +97,7 @@ namespace FishFlingers.Entities
 
         private void PositionFixedUpdate()
         {
-            bool sink = Physics.CheckSphere(transform.position, Data.SinkSettings.Radius, Data.SinkSettings.Mask);
+            bool sink = Physics.CheckSphere(_rigidbody.position, Data.SinkSettings.Radius, Data.SinkSettings.Mask);
 
             float targetY;
 
