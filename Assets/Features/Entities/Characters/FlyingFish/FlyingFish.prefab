@@ -126,6 +126,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: FlyingFish
       objectReference: {fileID: 0}
+    - target: {fileID: 9147761710190489017, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
+      propertyPath: m_Mass
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9147761710190489017, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -140,6 +148,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 7502424701398164475}
   m_SourcePrefab: {fileID: 100100000, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
+--- !u!54 &2620132874775960851 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 9147761710190489017, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
+  m_PrefabInstance: {fileID: 6534710111205257386}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7018228068551982755 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4308314301107375625, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
@@ -168,7 +181,7 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   _entityData: {fileID: 11400000, guid: 349370ccaeb9e5548b6d4002c5167571, type: 2}
   _entityModel: {fileID: 6309225596531950667}
-  _rigidbody: {fileID: 7878812079687700817}
+  _rigidbody: {fileID: 2620132874775960851}
   _characterCollider: {fileID: 7502424701398164475}
 --- !u!65 &7502424701398164475
 BoxCollider:
@@ -191,11 +204,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.125, y: 0.15, z: 0.45}
   m_Center: {x: 0, y: 0.075, z: 0}
---- !u!54 &7878812079687700817 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 4033217484698771963, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
-  m_PrefabInstance: {fileID: 6534710111205257386}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8282702041294059726 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2908733436539095140, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}

@@ -69,9 +69,9 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 3541544350305941869, guid: 1b7d8d28308257248ae096c188eb6202, type: 3}
   m_PrefabInstance: {fileID: 3971485502159355392}
   m_PrefabAsset: {fileID: 0}
---- !u!54 &1999070721754190112 stripped
+--- !u!54 &504346204411109171 stripped
 Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 3216605046608801568, guid: 1b7d8d28308257248ae096c188eb6202, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3594507156527767859, guid: 1b7d8d28308257248ae096c188eb6202, type: 3}
   m_PrefabInstance: {fileID: 3971485502159355392}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &4883760146399034499 stripped
@@ -92,6 +92,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.MetalTile
   _entityData: {fileID: 11400000, guid: 896b2cb666797b344a112e1962770195, type: 2}
-  _rigidbody: {fileID: 1999070721754190112}
+  _entityModel: {fileID: 0}
+  _rigidbody: {fileID: 504346204411109171}
   _meshRenderer: {fileID: 449122836709410669}
   _damagedColor: {r: 0.5411765, g: 0.5411765, b: 0.5411765, a: 1}

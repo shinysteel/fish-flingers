@@ -52,19 +52,28 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7210012384824277368, guid: 7e94ee0314840e64ca6dd1e0a45ae1d9, type: 3}
+      propertyPath: m_Mass
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7210012384824277368, guid: 7e94ee0314840e64ca6dd1e0a45ae1d9, type: 3}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
+    - target: {fileID: 7210012384824277368, guid: 7e94ee0314840e64ca6dd1e0a45ae1d9, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2393181450438531784, guid: 7e94ee0314840e64ca6dd1e0a45ae1d9, type: 3}
-      insertIndex: -1
+      insertIndex: 1
       addedObject: {fileID: 1738408072592514382}
     - targetCorrespondingSourceObject: {fileID: 2393181450438531784, guid: 7e94ee0314840e64ca6dd1e0a45ae1d9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1596470918788293711}
-    - targetCorrespondingSourceObject: {fileID: 2393181450438531784, guid: 7e94ee0314840e64ca6dd1e0a45ae1d9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5765823416808486095}
     - targetCorrespondingSourceObject: {fileID: 2393181450438531784, guid: 7e94ee0314840e64ca6dd1e0a45ae1d9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6496388388488766554}
@@ -97,7 +106,7 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   _entityData: {fileID: 11400000, guid: 1a9ed0623542a76478eeabfe1fcb2609, type: 2}
   _entityModel: {fileID: 0}
-  _rigidbody: {fileID: 5765823416808486095}
+  _rigidbody: {fileID: 4853443629506766343}
 --- !u!114 &1596470918788293711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,33 +138,6 @@ MonoBehaviour:
   _characterControllerPatch: 0
   _ownerAuth: 1
   _interpolationTiming: 0
---- !u!54 &5765823416808486095
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 460405706589029815}
-  serializedVersion: 5
-  m_Mass: 2
-  m_LinearDamping: 1
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 64
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
 --- !u!136 &6496388388488766554
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -179,3 +161,8 @@ CapsuleCollider:
   m_Height: 0.3
   m_Direction: 1
   m_Center: {x: 0, y: 0.15, z: 0}
+--- !u!54 &4853443629506766343 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 7210012384824277368, guid: 7e94ee0314840e64ca6dd1e0a45ae1d9, type: 3}
+  m_PrefabInstance: {fileID: 2834445681781645183}
+  m_PrefabAsset: {fileID: 0}

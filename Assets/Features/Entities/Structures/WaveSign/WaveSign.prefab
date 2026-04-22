@@ -69,9 +69,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 5301047904338821491}
   m_SourcePrefab: {fileID: 100100000, guid: 0760e80ac1fcc764b81d2f49b2876045, type: 3}
---- !u!54 &6242614518360746377 stripped
+--- !u!54 &4386832128480427575 stripped
 Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 497792573654144473, guid: 0760e80ac1fcc764b81d2f49b2876045, type: 3}
+  m_CorrespondingSourceObject: {fileID: 7830515058189107815, guid: 0760e80ac1fcc764b81d2f49b2876045, type: 3}
   m_PrefabInstance: {fileID: 5785642697417899088}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7660532792609774570 stripped
@@ -106,7 +106,8 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   _entityData: {fileID: 11400000, guid: 7da76300239ac2d42992e64473da872c, type: 2}
-  _rigidbody: {fileID: 6242614518360746377}
+  _entityModel: {fileID: 0}
+  _rigidbody: {fileID: 4386832128480427575}
 --- !u!65 &5301047904338821491
 BoxCollider:
   m_ObjectHideFlags: 0

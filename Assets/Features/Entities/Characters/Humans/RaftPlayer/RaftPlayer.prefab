@@ -339,6 +339,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 9147761710190489017, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
+      propertyPath: m_LinearDamping
+      value: 2.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -359,9 +363,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4126412385647280965}
   m_SourcePrefab: {fileID: 100100000, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
---- !u!54 &5014095360961662962 stripped
+--- !u!54 &909190606818001840 stripped
 Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 4033217484698771963, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
+  m_CorrespondingSourceObject: {fileID: 9147761710190489017, guid: badd43a18d5ac3c4c9eea3b471409447, type: 3}
   m_PrefabInstance: {fileID: 8245379279371677193}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &5307296185850863616 stripped
@@ -392,7 +396,7 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   _entityData: {fileID: 11400000, guid: 357cc2c034c459b4fbb0da20b294afa9, type: 2}
   _entityModel: {fileID: 4900650332982024173}
-  _rigidbody: {fileID: 5014095360961662962}
+  _rigidbody: {fileID: 909190606818001840}
   _characterCollider: {fileID: 6033468316738205443}
   _inventory: {fileID: 7248786603650612437}
   _inventoryLayout: {fileID: 11400000, guid: cfd8c0c5e490b4a47aa4e9b24205efd8, type: 2}
