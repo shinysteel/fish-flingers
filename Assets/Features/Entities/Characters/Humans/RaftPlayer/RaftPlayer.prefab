@@ -401,6 +401,7 @@ MonoBehaviour:
   _inventory: {fileID: 7248786603650612437}
   _inventoryLayout: {fileID: 11400000, guid: cfd8c0c5e490b4a47aa4e9b24205efd8, type: 2}
   _hotbar: {fileID: 4126412385647280965}
+  _paddleSlashPrefab: {fileID: 3727191493086139535, guid: f35846f23d1814845ae0c7e546752e38, type: 3}
 --- !u!136 &6033468316738205443
 CapsuleCollider:
   m_ObjectHideFlags: 0
