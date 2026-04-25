@@ -1,3 +1,4 @@
+using PrimeTween;
 using UnityEngine;
 
 namespace FishFlingers.Entities
@@ -26,7 +27,29 @@ namespace FishFlingers.Entities
 
             _defeatLogic = new CharacterDefeatLogic(this);
 
+            _healthModule.OnChanged += HandleHealthChangned;
+
             base.OnSpawned();
+        }
+
+        protected override void OnDespawned()
+        {
+            _healthModule.OnChanged -= HandleHealthChangned;
+
+            base.OnDespawned();
+        }
+
+        private void HandleHealthChangned(int previous, int current)
+        {
+            if (current == 0)
+            {
+                return;
+            }
+
+            if (current < previous)
+            {
+                CharacterModel.AnimateHurt();
+            }
         }
 
         protected virtual void Update()

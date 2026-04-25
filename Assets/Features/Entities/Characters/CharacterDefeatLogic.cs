@@ -71,9 +71,7 @@ namespace FishFlingers.Entities
             {
                 _character.RagdollLogic.SetEnabled(false);
 
-                _character.CharacterModel.Material.SetFloat(CharacterModel.DefeatBlendShaderPropertyName, 0f);
-
-                _character.CharacterModel.Animator.SetBool(CharacterModel.IsDefeatedAnimatorBoolName, false);
+                _character.CharacterModel.SetDefeated(false);
 
                 // Simulate 1 second to have the character unblink
                 _character.CharacterModel.Animator.Update(1f);
@@ -105,9 +103,7 @@ namespace FishFlingers.Entities
 
             _defeatTimer = 0f;
 
-            _character.CharacterModel.Material.SetFloat(CharacterModel.DefeatBlendShaderPropertyName, 1f);
-
-            _character.CharacterModel.Animator.SetBool(CharacterModel.IsDefeatedAnimatorBoolName, true);
+            _character.CharacterModel.SetDefeated(true);
 
             _character.CharacterModel.Animator.Update(0f);
 

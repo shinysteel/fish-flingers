@@ -12,7 +12,7 @@ namespace FishFlingers.Entities
 
         public Animator Animator => _animator;
 
-        private Material _material;
+        protected Material _material;
         public Material Material => _material;
 
         private void Awake()

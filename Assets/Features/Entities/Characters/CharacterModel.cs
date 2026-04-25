@@ -1,5 +1,7 @@
+using PrimeTween;
 using PurrNet;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 namespace FishFlingers.Entities
 {
@@ -11,14 +13,18 @@ namespace FishFlingers.Entities
         private float _minBlinkInterval = 2.5f;
         private float _maxBlinkInterval = 7.5f;
 
+        private Tween _hurtTween;
+
         public Transform ItemLocator => _itemLocator;
 
         // Animator
         private const string BlinkAnimatorTriggerName = "Blink";
-        public const string IsDefeatedAnimatorBoolName = "IsDefeated";
+        private const string IsDefeatedAnimatorBoolName = "IsDefeated";
+        private const string HurtAnimatorTriggerName = "Hurt";
 
         // Shader
-        public const string DefeatBlendShaderPropertyName = "_DefeatBlend";
+        private const string HurtBlendShaderPropertyName = "_HurtBlend";
+        private const string DefeatBlendShaderPropertyName = "_DefeatBlend";
 
         private void Start()
         {
@@ -47,6 +53,33 @@ namespace FishFlingers.Entities
         private void ResetBlinkTimer()
         {
             _blinkTimer = Random.Range(_minBlinkInterval, _maxBlinkInterval);
+        }
+
+        public void AnimateHurt()
+        {
+            if (_hurtTween.isAlive)
+            {
+                _hurtTween.Stop();
+            }
+
+            // Flash red
+            _hurtTween = Tween.Custom(startValue: 1f, endValue: 0f, duration: 0.5f, onValueChange: (float value) =>
+            {
+                _material.SetFloat(HurtBlendShaderPropertyName, value);
+            });
+
+            // Additive animation
+            SetTrigger(HurtAnimatorTriggerName);
+
+            ResetBlinkTimer();
+        }
+
+        public void SetDefeated(bool defeated)
+        {
+            // Tint grey
+            _material.SetFloat(DefeatBlendShaderPropertyName, defeated ? 1f : 0f);
+
+            _animator.SetBool(IsDefeatedAnimatorBoolName, defeated);
         }
     }
 }
