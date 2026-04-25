@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using PrimeTween;
 using ShinyOwl.Common;
 using FishFlingers.Items;
+using System;
 
 namespace FishFlingers.Entities
 {
@@ -10,11 +11,15 @@ namespace FishFlingers.Entities
     {
         private RaftPlayer _player;
 
+        private StateAnimationEvents _attackStateAnimationEvents;
+
+        public StateAnimationEvents AttackStateAnimationEvents => _attackStateAnimationEvents;
+
         private const string IsMovingBoolName = "IsMoving";
         private const string IsHoldingItemBoolName = "IsHoldingItem";
         private const string IsAttackingBoolName = "IsAttacking";
-        private const string AttackTriggerName = "Attack";
         private const string AttackStateName = "Attack";
+        private const string AttackTriggerName = "Attack";
 
         private enum Layer
         {
@@ -25,43 +30,34 @@ namespace FishFlingers.Entities
         public RaftPlayerAnimateLogic(RaftPlayer player)
         {
             _player = player;
+
+            _attackStateAnimationEvents = new StateAnimationEvents(AttackStateName)
+            {
+                new StateAnimationEvent(0.3f, () => _player.HeldInventoryItemLogic.HeldModel?.SetTrailEmitting(true)),
+                new StateAnimationEvent(0.7f, () => _player.HeldInventoryItemLogic.HeldModel?.SetTrailEmitting(false)),
+            };
         }
 
         public void Tick()
         {
-            bool isMoving = _player.InputLogic.MoveDirection != Vector3.zero;
-            bool isHoldingItem = _player.Hotbar.SelectedSlot.InventoryItem != null;
+            if (_player.isOwner)
+            {
+                bool isMoving = _player.InputLogic.MoveDirection != Vector3.zero;
+                bool isHoldingItem = _player.Hotbar.SelectedSlot.InventoryItem != null;
+                bool isAttacking = _player.AttackLogic.AttackState > RaftPlayerAttackState.None;
+
+                _player.CharacterModel.Animator.SetBool(IsMovingBoolName, isMoving);
+                _player.CharacterModel.Animator.SetBool(IsHoldingItemBoolName, isHoldingItem);
+                _player.CharacterModel.Animator.SetBool(IsAttackingBoolName, isAttacking);
+            }
             
-            _player.CharacterModel.Animator.SetBool(IsMovingBoolName, isMoving);
-            _player.CharacterModel.Animator.SetBool(IsHoldingItemBoolName, isHoldingItem);
+            AnimatorStateInfo info = _player.CharacterModel.Animator.GetCurrentAnimatorStateInfo(0);
+            _attackStateAnimationEvents.Tick(info);
         }
 
-        public async Task AttackAsync(AnimateEvents events)
+        public void Attack()
         {
-            ItemModel heldModel = _player.HeldInventoryItemLogic.HeldModel;
-            events.Add(new AnimateEvent(0.3f, () => heldModel?.SetTrailEmitting(true)));
-            events.Add(new AnimateEvent(0.7f, () => heldModel?.SetTrailEmitting(false)));
-
-            _ = events.PlayAsync(_player.CharacterModel.Animator, (int)Layer.Base, AttackStateName);
-
             _player.CharacterModel.SetTrigger(AttackTriggerName);
-
-            // Mark IsAttacking as true until we are transitioning out of the attack state
-            _player.CharacterModel.Animator.SetBool(IsAttackingBoolName, true);
-            
-            while (!_player.CharacterModel.Animator.GetCurrentAnimatorStateInfo((int)Layer.Base).IsName(AttackStateName))
-            {
-                await Task.Yield();
-            }
-
-            while (_player.CharacterModel.Animator.GetCurrentAnimatorStateInfo((int)Layer.Base).IsName(AttackStateName))
-            {
-                await Task.Yield();
-            }
-
-            heldModel?.SetTrailEmitting(false);
-
-            _player.CharacterModel.Animator.SetBool(IsAttackingBoolName, false);
         }
     }
 }

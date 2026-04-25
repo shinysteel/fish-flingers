@@ -71,9 +71,6 @@ namespace FishFlingers.UI
 
             _leftClickActionView.Setup();
             _rightClickActionView.Setup();
-
-            _leftClickActionView.Button.onClick.AddListener(LeftPressed);
-            _rightClickActionView.Button.onClick.AddListener(RightPressed);
         }
 
         private void OnDestroy()
@@ -91,52 +88,6 @@ namespace FishFlingers.UI
 
             _leftClickActionView.Show(slot.InventoryItem?.ItemInstance.Data.LeftClickAction != null);
             _rightClickActionView.Show(slot.InventoryItem?.ItemInstance.Data.RightClickAction != null);
-        }
-
-        private void Update()
-        {
-            SimulatePressedUpdate();
-        }
-
-        private void SimulatePressedUpdate()
-        {
-            // Note that the repeated check here stops the simulated presses. There's a reason we repeat it, since
-            // you can still press the buttons via the mouse. We aren't stopping that, and rather just not simulating
-            // the presses when it's not reasonable
-            if (_uiManager.IsLayerInUse(UILayer.Panels))
-            {
-                return;
-            }
-
-            if (_leftClickActionView.Button.gameObject.activeSelf && _context.LocalPlayer.InputLogic.LeftClick)
-            {
-                Utils.UI.SimulatePressed(_leftClickActionView.Button);
-            }
-
-            if (_rightClickActionView.Button.gameObject.activeSelf && _context.LocalPlayer.InputLogic.RightClick)
-            {
-                Utils.UI.SimulatePressed(_rightClickActionView.Button);
-            }
-        }
-
-        private void LeftPressed()
-        {
-            if (_uiManager.IsLayerInUse(UILayer.Panels))
-            {
-                return;
-            }
-
-            _selectedItem.ItemInstance.Data.LeftClickAction.Execute(_context);   
-        }
-
-        private void RightPressed()
-        {
-            if (_uiManager.IsLayerInUse(UILayer.Panels))
-            {
-                return;
-            }
-
-            _selectedItem.ItemInstance.Data.RightClickAction.Execute(_context);
         }
     }
 }

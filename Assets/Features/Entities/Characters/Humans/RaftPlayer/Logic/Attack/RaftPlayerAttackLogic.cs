@@ -32,33 +32,31 @@ namespace FishFlingers.Entities
             _player = player;
 
             _settings = _player.Data.AttackSettings;
+
+            if (_player.isOwner)
+            {
+                _player.AnimateLogic.AttackStateAnimationEvents.Add(new StateAnimationEvent(0f, () => _attackState = RaftPlayerAttackState.Windup));
+                _player.AnimateLogic.AttackStateAnimationEvents.Add(new StateAnimationEvent(0.5f, Lunge));
+                _player.AnimateLogic.AttackStateAnimationEvents.Add(new StateAnimationEvent(1f, () => _attackState = RaftPlayerAttackState.None));
+            }
         }
 
-        public async Task AttackAsync()
+        public void Attack()
         {
             if (_attackState > RaftPlayerAttackState.None)
             {
                 return;
             }
 
-            _attackState = RaftPlayerAttackState.Windup;
+            _player.AnimateLogic.Attack();
+        }
 
-            AnimateEvents events = new AnimateEvents()
-            {
-                new AnimateEvent(0.5f, () =>
-                {
-                    _player.Rigidbody.AddForce(_player.transform.forward * _settings.LungeStrength, ForceMode.Impulse);
-
-                    _attackState = RaftPlayerAttackState.Impact;
-
-                    Hitbox hitbox = _poolManager.GetPoolable<Hitbox>(new SpawnParams() { Position = _player.transform.position, Rotation = _player.transform.rotation });
-                    hitbox.Initialise(_settings.HitboxData);
-                }),
-            };
-
-            await _player.AnimateLogic.AttackAsync(events);
-
-            _attackState = RaftPlayerAttackState.None;
+        private void Lunge()
+        {
+            _attackState = RaftPlayerAttackState.Impact;
+            _player.Rigidbody.AddForce(_player.transform.forward * _settings.LungeStrength, ForceMode.Impulse);
+            Hitbox hitbox = _poolManager.GetPoolable<Hitbox>(new SpawnParams() { Position = _player.transform.position, Rotation = _player.transform.rotation });
+            hitbox.Initialise(_settings.HitboxData);
         }
     }
 }

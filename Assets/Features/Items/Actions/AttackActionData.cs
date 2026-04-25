@@ -1,4 +1,5 @@
 using FishFlingers.States;
+using ShinyOwl.Common;
 using UnityEngine;
 
 namespace FishFlingers.Items
@@ -8,7 +9,7 @@ namespace FishFlingers.Items
     {
         public override void Execute(GameplayContext context)
         {
-            _ = context.LocalPlayer.AttackLogic.AttackAsync();   
+            context.LocalPlayer.AttackLogic.Attack();   
         }
     }
 }

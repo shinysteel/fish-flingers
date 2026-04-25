@@ -139,6 +139,8 @@ namespace FishFlingers.Entities
                 return;
             }
 
+            _animateLogic.Tick();
+
             if (!isOwner)
             {
                 return;
@@ -146,7 +148,6 @@ namespace FishFlingers.Entities
 
             _inputLogic.Tick();
             _interactLogic.Tick();
-            _animateLogic.Tick();
             _hotkeyLogic.Tick();
             _tileTargetLogic.Tick();
 
