@@ -54,12 +54,12 @@ MonoBehaviour:
   _rectTransform: {fileID: 7159542584151935292}
   _image: {fileID: 8945574900454679932}
   _cellOutline: {fileID: 8641748338361621391}
-  _defaultColor: {r: 0.23137255, g: 0.18431373, b: 0.14117648, a: 1}
-  _itemColor: {r: 0.34117648, g: 0.34117648, b: 0.34117648, a: 1}
+  _defaultColor: {r: 0.59607846, g: 0.5019608, b: 0.4745098, a: 1}
+  _itemColor: {r: 0.5372549, g: 0.42745098, b: 0.40784314, a: 1}
   _hotbarColors:
-  - {r: 0.7137255, g: 0.24705882, b: 0.2509804, a: 1}
-  - {r: 0.24705882, g: 0.7137255, b: 0.2627451, a: 1}
-  - {r: 0.24705882, g: 0.29411766, b: 0.7137255, a: 1}
+  - {r: 0.8490566, g: 0.40850833, b: 0.4132454, a: 1}
+  - {r: 0.4078431, g: 0.8509804, b: 0.4378944, a: 1}
+  - {r: 0.4078431, g: 0.44307557, b: 0.8509804, a: 1}
 --- !u!222 &1891735651211777932
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -81,7 +81,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23137255, g: 0.18431373, b: 0.14117648, a: 1}
+  m_Color: {r: 0.59607846, g: 0.5019608, b: 0.4745098, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
