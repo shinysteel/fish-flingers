@@ -49,7 +49,7 @@ namespace FishFlingers.Hitboxes
 
         public Vector3 GetPosition(Transform hitboxTransform)
         {
-            return hitboxTransform.transform.position + hitboxTransform.TransformDirection(_offset);
+            return hitboxTransform.TransformPoint(_offset);
         }
     }
 }

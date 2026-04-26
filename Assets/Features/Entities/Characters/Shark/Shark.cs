@@ -5,7 +5,10 @@ using ShinyOwl.Common.Extensions;
 using ShinyOwl.Common.Framework;
 using ShinyOwl.Common.Utils;
 using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
+using FishFlingers.Hitboxes;
 
 namespace FishFlingers.Entities
 {
@@ -14,8 +17,10 @@ namespace FishFlingers.Entities
         private StateMachine<EState> _stateMachine;
 
         private RaftLine[] _targetLines = new RaftLine[2];
-        private Direction _swimDirection;
-        private int _flatSwimDirection;
+        private RaftLineNode[] _targetNodes = new RaftLineNode[2];
+        private Direction _swimDirectionEnum;
+        private int _swimDirectionFlat;
+        private Vector3 _shiftDirection;
 
         private const string IsBitingBoolName = "IsBiting";
 
@@ -23,7 +28,7 @@ namespace FishFlingers.Entities
         {
             None,
             Surface,
-            Approach,
+            Swim,
             Bite
         }
 
@@ -56,33 +61,35 @@ namespace FishFlingers.Entities
             public override void Enter()
             {
                 // Retrieve two lines to swim along
-                if (!_shark._context.Raft.Queries.TryGetRandomLine((RaftLine line) => line.LineTiles.Count > 0, out _shark._targetLines[0])
+                if (!_shark._context.Raft.Queries.TryGetRandomLine((RaftLine line) => line.Nodes.Count > 0, out _shark._targetLines[0])
                     || !_shark._context.Raft.Queries.TryGetRandomAdjacentLine(_shark._targetLines[0], out _shark._targetLines[1], out int adjacentDirection))
                 {
                     _shark._entityManager.Despawn(_shark);
                     return;
                 }
 
-                // Choose a random direction along the line, and select the edge with the biggest index. Surface away from it 
+                // Choose a random direction along the line, and select the edge with the bigge st index. Surface away from it 
                 int edgeDirection = Random.value < 0.5f ? -1 : 1;
                 RaftEdge[] edges = new RaftEdge[] { _shark._targetLines[0].GetEdge(edgeDirection), _shark._targetLines[1].GetEdge(edgeDirection) };
-                RaftEdge furthestEdge = edges.OrderByDescending(edge => edge?.LineTile.AxisIndex ?? int.MinValue).First();
-                _shark.transform.position = _shark._context.Raft.Queries.CellToWorldPosition(furthestEdge.LineTile.Tile.Cell) + Utils.Math.DirectionToVector3(furthestEdge.Direction) * Tile.Size * _surfaceOffset;
-                _shark._flatSwimDirection = -edgeDirection;
+                RaftEdge furthestEdge = edges.OrderByDescending(edge => edge?.Node.AxisIndex ?? int.MinValue).First();
+                _shark.transform.position = _shark._context.Raft.Queries.CellToWorldPosition(furthestEdge.Node.Cell) + Utils.Math.DirectionToVector3(furthestEdge.Direction) * Tile.Size * _surfaceOffset;
+
+                // Store directions
+                _shark._swimDirectionEnum = Utils.Math.FlipDirection(furthestEdge.Direction);
+                _shark._swimDirectionFlat = -edgeDirection;
 
                 // Sit in between the two lines
-                _shark._swimDirection = Utils.Math.FlipDirection(furthestEdge.Direction);
-                Vector3 shiftDirection = Utils.Math.DirectionToVector3(Utils.Math.PerpendicularDirection(_shark._swimDirection, true)) * adjacentDirection;
-                _shark.transform.position += shiftDirection * Tile.Size * 0.5f;
+                _shark._shiftDirection = Utils.Math.DirectionToVector3(_shark._targetLines[0].RaftAxis.GetDirection()) * adjacentDirection;
+                _shark.transform.position += _shark._shiftDirection * Tile.Size * 0.5f;
 
                 // Face the raft, and submerge so that only the fin is showing
-                _shark.transform.rotation = Quaternion.LookRotation(Utils.Math.DirectionToVector3(_shark._swimDirection), Vector3.up);
+                _shark.transform.rotation = Quaternion.LookRotation(Utils.Math.DirectionToVector3(_shark._swimDirectionEnum), Vector3.up);
                 _shark.transform.position += Vector3.down * _submergeDistance;
 
                 // Tween a surface animation where the shark comes from below
                 Vector3 startPosition = _shark.transform.position + Vector3.down * _surfaceDistance;
                 Tween.Position(_shark.transform, startValue: startPosition, endValue: _shark.transform.position, duration: _surfaceDuration, ease: Ease.OutBack)
-                    .OnComplete(() => _parentStateMachine.ChangeState(EState.Approach));
+                    .OnComplete(() => _parentStateMachine.ChangeState(EState.Swim));
             }
         }
 
@@ -92,44 +99,51 @@ namespace FishFlingers.Entities
         private class SwimState : State
         {
             private float _swimSpeed = 0.5f;
-            private RaftLineTile[] _lineTiles = new RaftLineTile[2];
 
             public SwimState(StateMachine<EState> parent) : base(parent)
             { }
             
             public override void Tick()
             {
-                // Determine our axis position
-                Vector2Int cell = _shark._context.Raft.Queries.WorldPositionToCell(_shark.transform.position);
-                int axisIndex = _shark._targetLines[0].RaftAxis.GetAxisIndex(cell);
-
+                // Retrieve the next nodes in the lines
+                int axisIndex = _shark._targetLines[0].RaftAxis.WorldPositionToAxisIndex(_shark.transform.position);
                 for (int i = 0; i < _shark._targetLines.Length; i++)
                 {
-                    _lineTiles[i] = _shark._targetLines[i].GetNextLineTile(axisIndex, _shark._flatSwimDirection);
+                    _shark._targetNodes[i] = _shark._targetLines[i].GetNextNode(axisIndex, _shark._swimDirectionFlat);
                 }
 
-                // Determine which tile in the RaftLine is 'next' given our position and direction
-                RaftLineTile closestLineTile = _lineTiles.OrderBy(lineTile => Mathf.Abs((lineTile?.AxisIndex ?? int.MaxValue) - axisIndex)).First();
-
-                // Move forward until we are 1 unit away from it
-                Vector3 targetPosition = closestLineTile.Tile.transform.position - Utils.Math.DirectionToVector3(_shark._swimDirection);
-                targetPosition.y = _shark.transform.position.y;
-                if (_shark._targetLines[0].RaftAxis.Type == Axis.Horizontal)
-                {
-                    targetPosition.z = _shark.transform.position.z;
-                }
-                else
-                {
-                    targetPosition.x = _shark.transform.position.x;
-                }
-
+                // Move to the next node from either line, and stop in front of it. If there is nno next node, keep swimming forward
+                Vector3 targetPosition = GetTargetPosition(axisIndex);
                 _shark.transform.position = Vector3.MoveTowards(_shark.transform.position, targetPosition, _swimSpeed * Time.deltaTime);
 
-                // Move to bite state
+                // When close enough, move to bite state
                 if (Vector3.Distance(_shark.transform.position, targetPosition) < 0.01f)
                 {
                     _parentStateMachine.ChangeState(EState.Bite);
                 }
+            }
+
+            private Vector3 GetTargetPosition(int axisIndex)
+            {
+                RaftLineNode closestNode = _shark._targetNodes
+                    .Where(node => node != null)
+                    .OrderBy(node => Mathf.Abs(node.AxisIndex - axisIndex))
+                    .FirstOrDefault();
+
+                Tile closestTile = null;
+                if (closestNode != null)
+                {
+                    _shark._context.Raft.Tiles.TryGetValue(closestNode.Cell, out closestTile);
+                }
+
+                Vector3 targetPosition = closestTile != null
+                    ? closestTile.transform.position - Utils.Math.DirectionToVector3(_shark._swimDirectionEnum)
+                    : Utils.Math.DirectionToVector3(_shark._swimDirectionEnum) * RaftAxis.DefaultLines;
+
+                targetPosition += _shark._shiftDirection * Tile.Size * 0.5f;
+                targetPosition.y = _shark.transform.position.y;
+
+                return targetPosition;
             }
         }
 
@@ -138,6 +152,9 @@ namespace FishFlingers.Entities
         /// </summary>
         private class BiteState : State
         {
+            private float _biteTimer = 0f;
+            private float _biteInterval = 2.5f;
+            
             public BiteState(StateMachine<EState> parent) : base(parent)
             { }
 
@@ -152,6 +169,47 @@ namespace FishFlingers.Entities
 
                 _shark.CharacterModel.Animator.SetBool(IsBitingBoolName, true);
             }
+
+            public override void Tick()
+            {
+                List<Tile> tiles = ListPool<Tile>.Get();
+
+                try
+                {
+                    foreach (RaftLineNode node in _shark._targetNodes)
+                    {
+                        if (node != null && _shark._context.Raft.Tiles.TryGetValue(node.Cell, out Tile tile))
+                        {
+                            tiles.Add(tile);
+                        }
+                    }
+
+                    if (tiles.Count == 0)
+                    {
+                        _parentStateMachine.ChangeState(EState.Swim);
+                        return;
+                    }
+
+                    _biteTimer += Time.deltaTime;
+
+                    if (_biteTimer < _biteInterval)
+                    {
+                        return;
+                    }
+
+                    _biteTimer -= _biteInterval;
+
+                    int axisIndex = _shark._targetLines[0].RaftAxis.WorldPositionToAxisIndex(_shark.transform.position);
+                    Vector3 hitboxDirection = Utils.Math.DirectionToVector3(_shark._swimDirectionEnum);
+                    Vector3 hitboxPosition = _shark._targetLines[0].AxisIndexToWorldPosition(axisIndex) + _shark._shiftDirection * Tile.Size * 0.5f + hitboxDirection;
+                    Hitbox hitbox = _shark._poolManager.GetPoolable<Hitbox>(new SpawnParams() { Position = hitboxPosition, Rotation = Quaternion.LookRotation(hitboxDirection, Vector3.up) });
+                    hitbox.Initialise(_shark.Data.BiteHitboxData);
+                }
+                finally
+                {
+                    ListPool<Tile>.Release(tiles);
+                }
+            }
         }
 
         protected override void Awake()
@@ -161,15 +219,15 @@ namespace FishFlingers.Entities
             _stateMachine = new();
 
             SurfaceState surfaceState = new SurfaceState(_stateMachine);
-            SwimState approachState = new SwimState(_stateMachine);
+            SwimState swimState = new SwimState(_stateMachine);
             BiteState biteState = new BiteState(_stateMachine);
 
             surfaceState.Initialise(this);
-            approachState.Initialise(this);
+            swimState.Initialise(this);
             biteState.Initialise(this);
             
             _stateMachine.AddState(EState.Surface, surfaceState);
-            _stateMachine.AddState(EState.Approach, approachState);
+            _stateMachine.AddState(EState.Swim, swimState);
             _stateMachine.AddState(EState.Bite, biteState);
         }
 

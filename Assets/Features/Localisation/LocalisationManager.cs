@@ -50,9 +50,9 @@ namespace FishFlingers.Localisation
                         _termLookupMap.Add((LocalisationTerm)Utils.Math.HashLongToInt(entry.KeyId), new LocalisedStringLookup(table.TableCollectionName, entry.Key));
                     }
                 }
-            };
 
-            base.Initialise(config);
+                State = ManagerState.Ready;
+            };
         }
 
         public string GetString(LocalisationTerm term)

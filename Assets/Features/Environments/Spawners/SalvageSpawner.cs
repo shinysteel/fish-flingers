@@ -79,12 +79,12 @@ namespace FishFlingers.Environments
             int minSpread = 3;
 
             float x = Random.Range(
-                (float)Mathf.Min(-minSpread, _context.Raft.Queries.Axes[Axis.Horizontal].MinIndex), 
-                Mathf.Max(minSpread, _context.Raft.Queries.Axes[Axis.Horizontal].MaxIndex));
+                (float)Mathf.Min(-minSpread, _context.Raft.Queries.Axes[Axis.Horizontal].MinLineIndex), 
+                Mathf.Max(minSpread, _context.Raft.Queries.Axes[Axis.Horizontal].MaxLineIndex));
 
             int forwardDist = 10;
 
-            int y = _context.Raft.Queries.Axes[Axis.Vertical].MaxIndex + forwardDist;
+            int y = _context.Raft.Queries.Axes[Axis.Vertical].MaxLineIndex + forwardDist;
 
             Vector3 position = _context.Raft.Queries.CellToWorldPosition(new Vector2(x, y));
 

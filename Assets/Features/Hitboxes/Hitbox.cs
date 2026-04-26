@@ -62,7 +62,7 @@ namespace FishFlingers.Hitboxes
 
                 int overlaps = step.Shape switch
                 {
-                    HitboxShape.Box => Physics.OverlapBoxNonAlloc(step.GetPosition(transform), step.Size * 0.5f, _collidersNonAlloc),
+                    HitboxShape.Box => Physics.OverlapBoxNonAlloc(step.GetPosition(transform), step.Size * 0.5f, _collidersNonAlloc, transform.rotation),
                     HitboxShape.Sphere => Physics.OverlapSphereNonAlloc(step.GetPosition(transform), step.Radius, _collidersNonAlloc),
                     _ => 0
                 };
@@ -139,16 +139,20 @@ namespace FishFlingers.Hitboxes
                 {
                     continue;
                 }
-                
+
+                Gizmos.matrix = Matrix4x4.TRS(step.GetPosition(transform), transform.rotation, Vector3.one);
+
                 if (step.Shape == HitboxShape.Box)
                 {
-                    Gizmos.DrawCube(step.GetPosition(transform), step.Size);
+                    Gizmos.DrawCube(Vector3.zero, step.Size);
                 }
                 else if (step.Shape == HitboxShape.Sphere)
                 {
-                    Gizmos.DrawSphere(step.GetPosition(transform), step.Radius);
+                    Gizmos.DrawSphere(Vector3.zero, step.Radius);
                 }
             }
+            
+            Gizmos.matrix = Matrix4x4.identity;
         }
     }
 }

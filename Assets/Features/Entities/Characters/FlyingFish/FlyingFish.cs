@@ -67,7 +67,7 @@ namespace FishFlingers.Entities
                     return;
                 }
 
-                _fish.transform.position = _fish._context.Raft.Queries.CellToWorldPosition(edge.LineTile.Tile.Cell + Utils.Math.DirectionToVector2Int(edge.Direction) * _scoutOffset);
+                _fish.transform.position = _fish._context.Raft.Queries.CellToWorldPosition(edge.Node.Cell + Utils.Math.DirectionToVector2Int(edge.Direction) * _scoutOffset);
 
                 // Rest slightly in the water
                 _fish.transform.position += Vector3.down * _restDistance;
