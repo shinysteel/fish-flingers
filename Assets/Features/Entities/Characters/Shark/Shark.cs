@@ -154,24 +154,35 @@ namespace FishFlingers.Entities
         {
             private float _biteTimer = 0f;
             private float _biteInterval = 2.5f;
+            private float _tweenDuration = 0.5f;
+
+            private Vector3 _startPosition;
+            private Quaternion _startRotation;
+            private Sequence _transitionSequence;
             
             public BiteState(StateMachine<EState> parent) : base(parent)
             { }
 
             public override void Enter()
             {
-                Vector3 bitePosition = _shark.transform.position + _shark.transform.forward * 0.1f + Vector3.up * 0.2f;
-                float duration = 0.5f;
+                _startPosition = _shark.transform.position;
+                _startRotation = _shark.transform.rotation;
 
-                Sequence sequence = Sequence.Create();
-                sequence.Chain(Tween.Position(_shark.transform, endValue: bitePosition, duration: duration));
-                sequence.Group(TweenExtensions.Rotation(_shark.transform, endValue: _shark.transform.rotation * Quaternion.AngleAxis(-30f, Vector3.right), duration: duration, ease: Ease.OutQuad));
+                Vector3 bitePosition = _shark.transform.position + _shark.transform.forward * 0.1f + Vector3.up * 0.2f;
+
+                Tween.Position(_shark.transform, endValue: bitePosition, duration: _tweenDuration);
+                TweenExtensions.Rotation(_shark.transform, endValue: _shark.transform.rotation * Quaternion.AngleAxis(-30f, Vector3.right), duration: _tweenDuration, ease: Ease.OutQuad);
 
                 _shark.CharacterModel.Animator.SetBool(IsBitingBoolName, true);
             }
 
             public override void Tick()
             {
+                if (_transitionSequence.isAlive)
+                {
+                    return;
+                }
+
                 List<Tile> tiles = ListPool<Tile>.Get();
 
                 try
@@ -186,7 +197,7 @@ namespace FishFlingers.Entities
 
                     if (tiles.Count == 0)
                     {
-                        _parentStateMachine.ChangeState(EState.Swim);
+                        TransitionToSwim();
                         return;
                     }
 
@@ -209,6 +220,16 @@ namespace FishFlingers.Entities
                 {
                     ListPool<Tile>.Release(tiles);
                 }
+            }
+
+            private void TransitionToSwim()
+            {
+                _shark.CharacterModel.Animator.SetBool(IsBitingBoolName, false);
+
+                _transitionSequence = Sequence.Create();
+                _transitionSequence.Chain(Tween.Position(_shark.transform, endValue: _startPosition, duration: _tweenDuration));
+                _transitionSequence.Group(TweenExtensions.Rotation(_shark.transform, endValue: _startRotation, duration: _tweenDuration, ease: Ease.OutQuad));
+                _transitionSequence.OnComplete(() => _parentStateMachine.ChangeState(EState.Swim));
             }
         }
 
