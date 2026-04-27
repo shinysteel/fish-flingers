@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 05da6ed0092556d4081b85fc7ce120b7
+guid: a7b7e51701bfeaa4e80981ea31abdb1b
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,45 +123,45 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: LeftClick
+      name: SmallWaveyButtonBrown
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 8
-        height: 8
+        width: 16
+        height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 932715f279b168d4fbcdd3efb8d47291
-      internalID: -945108908
+      spriteID: ce0ad916133ebea40865a0debf49fbf0
+      internalID: -834701522
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RightClick
+      name: SmallWaveyButtonBlue
       rect:
         serializedVersion: 2
-        x: 8
+        x: 16
         y: 0
-        width: 8
-        height: 8
+        width: 16
+        height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 65409ccb7d5cf184ba1c4cadd1eacdda
-      internalID: -198772440
+      spriteID: 6cb5c21f59e88cb44b33fafc4973cbd4
+      internalID: 44136699
       vertices: []
       indices: 
       edges: []
@@ -170,7 +170,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 3d1349120510a7642836ebfa0c0611e4
+    spriteID: 1f4029d4a9830574cb7507d7208390fe
     internalID: 0
     vertices: []
     indices: 
@@ -180,12 +180,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
-      - key: SpriteEditor.SliceOnImport
-        value: False
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":16.0,"y":16.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      LeftClick: -945108908
-      RightClick: -198772440
+      SmallWaveyButtonBlue: 44136699
+      SmallWaveyButtonBrown: -834701522
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
