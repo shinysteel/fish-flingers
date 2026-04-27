@@ -20,6 +20,8 @@ namespace FishFlingers.Entities
         [SerializeField] protected EntityModel _entityModel;
         public EntityModel EntityModel => _entityModel;
 
+        public new bool IsSpawned => isSpawned;
+
         private SyncVar<int> _netCurrentHealth;
 
         protected EntityHealthModule _healthModule;

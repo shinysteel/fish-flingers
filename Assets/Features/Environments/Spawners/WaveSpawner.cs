@@ -10,7 +10,7 @@ namespace FishFlingers.Environments
 {
     public class WaveSpawner : GameplayBehaviour
     {
-        [SerializeField] private EntityId _entityId;
+        [SerializeField] private EntityId[] _entityIds;
         [SerializeField] private float _spawnInterval = 2.5f;
         [SerializeField] private float _initialDelay = 1f;
         [SerializeField] private bool _prewarm;
@@ -62,7 +62,8 @@ namespace FishFlingers.Environments
 
         private void Spawn()
         {
-            _entityManager.Spawn(_entityId, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
+            EntityId id = _entityIds[Random.Range(0, _entityIds.Length)];
+            _entityManager.Spawn(id, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
         }
     }
 }

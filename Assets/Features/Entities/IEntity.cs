@@ -13,6 +13,7 @@ namespace FishFlingers.Entities
         EntityData EntityData { get; }
         EntityModel EntityModel { get; }
 
+        bool IsSpawned { get; }
         EntityHealthModule HealthModule { get; }
 
         Transform Transform { get; }

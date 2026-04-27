@@ -29,6 +29,9 @@ namespace FishFlingers.Entities
         [SerializeField] protected EntityModel _entityModel;
         public EntityModel EntityModel => _entityModel;
 
+        private bool _isSpawned;
+        public bool IsSpawned => _isSpawned;
+
         protected int _currentHealth;
 
         protected EntityHealthModule _healthModule;
@@ -81,12 +84,16 @@ namespace FishFlingers.Entities
                 getter: () => _currentHealth,
                 setter: HealthModuleSetter);
 
+            _isSpawned = true;
+
             _entityManager.RaiseNetEntitySpawned(this);
         }
 
         public virtual void OnReturnedToPool()
         {
             _entityManager?.RaiseNetEntityDespawned(this);
+
+            _isSpawned = false;
 
             _context = null;
 

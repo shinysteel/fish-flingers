@@ -74,6 +74,11 @@ namespace FishFlingers.Hitboxes
                         continue;
                     }
 
+                    if (!entity.IsSpawned)
+                    {
+                        continue;
+                    }
+
                     if (_hitEntities.Contains(entity))
                     {
                         continue;
