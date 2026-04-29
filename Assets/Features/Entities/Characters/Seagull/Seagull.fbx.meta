@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 91b71e3b4e01d71468f2566c22d21176
+guid: 7ba5d1e68e1a4df45a4b6ef41051f03e
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Seagull.png
-    second: {fileID: 2100000, guid: a6809b0b967e42b438dc62747fd34d3b, type: 2}
+    second: {fileID: 2100000, guid: ec1e41831432cda468cd2737b7a4044b, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -96,7 +96,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.005
+    globalScale: 0.5
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
