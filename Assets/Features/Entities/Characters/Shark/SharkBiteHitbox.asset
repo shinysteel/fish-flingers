@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: SharkBiteHitbox
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Hitboxes.HitboxData
   _damage: 1
-  _knockbackForceStrength: 1
+  _knockbackForceStrength: 50
   _knockbackTorqueStrength: 0.5
+  _stunDuration: 0.5
   _alliance: 1
   _steps:
   - _shape: 0

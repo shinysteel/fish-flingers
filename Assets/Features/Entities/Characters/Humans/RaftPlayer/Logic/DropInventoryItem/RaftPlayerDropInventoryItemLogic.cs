@@ -15,8 +15,7 @@ namespace FishFlingers.Entities
 
         private RaftPlayer _player;
 
-        private const float Pitch = -45f;
-        private const float Strength = 5f;
+        private RaftPlayerDropInventoryItemSettings _settings;
 
         public RaftPlayerDropInventoryItemLogic(RaftPlayer player)
         {
@@ -24,6 +23,8 @@ namespace FishFlingers.Entities
             _cameraManager = GameManager.Instance.Get<CameraManager>();
 
             _player = player;
+
+            _settings = _player.Data.DropInventoryItemSettings;
         }
 
         /// <summary>
@@ -35,9 +36,9 @@ namespace FishFlingers.Entities
             direction.y = 0f;
             direction.Normalize();
 
-            direction = Quaternion.AngleAxis(Pitch, Vector3.Cross(Vector3.up, direction)) * direction;
+            direction = Quaternion.AngleAxis(_settings.Pitch, Vector3.Cross(Vector3.up, direction)) * direction;
 
-            SpawnDroppedItemRpc(NetItemInstance.Create(itemInstance), _player.transform.position, direction, Strength);
+            SpawnDroppedItemRpc(NetItemInstance.Create(itemInstance), _player.transform.position, direction, _settings.Strength);
         }
 
         [ServerRpc(requireOwnership: false)]

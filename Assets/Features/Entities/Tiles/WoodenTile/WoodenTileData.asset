@@ -17,6 +17,8 @@ MonoBehaviour:
   _descriptionTerm: -1596126560
   _sprite: {fileID: 21300000, guid: 6f972666f32701e45bbe695d518d3d38, type: 3}
   _health: 3
+  _alliance: 0
+  _dropTables: []
   _recipe:
     _requirements:
     - _itemId: 1

@@ -52,7 +52,7 @@ namespace FishFlingers.Entities
         public RaftPlayerAttackLogic AttackLogic => _attackLogic;
         public RaftPlayerTileTargetLogic TileTargetLogic => _tileTargetLogic;
 
-        public bool CanAct => !_uiManager.IsLayerInUse(UILayer.Panels);
+        public bool CanAct => !_stunLogic.IsStunned;
 
         // SyncVars
         private SyncVar<NetInventoryItem> _netGrabbedInventoryItem = new SyncVar<NetInventoryItem>(ownerAuth: true);

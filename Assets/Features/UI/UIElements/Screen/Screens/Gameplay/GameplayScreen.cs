@@ -18,6 +18,7 @@ namespace FishFlingers.UI
         [SerializeField] private ItemActionsView _itemActionsView;
         [SerializeField] private Button _settingsButton;
         [SerializeField] private Button _fishingBagButton;
+        [SerializeField] private WaveMeter _waveMeter;
         
         private NetworkManager _networkManager;
         private UIManager _uiManager;
@@ -47,6 +48,7 @@ namespace FishFlingers.UI
 
             _hotbarView.Setup(context);
             _itemActionsView.Setup(context);
+            _waveMeter.Setup(context);
         }
 
         private void Update()
