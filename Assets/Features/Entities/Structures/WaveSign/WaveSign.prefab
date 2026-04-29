@@ -226,6 +226,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4451170818008832760, guid: 0563798e147606846b1e82c3f53ac03b, type: 3}
+      propertyPath: m_fontSize
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4451170818008832760, guid: 0563798e147606846b1e82c3f53ac03b, type: 3}
       propertyPath: m_fontColor.b
       value: 0.047058824
       objectReference: {fileID: 0}
@@ -236,6 +240,18 @@ PrefabInstance:
     - target: {fileID: 4451170818008832760, guid: 0563798e147606846b1e82c3f53ac03b, type: 3}
       propertyPath: m_fontColor.r
       value: 0.2509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 4451170818008832760, guid: 0563798e147606846b1e82c3f53ac03b, type: 3}
+      propertyPath: m_fontSizeMax
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4451170818008832760, guid: 0563798e147606846b1e82c3f53ac03b, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4451170818008832760, guid: 0563798e147606846b1e82c3f53ac03b, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4451170818008832760, guid: 0563798e147606846b1e82c3f53ac03b, type: 3}
       propertyPath: m_fontColor32.rgba
