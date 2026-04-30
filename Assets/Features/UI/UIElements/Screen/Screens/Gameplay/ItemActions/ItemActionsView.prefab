@@ -180,10 +180,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4360189676479328928}
     m_Modifications:
-    - target: {fileID: 1019043703847069769, guid: 4a9e1d8f51a3c2f4a9d776a502b2c5e7, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 1253452284, guid: 496fcd6011435bd4092e670105c7e5d8, type: 3}
     - target: {fileID: 1833079537789101187, guid: 4a9e1d8f51a3c2f4a9d776a502b2c5e7, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -292,10 +288,6 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: a8f5e5344e9d471479f7d1eca907f0af, type: 3}
-    - target: {fileID: 6498750572580325212, guid: 4a9e1d8f51a3c2f4a9d776a502b2c5e7, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 44136699, guid: a7b7e51701bfeaa4e80981ea31abdb1b, type: 3}
     - target: {fileID: 7876792021552493039, guid: 4a9e1d8f51a3c2f4a9d776a502b2c5e7, type: 3}
       propertyPath: m_fontSize
       value: 24
@@ -337,10 +329,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8067332511573980737}
     m_Modifications:
-    - target: {fileID: 1019043703847069769, guid: 4a9e1d8f51a3c2f4a9d776a502b2c5e7, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 1253452284, guid: 496fcd6011435bd4092e670105c7e5d8, type: 3}
     - target: {fileID: 1833079537789101187, guid: 4a9e1d8f51a3c2f4a9d776a502b2c5e7, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -449,10 +437,6 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 30cd8873c567f78429fe299f4ffa229e, type: 3}
-    - target: {fileID: 6498750572580325212, guid: 4a9e1d8f51a3c2f4a9d776a502b2c5e7, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 44136699, guid: a7b7e51701bfeaa4e80981ea31abdb1b, type: 3}
     - target: {fileID: 7876792021552493039, guid: 4a9e1d8f51a3c2f4a9d776a502b2c5e7, type: 3}
       propertyPath: m_fontSize
       value: 24

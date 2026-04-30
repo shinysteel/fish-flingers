@@ -253,22 +253,6 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2782932405702096647, guid: b2445ca03474c9642b1410dde0e1ffcc, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.925
-      objectReference: {fileID: 0}
-    - target: {fileID: 2782932405702096647, guid: b2445ca03474c9642b1410dde0e1ffcc, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.075
-      objectReference: {fileID: 0}
-    - target: {fileID: 2782932405702096647, guid: b2445ca03474c9642b1410dde0e1ffcc, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2782932405702096647, guid: b2445ca03474c9642b1410dde0e1ffcc, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3802163686133970347, guid: b2445ca03474c9642b1410dde0e1ffcc, type: 3}
       propertyPath: m_Name
       value: FishingBagPanel
