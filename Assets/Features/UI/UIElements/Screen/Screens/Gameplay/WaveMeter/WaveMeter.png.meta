@@ -39,7 +39,7 @@ TextureImporter:
     mipBias: 0
     wrapU: 1
     wrapV: 1
-    wrapW: 0
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 25
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -123,67 +123,67 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: WaveMeterCell
+      name: Test1
       rect:
         serializedVersion: 2
         x: 0
-        y: 16
-        width: 16
-        height: 16
+        y: 3
+        width: 32
+        height: 13
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 19, y: 0, z: 9, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 71d5515e04171294ca1809c4d2d5f6b5
+      spriteID: 5de85f474ff6c9349a8433d93f214fe4
       internalID: 1860964170
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: WaveMeterCellEmpty
+      name: Test2
       rect:
         serializedVersion: 2
         x: 16
-        y: 16
-        width: 16
-        height: 16
+        y: 0
+        width: 11
+        height: 3
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 3, y: 0, z: 4, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: db565728f9970c54287ee5db396a27ca
-      internalID: 79835215
+      spriteID: 37a5822c7499d8741ad34703c2fd0b51
+      internalID: -383683567
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: WaveMeterEnd
+      name: Test3
       rect:
         serializedVersion: 2
-        x: 32
-        y: 14
-        width: 16
-        height: 18
+        x: 28
+        y: 0
+        width: 1
+        height: 3
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 0, y: 0, z: 1, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8ea45217c4a4c6a4bbd6314bf6fe3446
-      internalID: 1737367191
+      spriteID: 8dc705cd1b750634da216d4530cf2692
+      internalID: -1373933637
       vertices: []
       indices: 
       edges: []
@@ -202,9 +202,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      WaveMeterCell: 1860964170
+      Test1: 1860964170
+      Test2: -383683567
+      Test3: -1373933637
       WaveMeterCellEmpty: 79835215
-      WaveMeterEnd: 1737367191
+      WaveMeterEndLeft: -1658817512
+      WaveMeterEndRight: 1751037401
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -265,36 +265,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
-      propertyPath: m_Pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
-      propertyPath: m_Pivot.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
       propertyPath: m_AnchorMin.y
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -309,28 +285,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -10
+      value: -12
       objectReference: {fileID: 0}
     - target: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -378,17 +334,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5997467655837129047, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
   m_PrefabInstance: {fileID: 5285836592678130984}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3524611407487402360 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8769351828862456912, guid: 1a1d6a5783edc6841b10003339e48bb1, type: 3}
-  m_PrefabInstance: {fileID: 5285836592678130984}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef681e51e2372c847a69c1ac5ca29981, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WaveMeter
 --- !u!1001 &7006873182628892783
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -535,7 +480,7 @@ MonoBehaviour:
   _itemActionsView: {fileID: 5507301903238883138}
   _settingsButton: {fileID: 8585480431251104968}
   _fishingBagButton: {fileID: 8012368499549825537}
-  _waveMeter: {fileID: 3524611407487402360}
+  _waveMeter: {fileID: 0}
 --- !u!114 &6644086406560650574 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4398296562300798241, guid: 55546b0b0191b2646974781ac294f8ad, type: 3}
@@ -657,7 +602,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7876792021552493039, guid: 4a9e1d8f51a3c2f4a9d776a502b2c5e7, type: 3}
       propertyPath: m_fontSize
-      value: 15.25
+      value: 20.05
       objectReference: {fileID: 0}
     - target: {fileID: 8462884968314587102, guid: 4a9e1d8f51a3c2f4a9d776a502b2c5e7, type: 3}
       propertyPath: m_Name
