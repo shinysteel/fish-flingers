@@ -71,7 +71,7 @@ namespace FishFlingers.Entities
         private List<HotbarSlot> _slots = new List<HotbarSlot>(DefaultCapacity);
         public IReadOnlyList<HotbarSlot> Slots => _slots;
 
-        private const int DefaultCapacity = 3;
+        private const int DefaultCapacity = 5;
 
         private HotbarSlot _selectedSlot;
         public HotbarSlot SelectedSlot => _selectedSlot;
