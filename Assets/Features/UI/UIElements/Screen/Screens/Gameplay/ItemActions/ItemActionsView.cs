@@ -1,5 +1,6 @@
 using FishFlingers.Entities;
 using FishFlingers.Inventories;
+using FishFlingers.Items;
 using FishFlingers.States;
 using PrimeTween;
 using ShinyOwl.Common.Utils;
@@ -19,6 +20,7 @@ namespace FishFlingers.UI
             [SerializeField] private Button _button;
             [SerializeField] private RectTransform _rectTransform;
             [SerializeField] private GameObject _container;
+            [SerializeField] private Image _iconImage;
 
             public Button Button => _button;
 
@@ -26,9 +28,9 @@ namespace FishFlingers.UI
 
             private const float ShowDuration = 0.1f;
 
-            public void Setup()
+            public void Setup(ItemActionData data)
             {
-                Utils.UI.StretchToParent(_rectTransform);
+                _iconImage.sprite = data?.Sprite;
             }
 
             public void Show(bool show)
@@ -51,16 +53,7 @@ namespace FishFlingers.UI
         [SerializeField] private ActionView _leftClickActionView;
         [SerializeField] private ActionView _rightClickActionView;
 
-        private UIManager _uiManager;
-
         private GameplayContext _context;
-
-        private InventoryItem _selectedItem;
-
-        private void Awake()
-        {
-            _uiManager = GameManager.Instance.Get<UIManager>();
-        }
 
         public void Setup(GameplayContext context)
         {
@@ -68,9 +61,6 @@ namespace FishFlingers.UI
 
             HandleHotbarSelectedChanged(_context.LocalPlayer.Hotbar.SelectedSlot);
             _context.LocalPlayer.Hotbar.OnSelectedChanged += HandleHotbarSelectedChanged;
-
-            _leftClickActionView.Setup();
-            _rightClickActionView.Setup();
         }
 
         private void OnDestroy()
@@ -83,8 +73,8 @@ namespace FishFlingers.UI
 
         private void HandleHotbarSelectedChanged(HotbarSlot slot)
         {
-            // _selectedItem denotes what actions can be executed
-            _selectedItem = slot.InventoryItem;
+            _leftClickActionView.Setup(slot.InventoryItem?.ItemInstance.Data.LeftClickAction);
+            _rightClickActionView.Setup(slot.InventoryItem?.ItemInstance.Data.RightClickAction);
 
             _leftClickActionView.Show(slot.InventoryItem?.ItemInstance.Data.LeftClickAction != null);
             _rightClickActionView.Show(slot.InventoryItem?.ItemInstance.Data.RightClickAction != null);

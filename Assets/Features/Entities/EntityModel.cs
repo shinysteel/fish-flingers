@@ -17,15 +17,15 @@ namespace FishFlingers.Entities
 
         private void Awake()
         {
-            foreach (MeshRenderer meshRenderer in transform.GetComponentsInChildren<MeshRenderer>())
+            foreach (MeshRenderer renderer in transform.GetComponentsInChildren<MeshRenderer>())
             {
                 if (_material == null)
                 {
-                    _material = meshRenderer.material;
+                    _material = renderer.material;
                 }
                 else
                 {
-                    meshRenderer.material = _material;
+                    renderer.material = _material;
                 }
             }
         }

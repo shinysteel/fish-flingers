@@ -7,8 +7,9 @@ using PurrNet;
 using ShinyOwl.Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-
+using UnityEngine.Pool;
 using Object = UnityEngine.Object;
 
 namespace FishFlingers.Entities
@@ -82,6 +83,11 @@ namespace FishFlingers.Entities
         {
             return _tile != null && _tile.Structure == null;
         }
+
+        public bool CanRepair()
+        {
+            return _tile?.HealthModule.Current < _tile?.HealthModule.Max;
+        }
     }
 
     public class RaftPlayerTileTargetLogic
@@ -97,20 +103,9 @@ namespace FishFlingers.Entities
         private RaftPlayerTileTarget _target;
         public RaftPlayerTileTarget Target => _target;
 
-        private bool _showingTarget;
-
-        private const float MaxRange = 1f;
-
         public event Action<RaftPlayerTileTarget> OnTargetChanged;
 
-        // Scales for the target depending on context
-        private static readonly Vector3 StructureVisualScale = new Vector3(0.75f, 0.25f, 0.75f);
-        private static readonly Vector3 TileVisualScale = new Vector3(1f, 0.25f, 1f);
-
-        private Tween _fadeTween;
-        private const float FadeDuration = 0.1f;
-
-        private const float VisualMaxAlpha = 0.4f; // Equivalent to ~102 in color32
+        private const float RepairRange = 1f;
 
         public RaftPlayerTileTargetLogic(GameplayContext context)
         {
@@ -130,7 +125,9 @@ namespace FishFlingers.Entities
         }
 
         ~RaftPlayerTileTargetLogic()
-        { 
+        {
+            _target.OnChanged -= HandleTargetChanged;
+
             if (_context.LocalPlayer != null)
             {
                 _context.LocalPlayer.Hotbar.OnSelectedChanged -= HandleHotbarSelectedSlotChanged;
@@ -139,10 +136,7 @@ namespace FishFlingers.Entities
 
         private void HandleTargetChanged()
         {
-            if (_showingTarget)
-            {
-                RefreshVisualColor();
-            }
+            RefreshVisual();
 
             // Passes along the event from Target -> Logic -> Listener
             OnTargetChanged?.Invoke(_target);
@@ -150,98 +144,91 @@ namespace FishFlingers.Entities
 
         private void HandleHotbarSelectedSlotChanged(HotbarSlot slot)
         {
-            _showingTarget = slot.InventoryItem?.ItemInstance.Data.ShowsTileTarget ?? false;
+            RefreshVisual();
+        }
 
-            _fadeTween.Stop();
-
-            // Fade in or out the target based on if we are using it or not
-            float startValue = _targetVisual.Material.color.a;
-            float endValue = _showingTarget ? VisualMaxAlpha : 0f;
-            Action<float> onValueChange = (float alpha) => _targetVisual.SetAlpha(alpha);
-
-            _fadeTween = Tween.Custom(startValue: startValue, endValue: endValue, duration: FadeDuration, onValueChange: onValueChange);
-
-            if (_showingTarget)
+        private void RefreshVisual()
+        {
+            if ((_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem?.ItemInstance.Data.CanRepair ?? false) && _target.CanRepair())
             {
-                RefreshVisualColor();
-                _targetVisual.gameObject.SetActive(true);    
+                _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.Repair);
+                _targetVisual.SetColor(RaftPlayerTileTargetVisual.EColor.Valid);
             }
             else
             {
-                _fadeTween.OnComplete(() => _targetVisual.gameObject.SetActive(false));
+                _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.None);
             }
         }
 
         public void Tick()
         {
-            // Targets become locked when you can't act
-            if (_context.LocalPlayer.CanAct)
-            {
-                DetermineTargetTick();
-            }
-
-            // _isTargeting represents if the selected item displays a target
-            if (_showingTarget)
-            {
-                TransformVisualTick();
-            }
+            DetermineTargetTick();
+            TransformVisualTick();
         }
 
         private void DetermineTargetTick()
         {
-            Ray ray = _cameraManager.MainCamera.ScreenPointToRay(_context.LocalPlayer.InputLogic.GameplayMouse);
+            List<Tile> tiles = ListPool<Tile>.Get();
 
-            // Have the plane sit at the player's origin so that y does not influence the target
-            Plane plane = new Plane(Vector3.up, _context.LocalPlayer.transform.position);
-
-            // Face the cursor
-            if (!plane.Raycast(ray, out float distance))
-            {
-                return;
-            }
-
-            Vector3 toPoint = (ray.GetPoint(distance) - _context.LocalPlayer.transform.position);
-
-            // Target the cell x units away from us in the direction we are facing
-            Vector3 position = _context.LocalPlayer.transform.position + toPoint.normalized * Mathf.Min(toPoint.magnitude, MaxRange);
-
-            Vector2Int cell = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
+            Vector2Int playerCell = _context.Raft.Queries.WorldPositionToCell(_context.LocalPlayer.transform.position);
             
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    if (_context.Raft.Tiles.TryGetValue(playerCell + new Vector2Int(i, j), out Tile tile))
+                    {
+                        tiles.Add(tile);
+                    }
+                }
+            }
+
+            Tile closestTile = tiles
+                .Where(tile => tile.HealthModule.Current < tile.HealthModule.Max && Vector3.Distance(tile.transform.position, _context.LocalPlayer.transform.position) < RepairRange)
+                .OrderBy(tile => Vector3.Distance(tile.transform.position, _context.LocalPlayer.transform.position))
+                .FirstOrDefault();
+            
+            ListPool<Tile>.Release(tiles);
+
+            Vector2Int newTargetCell = closestTile?.Cell ?? playerCell;
+
             // We only care if the cell has changed
-            if (_target.Cell == cell)
+            if (_target.Cell == newTargetCell)
             {
                 return;
             }
 
-            _target.SetCell(cell);
+            _target.SetCell(newTargetCell);
+
+            //Ray ray = _cameraManager.MainCamera.ScreenPointToRay(_context.LocalPlayer.InputLogic.GameplayMouse);
+
+            //// Have the plane sit at the player's origin so that y does not influence the target
+            //Plane plane = new Plane(Vector3.up, _context.LocalPlayer.transform.position);
+
+            //// Face the cursor
+            //if (!plane.Raycast(ray, out float distance))
+            //{
+            //    return;
+            //}
+
+            //Vector3 toPoint = (ray.GetPoint(distance) - _context.LocalPlayer.transform.position);
+
+            //// Target the cell x units away from us in the direction we are facing
+            //Vector3 position = _context.LocalPlayer.transform.position + toPoint.normalized * Mathf.Min(toPoint.magnitude, MaxRange);
+
+            //Vector2Int cell = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         }
 
-        /// <summary>
-        /// Transforms the visual based on whether we are targeting a tile or not
-        /// </summary>
         private void TransformVisualTick()
         {
-            Vector3 scale;
             Vector3 position = _context.Raft.Queries.CellToWorldPosition(_target.Cell);
 
             if (_target.Tile != null)
             {
-                scale = StructureVisualScale;
-                position.y = _target.Tile.GetSurfaceY() + scale.y * 0.5f;
-            }
-            else
-            {
-                scale = TileVisualScale;
-                position.y = 0f;
+                position.y = _target.Tile.GetSurfaceY();
             }
 
-            _targetVisual.SetVisualScale(scale);
             _targetVisual.transform.position = position;
-        }
-
-        private void RefreshVisualColor()
-        {
-            _targetVisual.SetColor(_target.CanBuild() ? _settings.ValidColor : _settings.InvalidColor);
         }
     }
 }

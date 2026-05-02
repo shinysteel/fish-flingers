@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b630e5ae21a75c40a9000d038969b31, type: 3}
   m_Name: BuildActionData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Items.BuildActionData
+  _sprite: {fileID: 21300000, guid: 30cd8873c567f78429fe299f4ffa229e, type: 3}

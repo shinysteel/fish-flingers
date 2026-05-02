@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0094ce6ee8d1e647804ba25e502c4e3, type: 3}
-  m_Name: AttackActionData
-  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Items.AttackActionData
-  _sprite: {fileID: 21300000, guid: a8f5e5344e9d471479f7d1eca907f0af, type: 3}
+  m_Script: {fileID: 11500000, guid: 95ad941d839f1204dad308229ddf2bc5, type: 3}
+  m_Name: RepairActionData
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Items.RepairActionData
+  _sprite: {fileID: 21300000, guid: f27c855da8110564bb782fea676764bf, type: 3}

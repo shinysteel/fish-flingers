@@ -37,5 +37,5 @@ MonoBehaviour:
     _mask:
       serializedVersion: 2
       m_Bits: 16
-    _ascendStrength: 300
+    _ascendStrength: 400
     _ascendDepthThreshold: 0.25

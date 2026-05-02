@@ -90,27 +90,7 @@ namespace FishFlingers.Entities
 
         private void LookFixedTick()
         {
-            Vector3 direction;
-
-            if (_player.Hotbar.SelectedSlot.InventoryItem?.ItemInstance.Data.ShowsTileTarget ?? false)
-            {
-                Ray ray = _cameraManager.MainCamera.ScreenPointToRay(_player.InputLogic.GameplayMouse);
-
-                // Have the plane sit at the player's origin so that y does not influence the target
-                Plane plane = new Plane(Vector3.up, _player.transform.position);
-
-                // Face the cursor
-                if (!plane.Raycast(ray, out float distance))
-                {
-                    return;
-                }
-
-                direction = (ray.GetPoint(distance) - _player.transform.position).normalized;
-            }
-            else
-            {
-                direction = _player.InputLogic.MoveDirection;
-            }
+            Vector3 direction = _player.InputLogic.MoveDirection;
 
             if (direction == Vector3.zero)
             {
