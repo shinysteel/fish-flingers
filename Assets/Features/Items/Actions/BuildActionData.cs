@@ -13,7 +13,9 @@ namespace FishFlingers.Items
             {
                 return;
             }
-            
+
+            context.LocalPlayer.TileTargetLogic.SetIsBuilding(true);
+
             UIManager uiManager = GameManager.Instance.Get<UIManager>();
 
             uiManager.CreateScreenUIAsync(uiManager.Config.BuildingKitPanelPrefab, UILayer.Panels).completed += (BuildingKitPanel panel) =>

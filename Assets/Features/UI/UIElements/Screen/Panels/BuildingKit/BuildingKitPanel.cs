@@ -42,6 +42,13 @@ namespace FishFlingers.UI
             _context.LocalPlayer.Hotbar.OnSelectedChanged += HandleHotbarSelectedChanged;
         }
 
+        public override void Hide(Action onComplete)
+        {
+            base.Hide(onComplete);
+
+            _context.LocalPlayer.TileTargetLogic.SetIsBuilding(false);
+        }
+
         public override void Unload()
         {
             if (_context.LocalPlayer != null)
@@ -59,25 +66,25 @@ namespace FishFlingers.UI
 
         private void HandleRaftPlayerTileTargetChanged(RaftPlayerTileTarget target)
         {
-            if (!target.CanBuild())
+            if (_isShowing)
             {
-                if (_isShowing)
-                {
-                    ClosePressed();
-                }
-
-                return;
+                RefreshEntries();
             }
-
-            RefreshEntries();
         }
 
         private void RefreshEntries()
         {
+            IEnumerable<IBuildable> buildables = Enumerable.Empty<IBuildable>();
+
             // We populate the entries with either tiles or structures depending on the target
-            IEnumerable<IBuildable> buildables = _context.LocalPlayer.TileTargetLogic.Target.Tile == null
-                ? _entityManager.GetEntityPrefabs<Tile>().Select(tile => tile.Data)
-                : _entityManager.GetEntityPrefabs<Structure>().Select(structure => structure.StructureData);
+            if (_context.LocalPlayer.TileTargetLogic.Target.CanBuildTile())
+            {
+                buildables = _entityManager.GetEntityPrefabs<Tile>().Select(tile => tile.Data);
+            }
+            else if (_context.LocalPlayer.TileTargetLogic.Target.CanBuildStructure())
+            {
+                buildables = _entityManager.GetEntityPrefabs<Structure>().Select(structure => structure.StructureData);
+            }
 
             Utils.Collections.ResizeList(_blueprintEntries, buildables.Count(),
                 createElement: () => _poolManager.GetPoolable<BlueprintEntry>(new SpawnParams() { Parent = _blueprintsScrollRect.content }),

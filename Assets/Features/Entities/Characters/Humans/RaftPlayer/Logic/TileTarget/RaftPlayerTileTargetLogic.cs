@@ -105,6 +105,8 @@ namespace FishFlingers.Entities
 
         public event Action<RaftPlayerTileTarget> OnTargetChanged;
 
+        private bool _isBuilding;
+
         private const float RepairRange = 1f;
 
         public RaftPlayerTileTargetLogic(GameplayContext context)
@@ -147,19 +149,6 @@ namespace FishFlingers.Entities
             RefreshVisual();
         }
 
-        private void RefreshVisual()
-        {
-            if ((_context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem?.ItemInstance.Data.CanRepair ?? false) && _target.CanRepair())
-            {
-                _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.Repair);
-                _targetVisual.SetColor(RaftPlayerTileTargetVisual.EColor.Valid);
-            }
-            else
-            {
-                _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.None);
-            }
-        }
-
         public void Tick()
         {
             DetermineTargetTick();
@@ -168,55 +157,48 @@ namespace FishFlingers.Entities
 
         private void DetermineTargetTick()
         {
-            List<Tile> tiles = ListPool<Tile>.Get();
+            Vector2Int newTargetCell;
 
-            Vector2Int playerCell = _context.Raft.Queries.WorldPositionToCell(_context.LocalPlayer.transform.position);
-            
-            for (int i = -1; i <= 1; i++)
+            if (!_isBuilding)
             {
-                for (int j = -1; j <= 1; j++)
+                Vector2Int playerCell = _context.Raft.Queries.WorldPositionToCell(_context.LocalPlayer.transform.position);
+
+                List<Tile> tiles = ListPool<Tile>.Get();
+
+                for (int i = -1; i <= 1; i++)
                 {
-                    if (_context.Raft.Tiles.TryGetValue(playerCell + new Vector2Int(i, j), out Tile tile))
+                    for (int j = -1; j <= 1; j++)
                     {
-                        tiles.Add(tile);
+                        if (_context.Raft.Tiles.TryGetValue(playerCell + new Vector2Int(i, j), out Tile tile))
+                        {
+                            tiles.Add(tile);
+                        }
                     }
                 }
+
+                // Find the closest tile that can be repaired
+                Tile closestTile = tiles
+                    .Where(tile => tile.HealthModule.Current < tile.HealthModule.Max && Vector3.Distance(tile.transform.position, _context.LocalPlayer.transform.position) < RepairRange)
+                    .OrderBy(tile => Vector3.Distance(tile.transform.position, _context.LocalPlayer.transform.position))
+                    .FirstOrDefault();
+
+                ListPool<Tile>.Release(tiles);
+
+                newTargetCell = closestTile?.Cell ?? playerCell;                
             }
-
-            Tile closestTile = tiles
-                .Where(tile => tile.HealthModule.Current < tile.HealthModule.Max && Vector3.Distance(tile.transform.position, _context.LocalPlayer.transform.position) < RepairRange)
-                .OrderBy(tile => Vector3.Distance(tile.transform.position, _context.LocalPlayer.transform.position))
-                .FirstOrDefault();
+            else
+            {
+                newTargetCell = _context.Raft.Queries.WorldPositionToCell(_context.LocalPlayer.transform.position + _context.LocalPlayer.transform.forward * 1f);
+            }
             
-            ListPool<Tile>.Release(tiles);
-
-            Vector2Int newTargetCell = closestTile?.Cell ?? playerCell;
-
             // We only care if the cell has changed
             if (_target.Cell == newTargetCell)
             {
                 return;
             }
 
+            // Mark the target as dirty by changing its cell, which will cause RefreshVisual to be invoked
             _target.SetCell(newTargetCell);
-
-            //Ray ray = _cameraManager.MainCamera.ScreenPointToRay(_context.LocalPlayer.InputLogic.GameplayMouse);
-
-            //// Have the plane sit at the player's origin so that y does not influence the target
-            //Plane plane = new Plane(Vector3.up, _context.LocalPlayer.transform.position);
-
-            //// Face the cursor
-            //if (!plane.Raycast(ray, out float distance))
-            //{
-            //    return;
-            //}
-
-            //Vector3 toPoint = (ray.GetPoint(distance) - _context.LocalPlayer.transform.position);
-
-            //// Target the cell x units away from us in the direction we are facing
-            //Vector3 position = _context.LocalPlayer.transform.position + toPoint.normalized * Mathf.Min(toPoint.magnitude, MaxRange);
-
-            //Vector2Int cell = new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         }
 
         private void TransformVisualTick()
@@ -229,6 +211,39 @@ namespace FishFlingers.Entities
             }
 
             _targetVisual.transform.position = position;
+        }
+
+        private void RefreshVisual()
+        {
+            bool itemCanRepair = _context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem?.ItemInstance.Data.CanRepair ?? false;
+
+            if (_isBuilding)
+            {
+                if (_target.CanBuildTile())
+                {
+                    _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.TileScaffold);
+                    _targetVisual.SetColor(RaftPlayerTileTargetVisual.EColor.Valid);
+                }
+                else
+                {
+                    _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.StructureScaffold);
+                    _targetVisual.SetColor(_target.CanBuildStructure() ? RaftPlayerTileTargetVisual.EColor.Valid : RaftPlayerTileTargetVisual.EColor.Invalid);
+                }
+            }
+            else if (itemCanRepair && _target.CanRepair())
+            {
+                _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.Repair);
+                _targetVisual.SetColor(RaftPlayerTileTargetVisual.EColor.Valid);
+            }
+            else
+            {
+                _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.None);
+            }
+        }
+
+        public void SetIsBuilding(bool isBuilding)
+        {
+            _isBuilding = isBuilding;
         }
     }
 }
