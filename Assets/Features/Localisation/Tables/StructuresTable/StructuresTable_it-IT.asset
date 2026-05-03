@@ -31,7 +31,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 27724425816535040
-    m_Localized: Conserva i tuoi oggetti all'interno della sua bocca
+    m_Localized: "Pu\xF2 contenere cose proprio come una conchiglia"
     m_Metadata:
       m_Items: []
   references:

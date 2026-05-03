@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb394ab87c3860f4fa32de6884a4b079, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.MetalTile
-  _entityData: {fileID: 11400000, guid: 896b2cb666797b344a112e1962770195, type: 2}
+  _entityDefinitionData: {fileID: 11400000, guid: 896b2cb666797b344a112e1962770195, type: 2}
   _entityModel: {fileID: 0}
   _rigidbody: {fileID: 504346204411109171}
   _meshRenderer: {fileID: 449122836709410669}

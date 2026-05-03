@@ -55,7 +55,7 @@ namespace FishFlingers.Environments
                 {
                     EntityId id = EntityId.WoodenTile;
 
-                    EntityData data = entityManager.GetEntityPrefab(id).EntityData;
+                    EntityDefinitionData data = entityManager.GetEntityPrefab(id).EntityDefinitionData;
 
                     int health = data.Health;
 

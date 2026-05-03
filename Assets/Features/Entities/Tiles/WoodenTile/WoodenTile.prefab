@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ce809724b21bf9419f775464c62d79f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.WoodenTile
-  _entityData: {fileID: 11400000, guid: ab01bfd23c3274e4899bd81079252d9c, type: 2}
+  _entityDefinitionData: {fileID: 11400000, guid: ab01bfd23c3274e4899bd81079252d9c, type: 2}
   _entityModel: {fileID: 0}
   _rigidbody: {fileID: 3467063576354713616}
   _meshRenderer: {fileID: 3519894131876325454}

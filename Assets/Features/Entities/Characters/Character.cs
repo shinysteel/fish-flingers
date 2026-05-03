@@ -6,7 +6,7 @@ namespace FishFlingers.Entities
 {
     public abstract class Character : NetEntity
     {
-        public CharacterData CharacterData => (CharacterData)_entityData;
+        public CharacterDefinitionData CharacterDefinitionData => (CharacterDefinitionData)_entityDefinitionData;
         public CharacterModel CharacterModel => (CharacterModel)_entityModel;
 
         [SerializeField] protected Collider _characterCollider;
@@ -95,8 +95,8 @@ namespace FishFlingers.Entities
         }
     }
 
-    public abstract class Character<T> : Character where T : CharacterData
+    public abstract class Character<T> : Character where T : CharacterDefinitionData
     {
-        public T Data => (T)_entityData;
+        public T DefinitionData => (T)_entityDefinitionData;
     }
 }

@@ -42,9 +42,9 @@ namespace FishFlingers.UI
             _context = context;
             _buildable = buildable;
 
-            _image.sprite = _buildable.EntityData.Sprite;
-            _nameText.text = _localisationManager.GetString(_buildable.EntityData.NameTerm);
-            _descriptionText.text = _localisationManager.GetString(_buildable.EntityData.DescriptionTerm);
+            _image.sprite = _buildable.DefinitionData.Sprite;
+            _nameText.text = _localisationManager.GetString(_buildable.DefinitionData.NameTerm);
+            _descriptionText.text = _localisationManager.GetString(_buildable.DefinitionData.DescriptionTerm);
 
             RefreshEntries();
         }

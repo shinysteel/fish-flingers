@@ -19,7 +19,7 @@ namespace FishFlingers.Items
 
         private ItemManagerConfig _config;
 
-        private Dictionary<ItemId, ItemData> _idDataMap = new();
+        private Dictionary<ItemId, ItemDefinitionData> _idDataMap = new();
 
         public override void Initialise(GameManagerConfig config)
         {
@@ -27,7 +27,7 @@ namespace FishFlingers.Items
 
             _config = config.ItemManagerConfig;
 
-            foreach (ItemData data in _config.ItemDataScanner.GetAssets())
+            foreach (ItemDefinitionData data in _config.ItemDataScanner.GetAssets())
             {
                 _idDataMap.Add(data.ItemId, data);
             }
@@ -35,7 +35,7 @@ namespace FishFlingers.Items
             base.Initialise(config);
         }
 
-        public ItemData GetItemData(ItemId id)
+        public ItemDefinitionData GetItemData(ItemId id)
         {
             return _idDataMap[id];
         }
@@ -73,7 +73,7 @@ namespace FishFlingers.Items
                 // Enforce max stack for each pick
                 foreach (WeightedPick<ItemId> pick in picks)
                 {
-                    ItemData data = GetItemData(pick.Value);
+                    ItemDefinitionData data = GetItemData(pick.Value);
                     int pickCount = pick.Count;
 
                     while (pickCount > 0)

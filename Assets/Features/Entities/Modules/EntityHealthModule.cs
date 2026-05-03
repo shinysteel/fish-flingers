@@ -24,7 +24,7 @@ namespace FishFlingers.Entities
             _getter = getter;
             _setter = setter;
 
-            _max = _entity.EntityData.Health;
+            _max = _entity.EntityDefinitionData.Health;
         }
 
         public void SetHealth(int health)

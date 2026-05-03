@@ -27,7 +27,7 @@ namespace FishFlingers.Entities
         private DroppedItemType _type;
         public DroppedItemType Type => _type;
 
-        public DroppedItemData Data => (DroppedItemData)_entityData;
+        public DroppedItemDefinitionData Data => (DroppedItemDefinitionData)_entityDefinitionData;
 
         public Vector3 Position => transform.position;
 

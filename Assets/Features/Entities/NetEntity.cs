@@ -14,8 +14,8 @@ namespace FishFlingers.Entities
     {
         // Start of IEntity
 
-        [SerializeField] protected EntityData _entityData;
-        public EntityData EntityData => _entityData;
+        [SerializeField] protected EntityDefinitionData _entityDefinitionData;
+        public EntityDefinitionData EntityDefinitionData => _entityDefinitionData;
 
         [SerializeField] protected EntityModel _entityModel;
         public EntityModel EntityModel => _entityModel;
@@ -59,7 +59,7 @@ namespace FishFlingers.Entities
 
         protected override void OnInitializeModules()
         {
-            _netCurrentHealth = new SyncVar<int>(_entityData.Health);
+            _netCurrentHealth = new SyncVar<int>(_entityDefinitionData.Health);
 
             _netCurrentHealth.onChangedWithOld += HandleNetCurrentHealthChanged;
 
@@ -74,7 +74,7 @@ namespace FishFlingers.Entities
 
             if (isServer)
             {
-                _healthModule.SetHealth(_entityData.Health);
+                _healthModule.SetHealth(_entityDefinitionData.Health);
             }
             
             _entityManager.RaiseNetEntitySpawned(this);

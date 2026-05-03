@@ -24,7 +24,7 @@ namespace FishFlingers.Entities
         {
             _character = character;
 
-            _settings = _character.CharacterData.CharacterPhysicsSettings;
+            _settings = _character.CharacterDefinitionData.CharacterPhysicsSettings;
         }
 
         public virtual void Tick()

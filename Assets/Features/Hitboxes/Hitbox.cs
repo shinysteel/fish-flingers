@@ -84,7 +84,7 @@ namespace FishFlingers.Hitboxes
                         continue;
                     }
 
-                    if (_data.Alliance == entity.EntityData.Alliance && _data.Alliance != EntityAlliance.Neutral)
+                    if (_data.Alliance == entity.EntityDefinitionData.Alliance && _data.Alliance != EntityAlliance.Neutral)
                     {
                         continue;
                     }

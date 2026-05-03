@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b60f2a755ade6245bc03f9471f8ab7b, type: 3}
+  m_Name: ClamChestDefinitionData
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.ClamChestData
+  _id: 201
+  _nameTerm: -423162057
+  _descriptionTerm: -402190537
+  _sprite: {fileID: 21300000, guid: d7f2a94d1af632942b788d0a0c9b4ffc, type: 3}
+  _health: 999
+  _alliance: 0
+  _dropTables: []
+  _recipe:
+    _requirements:
+    - _itemId: 1
+      _count: 3

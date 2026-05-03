@@ -31,7 +31,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 27724425816535040
-    m_Localized: "Range vos objets \xE0 l'int\xE9rieur de sa bouche"
+    m_Localized: Peut contenir des choses comme une palourde
     m_Metadata:
       m_Items: []
   references:

@@ -12,7 +12,7 @@ using FishFlingers.Hitboxes;
 
 namespace FishFlingers.Entities
 {
-    public class Shark : Character<SharkData>
+    public class Shark : Character<SharkDefinitionData>
     {
         private StateMachine<EState> _stateMachine;
 
@@ -252,7 +252,7 @@ namespace FishFlingers.Entities
                     Vector3 hitboxDirection = Utils.Math.DirectionToVector3(_shark._swimDirectionEnum);
                     Vector3 hitboxPosition = _shark._targetLines[0].AxisIndexToWorldPosition(axisIndex) + _shark._shiftDirection * Tile.Size * 0.5f + hitboxDirection;
                     Hitbox hitbox = _shark._poolManager.GetPoolable<Hitbox>(new SpawnParams() { Position = hitboxPosition, Rotation = Quaternion.LookRotation(hitboxDirection, Vector3.up) });
-                    hitbox.Initialise(_shark.Data.BiteHitboxData);
+                    hitbox.Initialise(_shark.DefinitionData.BiteHitboxData);
 
                     RemoveMarker();
                 }

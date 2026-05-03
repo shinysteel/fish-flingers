@@ -31,7 +31,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 27724425816535040
-    m_Localized: "Es bewahrt Ihre Gegenst\xE4nde in seinem Maul auf."
+    m_Localized: Kann Dinge aufbewahren wie eine Muschel.
     m_Metadata:
       m_Items: []
   references:

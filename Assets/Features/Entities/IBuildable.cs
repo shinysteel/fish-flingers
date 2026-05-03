@@ -4,11 +4,8 @@ using UnityEngine;
 
 namespace FishFlingers.Entities
 {
-    public interface IBuildable
+    public interface IBuildable : ICraftable
     {
-        EntityData EntityData { get; }
-        Recipe Recipe { get; }
-
         bool TryBuild(GameplayContext context, RaftPlayerTileTarget target);
     }
 }

@@ -24,7 +24,7 @@ namespace FishFlingers.Entities
 
             _player = player;
 
-            _settings = _player.Data.DropInventoryItemSettings;
+            _settings = _player.DefinitionData.DropInventoryItemSettings;
         }
 
         /// <summary>

@@ -28,7 +28,7 @@ namespace FishFlingers.Entities
             JsonData = jsonData;
         }
 
-        public StructureSave(Structure structure) : this(structure.Cell, structure.StructureData.Id, structure.GetJsonData())
+        public StructureSave(Structure structure) : this(structure.Cell, structure.StructureDefinitionData.Id, structure.GetJsonData())
         { }
     }
 }

@@ -30,7 +30,7 @@ namespace FishFlingers.Entities
 
             _character = character;
 
-            _settings = _character.CharacterData.CharacterDefeatSettings;
+            _settings = _character.CharacterDefinitionData.CharacterDefeatSettings;
 
             _character.HealthModule.OnChanged += HandleHealthChanged;
         }
@@ -76,7 +76,7 @@ namespace FishFlingers.Entities
                 // Simulate 1 second to have the character unblink
                 _character.CharacterModel.Animator.Update(1f);
 
-                _itemManager.SpawnDrops(_character.transform.position, _character.CharacterData.DropTables);
+                _itemManager.SpawnDrops(_character.transform.position, _character.CharacterDefinitionData.DropTables);
 
                 _entityManager.Despawn(_character);
             });

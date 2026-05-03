@@ -27,7 +27,7 @@ namespace FishFlingers.Entities
 
             _player = player;
 
-            _settings = _player.Data.RaftPlayerPhysicsSettings;
+            _settings = _player.DefinitionData.RaftPlayerPhysicsSettings;
         }
 
         public override void Tick()

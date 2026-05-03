@@ -31,7 +31,7 @@ namespace FishFlingers.Entities
 
             _player = player;
 
-            _settings = _player.Data.AttackSettings;
+            _settings = _player.DefinitionData.AttackSettings;
 
             if (_player.isOwner)
             {

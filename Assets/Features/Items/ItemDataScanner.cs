@@ -5,6 +5,6 @@ using UnityEngine;
 namespace FishFlingers.Items
 {
     [CreateAssetMenu(fileName = "ItemDataScanner", menuName = "Scanners/ItemDataScanner")]
-    public class ItemDataScanner : AssetScanner<ItemData>
+    public class ItemDataScanner : AssetScanner<ItemDefinitionData>
     { }
 }

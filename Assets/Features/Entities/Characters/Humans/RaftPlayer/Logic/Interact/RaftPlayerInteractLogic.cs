@@ -190,7 +190,7 @@ namespace FishFlingers.Entities
 
             _player = player;
 
-            _settings = _player.Data.InteractSettings;
+            _settings = _player.DefinitionData.InteractSettings;
 
             _uiStateMachine = new();
 

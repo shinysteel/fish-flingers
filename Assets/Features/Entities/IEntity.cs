@@ -10,7 +10,7 @@ namespace FishFlingers.Entities
 
         void Initialise(GameplayContext context);
 
-        EntityData EntityData { get; }
+        EntityDefinitionData EntityDefinitionData { get; }
         EntityModel EntityModel { get; }
 
         bool IsSpawned { get; }

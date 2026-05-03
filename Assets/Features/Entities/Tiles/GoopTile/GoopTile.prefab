@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 390a4e782fc5a2d4fab5744e835d0c25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.GoopTile
-  _entityData: {fileID: 11400000, guid: 7318843b90710764f97d46d8bc15de07, type: 2}
+  _entityDefinitionData: {fileID: 11400000, guid: 7318843b90710764f97d46d8bc15de07, type: 2}
   _entityModel: {fileID: 0}
   _rigidbody: {fileID: 2420220123898849964}
   _meshRenderer: {fileID: 2400998617261748978}

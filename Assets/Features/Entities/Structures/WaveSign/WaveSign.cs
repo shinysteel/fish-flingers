@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace FishFlingers.Entities
 {
-    public class WaveSign : Structure<WaveSignData>
+    public class WaveSign : Structure<WaveSignDefinitionData>
     {
     }
 }

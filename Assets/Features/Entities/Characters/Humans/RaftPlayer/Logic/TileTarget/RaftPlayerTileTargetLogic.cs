@@ -115,7 +115,7 @@ namespace FishFlingers.Entities
 
             _context = context;
 
-            _settings = _context.LocalPlayer.Data.TileTargetSettings;
+            _settings = _context.LocalPlayer.DefinitionData.TileTargetSettings;
 
             _targetVisual = Object.Instantiate(_settings.TargetVisualPrefab);
 

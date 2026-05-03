@@ -109,7 +109,7 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  _entityData: {fileID: 11400000, guid: a2868b6d48113a144b0ca8168c8792de, type: 2}
+  _entityDefinitionData: {fileID: 11400000, guid: a2868b6d48113a144b0ca8168c8792de, type: 2}
   _entityModel: {fileID: 9072423710765274325}
   _rigidbody: {fileID: 8979648408233181983}
   _characterCollider: {fileID: 5037973609124970909}

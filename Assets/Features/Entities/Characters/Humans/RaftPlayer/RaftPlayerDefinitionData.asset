@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5df523b8b266ff043afe50dbd6945af1, type: 3}
+  m_Name: RaftPlayerDefinitionData
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.RaftPlayerData
+  _id: 100
+  _nameTerm: 814387201
+  _descriptionTerm: 1347063821
+  _sprite: {fileID: 21300000, guid: 4d5437e4103caf0479f3fe3a36805b12, type: 3}
+  _health: 100
+  _alliance: 0
+  _dropTables: []
+  _canSwim: 1
+  _characterDefeatSettings: {fileID: 11400000, guid: 484c201329a59914caafd3e06dbc8ddf, type: 2}
+  _characterPhysicsSettings: {fileID: 11400000, guid: 1cb918813fdeea64ba84e4ef6eb1ffb8, type: 2}
+  _interactSettings: {fileID: 11400000, guid: da84a5b8bf687604b84d0bb4818d2391, type: 2}
+  _dropInventoryItemSettings: {fileID: 11400000, guid: b80a952aa43fdb048887a9e8804e22b3, type: 2}
+  _attackSettings: {fileID: 11400000, guid: 3b5d7d41be98a0c47a80dd66b96d5f46, type: 2}
+  _tileTargetSettings: {fileID: 11400000, guid: 327f6f69953809440baa666aa58e4a94, type: 2}

@@ -172,7 +172,7 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  _entityData: {fileID: 11400000, guid: 519a91e1e1075dd47a4ac38aed739eac, type: 2}
+  _entityDefinitionData: {fileID: 11400000, guid: 519a91e1e1075dd47a4ac38aed739eac, type: 2}
   _entityModel: {fileID: 0}
   _rigidbody: {fileID: 4451143466709783291}
   _hingeTransform: {fileID: 5235366698202538356}

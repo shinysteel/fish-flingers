@@ -20,7 +20,7 @@ using UnityEngine.UIElements;
 
 namespace FishFlingers.Entities
 {
-    public class RaftPlayer : Character<RaftPlayerData>
+    public class RaftPlayer : Character<RaftPlayerDefinitionData>
     {
         public CapsuleCollider CapsuleCollider => (CapsuleCollider)_characterCollider;
 

@@ -8,10 +8,10 @@ namespace FishFlingers.Items
     public class ItemInstance : IDeepCloneable<ItemInstance>
     {
         public string InstanceId { get; private set; }
-        public ItemData Data { get; private set; }
+        public ItemDefinitionData Data { get; private set; }
         public int Count { get; private set; }
 
-        public ItemInstance(string instanceId, ItemData data, int count)
+        public ItemInstance(string instanceId, ItemDefinitionData data, int count)
         {
             InstanceId = instanceId;
             Data = data;
@@ -70,7 +70,7 @@ namespace FishFlingers.Items
             }
 
             ItemManager itemManager = GameManager.Instance.Get<ItemManager>();
-            ItemData data = itemManager.GetItemData(ItemId);
+            ItemDefinitionData data = itemManager.GetItemData(ItemId);
 
             // Check for remaining space
             int remainingSpace = data.MaxStack - Count;
@@ -133,7 +133,7 @@ namespace FishFlingers.Items
         public void SetCount(int count)
         {
             ItemManager itemManager = GameManager.Instance.Get<ItemManager>();
-            ItemData data = itemManager.GetItemData(ItemId);
+            ItemDefinitionData data = itemManager.GetItemData(ItemId);
 
             count = Mathf.Clamp(count, 0, data.MaxStack);
             Count = count;

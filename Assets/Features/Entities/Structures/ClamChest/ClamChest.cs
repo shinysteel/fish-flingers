@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace FishFlingers.Entities
 {
-    public class ClamChest : Structure<ClamChestData>, IInteractable, IHasInventory, INetworkManagerListener
+    public class ClamChest : Structure<ClamChestDefinitionData>, IInteractable, IHasInventory, INetworkManagerListener
     {
         [SerializeField] private Transform _hingeTransform;
         [SerializeField] private Inventory _inventory;

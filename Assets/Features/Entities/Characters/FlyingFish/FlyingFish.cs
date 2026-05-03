@@ -12,7 +12,7 @@ using FishFlingers.Audio;
 
 namespace FishFlingers.Entities
 {
-    public class FlyingFish : Character<FlyingFishData>
+    public class FlyingFish : Character<FlyingFishDefinitionData>
     {
         private StateMachine<EState> _stateMachine;
 
@@ -90,7 +90,7 @@ namespace FishFlingers.Entities
                 _scoutTimer += Time.deltaTime;
 
                 // Scout for some time before attacking
-                if (_scoutTimer < _fish.Data.ScoutDuration)
+                if (_scoutTimer < _fish.DefinitionData.ScoutDuration)
                 {
                     return;
                 }
@@ -125,7 +125,7 @@ namespace FishFlingers.Entities
                 _anticipatePosition = _fish.transform.position + anticipateOffset;
 
                 // Match the launch angle
-                _anticipateRotation = Quaternion.AngleAxis(_fish.Data.LaunchAngle, _fish.transform.right) * _fish.transform.rotation;
+                _anticipateRotation = Quaternion.AngleAxis(_fish.DefinitionData.LaunchAngle, _fish.transform.right) * _fish.transform.rotation;
 
                 // Anticipate with a small duck
                 Sequence.Create()
@@ -153,14 +153,14 @@ namespace FishFlingers.Entities
                 _flyTimer += Time.deltaTime;
 
                 // Interpolate from start to end
-                float time = _flyTimer / _fish.Data.FlyDuration;
-                _fish.transform.position = Utils.Physics.GetProjectilePosition(_anticipatePosition, _landPosition, Physics.gravity.magnitude, _fish.Data.LaunchAngle, time);
+                float time = _flyTimer / _fish.DefinitionData.FlyDuration;
+                _fish.transform.position = Utils.Physics.GetProjectilePosition(_anticipatePosition, _landPosition, Physics.gravity.magnitude, _fish.DefinitionData.LaunchAngle, time);
                 _fish.transform.rotation = Quaternion.Slerp(_anticipateRotation, _landRotation, time);
 
-                if (_flyTimer > _fish.Data.FlyDuration)
+                if (_flyTimer > _fish.DefinitionData.FlyDuration)
                 {
                     Hitbox hitbox = _fish._poolManager.GetPoolable<Hitbox>(new SpawnParams() { Position = _fish._targetTile.transform.position });
-                    hitbox.Initialise(_fish.Data.ImpactHitboxData);
+                    hitbox.Initialise(_fish.DefinitionData.ImpactHitboxData);
 
                     _fish._entityManager.Despawn(_fish);
                 }

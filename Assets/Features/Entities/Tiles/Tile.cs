@@ -25,7 +25,7 @@ namespace FishFlingers.Entities
         private int _rotations;
         public int Rotations => _rotations;
         
-        public TileData Data => (TileData)_entityData;
+        public TileDefinitionData TileDefinitionData => (TileDefinitionData)_entityDefinitionData;
 
         private Structure _structure;
         public Structure Structure => _structure;
@@ -103,7 +103,7 @@ namespace FishFlingers.Entities
 
         private void PositionFixedUpdate()
         {
-            bool sink = Physics.CheckSphere(_rigidbody.position, Data.SinkSettings.Radius, Data.SinkSettings.Mask);
+            bool sink = Physics.CheckSphere(_rigidbody.position, TileDefinitionData.SinkSettings.Radius, TileDefinitionData.SinkSettings.Mask);
 
             float targetY;
 
@@ -115,13 +115,13 @@ namespace FishFlingers.Entities
             else
             {
                 // Bob up and down
-                targetY = Data.BobSettings.Amplitude * Mathf.PerlinNoise(
-                    _cell.x * Data.BobSettings.NoiseScale + Time.time * Data.BobSettings.TimeScale,
-                    _cell.y * Data.BobSettings.NoiseScale + Time.time * Data.BobSettings.TimeScale);
+                targetY = TileDefinitionData.BobSettings.Amplitude * Mathf.PerlinNoise(
+                    _cell.x * TileDefinitionData.BobSettings.NoiseScale + Time.time * TileDefinitionData.BobSettings.TimeScale,
+                    _cell.y * TileDefinitionData.BobSettings.NoiseScale + Time.time * TileDefinitionData.BobSettings.TimeScale);
             }
 
             Vector3 targetPosition = new Vector3(_rigidbody.position.x, targetY, _rigidbody.position.z);
-            _rigidbody.MovePosition(Vector3.MoveTowards(_rigidbody.position, targetPosition, Data.SinkSettings.Speed * Time.fixedDeltaTime));
+            _rigidbody.MovePosition(Vector3.MoveTowards(_rigidbody.position, targetPosition, TileDefinitionData.SinkSettings.Speed * Time.fixedDeltaTime));
         }
 
         /// <summary>

@@ -19,12 +19,12 @@ namespace FishFlingers.Entities
             
             if (_networkManager.IsServer)
             {
-                _healthModule.SetHealth(_entityData.Health);
+                _healthModule.SetHealth(_entityDefinitionData.Health);
             }
         }
 
-        [SerializeField] protected EntityData _entityData;
-        public EntityData EntityData => _entityData;
+        [SerializeField] protected EntityDefinitionData _entityDefinitionData;
+        public EntityDefinitionData EntityDefinitionData => _entityDefinitionData;
 
         [SerializeField] protected EntityModel _entityModel;
         public EntityModel EntityModel => _entityModel;

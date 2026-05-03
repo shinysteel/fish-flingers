@@ -12,7 +12,7 @@ namespace FishFlingers.Entities
         private Vector2Int _cell;
         public Vector2Int Cell => _cell;
 
-        public StructureData StructureData => (StructureData)_entityData;
+        public StructureDefinitionData StructureDefinitionData => (StructureDefinitionData)_entityDefinitionData;
 
         public virtual string GetJsonData()
         {
@@ -35,8 +35,8 @@ namespace FishFlingers.Entities
         }
     }
 
-    public abstract class Structure<T> : Structure where T : StructureData
+    public abstract class Structure<T> : Structure where T : StructureDefinitionData
     {
-        public T Data => (T)_entityData;
+        public T Data => (T)_entityDefinitionData;
     }
 }

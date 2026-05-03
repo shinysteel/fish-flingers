@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace FishFlingers.Entities
 {
-    public class Seagull : Character<SeagullData>
+    public class Seagull : Character<SeagullDefinitionData>
     {
         private StateMachine<EState> _stateMachine;
 
@@ -97,10 +97,10 @@ namespace FishFlingers.Entities
                 }
 
                 Vector3 targetDirection = (_targetPosition.Value - _seagull.transform.position).normalized;
-                Vector3 targetVelocity = targetDirection * _seagull.Data.FlySettings.Speed;
+                Vector3 targetVelocity = targetDirection * _seagull.DefinitionData.FlySettings.Speed;
                 Vector3 change = targetVelocity - _velocity;
 
-                _velocity += change * _seagull.Data.FlySettings.Acceleration * Time.deltaTime;
+                _velocity += change * _seagull.DefinitionData.FlySettings.Acceleration * Time.deltaTime;
                 _seagull.transform.position += _velocity * Time.deltaTime;
 
                 if (Vector3.Distance(_seagull._rigidbody.position, _targetPosition.Value) < 0.1f)
