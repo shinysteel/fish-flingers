@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: ItemsTable_pl-PL
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: pl-PL
+  m_SharedData: {fileID: 11400000, guid: 12dfd1feb414b9649a6dbe805c0e67eb, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1411163451392
+    m_Localized: "Drewno dryfuj\u0105ce"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1411201200128
+    m_Localized: "Drewno dryfuj\u0105ce po morzu"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1411201200129
+    m_Localized: Goop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1411201200130
+    m_Localized: "Mi\u0119siste resztki rybiego wroga"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1411205394432
+    m_Localized: "M\u0142otek"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1411205394433
+    m_Localized: "Potrafi naprawia\u0107 p\u0142ytki i budowa\u0107 konstrukcje"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1411205394434
+    m_Localized: "Wios\u0142owa\u0107"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1411205394435
+    m_Localized: "Spos\xF3b rzucania rybami"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1411205394436
+    m_Localized: Skrawek
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1411205394437
+    m_Localized: "Cenny metal, kt\xF3ry trudno tu zdoby\u0107"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

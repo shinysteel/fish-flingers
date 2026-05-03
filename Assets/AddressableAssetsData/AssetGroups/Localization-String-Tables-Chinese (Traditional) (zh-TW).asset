@@ -75,6 +75,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-zh-TW
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c5283581c28deee4a9c43fe3fc8092d0
+    m_Address: ItemsTable_zh-TW
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-zh-TW
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e711f3feece39c5438a793f7ff090859
     m_Address: EntitiesTable_zh-TW
     m_ReadOnly: 1

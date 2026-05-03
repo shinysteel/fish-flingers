@@ -41,8 +41,6 @@ namespace FishFlingers.UI
 
         public void Setup(ICreatable creatable, Action onCreatePressed)
         {
-            Log.Info($"setting up {creatable.DefinitionData.name}");
-            
             _creatable = creatable;
             _onCreatePressed = onCreatePressed;
 

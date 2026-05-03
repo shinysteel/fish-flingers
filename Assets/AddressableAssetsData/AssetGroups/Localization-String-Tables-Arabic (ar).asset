@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Localization-String-Tables-Arabic (ar)
   m_GUID: a338eafee02fa6945bc95b4e10c8457d
   m_SerializeEntries:
+  - m_GUID: 0660927165e1aa644b3bc7ace3343a84
+    m_Address: ItemsTable_ar
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ar
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2f341bba2dc31b747b7c13aaea0c3f70
     m_Address: BrowseGamesPanelTable_ar
     m_ReadOnly: 1

@@ -45,6 +45,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-en
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4520ba7aa3ecc5e459fcd0bcbccd325c
+    m_Address: ItemsTable_en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 616f0abd5cb169a40a0e4984eae5e8b3
     m_Address: FishingBagPanelTable_en
     m_ReadOnly: 1

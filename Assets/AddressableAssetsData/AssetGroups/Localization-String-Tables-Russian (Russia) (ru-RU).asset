@@ -63,6 +63,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-ru-RU
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b3a903de91c516947bcae5984900f4ea
+    m_Address: ItemsTable_ru-RU
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru-RU
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b88f77e7b06963947b773c0995bbdc69
     m_Address: BuildingKitPanelTable_ru-RU
     m_ReadOnly: 1
