@@ -10,7 +10,8 @@ namespace FishFlingers.Audio
     public enum SoundId
     {
         Jump,
-        Footstep
+        Footstep,
+        PaddleAttack
     }
 
     public class AudioManager : GameSystem<IAudioManagerListener>

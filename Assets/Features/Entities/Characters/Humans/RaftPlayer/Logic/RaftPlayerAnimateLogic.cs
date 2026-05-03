@@ -48,6 +48,7 @@ namespace FishFlingers.Entities
 
             _attackStateAnimationEvents = new StateAnimationEvents(AttackStateName, false)
             {
+                new StateAnimationEvent(0.3f, () => _audioManager.PlaySound(SoundId.PaddleAttack)),
                 new StateAnimationEvent(0.3f, () => _player.HeldInventoryItemLogic.HeldModel?.SetTrailEmitting(true)),
                 new StateAnimationEvent(0.7f, () => _player.HeldInventoryItemLogic.HeldModel?.SetTrailEmitting(false)),
             };
