@@ -261,7 +261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23137255, g: 0.18431373, b: 0.14117648, a: 1}
+  m_Color: {r: 0.4509804, g: 0.30588236, b: 0.22352941, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -414,7 +414,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6090636320031129619}
   - component: {fileID: 3941829643475028699}
-  - component: {fileID: 8558031547872929354}
   m_Layer: 5
   m_Name: ScrollRect
   m_TagString: Untagged
@@ -473,11 +472,3 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!222 &8558031547872929354
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8902864961357664368}
-  m_CullTransparentMesh: 1
