@@ -78,25 +78,7 @@ namespace FishFlingers.UI
         private void SettingsPressed()
         {
             _settingsPanelInstance.Toggle(null);
-
-            //if (_uiManager.IsLayerInUse(UILayer.Panels))
-            //{
-            //    return;
-            //}
-
-            //_ = SettingsPressedAsync();
         }
-
-        //private async Task SettingsPressedAsync()
-        //{
-        //    if (_networkManager.IsServer)
-        //    {
-        //        await _saveManager.SaveGameAsync();
-        //        _networkManager.StopServer();
-        //    }
-
-        //    _networkManager.StopClient();
-        //}
 
         private void FishingBagPressed()
         {
