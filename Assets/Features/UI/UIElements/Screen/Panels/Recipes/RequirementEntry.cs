@@ -11,7 +11,6 @@ namespace FishFlingers.UI
     public class RequirementEntry : MonoBehaviour, IPoolable
     {
         [SerializeField] private TextMeshProUGUI _text;
-        [SerializeField] private Image _image;
 
         private ItemManager _itemManager;
 
@@ -25,8 +24,6 @@ namespace FishFlingers.UI
             ItemDefinitionData itemData = _itemManager.GetItemDefinitionData(requirement.ItemId);
 
             _text.text = $"x{requirement.Count}<sprite name=\"{itemData.SpriteAssetName}\">";
-
-            _image.enabled = transform.GetSiblingIndex() % 2 != 0;
         }
 
         public void OnReturnedToPool()
