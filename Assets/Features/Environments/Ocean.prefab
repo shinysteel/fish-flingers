@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Ocean
   _boxCollider: {fileID: 6793918336966280118}
   _submergePercent: 0.5
-  _linearDrag: {x: 5, y: 4, z: 5}
+  _linearDrag: {x: 6, y: 4, z: 6}
   _angularDrag: 2.5
   _currentSpeed: 0.25
 --- !u!65 &6793918336966280118

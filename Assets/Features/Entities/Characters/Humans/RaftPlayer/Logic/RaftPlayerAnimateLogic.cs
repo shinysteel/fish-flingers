@@ -22,12 +22,13 @@ namespace FishFlingers.Entities
         private const string IsMovingBoolName = "IsMoving";
         private const string IsHoldingItemBoolName = "IsHoldingItem";
         private const string IsAttackingBoolName = "IsAttacking";
-
-        private const string MoveStateName = "Move";
-        private const string AttackStateName = "Attack";
+        private const string InWaterBoolName = "InWater";
 
         private const string AttackTriggerName = "Attack";
-        
+
+        private const string RunStateName = "Base Layer.Ground.Run";
+        private const string AttackStateName = "Attack";
+
         private enum Layer
         {
             Base,
@@ -40,7 +41,7 @@ namespace FishFlingers.Entities
 
             _player = player;
 
-            _moveStateAnimationEvents = new StateAnimationEvents(MoveStateName, true)
+            _moveStateAnimationEvents = new StateAnimationEvents(RunStateName, true)
             {
                 new StateAnimationEvent(0.1f, () => _audioManager.PlaySound(SoundId.Footstep)),
                 new StateAnimationEvent(0.6f, () => _audioManager.PlaySound(SoundId.Footstep))
@@ -61,10 +62,12 @@ namespace FishFlingers.Entities
                 bool isMoving = _player.InputLogic.MoveDirection != Vector3.zero;
                 bool isHoldingItem = _player.Hotbar.SelectedSlot.InventoryItem != null;
                 bool isAttacking = _player.AttackLogic.AttackState > RaftPlayerAttackState.None;
+                bool inWater = _player.PhysicsLogic.InWater;
 
                 _player.CharacterModel.Animator.SetBool(IsMovingBoolName, isMoving);
                 _player.CharacterModel.Animator.SetBool(IsHoldingItemBoolName, isHoldingItem);
                 _player.CharacterModel.Animator.SetBool(IsAttackingBoolName, isAttacking);
+                _player.CharacterModel.Animator.SetBool(InWaterBoolName, inWater);
             }
 
             AnimatorStateInfo info = _player.CharacterModel.Animator.GetCurrentAnimatorStateInfo(0);
