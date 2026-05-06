@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace FishFlingers.UI
 {
-    public class HotbarWidgetSlot : MonoBehaviour, ISlotView, IPoolable
+    public class HotbarWidgetSlot : MonoBehaviour, ISlotView, ITypedPoolable
     {
         [SerializeField] private SlotView _view;
 
@@ -62,7 +62,7 @@ namespace FishFlingers.UI
 
             if (_unitItemView == null)
             {
-                _unitItemView = _poolManager.GetPoolable<UnitItemView>(new SpawnParams() { Parent = transform });
+                _unitItemView = _poolManager.GetTypedPoolable<UnitItemView>(new SpawnParams() { Parent = transform });
                 RefreshItemViewSize();
             }
 
@@ -79,7 +79,7 @@ namespace FishFlingers.UI
         {
             if (_unitItemView != null)
             {
-                _poolManager.ReturnPoolable(_unitItemView);
+                _poolManager.ReturnTypedPoolable(_unitItemView);
             }
 
             _unitItemView = null;

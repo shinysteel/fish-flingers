@@ -51,13 +51,13 @@ namespace FishFlingers.Effects
         {
             if (change.operation == SyncDictionaryOperation.Added)
             {
-                DangerMarker marker = _poolManager.GetPoolable<DangerMarker>(new SpawnParams());
+                DangerMarker marker = _poolManager.GetTypedPoolable<DangerMarker>(new SpawnParams());
                 marker.Initialise(_context, change.value);
                 _markedCells.Add(change.key, marker);
             }
             else if (change.operation == SyncDictionaryOperation.Removed)
             {
-                _poolManager.ReturnPoolable(_markedCells[change.key]);
+                _poolManager.ReturnTypedPoolable(_markedCells[change.key]);
                 _markedCells.Remove(change.key);
             }
         }

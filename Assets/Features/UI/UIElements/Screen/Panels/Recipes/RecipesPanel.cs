@@ -45,7 +45,7 @@ namespace FishFlingers.UI
         {
             foreach (BlueprintEntry entry in _blueprintEntries)
             {
-                _poolManager.ReturnPoolable(entry);
+                _poolManager.ReturnTypedPoolable(entry);
             }
         }
 
@@ -54,8 +54,8 @@ namespace FishFlingers.UI
             IEnumerable<T> creatables = GetCreatables();
 
             Utils.Collections.ResizeList(_blueprintEntries, creatables.Count(),
-                createElement: () => _poolManager.GetPoolable<BlueprintEntry>(new SpawnParams() { Parent = _blueprintsScrollRect.content }),
-                removeElement: (BlueprintEntry entry) => _poolManager.ReturnPoolable(entry),
+                createElement: () => _poolManager.GetTypedPoolable<BlueprintEntry>(new SpawnParams() { Parent = _blueprintsScrollRect.content }),
+                removeElement: (BlueprintEntry entry) => _poolManager.ReturnTypedPoolable(entry),
                 processElement: processElement);
 
             void processElement(BlueprintEntry entry, int index)

@@ -136,9 +136,9 @@ namespace FishFlingers.Entities
             Entity entity = prefab as Entity;
 
             // Entity + Poolable
-            if (entity is IPoolable)
+            if (entity is ITypedPoolable)
             {
-                return (IEntity)_poolManager.GetPoolable(entity.GetType(), parameters);
+                return (IEntity)_poolManager.GetTypedPoolable(entity.GetType(), parameters);
             }
 
             // Entity
@@ -163,9 +163,9 @@ namespace FishFlingers.Entities
             Entity obj = entity as Entity;
 
             // Entity + Poolable
-            if (obj is IPoolable)
+            if (obj is ITypedPoolable)
             {
-                _poolManager.ReturnPoolable(obj);
+                _poolManager.ReturnTypedPoolable(obj);
                 return;
             }
 

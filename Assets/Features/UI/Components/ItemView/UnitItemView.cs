@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace FishFlingers.UI
 {
-    public class UnitItemView : MonoBehaviour, IPoolable
+    public class UnitItemView : MonoBehaviour, ITypedPoolable
     {
         // It's not safe to expose _view for this script's use case, so we will be routing methods through here
         [SerializeField] private ItemView _view;

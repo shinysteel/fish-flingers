@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FishFlingers.Audio
 {
-    public class SoundCue : MonoBehaviour, IPoolable
+    public class SoundCue : MonoBehaviour, ITypedPoolable
     {
         [SerializeField] private AudioSource _audioSource;
 
@@ -38,7 +38,7 @@ namespace FishFlingers.Audio
 
             if (_timer >= _audioSource.clip.length)
             {
-                _poolManager.ReturnPoolable(this);
+                _poolManager.ReturnTypedPoolable(this);
             }
         }
 

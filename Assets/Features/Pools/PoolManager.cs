@@ -20,18 +20,22 @@ namespace FishFlingers.Pools
         void OnReturnedToPool();
     }
 
+    public interface ITypedPoolable : IPoolable
+    { }
+
     public interface IPoolManagerListener
     { }
 
     public class PoolManager : GameSystem<IPoolManagerListener>
     {
         private ItemManager _itemManager;
+        private EnvironmentManager _environmentManager;
 
         private PoolManagerConfig _config;
 
-        private Dictionary<Type, IPoolable> _typeRegistry = new();
         private Dictionary<Type, IPool> _typePools = new();
-        private Dictionary<ItemId, Pool<ItemModel>> _itemModelPools = new(); 
+        private Dictionary<ItemId, Pool<ItemModel>> _itemModelPools = new();
+        private Dictionary<PropId, Pool<Prop>> _propPools = new();
 
         private Transform _container;
         
@@ -118,28 +122,23 @@ namespace FishFlingers.Pools
         public override void Initialise(GameManagerConfig config)
         {
             _itemManager = GameManager.Instance.Get<ItemManager>();
+            _environmentManager = GameManager.Instance.Get<EnvironmentManager>();
 
             _config = config.PoolManagerConfig;
 
             _container = new GameObject(ContainerName).transform;
             Object.DontDestroyOnLoad(_container.gameObject);
 
-            foreach (IPoolable poolable in _config.PoolableScanner.GetAssets())
+            foreach (ITypedPoolable typedPoolable in _config.TypedPoolableScanner.GetAssets())
             {
-                RegisterType(poolable);   
+                CreateTypedPool(typedPoolable);   
             }
             
             base.Initialise(config);
         }
 
-        private void RegisterType<T>(T prefab) where T : IPoolable
+        private void CreateTypedPool<T>(T prefab) where T : ITypedPoolable
         {
-            // Ignore ItemModels, since we pool those separately
-            if (prefab is ItemModel)
-            {
-                return;
-            }
-
             if (prefab is not Component component)
             {
                 return;
@@ -147,42 +146,37 @@ namespace FishFlingers.Pools
 
             Type type = component.GetType();
 
-            if (_typeRegistry.ContainsKey(type))
+            if (_typePools.ContainsKey(type))
             {
                 Log.Error($"The type {type} has already been registered");
                 return;
             }
 
-            _typeRegistry[type] = prefab;
+            Transform container = new GameObject($"{type.Name}s").transform;
+            container.SetParent(_container);
+
+            Type poolType = typeof(Pool<>).MakeGenericType(type);
+            _typePools[type] = (IPool)Activator.CreateInstance(poolType, prefab, container);
         }
         
         // Allows requesting runtime-known types
-        public Component GetPoolable(Type type, SpawnParams parameters)
+        public Component GetTypedPoolable(Type type, SpawnParams parameters)
         {
-            if (!_typeRegistry.TryGetValue(type, out IPoolable prefab))
+            if (!_typePools.TryGetValue(type, out IPool pool))
             {
                 Log.Error($"Tried to retrieve an unregistered poolable object with type {type}");
                 return null;
             }
 
-            if (!_typePools.ContainsKey(type))
-            {
-                Transform container = new GameObject($"{type.Name}s").transform;
-                container.SetParent(_container);
-
-                Type poolType = typeof(Pool<>).MakeGenericType(type);
-                _typePools[type] = (IPool)Activator.CreateInstance(poolType, prefab, container);
-            }
-
-            return (Component)_typePools[type].Get(parameters);
+            return (Component)pool.Get(parameters);
         }
 
-        public T GetPoolable<T>(SpawnParams parameters) where T : Component, IPoolable
+        public T GetTypedPoolable<T>(SpawnParams parameters) where T : Component, ITypedPoolable
         {
-            return (T)GetPoolable(typeof(T), parameters);
+            return (T)GetTypedPoolable(typeof(T), parameters);
         }
 
-        public void ReturnPoolable<T>(T obj) where T : Component, IPoolable
+        public void ReturnTypedPoolable<T>(T obj) where T : Component, ITypedPoolable
         {
             // Runtime types are useful here. For example, it allows returning a Tile object without knowing it's concrete type
             Type type = obj.GetType();
@@ -196,28 +190,50 @@ namespace FishFlingers.Pools
             pool.Return(obj);
         }
 
-        public ItemModel GetItemModel(ItemId id, SpawnParams parameters)
+        private T GetPoolable<T, U>(Dictionary<U, Pool<T>> pools, U id, T prefab, SpawnParams parameters)
+            where T : Component, IPoolable
+            where U : Enum
         {
-            if (!_itemModelPools.ContainsKey(id))
+            if (!pools.ContainsKey(id))
             {
                 Transform container = new GameObject($"{id.ToString()}s").transform;
                 container.SetParent(_container);
-
-                ItemDefinitionData data = _itemManager.GetItemDefinitionData(id);
-                _itemModelPools.Add(id, new Pool<ItemModel>(data.Model, container));
+                pools.Add(id, new Pool<T>(prefab, container));
             }
 
-            return (ItemModel)_itemModelPools[id].Get(parameters);
+            return (T)pools[id].Get(parameters);
         }
 
-        public void ReturnItemModel(ItemModel model)
+        private void ReturnPoolable<T, U>(T poolable, U id, Dictionary<U, Pool<T>> pools) 
+            where T : Component, IPoolable
+            where U : Enum
         {
-            if (!_itemModelPools.TryGetValue(model.ItemId, out Pool<ItemModel> pool))
+            if (!pools.TryGetValue(id, out Pool<T> pool))
             {
                 return;
             }
 
-            pool.Return(model);
+            pool.Return(poolable);
+        }
+
+        public ItemModel GetItemModel(ItemId id, SpawnParams parameters)
+        {
+            return GetPoolable(_itemModelPools, id, _itemManager.GetItemDefinitionData(id).Model, parameters);
+        }
+
+        public void ReturnItemModel(ItemModel model)
+        {
+            ReturnPoolable(model, model.ItemId, _itemModelPools);
+        }
+
+        public Prop GetProp(PropId id, SpawnParams parameters)
+        {
+            return GetPoolable(_propPools, id, _environmentManager.GetPropPrefab(id), parameters);
+        }
+
+        public void ReturnProp(Prop prop)
+        {
+            ReturnPoolable(prop, prop.Id, _propPools);
         }
     }
 }

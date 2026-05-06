@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace FishFlingers.UI
 {
-    public class LobbyEntry : MonoBehaviour, IPoolable
+    public class LobbyEntry : MonoBehaviour, ITypedPoolable
     {
         [SerializeField] private Button _button;
         [SerializeField] private TextMeshProUGUI _nameText;

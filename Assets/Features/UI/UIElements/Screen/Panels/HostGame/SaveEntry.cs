@@ -8,7 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SaveEntry : MonoBehaviour, IPoolable
+public class SaveEntry : MonoBehaviour, ITypedPoolable
 {
     [SerializeField] private Button _button;
     [SerializeField] private Image _thumbnailImage;

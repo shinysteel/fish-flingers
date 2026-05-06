@@ -15,7 +15,7 @@ using ShinyOwl.Common;
 
 namespace FishFlingers.UI
 {
-    public class BlueprintEntry : MonoBehaviour, IPoolable
+    public class BlueprintEntry : MonoBehaviour, ITypedPoolable
     {
         [SerializeField] private Image _image;
         [SerializeField] private TextMeshProUGUI _nameText;
@@ -55,8 +55,8 @@ namespace FishFlingers.UI
         private void RefreshEntries()
         {
             Utils.Collections.ResizeList(_requirementEntries, _creatable.Recipe.Requirements.Length,
-                createElement: () => _poolManager.GetPoolable<RequirementEntry>(new SpawnParams() { Parent = _requirementEntriesContainer }),
-                removeElement: (RequirementEntry entry) => _poolManager.ReturnPoolable(entry),
+                createElement: () => _poolManager.GetTypedPoolable<RequirementEntry>(new SpawnParams() { Parent = _requirementEntriesContainer }),
+                removeElement: (RequirementEntry entry) => _poolManager.ReturnTypedPoolable(entry),
                 processElement: (RequirementEntry entry, int index) => entry.Setup(_creatable.Recipe.Requirements[index]));
         }
 
@@ -69,7 +69,7 @@ namespace FishFlingers.UI
         { 
             foreach (RequirementEntry entry in _requirementEntries)
             {
-                _poolManager.ReturnPoolable(entry);
+                _poolManager.ReturnTypedPoolable(entry);
             }
 
             _requirementEntries.Clear();

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace FishFlingers.Entities
 {
-    public abstract class Entity : MonoBehaviour, IEntity, IPoolable
+    public abstract class Entity : MonoBehaviour, IEntity, ITypedPoolable
     {
         // Start of IEntity
 

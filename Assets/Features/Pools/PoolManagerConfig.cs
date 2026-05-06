@@ -8,8 +8,8 @@ namespace FishFlingers.Pools
     [CreateAssetMenu(fileName = "PoolManagerConfig", menuName = "Configs/Managers/PoolManagerConfig")]
     public class PoolManagerConfig : ScriptableObject
     {
-        [SerializeField] private PoolableScanner _poolableScanner;
+        [SerializeField] private TypedPoolableScanner _typedPoolableScanner;
 
-        public PoolableScanner PoolableScanner => _poolableScanner;
+        public TypedPoolableScanner TypedPoolableScanner => _typedPoolableScanner;
     }
 }

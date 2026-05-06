@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace FishFlingers.UI
 {
     // Ambigious with FishFlingers.Inventories.InventorySlot, so we use the View suffix
-    public class InventorySlotView : MonoBehaviour, ISlotView, IPoolable
+    public class InventorySlotView : MonoBehaviour, ISlotView, ITypedPoolable
     {
         [SerializeField] private SlotView _view;
 

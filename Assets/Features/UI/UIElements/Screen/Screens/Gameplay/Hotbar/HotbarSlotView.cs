@@ -22,7 +22,7 @@ namespace FishFlingers.UI
             {
                 if (_unitItemView == null)
                 {
-                    _unitItemView = _poolManager.GetPoolable<UnitItemView>(new SpawnParams() { Parent = transform });
+                    _unitItemView = _poolManager.GetTypedPoolable<UnitItemView>(new SpawnParams() { Parent = transform });
                     _unitItemView.SetSlotSize(_rectTransform.sizeDelta);
                 }
 
@@ -32,7 +32,7 @@ namespace FishFlingers.UI
             {
                 if (_unitItemView != null)
                 {
-                    _poolManager.ReturnPoolable(_unitItemView);
+                    _poolManager.ReturnTypedPoolable(_unitItemView);
                     _unitItemView = null;
                 }
             }

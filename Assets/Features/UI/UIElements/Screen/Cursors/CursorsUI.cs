@@ -69,8 +69,8 @@ namespace FishFlingers.UI
         private void SyncCursors()
         {
             Utils.Collections.ResizeList(_cursors, _context.Players.Count,
-                createElement: () => _poolManager.GetPoolable<Cursor>(new SpawnParams() { Parent = transform }),
-                removeElement: (Cursor cursor) => _poolManager.ReturnPoolable(cursor),
+                createElement: () => _poolManager.GetTypedPoolable<Cursor>(new SpawnParams() { Parent = transform }),
+                removeElement: (Cursor cursor) => _poolManager.ReturnTypedPoolable(cursor),
                 processElement: (Cursor cursor, int index) => cursor.SetOwner(_context.Players[index]));
         }
 

@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e918a9184c017064dbd30a87c819c46b, type: 3}
   m_Name: PoolManagerConfig
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Pools.PoolManagerConfig
-  _poolableScanner: {fileID: 11400000, guid: 63c74bb77e39c20438a470697b86fdf2, type: 2}
+  _typedPoolableScanner: {fileID: 11400000, guid: 63c74bb77e39c20438a470697b86fdf2, type: 2}

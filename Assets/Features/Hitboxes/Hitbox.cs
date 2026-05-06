@@ -14,7 +14,7 @@ namespace FishFlingers.Hitboxes
         Sphere
     }
 
-    public class Hitbox : MonoBehaviour, IPoolable
+    public class Hitbox : MonoBehaviour, ITypedPoolable
     {
         private PoolManager _poolManager;
         private HitboxManager _hitboxManager;
@@ -47,7 +47,7 @@ namespace FishFlingers.Hitboxes
 
             if (_timer >= _data.HitboxDuration)
             {
-                _poolManager.ReturnPoolable(this);
+                _poolManager.ReturnTypedPoolable(this);
             }
         }
 

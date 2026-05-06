@@ -7,7 +7,7 @@ using ShinyOwl.Common;
 
 namespace FishFlingers.UI
 {
-    public class InventoryItemView : MonoBehaviour, IPoolable
+    public class InventoryItemView : MonoBehaviour, ITypedPoolable
     {
         // Composition instead of inheritance so that prefab variants play nicely
         [SerializeField] private ItemView _view;

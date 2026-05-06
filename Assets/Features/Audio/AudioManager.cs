@@ -38,7 +38,7 @@ namespace FishFlingers.Audio
 
         public void PlaySound(SoundId id)
         {
-            SoundCue cue = _poolManager.GetPoolable<SoundCue>(new SpawnParams());
+            SoundCue cue = _poolManager.GetTypedPoolable<SoundCue>(new SpawnParams());
             cue.Initialise(_idDataMap[id]);
         }
     }

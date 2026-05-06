@@ -14,7 +14,7 @@ using UnityEngine.UI;
 
 namespace FishFlingers.UI
 {
-    public class Cursor : MonoBehaviour, IPoolable
+    public class Cursor : MonoBehaviour, ITypedPoolable
     {
         [SerializeField] private RectTransform _rectTransform;
         [SerializeField] private GameObject _visualsGameObject;

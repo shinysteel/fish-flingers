@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace FishFlingers.Effects
 {
-    public class DangerMarker : MonoBehaviour, IPoolable
+    public class DangerMarker : MonoBehaviour, ITypedPoolable
     {
         [SerializeField] private Transform _visualTransform;
         [SerializeField] private MeshRenderer _meshRenderer;
