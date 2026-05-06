@@ -89,6 +89,11 @@ namespace FishFlingers.Hitboxes
                         continue;
                     }
 
+                    if (entity.LifecycleModule.InGracePeriod)
+                    {
+                        return;
+                    }
+
                     // Hit the entity
                     entity.HealthModule.ChangeHealth(-_data.Damage);
 

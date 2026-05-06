@@ -14,11 +14,15 @@ namespace FishFlingers.Entities
 
         private CharacterRagdollLogic _ragdollLogic;
         protected CharacterPhysicsLogic _physicsLogic;
-        protected CharacterDefeatLogic _defeatLogic;
         protected CharacterStunLogic _stunLogic;
 
         public CharacterRagdollLogic RagdollLogic => _ragdollLogic;
         public CharacterPhysicsLogic PhysicsLogic => _physicsLogic;
+
+        protected override EntityDefeatModule CreateDefeatModule()
+        {
+            return new CharacterDefeatModule(this);
+        }
 
         protected override void OnSpawned()
         {
@@ -26,8 +30,6 @@ namespace FishFlingers.Entities
 
             // Some characters setup their own inherited logic script
             _physicsLogic ??= new CharacterPhysicsLogic(this);
-
-            _defeatLogic = new CharacterDefeatLogic(this);
 
             _stunLogic = new CharacterStunLogic();
 
@@ -56,31 +58,32 @@ namespace FishFlingers.Entities
             }
         }
 
-        protected virtual void Update()
+        protected override void Update()
         {
-            if (!isFullySpawned)
-            {
-                return;
-            }
+            base.Update();
 
             if (!isOwner)
             {
                 return;
             }
+
+            if (!isFullySpawned)
+            {
+                return;
+            }
             
-            _defeatLogic.Tick();
             _physicsLogic.Tick();
             _stunLogic.Tick();
         }
 
         protected virtual void FixedUpdate()
         {
-            if (!isFullySpawned)
+            if (!isOwner)
             {
                 return;
             }
 
-            if (!isOwner)
+            if (!isFullySpawned)
             {
                 return;
             }

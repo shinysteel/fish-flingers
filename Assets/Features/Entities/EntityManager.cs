@@ -160,20 +160,23 @@ namespace FishFlingers.Entities
                 return;
             }
 
+            Entity obj = entity as Entity;
+
+            // Entity + Poolable
+            if (obj is IPoolable)
+            {
+                _poolManager.ReturnPoolable(obj);
+                return;
+            }
+
             // Entity
-            if (entity is Entity obj)
+            if (obj != null)
             {
                 Object.Destroy(obj.gameObject);
                 return;
             }
 
             Log.Error($"The top-level class of {entity} is unknown, and so it couldn't be despawned");
-        }
-
-        public void Despawn<T>(T entity) where T : Entity, IPoolable
-        {
-            // Entity + Poolable
-            _poolManager.ReturnPoolable(entity);
         }
 
         // Since NetEntity lifecycle is controlled by Purrnet, we need to manually raise these events

@@ -12,10 +12,14 @@ namespace FishFlingers.Entities
         [SerializeField] protected int _health = 1;
         [SerializeField] private EntityAlliance _alliance;
         [SerializeField] private DropTable[] _dropTables;
+        [SerializeField] private EntityDefeatSettings _entityDefeatSettings;
+        [SerializeField] private EntityLifecycleSettings _entityLifecycleSettings;
 
         public EntityId Id => _id;
         public int Health => _health;
         public EntityAlliance Alliance => _alliance;
         public DropTable[] DropTables => _dropTables;
+        public EntityDefeatSettings EntityDefeatSettings => _entityDefeatSettings;
+        public EntityLifecycleSettings EntityLifecycleSettings => _entityLifecycleSettings;
     }
 }

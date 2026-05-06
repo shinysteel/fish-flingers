@@ -12,14 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 886f3bf16237d25499b5cd04227d2154, type: 3}
   m_Name: DroppedItemDefinitionData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.DroppedItemData
-  _id: 2
   _nameTerm: -1941270485
   _descriptionTerm: -1999990735
   _sprite: {fileID: 21300000, guid: 613c7c555dab2ab468e3c294e10b1aeb, type: 3}
+  _id: 2
   _health: 1
   _alliance: 0
   _dropTables: []
-  _dropOrientations:
+  _entityDefeatSettings: {fileID: 11400000, guid: 4d6268f574805274586387a8befa046c, type: 2}
+  _entityLifecycleSettings: {fileID: 11400000, guid: 6a93d339f0cea4e4f98636516b21a396, type: 2}
+  _modelOrientations:
   - _positions:
     - {x: 0, y: 0, z: 0}
   - _positions:

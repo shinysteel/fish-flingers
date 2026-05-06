@@ -15,8 +15,8 @@ namespace FishFlingers.Entities
     [CreateAssetMenu(fileName = "DroppedItemDefinitionData", menuName = "Data/Entities/DroppedItemDefinitionData")]
     public class DroppedItemDefinitionData : EntityDefinitionData
     {
-        [SerializeField] private DropOrientation[] _dropOrientations;
+        [SerializeField] private DropOrientation[] _modelOrientations;
 
-        public DropOrientation[] DropOrientations => _dropOrientations;
+        public DropOrientation[] ModelOrientations => _modelOrientations;
     }
 }

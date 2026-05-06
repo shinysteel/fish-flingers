@@ -204,13 +204,13 @@ namespace FishFlingers.Environments
                 return;
             }
 
+            // Structures and tiles handle despawning themselves, we just need to remove them from collections
             if (tile.Structure != null)
             {
-                _entityManager.Despawn(tile.Structure);
+                tile.Structure.HealthModule.SetHealth(0);
             }
-                
-            // Return to pool
-            _entityManager.Despawn(tile);
+
+            tile.SetHealth(0);
 
             _tiles.Remove(cell);
 

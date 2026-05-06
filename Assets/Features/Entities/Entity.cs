@@ -38,6 +38,12 @@ namespace FishFlingers.Entities
 
         public EntityHealthModule HealthModule => _healthModule;
 
+        protected EntityDefeatModule _defeatModule;
+        public EntityDefeatModule DefeatModule => _defeatModule;
+
+        private EntityLifecycleModule _lifecycleModule;
+        public EntityLifecycleModule LifecycleModule => _lifecycleModule;
+
         public Transform Transform => transform;
 
         [SerializeField] protected Rigidbody _rigidbody;
@@ -78,11 +84,25 @@ namespace FishFlingers.Entities
             _healthModule.RaiseChanged(previous, _currentHealth);
         }
 
+        protected virtual void Update()
+        {
+            if (!_isSpawned)
+            {
+                return;
+            }
+
+            _defeatModule.Tick();
+        }
+
         public virtual void OnTakenFromPool()
         {
             _healthModule = new EntityHealthModule(this,
                 getter: () => _currentHealth,
                 setter: HealthModuleSetter);
+
+            _defeatModule ??= new EntityDefeatModule(this);
+
+            _lifecycleModule = new EntityLifecycleModule(this);
 
             _isSpawned = true;
 

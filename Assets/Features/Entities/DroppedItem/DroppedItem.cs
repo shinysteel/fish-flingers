@@ -72,11 +72,13 @@ namespace FishFlingers.Entities
             Utils.Collections.ResizeList(_itemModels, count,
                 createElement: () => _poolManager.GetItemModel(netItemInstance.ItemId, new SpawnParams() { Parent = transform }),
                 removeElement: (ItemModel model) => _poolManager.ReturnItemModel(model),
-                processElement: (ItemModel model, int index) => model.transform.localPosition = Data.DropOrientations[count - 1].Positions[index]);
+                processElement: (ItemModel model, int index) => model.transform.localPosition = Data.ModelOrientations[count - 1].Positions[index]);
         }
         
-        private void Update()
+        protected override void Update()
         {
+            base.Update();
+            
             // It seems calling Rpcs is unsafe before isFullySpawned is true, given there's errors if the despawn condition is immediately true on spawn
             if (isOwner && isFullySpawned)
             {

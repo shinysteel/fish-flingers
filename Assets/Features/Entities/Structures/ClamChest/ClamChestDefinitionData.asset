@@ -12,13 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b60f2a755ade6245bc03f9471f8ab7b, type: 3}
   m_Name: ClamChestDefinitionData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.ClamChestData
-  _id: 201
   _nameTerm: -423162057
   _descriptionTerm: -402190537
   _sprite: {fileID: 21300000, guid: d7f2a94d1af632942b788d0a0c9b4ffc, type: 3}
+  _id: 201
   _health: 999
   _alliance: 0
-  _dropTables: []
+  _dropTables:
+  - {fileID: 11400000, guid: ff7c584d74daaef499f14edac37ffe10, type: 2}
+  _entityDefeatSettings: {fileID: 11400000, guid: 4d6268f574805274586387a8befa046c, type: 2}
+  _entityLifecycleSettings: {fileID: 11400000, guid: 6a93d339f0cea4e4f98636516b21a396, type: 2}
   _recipe:
     _requirements:
     - _itemId: 1

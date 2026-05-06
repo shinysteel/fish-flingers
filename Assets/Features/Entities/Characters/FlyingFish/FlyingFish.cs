@@ -189,7 +189,7 @@ namespace FishFlingers.Entities
 
             if (isServer)
             {
-                _defeatLogic.OnDefeated += HandleDefeated;
+                _defeatModule.OnDefeated += HandleDefeated;
 
                 _stateMachine.ChangeState(EState.Scout);
             }
@@ -201,7 +201,7 @@ namespace FishFlingers.Entities
             {
                 Cleanup();
 
-                _defeatLogic.OnDefeated -= HandleDefeated;
+                _defeatModule.OnDefeated -= HandleDefeated;
             }
 
             base.OnDespawned();

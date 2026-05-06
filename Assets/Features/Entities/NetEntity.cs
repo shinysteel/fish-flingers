@@ -28,6 +28,12 @@ namespace FishFlingers.Entities
 
         public EntityHealthModule HealthModule => _healthModule;
 
+        protected EntityDefeatModule _defeatModule;
+        public EntityDefeatModule DefeatModule => _defeatModule;
+
+        private EntityLifecycleModule _lifecycleModule;
+        public EntityLifecycleModule LifecycleModule => _lifecycleModule;
+
         public Transform Transform => transform;
 
         [SerializeField] protected Rigidbody _rigidbody;
@@ -66,6 +72,15 @@ namespace FishFlingers.Entities
             _healthModule = new EntityHealthModule(this,
                 getter: () => _netCurrentHealth.value,
                 setter: SetHealthRpc);
+
+            _defeatModule = CreateDefeatModule();
+
+            _lifecycleModule = new EntityLifecycleModule(this);   
+        }
+
+        protected virtual EntityDefeatModule CreateDefeatModule()
+        {
+            return new EntityDefeatModule(this);
         }
 
         protected override void OnSpawned()
@@ -91,6 +106,21 @@ namespace FishFlingers.Entities
             _context = null;
 
             _healthModule = null;
+        }
+
+        protected virtual void Update()
+        {
+            if (!isOwner)
+            {   
+                return;
+            }
+
+            if (!IsSpawned)
+            {
+                return;
+            }
+
+            _defeatModule.Tick();
         }
 
         [ServerRpc]
