@@ -97,6 +97,8 @@ namespace FishFlingers.Hitboxes
                     // Hit the entity
                     entity.HealthModule.ChangeHealth(-_data.Damage);
 
+                    entity.EffectsModule.AnimateHurt();
+
                     Vector3 forceDirection = (entity.Transform.position - transform.position).normalized;
                     entity.AddForce(forceDirection * _data.KnockbackForceStrength);
 

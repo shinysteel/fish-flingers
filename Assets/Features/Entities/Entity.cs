@@ -35,14 +35,14 @@ namespace FishFlingers.Entities
         protected int _currentHealth;
 
         protected EntityHealthModule _healthModule;
+        protected EntityDefeatModule _defeatModule;
+        private EntityLifecycleModule _lifecycleModule;
+        private EntityEffectsModule _effectsModule;
 
         public EntityHealthModule HealthModule => _healthModule;
-
-        protected EntityDefeatModule _defeatModule;
         public EntityDefeatModule DefeatModule => _defeatModule;
-
-        private EntityLifecycleModule _lifecycleModule;
         public EntityLifecycleModule LifecycleModule => _lifecycleModule;
+        public EntityEffectsModule EffectsModule => _effectsModule;
 
         public Transform Transform => transform;
 
@@ -104,6 +104,8 @@ namespace FishFlingers.Entities
 
             _lifecycleModule = new EntityLifecycleModule(this);
 
+            _effectsModule ??= new EntityEffectsModule(this);
+
             _isSpawned = true;
 
             _entityManager.RaiseNetEntitySpawned(this);
@@ -120,6 +122,7 @@ namespace FishFlingers.Entities
             _healthModule = null;
             _defeatModule = null;
             _lifecycleModule = null;
+            _effectsModule = null;
         }
     }
 }

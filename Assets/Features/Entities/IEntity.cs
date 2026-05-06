@@ -18,6 +18,7 @@ namespace FishFlingers.Entities
         EntityHealthModule HealthModule { get; }
         EntityDefeatModule DefeatModule { get; }
         EntityLifecycleModule LifecycleModule { get; }
+        EntityEffectsModule EffectsModule { get; }
 
         Transform Transform { get; }
         Rigidbody Rigidbody { get; }

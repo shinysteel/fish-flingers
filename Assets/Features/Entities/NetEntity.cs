@@ -25,14 +25,14 @@ namespace FishFlingers.Entities
         private SyncVar<int> _netCurrentHealth;
 
         protected EntityHealthModule _healthModule;
+        protected EntityDefeatModule _defeatModule;
+        protected EntityLifecycleModule _lifecycleModule;
+        protected EntityEffectsModule _effectsModule;
 
         public EntityHealthModule HealthModule => _healthModule;
-
-        protected EntityDefeatModule _defeatModule;
         public EntityDefeatModule DefeatModule => _defeatModule;
-
-        private EntityLifecycleModule _lifecycleModule;
         public EntityLifecycleModule LifecycleModule => _lifecycleModule;
+        public EntityEffectsModule EffectsModule => _effectsModule;
 
         public Transform Transform => transform;
 
@@ -75,7 +75,9 @@ namespace FishFlingers.Entities
 
             _defeatModule = CreateDefeatModule();
 
-            _lifecycleModule = new EntityLifecycleModule(this);   
+            _lifecycleModule = new EntityLifecycleModule(this);
+
+            _effectsModule ??= new EntityEffectsModule(this);
         }
 
         protected virtual EntityDefeatModule CreateDefeatModule()
@@ -106,6 +108,9 @@ namespace FishFlingers.Entities
             _context = null;
 
             _healthModule = null;
+            _defeatModule = null;
+            _lifecycleModule = null;
+            _effectsModule = null;
         }
 
         protected virtual void Update()

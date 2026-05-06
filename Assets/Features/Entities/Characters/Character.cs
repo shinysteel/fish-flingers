@@ -19,6 +19,13 @@ namespace FishFlingers.Entities
         public CharacterRagdollLogic RagdollLogic => _ragdollLogic;
         public CharacterPhysicsLogic PhysicsLogic => _physicsLogic;
 
+        protected override void OnInitializeModules()
+        {
+            _effectsModule = new CharacterEffectsModule(this);
+
+            base.OnInitializeModules();
+        }
+
         protected override EntityDefeatModule CreateDefeatModule()
         {
             return new CharacterDefeatModule(this);
@@ -33,29 +40,7 @@ namespace FishFlingers.Entities
 
             _stunLogic = new CharacterStunLogic();
 
-            _healthModule.OnChanged += HandleHealthChanged;
-
             base.OnSpawned();
-        }
-
-        protected override void OnDespawned()
-        {
-            _healthModule.OnChanged -= HandleHealthChanged;
-
-            base.OnDespawned();
-        }
-
-        private void HandleHealthChanged(int previous, int current)
-        {
-            if (current == 0)
-            {
-                return;
-            }
-
-            if (current < previous)
-            {
-                CharacterModel.AnimateHurt();
-            }
         }
 
         protected override void Update()
