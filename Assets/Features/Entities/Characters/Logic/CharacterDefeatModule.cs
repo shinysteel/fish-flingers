@@ -60,7 +60,7 @@ namespace FishFlingers.Entities
             base.Defeat();
         }
 
-        public override void Despawn()
+        protected override void Despawn()
         {
             Character.RagdollLogic.SetEnabled(false);
 

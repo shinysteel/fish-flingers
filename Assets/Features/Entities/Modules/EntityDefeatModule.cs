@@ -83,7 +83,7 @@ namespace FishFlingers.Entities
             OnDefeated?.Invoke();
         }
 
-        public virtual void Despawn()
+        protected virtual void Despawn()
         {
             if (_networkManager.IsServer)
             {

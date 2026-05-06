@@ -23,7 +23,7 @@ namespace FishFlingers.Entities
 
         }
 
-        public override void Despawn()
+        protected override void Despawn()
         {
             
         }
