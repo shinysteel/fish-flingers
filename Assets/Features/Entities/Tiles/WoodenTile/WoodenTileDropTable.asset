@@ -15,5 +15,5 @@ MonoBehaviour:
   _entries:
   - _value: 1
     _weight: 1
-    _minCount: 1
+    _minCount: 0
     _maxCount: 1
