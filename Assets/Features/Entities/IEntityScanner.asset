@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c31aea20858efb649bfc76d868632256, type: 3}
+  m_Name: IEntityScanner
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.IEntityScanner
+  _folder: {fileID: 102900000, guid: 00000000000000001000000000000000, type: 3}
+  _assets:
+  - {fileID: 2298525168326564, guid: 2ec11c15af7d61d4bbb753596db5f604, type: 3}
+  - {fileID: 5801466337614864078, guid: 376b91b1dc84a854b9823d399a2cf16c, type: 3}
+  - {fileID: 7203403020361580477, guid: 3a289d142bf1ffe4e9934264ef072cac, type: 3}
+  - {fileID: -4403548261498651266, guid: 42d59979e5484f3438b01c31cca380d4, type: 3}
+  - {fileID: 3275629116385961243, guid: 4c1365dbe752c184ab2ce8dfa6df3ed0, type: 3}
+  - {fileID: 1738408072592514382, guid: 617cb5a1fe2e3d449986e7c9d9d1b3b5, type: 3}
+  - {fileID: 5924475881420196102, guid: 683635062207e3f46841b4cffad69551, type: 3}
+  - {fileID: 3375244540226938909, guid: 8ad68e0ce03173649a0cd33ced492cbf, type: 3}
+  - {fileID: 6056385187022425606, guid: 9d1a7e0ed9c651d488ca320d436631b1, type: 3}
+  - {fileID: 4245544028085337723, guid: ccc0fd640ced7c849bd4b06db7d840fb, type: 3}

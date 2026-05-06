@@ -61,9 +61,9 @@ namespace FishFlingers.Entities
             _config = config.EntityManagerConfig;
 
             // Entity prefab map
-            foreach (EntityMapping mapping in _config.EntityMappings)
+            foreach (IEntity prefab in _config.IEntityScanner.GetAssets())
             {
-                _idPrefabMap.Add(mapping.Id, mapping.Prefab.GetComponent<IEntity>());
+                _idPrefabMap.Add(prefab.EntityDefinitionData.Id, prefab);
             }
 
             // Type entities map
@@ -74,14 +74,8 @@ namespace FishFlingers.Entities
                 _typePrefabsMap.Add(type, new());
             }
 
-            foreach (EntityMapping mapping in _config.EntityMappings)
+            foreach (IEntity entity in _idPrefabMap.Values)
             {
-                if (!mapping.Prefab.TryGetComponent(out IEntity entity))
-                {
-                    Log.Error($"Could not find a component that implements IEntity on {mapping.Prefab}");
-                    continue;
-                }
-
                 foreach (Type type in types)
                 {
                     if (type.IsAssignableFrom(entity.GetType()))

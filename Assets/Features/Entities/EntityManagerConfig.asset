@@ -12,24 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71657a18074db9740af4781b5d25f453, type: 3}
   m_Name: EntityManagerConfig
   m_EditorClassIdentifier: Assembly-CSharp::EntityManagerConfig
-  _entityMappings:
-  - _id: 1
-    _prefab: {fileID: 7255031440559130908, guid: 2ec11c15af7d61d4bbb753596db5f604, type: 3}
-  - _id: 2
-    _prefab: {fileID: 8440922441693139872, guid: 9d1a7e0ed9c651d488ca320d436631b1, type: 3}
-  - _id: 3
-    _prefab: {fileID: 4883760146399034499, guid: 8ad68e0ce03173649a0cd33ced492cbf, type: 3}
-  - _id: 4
-    _prefab: {fileID: 460405706589029815, guid: 617cb5a1fe2e3d449986e7c9d9d1b3b5, type: 3}
-  - _id: 100
-    _prefab: {fileID: 5307296185850863616, guid: 3a289d142bf1ffe4e9934264ef072cac, type: 3}
-  - _id: 101
-    _prefab: {fileID: 7018228068551982755, guid: 376b91b1dc84a854b9823d399a2cf16c, type: 3}
-  - _id: 102
-    _prefab: {fileID: 6075104437459802324, guid: 683635062207e3f46841b4cffad69551, type: 3}
-  - _id: 103
-    _prefab: {fileID: 4154372124058542255, guid: ccc0fd640ced7c849bd4b06db7d840fb, type: 3}
-  - _id: 200
-    _prefab: {fileID: 8779905312493133191, guid: 4c1365dbe752c184ab2ce8dfa6df3ed0, type: 3}
-  - _id: 201
-    _prefab: {fileID: 8718114211947278667, guid: 42d59979e5484f3438b01c31cca380d4, type: 3}
+  _iEntityScanner: {fileID: 11400000, guid: 03b51085fa8aacb4bbae1aa296c6e8eb, type: 2}

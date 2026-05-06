@@ -129,7 +129,7 @@ namespace FishFlingers.Pools
             _container = new GameObject(ContainerName).transform;
             Object.DontDestroyOnLoad(_container.gameObject);
 
-            foreach (ITypedPoolable typedPoolable in _config.TypedPoolableScanner.GetAssets())
+            foreach (ITypedPoolable typedPoolable in _config.ITypedPoolableScanner.GetAssets())
             {
                 CreateTypedPool(typedPoolable);   
             }
