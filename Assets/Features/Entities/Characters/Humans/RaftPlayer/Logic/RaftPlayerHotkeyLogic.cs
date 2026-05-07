@@ -8,6 +8,7 @@ using ShinyOwl.Common;
 using ShinyOwl.Common.Utils;
 using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 using NetworkManager = FishFlingers.Networking.NetworkManager;
 
 namespace FishFlingers.Entities
@@ -43,6 +44,11 @@ namespace FishFlingers.Entities
         /// </summary>
         public void Tick()
         {
+            if (!_context.LocalPlayer.isOwner)
+            {
+                return;
+            }
+
             if (_context.LocalPlayer.InputLogic.LeftClick)
             {
                 LeftClick();

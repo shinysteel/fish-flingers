@@ -12,20 +12,13 @@ namespace FishFlingers.Entities
         { 
             
         }
-        
-        public override void DefeatTick()
-        {
-            
-        }
 
         public override void Defeat()
         {
-
         }
 
         protected override void Despawn()
         {
-            
         }
     }
 }

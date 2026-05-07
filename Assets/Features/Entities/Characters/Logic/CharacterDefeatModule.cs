@@ -20,7 +20,7 @@ namespace FishFlingers.Entities
         public CharacterDefeatModule(Character character) : base(character)
         { }
 
-        public override void DefeatTick()
+        public override void Tick()
         {
             if (!_isDefeated)
             {
@@ -44,7 +44,8 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            _defeatTween = Tween.Scale(Character.transform, endValue: Vector3.zero, duration: CharacterDefeatSettings.TweenDuration, ease: Ease.InBack).OnComplete(Despawn);
+            _defeatTween = Tween.Scale(Character.transform, endValue: Vector3.zero, duration: CharacterDefeatSettings.TweenDuration, ease: Ease.InBack)
+                .OnComplete(Despawn);
         }
 
         public override void Defeat()
@@ -57,7 +58,9 @@ namespace FishFlingers.Entities
 
             Character.RagdollLogic.SetEnabled(true);
 
-            base.Defeat();
+            _isDefeated = true;
+
+            RaiseDefeated();
         }
 
         protected override void Despawn()

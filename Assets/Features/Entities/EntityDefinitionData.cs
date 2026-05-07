@@ -5,8 +5,7 @@ using UnityEngine;
 
 namespace FishFlingers.Entities
 {
-    [CreateAssetMenu(fileName = "EntityDefinitionData", menuName = "Data/Entities/EntityDefinitionData")]
-    public class EntityDefinitionData : DefinitionData
+    public abstract class EntityDefinitionData : DefinitionData
     {
         [SerializeField] protected EntityId _id;
         [SerializeField] protected int _health = 1;

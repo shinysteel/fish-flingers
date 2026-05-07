@@ -41,6 +41,7 @@ namespace FishFlingers.Entities
         private RaftPlayerAttackLogic _attackLogic;
         private RaftPlayerHotkeyLogic _hotkeyLogic;
         private RaftPlayerTileTargetLogic _tileTargetLogic;
+        private RaftPlayerDrownLogic _drownLogic;
 
         public RaftPlayerInputLogic InputLogic => _inputLogic;
         public RaftPlayerInteractLogic InteractLogic => _interactLogic;
@@ -105,6 +106,7 @@ namespace FishFlingers.Entities
             _heldInventoryItemLogic = new RaftPlayerHeldInventoryItemLogic(this);
             _openNetBehaviourLogic = new RaftPlayerOpenNetBehaviourLogic(_netOpenNetworkId);
             _attackLogic = new RaftPlayerAttackLogic(this);
+            _drownLogic = new RaftPlayerDrownLogic(this);
 
             if (isOwner)
             {
@@ -144,19 +146,17 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            _animateLogic.Tick();
-
-            if (!isOwner)
-            {
-                return;
-            }
-
             _inputLogic.Tick();
             _interactLogic.Tick();
+            _animateLogic.Tick();
             _hotkeyLogic.Tick();
             _tileTargetLogic.Tick();
+            _drownLogic.Tick();
 
-            SyncVarsUpdate();
+            if (isOwner)
+            {
+                SyncVarsUpdate();
+            }
         }
 
         private void SyncVarsUpdate()

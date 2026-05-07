@@ -8,7 +8,8 @@ namespace FishFlingers.Entities
 
         private float _spawnTime;
 
-        public bool InGracePeriod => Time.time - _spawnTime < _settings.GracePeriod;
+        public float TimeAlive => Time.time - _spawnTime;
+        public bool InGracePeriod => TimeAlive < _settings.GracePeriod;
 
         public EntityLifecycleModule(IEntity entity)
         {

@@ -60,6 +60,11 @@ namespace FishFlingers.Entities
 
         public void Tick()
         {
+            if (!_player.isOwner)
+            {
+                return;
+            }
+
             _mouse = Input.mousePosition;
             _scroll = Input.GetAxis(MouseScrollWheelAxis);
             _shift = Input.GetKey(KeyCode.LeftShift);

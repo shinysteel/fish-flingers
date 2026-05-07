@@ -45,21 +45,8 @@ namespace FishFlingers.Entities
             }
         }
 
-        public void Tick()
-        {
-            DefeatTick();
-        }
-
-        public virtual void DefeatTick()
-        {
-            if (!_isDefeated)
-            {
-                return;
-            }
-
-            // Entities are local, so they need to be 'despawned' on all clients
-            Despawn();
-        }
+        public virtual void Tick()
+        { }
 
         private void HandleHealthChanged(int previous, int current)
         {
@@ -76,11 +63,19 @@ namespace FishFlingers.Entities
             Defeat();
         }
 
+        protected void RaiseDefeated()
+        {
+            OnDefeated?.Invoke();
+        }
+
         public virtual void Defeat()
         {
             _isDefeated = true;
 
-            OnDefeated?.Invoke();
+            RaiseDefeated();
+
+            // Entities are local, so they need to be 'despawned' on all clients
+            Despawn();
         }
 
         protected virtual void Despawn()

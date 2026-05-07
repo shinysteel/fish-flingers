@@ -18,20 +18,23 @@ namespace FishFlingers.Entities
     {
         None        = 0   ,
         
-        GoopTile    = 1   ,
-        WoodenTile  = 2   ,
-        MetalTile   = 3   ,
-        DroppedItem = 4   ,
+        DroppedItem = 1   ,
         
         // Characters
         RaftPlayer  = 100 ,
         FlyingFish  = 101 ,
         Shark       = 102 ,
         Seagull     = 103 ,
+        Drowning    = 104 ,
+
+        // Tiles
+        GoopTile    = 201 ,
+        WoodenTile  = 202 ,
+        MetalTile   = 203 ,
 
         // Structures
-        WaveSign    = 200 ,
-        ClamChest   = 201 ,
+        WaveSign    = 300 ,
+        ClamChest   = 301 ,
     }
 
     public interface IEntityManagerListener

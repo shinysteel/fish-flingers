@@ -151,6 +151,11 @@ namespace FishFlingers.Entities
 
         public void Tick()
         {
+            if (!_context.LocalPlayer.isOwner)
+            {
+                return;
+            }
+
             DetermineTargetTick();
             TransformVisualTick();
         }

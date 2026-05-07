@@ -113,6 +113,8 @@ namespace FishFlingers.Entities
 
         public virtual void OnReturnedToPool()
         {
+            Log.Info($"{name} returned to pool");
+
             _entityManager?.RaiseNetEntityDespawned(this);
 
             _isSpawned = false;

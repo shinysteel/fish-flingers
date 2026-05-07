@@ -5,7 +5,6 @@ using ShinyOwl.Common;
 
 namespace FishFlingers.Entities
 {
-    [CreateAssetMenu(fileName = "StructureData", menuName = "Data/Entities/Structures/StructureData")]
     public abstract class StructureDefinitionData : EntityDefinitionData, IBuildable
     {
         [SerializeField] private Recipe _recipe;

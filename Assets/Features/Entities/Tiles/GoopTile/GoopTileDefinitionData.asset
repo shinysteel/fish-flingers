@@ -15,7 +15,7 @@ MonoBehaviour:
   _nameTerm: -1642263902
   _descriptionTerm: -1596126558
   _sprite: {fileID: 21300000, guid: dea6ff58c8e5b6e4687ca9e6847f76e2, type: 3}
-  _id: 1
+  _id: 201
   _health: 2
   _isDamageable: 1
   _alliance: 0

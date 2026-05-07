@@ -64,6 +64,12 @@ namespace FishFlingers.Entities
 
         private void HandleHealthChanged(int previous, int current)
         {
+            // Since this event can also trigger a despawn, we need to account for that
+            if (!IsSpawned)
+            {
+                return;
+            }
+
             _material.color = Color.Lerp(Color.white, _damagedColor, 1f - ((float)_healthModule.Current / _healthModule.Max));
         }
 

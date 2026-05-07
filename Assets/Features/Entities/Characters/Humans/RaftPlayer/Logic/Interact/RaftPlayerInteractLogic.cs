@@ -231,6 +231,11 @@ namespace FishFlingers.Entities
 
         public void Tick()
         {
+            if (!_player.isOwner)
+            {
+                return;
+            }
+
             _targetInteractable = FindTarget();
 
             _uiStateMachine.Tick();

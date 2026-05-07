@@ -91,11 +91,17 @@ namespace FishFlingers.Hitboxes
 
                     if (entity.LifecycleModule.InGracePeriod)
                     {
-                        return;
+                        continue;
                     }
 
                     // Hit the entity
                     entity.HealthModule.ChangeHealth(-_data.Damage);
+
+                    // Damaging an entity can cause it to despawn
+                    if (!entity.IsSpawned)
+                    {
+                        continue;
+                    }
 
                     entity.EffectsModule.AnimateHurt();
 
