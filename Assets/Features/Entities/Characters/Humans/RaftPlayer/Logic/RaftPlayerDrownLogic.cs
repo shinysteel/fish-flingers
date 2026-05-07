@@ -27,7 +27,7 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            if (_player.PhysicsLogic.InWater)
+            if (_player.RaftPlayerPhysicsModule.InWater)
             {
                 if (_drowning == null)
                 {

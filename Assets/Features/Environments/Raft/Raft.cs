@@ -9,6 +9,7 @@ using PurrNet;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -207,7 +208,7 @@ namespace FishFlingers.Environments
             // Structures and tiles handle despawning themselves, we just need to remove them from collections
             if (tile.Structure != null)
             {
-                tile.Structure.DefeatModule.Defeat();
+                tile.Structure.EntityDefeatModule.Defeat();
             }
 
             tile.SetHealth(0);

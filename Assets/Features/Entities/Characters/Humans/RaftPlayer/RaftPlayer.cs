@@ -43,6 +43,8 @@ namespace FishFlingers.Entities
         private RaftPlayerTileTargetLogic _tileTargetLogic;
         private RaftPlayerDrownLogic _drownLogic;
 
+        public RaftPlayerPhysicsModule RaftPlayerPhysicsModule => (RaftPlayerPhysicsModule)_entityPhysicsModule;
+
         public RaftPlayerInputLogic InputLogic => _inputLogic;
         public RaftPlayerInteractLogic InteractLogic => _interactLogic;
         public RaftPlayerGrabbedInventoryItemLogic GrabbedInventoryItemLogic => _grabbedInventoryItemLogic;
@@ -90,6 +92,13 @@ namespace FishFlingers.Entities
             }
         }
 
+        protected override void OnInitializeModules()
+        {
+            _entityPhysicsModule = new RaftPlayerPhysicsModule(this, _rigidbody);
+
+            base.OnInitializeModules();
+        }
+
         protected override EntityDefeatModule CreateDefeatModule()
         {
             return new RaftPlayerDefeatModule(this);
@@ -98,7 +107,6 @@ namespace FishFlingers.Entities
         protected override void OnSpawned()
         {
             _inputLogic = new RaftPlayerInputLogic(this);
-            _physicsLogic = new RaftPlayerPhysicsLogic(this);
             _interactLogic = new RaftPlayerInteractLogic(this);
             _grabbedInventoryItemLogic = new RaftPlayerGrabbedInventoryItemLogic(this, _netGrabbedInventoryItem);
             _dropInventoryItemLogic = new RaftPlayerDropInventoryItemLogic(this);

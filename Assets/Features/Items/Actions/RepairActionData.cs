@@ -13,7 +13,7 @@ namespace FishFlingers.Items
                 return;
             }
 
-            context.LocalPlayer.TileTargetLogic.Target.Tile.HealthModule.ChangeHealth(1);
+            context.LocalPlayer.TileTargetLogic.Target.Tile.EntityHealthModule.ChangeHealth(1);
         }
     }
 }

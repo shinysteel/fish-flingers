@@ -9,60 +9,36 @@ namespace FishFlingers.Entities
 {
     public abstract class Entity : MonoBehaviour, IEntity, ITypedPoolable
     {
-        // Start of IEntity
-
-        protected GameplayContext _context;
-
-        public virtual void Initialise(GameplayContext context)
-        {
-            _context = context;
-            
-            if (_networkManager.IsServer)
-            {
-                _healthModule.SetHealth(_entityDefinitionData.Health);
-            }
-        }
-
         [SerializeField] protected EntityDefinitionData _entityDefinitionData;
-        public EntityDefinitionData EntityDefinitionData => _entityDefinitionData;
-
         [SerializeField] protected EntityModel _entityModel;
-        public EntityModel EntityModel => _entityModel;
-
-        private bool _isSpawned;
-        public bool IsSpawned => _isSpawned;
-
-        protected int _currentHealth;
-
-        protected EntityHealthModule _healthModule;
-        protected EntityDefeatModule _defeatModule;
-        private EntityLifecycleModule _lifecycleModule;
-        private EntityEffectsModule _effectsModule;
-
-        public EntityHealthModule HealthModule => _healthModule;
-        public EntityDefeatModule DefeatModule => _defeatModule;
-        public EntityLifecycleModule LifecycleModule => _lifecycleModule;
-        public EntityEffectsModule EffectsModule => _effectsModule;
-
-        public Transform Transform => transform;
-
-        [SerializeField] protected Rigidbody _rigidbody;
-        public Rigidbody Rigidbody => _rigidbody;
-
-        void IEntity.AddForce(Vector3 force)
-        {
-            _rigidbody.AddForce(force);
-        }
-
-        void IEntity.AddTorque(Vector3 torque)
-        {
-            _rigidbody.AddTorque(torque);
-        }
-
-        // End of IEntity
+        [SerializeField] private Rigidbody _rigidbody;
 
         protected NetworkManager _networkManager;
         protected EntityManager _entityManager;
+
+        protected GameplayContext _context;
+
+        protected bool _isSpawned;
+        protected int _currentHealth;
+
+        protected EntityHealthModule _entityHealthModule;
+        protected EntityDefeatModule _entityDefeatModule;
+        protected EntityLifecycleModule _entityLifecycleModule;
+        protected EntityEffectsModule _entityEffectsModule;
+        protected EntityPhysicsModule _entityPhysicsModule;
+
+        public EntityDefinitionData EntityDefinitionData => _entityDefinitionData;
+        public EntityModel EntityModel => _entityModel;
+
+        public bool IsSpawned => _isSpawned;
+        public bool IsOwner => true;
+        public Transform Transform => transform;
+
+        public EntityHealthModule EntityHealthModule => _entityHealthModule;
+        public EntityDefeatModule EntityDefeatModule => _entityDefeatModule;
+        public EntityLifecycleModule EntityLifecycleModule => _entityLifecycleModule;
+        public EntityEffectsModule EntityEffectsModule => _entityEffectsModule;
+        public EntityPhysicsModule EntityPhysicsModule => _entityPhysicsModule;
 
         protected virtual void Awake()
         {
@@ -70,7 +46,69 @@ namespace FishFlingers.Entities
             _entityManager = GameManager.Instance.Get<EntityManager>();
         }
 
-        protected abstract void HealthModuleSetter(int health);
+        public virtual void Initialise(GameplayContext context)
+        {
+            _context = context;
+
+            if (_networkManager.IsServer)
+            {
+                _entityHealthModule.SetHealth(_entityDefinitionData.Health);
+            }
+        }
+
+        protected virtual void Update()
+        {
+            if (!_isSpawned)
+            {
+                return;
+            }
+
+            _entityDefeatModule.Tick();
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            if (!_isSpawned)
+            {
+                return;
+            }
+
+            _entityPhysicsModule.FixedTick();
+        }
+
+        public virtual void OnTakenFromPool()
+        {
+            _entityHealthModule = new EntityHealthModule(this,
+                getter: () => _currentHealth,
+                setter: HealthModuleSetter);
+
+            _entityDefeatModule ??= new EntityDefeatModule(this);
+
+            _entityLifecycleModule = new EntityLifecycleModule(this);
+
+            _entityEffectsModule ??= new EntityEffectsModule(this);
+
+            _entityPhysicsModule ??= new EntityPhysicsModule(this, _rigidbody);
+
+            _isSpawned = true;
+
+            _entityManager.RaiseNetEntitySpawned(this);
+        }
+
+        public virtual void OnReturnedToPool()
+        {
+            _entityManager?.RaiseNetEntityDespawned(this);
+
+            _isSpawned = false;
+
+            _context = null;
+
+            _entityHealthModule = null;
+            _entityDefeatModule = null;
+            _entityLifecycleModule = null;
+            _entityEffectsModule = null;
+            _entityPhysicsModule = null;
+        }
 
         public void SetHealth(int health)
         {
@@ -81,50 +119,9 @@ namespace FishFlingers.Entities
 
             int previous = _currentHealth;
             _currentHealth = health;
-            _healthModule.RaiseChanged(previous, _currentHealth);
+            _entityHealthModule.RaiseChanged(previous, _currentHealth);
         }
 
-        protected virtual void Update()
-        {
-            if (!_isSpawned)
-            {
-                return;
-            }
-
-            _defeatModule.Tick();
-        }
-
-        public virtual void OnTakenFromPool()
-        {
-            _healthModule = new EntityHealthModule(this,
-                getter: () => _currentHealth,
-                setter: HealthModuleSetter);
-
-            _defeatModule ??= new EntityDefeatModule(this);
-
-            _lifecycleModule = new EntityLifecycleModule(this);
-
-            _effectsModule ??= new EntityEffectsModule(this);
-
-            _isSpawned = true;
-
-            _entityManager.RaiseNetEntitySpawned(this);
-        }
-
-        public virtual void OnReturnedToPool()
-        {
-            Log.Info($"{name} returned to pool");
-
-            _entityManager?.RaiseNetEntityDespawned(this);
-
-            _isSpawned = false;
-
-            _context = null;
-
-            _healthModule = null;
-            _defeatModule = null;
-            _lifecycleModule = null;
-            _effectsModule = null;
-        }
+        protected abstract void HealthModuleSetter(int health);
     }
 }

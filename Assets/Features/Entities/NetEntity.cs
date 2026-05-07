@@ -12,56 +12,30 @@ namespace FishFlingers.Entities
     // but for now they aren't used in any other state
     public abstract class NetEntity : GameplayBehaviour, IEntity
     {
-        // Start of IEntity
-
         [SerializeField] protected EntityDefinitionData _entityDefinitionData;
-        public EntityDefinitionData EntityDefinitionData => _entityDefinitionData;
-
         [SerializeField] protected EntityModel _entityModel;
-        public EntityModel EntityModel => _entityModel;
-
-        public new bool IsSpawned => isSpawned;
+        [SerializeField] protected Rigidbody _rigidbody;
 
         private SyncVar<int> _netCurrentHealth;
 
-        protected EntityHealthModule _healthModule;
-        protected EntityDefeatModule _defeatModule;
-        protected EntityLifecycleModule _lifecycleModule;
-        protected EntityEffectsModule _effectsModule;
+        protected EntityHealthModule _entityHealthModule;
+        protected EntityDefeatModule _entityDefeatModule;
+        protected EntityLifecycleModule _entityLifecycleModule;
+        protected EntityEffectsModule _entityEffectsModule;
+        protected EntityPhysicsModule _entityPhysicsModule;
 
-        public EntityHealthModule HealthModule => _healthModule;
-        public EntityDefeatModule DefeatModule => _defeatModule;
-        public EntityLifecycleModule LifecycleModule => _lifecycleModule;
-        public EntityEffectsModule EffectsModule => _effectsModule;
+        public EntityDefinitionData EntityDefinitionData => _entityDefinitionData;
+        public EntityModel EntityModel => _entityModel;
 
+        public new bool IsSpawned => isSpawned;
+        public bool IsOwner => isOwner;
         public Transform Transform => transform;
 
-        [SerializeField] protected Rigidbody _rigidbody;
-        public Rigidbody Rigidbody => _rigidbody;
-
-        void IEntity.AddForce(Vector3 force)
-        {
-            AddForceRpc(force);
-        }
-
-        void IEntity.AddTorque(Vector3 torque)
-        {
-            AddTorqueRpc(torque);
-        }
-
-        [ServerRpc]
-        private void AddForceRpc(Vector3 force)
-        {
-            _rigidbody.AddForce(force, ForceMode.Impulse);
-        }
-
-        [ServerRpc]
-        private void AddTorqueRpc(Vector3 torque)
-        {
-            _rigidbody.AddTorque(torque, ForceMode.Impulse);
-        }
-
-        // End of IEntity
+        public EntityHealthModule EntityHealthModule => _entityHealthModule;
+        public EntityDefeatModule EntityDefeatModule => _entityDefeatModule;
+        public EntityLifecycleModule EntityLifecycleModule => _entityLifecycleModule;
+        public EntityEffectsModule EntityEffectsModule => _entityEffectsModule;
+        public EntityPhysicsModule EntityPhysicsModule => _entityPhysicsModule;
 
         protected override void OnInitializeModules()
         {
@@ -69,15 +43,17 @@ namespace FishFlingers.Entities
 
             _netCurrentHealth.onChangedWithOld += HandleNetCurrentHealthChanged;
 
-            _healthModule = new EntityHealthModule(this,
+            _entityHealthModule = new EntityHealthModule(this,
                 getter: () => _netCurrentHealth.value,
                 setter: SetHealthRpc);
 
-            _defeatModule = CreateDefeatModule();
+            _entityDefeatModule = CreateDefeatModule();
 
-            _lifecycleModule = new EntityLifecycleModule(this);
+            _entityLifecycleModule = new EntityLifecycleModule(this);
 
-            _effectsModule ??= new EntityEffectsModule(this);
+            _entityEffectsModule ??= new EntityEffectsModule(this);
+
+            _entityPhysicsModule ??= new EntityPhysicsModule(this, _rigidbody);
         }
 
         protected virtual EntityDefeatModule CreateDefeatModule()
@@ -91,7 +67,7 @@ namespace FishFlingers.Entities
 
             if (isServer)
             {
-                _healthModule.SetHealth(_entityDefinitionData.Health);
+                _entityHealthModule.SetHealth(_entityDefinitionData.Health);
             }
             
             _entityManager.RaiseNetEntitySpawned(this);
@@ -107,25 +83,37 @@ namespace FishFlingers.Entities
 
             _context = null;
 
-            _healthModule = null;
-            _defeatModule = null;
-            _lifecycleModule = null;
-            _effectsModule = null;
+            _entityHealthModule = null;
+            _entityDefeatModule = null;
+            _entityLifecycleModule = null;
+            _entityEffectsModule = null;
+            _entityPhysicsModule = null;
         }
 
         protected virtual void Update()
         {
-            if (!isOwner)
-            {   
-                return;
-            }
-
-            if (!IsSpawned)
+            if (!isFullySpawned)
             {
                 return;
             }
 
-            _defeatModule.Tick();
+            _entityDefeatModule.Tick();
+            _entityPhysicsModule.Tick();
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            if (!isFullySpawned)
+            {
+                return;
+            }
+
+            _entityPhysicsModule.FixedTick();
+        }
+
+        private void HandleNetCurrentHealthChanged(int previous, int current)
+        {
+            _entityHealthModule.RaiseChanged(previous, current);
         }
 
         [ServerRpc]
@@ -134,9 +122,16 @@ namespace FishFlingers.Entities
             _netCurrentHealth.value = health;
         }
 
-        private void HandleNetCurrentHealthChanged(int previous, int current)
+        [ServerRpc]
+        public void AddForceRpc(Vector3 force)
         {
-            _healthModule.RaiseChanged(previous, current);
+            _entityPhysicsModule.Rigidbody.AddForce(force, ForceMode.Impulse);
+        }
+
+        [ServerRpc]
+        public void AddTorqueRpc(Vector3 torque)
+        {
+            _entityPhysicsModule.Rigidbody.AddTorque(torque, ForceMode.Impulse);
         }
     }
 }

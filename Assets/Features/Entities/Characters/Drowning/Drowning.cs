@@ -19,11 +19,11 @@ namespace FishFlingers.Entities
             direction.y = 0f;
             direction.Normalize();
 
-            direction = Quaternion.AngleAxis(Random.Range(-25f, 25f), Vector3.up) * direction;
+            direction = Quaternion.AngleAxis(Random.Range(-30f, 30f), Vector3.up) * direction;
 
             Vector3 position = _target.transform.position;
             position.y = 0f;
-            position += direction * 5f;
+            position += direction * 3f;
             
             transform.position = position;
         }
@@ -41,7 +41,7 @@ namespace FishFlingers.Entities
             direction.y = 0f;
             direction.Normalize();
 
-            float speed = 0.5f + _lifecycleModule.TimeAlive * 0.5f;
+            float speed = 0.5f + _entityLifecycleModule.TimeAlive * 0.5f;
 
             transform.position += direction * speed * Time.deltaTime;
         }

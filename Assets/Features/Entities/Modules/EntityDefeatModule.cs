@@ -34,14 +34,14 @@ namespace FishFlingers.Entities
 
             _entityDefeatSettings = _entity.EntityDefinitionData.EntityDefeatSettings;
 
-            _entity.HealthModule.OnChanged += HandleHealthChanged;
+            _entity.EntityHealthModule.OnChanged += HandleHealthChanged;
         }
 
         ~EntityDefeatModule()
         {
             if (_entity != null)
             {
-                _entity.HealthModule.OnChanged -= HandleHealthChanged;
+                _entity.EntityHealthModule.OnChanged -= HandleHealthChanged;
             }
         }
 

@@ -89,13 +89,13 @@ namespace FishFlingers.Hitboxes
                         continue;
                     }
 
-                    if (entity.LifecycleModule.InGracePeriod)
+                    if (entity.EntityLifecycleModule.InGracePeriod)
                     {
                         continue;
                     }
 
                     // Hit the entity
-                    entity.HealthModule.ChangeHealth(-_data.Damage);
+                    entity.EntityHealthModule.ChangeHealth(-_data.Damage);
 
                     // Damaging an entity can cause it to despawn
                     if (!entity.IsSpawned)
@@ -103,16 +103,16 @@ namespace FishFlingers.Hitboxes
                         continue;
                     }
 
-                    entity.EffectsModule.AnimateHurt();
+                    entity.EntityEffectsModule.AnimateHurt();
 
                     Vector3 forceDirection = (entity.Transform.position - transform.position).normalized;
-                    entity.AddForce(forceDirection * _data.KnockbackForceStrength);
+                    entity.EntityPhysicsModule.Rigidbody.AddForce(forceDirection * _data.KnockbackForceStrength, ForceMode.Impulse);
 
                     Vector3 torqueDirection = forceDirection;
                     torqueDirection.y = 0f;
                     torqueDirection.Normalize();
                     torqueDirection = -Vector3.Cross(torqueDirection, Vector3.up);
-                    entity.AddTorque(torqueDirection * _data.KnockbackTorqueStrength);
+                    entity.EntityPhysicsModule.Rigidbody.AddTorque(torqueDirection * _data.KnockbackTorqueStrength, ForceMode.Impulse);
 
                     if (entity is Character character)
                     {

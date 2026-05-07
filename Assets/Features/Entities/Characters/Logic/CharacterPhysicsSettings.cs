@@ -4,7 +4,7 @@ using UnityEngine;
 namespace FishFlingers.Entities
 {
     [CreateAssetMenu(fileName = "CharacterPhysicsSettings", menuName = "Settings/Entities/CharacterPhysicsSettings")]
-    public class CharacterPhysicsSettings : ScriptableObject
+    public class CharacterPhysicsSettings : EntityPhysicsSettings
     {
         [SerializeField] private CharacterContactDetectionSettings _contactDetection;
 

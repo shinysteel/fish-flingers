@@ -40,8 +40,8 @@ namespace FishFlingers.Entities
             player.transform.position = Position;
             player.transform.rotation = Rotation;
 
-            player.Rigidbody.linearVelocity = Vector3.zero;
-            player.Rigidbody.angularVelocity = Vector3.zero;
+            player.RaftPlayerPhysicsModule.Rigidbody.linearVelocity = Vector3.zero;
+            player.RaftPlayerPhysicsModule.Rigidbody.angularVelocity = Vector3.zero;
 
             await Inventory.LoadToAsync(player.Inventory);
 

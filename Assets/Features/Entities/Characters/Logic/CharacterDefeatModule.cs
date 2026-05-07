@@ -22,6 +22,11 @@ namespace FishFlingers.Entities
 
         public override void Tick()
         {
+            if (!Character.isOwner)
+            {
+                return;
+            }
+
             if (!_isDefeated)
             {
                 return;
@@ -32,7 +37,7 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            if (!Character.PhysicsLogic.IsGrounded && !Character.PhysicsLogic.InWater)
+            if (!Character.CharacterPhysicsModule.IsGrounded && !Character.CharacterPhysicsModule.InWater)
             {
                 return;
             }

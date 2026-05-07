@@ -14,16 +14,13 @@ namespace FishFlingers.Entities
         EntityModel EntityModel { get; }
 
         bool IsSpawned { get; }
-
-        EntityHealthModule HealthModule { get; }
-        EntityDefeatModule DefeatModule { get; }
-        EntityLifecycleModule LifecycleModule { get; }
-        EntityEffectsModule EffectsModule { get; }
-
+        bool IsOwner { get; }
         Transform Transform { get; }
-        Rigidbody Rigidbody { get; }
 
-        void AddForce(Vector3 force);
-        void AddTorque(Vector3 torque);
+        EntityHealthModule EntityHealthModule { get; }
+        EntityDefeatModule EntityDefeatModule { get; }
+        EntityLifecycleModule EntityLifecycleModule { get; }
+        EntityEffectsModule EntityEffectsModule { get; }
+        EntityPhysicsModule EntityPhysicsModule { get; }
     }
 }

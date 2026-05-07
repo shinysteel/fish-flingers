@@ -62,7 +62,7 @@ namespace FishFlingers.Entities
                 bool isMoving = _player.InputLogic.MoveDirection != Vector3.zero;
                 bool isHoldingItem = _player.Hotbar.SelectedSlot.InventoryItem != null;
                 bool isAttacking = _player.AttackLogic.AttackState > RaftPlayerAttackState.None;
-                bool inWater = _player.PhysicsLogic.InWater;
+                bool inWater = _player.RaftPlayerPhysicsModule.InWater;
 
                 _player.CharacterModel.Animator.SetBool(IsMovingBoolName, isMoving);
                 _player.CharacterModel.Animator.SetBool(IsHoldingItemBoolName, isHoldingItem);

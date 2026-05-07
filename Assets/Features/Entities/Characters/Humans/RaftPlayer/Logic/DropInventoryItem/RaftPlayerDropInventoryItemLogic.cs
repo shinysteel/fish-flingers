@@ -51,7 +51,7 @@ namespace FishFlingers.Entities
             item.Set(netItemInstance, DroppedItemType.Default);
 
             // Launch the item
-            item.Rigidbody.AddForce(direction * strength, ForceMode.Impulse);
+            item.EntityPhysicsModule.Rigidbody.AddForce(direction * strength, ForceMode.Impulse);
         }
     }
 }

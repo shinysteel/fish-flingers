@@ -86,7 +86,7 @@ namespace FishFlingers.Entities
 
         public bool CanRepair()
         {
-            return _tile?.HealthModule.Current < _tile?.HealthModule.Max;
+            return _tile?.EntityHealthModule.Current < _tile?.EntityHealthModule.Max;
         }
     }
 
@@ -183,7 +183,7 @@ namespace FishFlingers.Entities
 
                 // Find the closest tile that can be repaired
                 Tile closestTile = tiles
-                    .Where(tile => tile.HealthModule.Current < tile.HealthModule.Max && Vector3.Distance(tile.transform.position, _context.LocalPlayer.transform.position) < RepairRange)
+                    .Where(tile => tile.EntityHealthModule.Current < tile.EntityHealthModule.Max && Vector3.Distance(tile.transform.position, _context.LocalPlayer.transform.position) < RepairRange)
                     .OrderBy(tile => Vector3.Distance(tile.transform.position, _context.LocalPlayer.transform.position))
                     .FirstOrDefault();
 

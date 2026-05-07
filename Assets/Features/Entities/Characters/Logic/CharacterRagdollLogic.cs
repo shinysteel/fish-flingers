@@ -1,4 +1,5 @@
 using PrimeTween;
+using ShinyOwl.Common;
 using UnityEngine;
 
 namespace FishFlingers.Entities
@@ -13,14 +14,14 @@ namespace FishFlingers.Entities
         {
             _character = character;
 
-            _isKinematic = _character.Rigidbody.isKinematic;
-            _rigidbodyConstraints = _character.Rigidbody.constraints;
+            _isKinematic = _character.EntityPhysicsModule.Rigidbody.isKinematic;
+            _rigidbodyConstraints = _character.EntityPhysicsModule.Rigidbody.constraints;
         }
 
         public void SetEnabled(bool enabled)
         {
-            _character.Rigidbody.isKinematic = _isKinematic && !enabled;
-            _character.Rigidbody.constraints = enabled ? RigidbodyConstraints.None : _rigidbodyConstraints;
+            _character.EntityPhysicsModule.Rigidbody.isKinematic = _isKinematic && !enabled;
+            _character.EntityPhysicsModule.Rigidbody.constraints = enabled ? RigidbodyConstraints.None : _rigidbodyConstraints;
 
             _character.CharacterModel.Animator.enabled = !enabled;
 

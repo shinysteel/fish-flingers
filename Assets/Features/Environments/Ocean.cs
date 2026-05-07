@@ -34,20 +34,20 @@ namespace FishFlingers.Environments
         private void BuoyancyOnTriggerStay(Collider collider, IEntity entity)
         { 
             // More mass = more force
-            float strength = entity.Rigidbody.mass * Physics.gravity.magnitude / _submergePercent;
+            float strength = entity.EntityPhysicsModule.Rigidbody.mass * Physics.gravity.magnitude / _submergePercent;
             float factor = GetBuoyancyFactor(collider);
             Vector3 force = Vector3.up * strength * factor;
 
             // Push the entity upwards to simulate floating
-            entity.Rigidbody.AddForce(force);
+            entity.EntityPhysicsModule.Rigidbody.AddForce(force);
         }
 
         // Current is referring to motion in water
         private void CurrentOnTriggerStay(IEntity entity)
         {
-            if (!entity.Rigidbody.isKinematic)
+            if (!entity.EntityPhysicsModule.Rigidbody.isKinematic)
             {
-                entity.Rigidbody.MovePosition(entity.Rigidbody.position + Vector3.back * _currentSpeed * Time.fixedDeltaTime);
+                entity.EntityPhysicsModule.Rigidbody.MovePosition(entity.EntityPhysicsModule.Rigidbody.position + Vector3.back * _currentSpeed * Time.fixedDeltaTime);
             }
         }
 
@@ -55,8 +55,8 @@ namespace FishFlingers.Environments
         {
             // Drag stops the entity being 'launched' from buoyancy, and
             // slows it down on the XZ plane
-            entity.Rigidbody.AddForce(Vector3.Scale(-entity.Rigidbody.linearVelocity, _linearDrag), ForceMode.Acceleration);
-            entity.Rigidbody.AddTorque(-entity.Rigidbody.angularVelocity * _angularDrag, ForceMode.Acceleration);
+            entity.EntityPhysicsModule.Rigidbody.AddForce(Vector3.Scale(-entity.EntityPhysicsModule.Rigidbody.linearVelocity, _linearDrag), ForceMode.Acceleration);
+            entity.EntityPhysicsModule.Rigidbody.AddTorque(-entity.EntityPhysicsModule.Rigidbody.angularVelocity * _angularDrag, ForceMode.Acceleration);
         }
     }
 }

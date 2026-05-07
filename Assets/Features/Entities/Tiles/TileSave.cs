@@ -29,7 +29,7 @@ namespace FishFlingers.Entities
             Rotations = rotations;
         }
 
-        public TileSave(Tile tile) : this(tile.Cell, tile.TileDefinitionData.Id, tile.HealthModule.Current, tile.Rotations)
+        public TileSave(Tile tile) : this(tile.Cell, tile.TileDefinitionData.Id, tile.EntityHealthModule.Current, tile.Rotations)
         { }
     }
 }

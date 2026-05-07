@@ -54,7 +54,7 @@ namespace FishFlingers.Entities
         private void Lunge()
         {
             _attackState = RaftPlayerAttackState.Impact;
-            _player.Rigidbody.AddForce(_player.transform.forward * _settings.LungeStrength, ForceMode.Impulse);
+            _player.EntityPhysicsModule.Rigidbody.AddForce(_player.transform.forward * _settings.LungeStrength, ForceMode.Impulse);
             Hitbox hitbox = _poolManager.GetTypedPoolable<Hitbox>(new SpawnParams() { Position = _player.transform.position, Rotation = _player.transform.rotation });
             hitbox.Initialise(_settings.HitboxData);
         }

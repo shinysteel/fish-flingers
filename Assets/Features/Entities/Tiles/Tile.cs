@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ShinyOwl.Common.Utils;
 using FishFlingers.States;
+using System.Collections;
 
 namespace FishFlingers.Entities
 {
@@ -48,14 +49,14 @@ namespace FishFlingers.Entities
         {
             base.OnTakenFromPool();
 
-            HandleHealthChanged(0, _healthModule.Current);
+            HandleHealthChanged(0, _entityHealthModule.Current);
 
-            _healthModule.OnChanged += HandleHealthChanged;
+            _entityHealthModule.OnChanged += HandleHealthChanged;
         }
 
         public override void OnReturnedToPool()
         {
-            _healthModule.OnChanged -= HandleHealthChanged;
+            _entityHealthModule.OnChanged -= HandleHealthChanged;
 
             _cell = Vector2Int.one * int.MinValue;
 
@@ -70,7 +71,7 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            _material.color = Color.Lerp(Color.white, _damagedColor, 1f - ((float)_healthModule.Current / _healthModule.Max));
+            _material.color = Color.Lerp(Color.white, _damagedColor, 1f - ((float)_entityHealthModule.Current / _entityHealthModule.Max));
         }
 
         public void SetCell(Vector2Int cell)
@@ -82,7 +83,7 @@ namespace FishFlingers.Entities
 
             _cell = cell;
 
-            transform.position = _context.Raft.Queries.CellToWorldPosition(cell);
+            transform.position = _context.Raft.Queries.CellToWorldPosition(_cell);
         }
 
         public void SetRotations(int rotations)
@@ -97,14 +98,16 @@ namespace FishFlingers.Entities
             _structure = structure;
         }
 
-        private void FixedUpdate()
+        protected override void FixedUpdate()
         {
+            base.FixedUpdate();
+
             PositionFixedUpdate();
         }
 
         private void PositionFixedUpdate()
         {
-            bool sink = Physics.CheckSphere(_rigidbody.position, TileDefinitionData.SinkSettings.Radius, TileDefinitionData.SinkSettings.Mask);
+            bool sink = Physics.CheckSphere(_entityPhysicsModule.Rigidbody.position, TileDefinitionData.SinkSettings.Radius, TileDefinitionData.SinkSettings.Mask);
 
             float targetY;
 
@@ -121,8 +124,8 @@ namespace FishFlingers.Entities
                     _cell.y * TileDefinitionData.BobSettings.NoiseScale + Time.time * TileDefinitionData.BobSettings.TimeScale);
             }
 
-            Vector3 targetPosition = new Vector3(_rigidbody.position.x, targetY, _rigidbody.position.z);
-            _rigidbody.MovePosition(Vector3.MoveTowards(_rigidbody.position, targetPosition, TileDefinitionData.SinkSettings.Speed * Time.fixedDeltaTime));
+            Vector3 targetPosition = new Vector3(_entityPhysicsModule.Rigidbody.position.x, targetY, _entityPhysicsModule.Rigidbody.position.z);
+            _entityPhysicsModule.Rigidbody.MovePosition(Vector3.MoveTowards(_entityPhysicsModule.Rigidbody.position, targetPosition, TileDefinitionData.SinkSettings.Speed * Time.fixedDeltaTime));
         }
 
         /// <summary>

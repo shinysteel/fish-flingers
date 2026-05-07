@@ -8,20 +8,22 @@ namespace FishFlingers.Entities
     {
         public CharacterDefinitionData CharacterDefinitionData => (CharacterDefinitionData)_entityDefinitionData;
         public CharacterModel CharacterModel => (CharacterModel)_entityModel;
+        public CharacterPhysicsModule CharacterPhysicsModule => (CharacterPhysicsModule)_entityPhysicsModule;
 
         [SerializeField] protected Collider _characterCollider;
         public Collider CharacterCollider => _characterCollider;
 
         private CharacterRagdollLogic _ragdollLogic;
-        protected CharacterPhysicsLogic _physicsLogic;
         protected CharacterStunLogic _stunLogic;
 
         public CharacterRagdollLogic RagdollLogic => _ragdollLogic;
-        public CharacterPhysicsLogic PhysicsLogic => _physicsLogic;
 
         protected override void OnInitializeModules()
         {
-            _effectsModule = new CharacterEffectsModule(this);
+            _entityEffectsModule = new CharacterEffectsModule(this);
+
+            // Some characters setup their own inherited logic script
+            _entityPhysicsModule ??= new CharacterPhysicsModule(this, _rigidbody);
 
             base.OnInitializeModules();
         }
@@ -35,10 +37,7 @@ namespace FishFlingers.Entities
         {
             _ragdollLogic = new CharacterRagdollLogic(this);
 
-            // Some characters setup their own inherited logic script
-            _physicsLogic ??= new CharacterPhysicsLogic(this);
-
-            _stunLogic = new CharacterStunLogic();
+            _stunLogic = new CharacterStunLogic(this);
 
             base.OnSpawned();
         }
@@ -47,33 +46,12 @@ namespace FishFlingers.Entities
         {
             base.Update();
 
-            if (!isOwner)
-            {
-                return;
-            }
-
             if (!isFullySpawned)
             {
                 return;
             }
             
-            _physicsLogic.Tick();
             _stunLogic.Tick();
-        }
-
-        protected virtual void FixedUpdate()
-        {
-            if (!isOwner)
-            {
-                return;
-            }
-
-            if (!isFullySpawned)
-            {
-                return;
-            }
-
-            _physicsLogic.FixedTick();
         }
 
         [ServerRpc]

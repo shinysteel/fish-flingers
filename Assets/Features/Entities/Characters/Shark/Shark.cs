@@ -314,7 +314,7 @@ namespace FishFlingers.Entities
 
             if (isOwner)
             {
-                _defeatModule.OnDefeated += HandleDefeated;
+                _entityDefeatModule.OnDefeated += HandleDefeated;
 
                 _stateMachine.ChangeState(EState.Surface);
             }
@@ -326,7 +326,7 @@ namespace FishFlingers.Entities
             {
                 Cleanup();
 
-                _defeatModule.OnDefeated -= HandleDefeated;
+                _entityDefeatModule.OnDefeated -= HandleDefeated;
             }
 
             base.OnDespawned();
