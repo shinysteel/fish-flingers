@@ -1,5 +1,6 @@
 using FishFlingers.Entities;
 using FishFlingers.Networking;
+using FishFlingers.States;
 using PurrNet;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,8 +15,10 @@ namespace FishFlingers.Effects
 
         private int _idCounter;
 
-        protected override void OnSpawned()
+        public override void Initialise(GameplayContext context)
         {
+            base.Initialise(context);
+
             foreach (KeyValuePair<int, Vector2Int[]> kvp in _netMarkedCells)
             {
                 SyncDictionaryChange<int, Vector2Int[]> change = new SyncDictionaryChange<int, Vector2Int[]>(SyncDictionaryOperation.Added, kvp.Key, kvp.Value);
@@ -23,8 +26,6 @@ namespace FishFlingers.Effects
             }
 
             _netMarkedCells.onChanged += HandleNetMarkedCellsChanged;
-
-            base.OnSpawned();
         }
 
         protected override void OnDespawned()
@@ -32,6 +33,11 @@ namespace FishFlingers.Effects
             base.OnDespawned();
 
             _netMarkedCells.onChanged -= HandleNetMarkedCellsChanged;
+
+            foreach (DangerMarker marker in _markedCells.Values)
+            {
+                _poolManager.ReturnTypedPoolable(marker);
+            }
         }
 
         public int AddNetMarkedCells(params Vector2Int[] cells)
