@@ -41,7 +41,6 @@ namespace FishFlingers.Entities
         private RaftPlayerAttackLogic _attackLogic;
         private RaftPlayerHotkeyLogic _hotkeyLogic;
         private RaftPlayerTileTargetLogic _tileTargetLogic;
-        private RaftPlayerDrownLogic _drownLogic;
 
         public RaftPlayerPhysicsModule RaftPlayerPhysicsModule => (RaftPlayerPhysicsModule)_entityPhysicsModule;
 
@@ -112,7 +111,6 @@ namespace FishFlingers.Entities
             _heldInventoryItemLogic = new RaftPlayerHeldInventoryItemLogic(this);
             _openNetBehaviourLogic = new RaftPlayerOpenNetBehaviourLogic(_netOpenNetworkId);
             _attackLogic = new RaftPlayerAttackLogic(this);
-            _drownLogic = new RaftPlayerDrownLogic(this);
 
             if (isOwner)
             {
@@ -144,11 +142,6 @@ namespace FishFlingers.Entities
         {
             base.Update();
             
-            if (!isFullySpawned)
-            {
-                return;
-            }
-
             if (!_isInitialised)
             {
                 return;
@@ -159,7 +152,6 @@ namespace FishFlingers.Entities
             _animateLogic.Tick();
             _hotkeyLogic.Tick();
             _tileTargetLogic.Tick();
-            _drownLogic.Tick();
 
             if (isOwner)
             {

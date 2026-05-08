@@ -13,8 +13,17 @@ namespace FishFlingers.Entities
             
         }
 
+        // Don't inherit Tick logic from CharacterDefeatModule
+        public override void Tick()
+        { }
+        
         public override void Defeat()
         {
+            _poolManager.GetProp(PropId.Barrel, new SpawnParams() { Parent = Player.transform });
+
+            _isDefeated = true;
+
+            RaiseDefeated();
         }
 
         protected override void Despawn()

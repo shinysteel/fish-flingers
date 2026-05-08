@@ -109,24 +109,24 @@ namespace FishFlingers.States
                 // All clients need to build a local GameplayContext class
                 Raft raft = null;
                 WaveSpawner waveSpawner = null;
-                SalvageSpawner salvageSpawner = null;
                 EnvironmentMarker environmentMarker = null;
 
                 if (_networkManager.IsServer)
                 {
                     raft = _networkManager.Spawn(_config.RaftPrefab);
                     waveSpawner = _networkManager.Spawn(_config.WaveSpawnerPrefab);
-                    salvageSpawner = _networkManager.Spawn(_config.SalvageSpawnerPrefab);
                     environmentMarker = _networkManager.Spawn(_config.EnvironmentMarkerPrefab);
+
+                    _networkManager.Spawn(_config.DrowningSpawnerPrefab);
+                    _networkManager.Spawn(_config.SalvageSpawnerPrefab);
                 }
                 else
                 {
                     // Clients will need to retrieve these objects
-                    while (raft == null || waveSpawner == null || salvageSpawner == null)
+                    while (raft == null || waveSpawner == null || environmentMarker == null)
                     {
                         raft ??= Object.FindFirstObjectByType<Raft>();
                         waveSpawner ??= Object.FindFirstObjectByType<WaveSpawner>();
-                        salvageSpawner ??= Object.FindFirstObjectByType<SalvageSpawner>();
                         environmentMarker ??= Object.FindFirstObjectByType<EnvironmentMarker>();
                         await Task.Yield();
                     }

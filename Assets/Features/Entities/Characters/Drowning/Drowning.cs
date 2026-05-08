@@ -44,6 +44,7 @@ namespace FishFlingers.Entities
             }
 
             MoveUpdate();
+            DefeatUpdate();
         }
 
         private void ScaleUpdate()
@@ -64,6 +65,15 @@ namespace FishFlingers.Entities
             float speed = -1f + Mathf.Pow(1.4f, _entityLifecycleModule.TimeAlive);
 
             transform.position += direction * speed * Time.deltaTime;
+        }
+
+        private void DefeatUpdate()
+        {
+            if (Vector3.Distance(transform.position, _target.transform.position) < 0.5f)
+            {
+                _target.EntityDefeatModule.Defeat();
+                _entityManager.Despawn(this);
+            }
         }
     }
 }

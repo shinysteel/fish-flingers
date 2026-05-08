@@ -20,6 +20,7 @@ namespace FishFlingers.Entities
         protected EntityDefeatSettings _entityDefeatSettings;
 
         protected bool _isDefeated;
+        public bool IsDefeated => _isDefeated;
 
         public event Action OnDefeated;
 
