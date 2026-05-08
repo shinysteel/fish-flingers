@@ -25,6 +25,11 @@ namespace FishFlingers.Entities
             position += direction * 3f;
             
             transform.position = position;
+        }
+
+        protected override void OnSpawned()
+        {
+            base.OnSpawned();
 
             Tween.Alpha(_spriteRenderer, startValue: 0f, endValue: 1f, duration: 0.33f);
         }

@@ -88,6 +88,11 @@ namespace FishFlingers.Environments
 
             foreach (Tile tile in _tiles.Values)
             {
+                if (tile.Structure != null)
+                {
+                    tile.Structure.transform.SetParent(null);
+                }
+                
                 _entityManager.Despawn(tile);
             }
         }
