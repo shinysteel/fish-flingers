@@ -88,7 +88,7 @@ namespace FishFlingers.Environments
 
             Vector3 position = _context.Raft.Queries.CellToWorldPosition(new Vector2(x, y));
 
-            _itemManager.SpawnDrop(position, _dropTable);
+            _itemManager.SpawnDrops(position, DroppedItemType.Salvage, _dropTable);
         }
 
         void IEntityManagerListener.OnEntitySpawned(IEntity entity)

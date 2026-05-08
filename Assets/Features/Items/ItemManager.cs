@@ -45,12 +45,7 @@ namespace FishFlingers.Items
             return _idDataMap.Values;
         }
 
-        public void SpawnDrop(Vector3 position, DropTable table)
-        {
-            SpawnDrops(position, new DropTable[] { table });
-        }
-
-        public void SpawnDrops(Vector3 position, DropTable[] tables)
+        public void SpawnDrops(Vector3 position, DroppedItemType type, params DropTable[] tables)
         {
             List<WeightedPick<ItemId>> picks = ListPool<WeightedPick<ItemId>>.Get();
             List<NetItemInstance> netItemInstances = ListPool<NetItemInstance>.Get();
@@ -92,8 +87,8 @@ namespace FishFlingers.Items
                 foreach (NetItemInstance netItemInstance in netItemInstances)
                 {
                     DroppedItem droppedItem = (DroppedItem)_entityManager.Spawn(EntityId.DroppedItem, new SpawnParams() { Position = position });
-                    droppedItem.Set(netItemInstance, DroppedItemType.Default);
-                }   
+                    droppedItem.Set(netItemInstance, type);
+                }
             }
             finally
             {

@@ -82,7 +82,7 @@ namespace FishFlingers.Entities
         {
             if (_networkManager.IsServer)
             {
-                _itemManager.SpawnDrops(_entity.Transform.position, _entity.EntityDefinitionData.DropTables);
+                _itemManager.SpawnDrops(_entity.Transform.position, DroppedItemType.Default, _entity.EntityDefinitionData.DropTables);
             }
 
             _entityManager.Despawn(_entity);
