@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UIElements;
 
 namespace ShinyOwl.Common.Utils
@@ -26,6 +27,26 @@ namespace ShinyOwl.Common.Utils
                 {
                     processElement(list[i], i);
                 }
+            }
+
+            public static void RemoveDictionaryKeys<T, U>(Dictionary<T, U> dictionary, Func<KeyValuePair<T, U>, bool> condition)
+            {
+                List<T> list = ListPool<T>.Get();
+
+                foreach (KeyValuePair<T, U> kvp in dictionary)
+                {
+                    if (condition(kvp))
+                    {
+                        list.Add(kvp.Key);
+                    }
+                }
+
+                foreach (T key in list)
+                {
+                    dictionary.Remove(key);
+                }
+
+                ListPool<T>.Release(list);
             }
         }
     }
