@@ -74,6 +74,11 @@ Rigidbody:
   m_CorrespondingSourceObject: {fileID: 3594507156527767859, guid: 1b7d8d28308257248ae096c188eb6202, type: 3}
   m_PrefabInstance: {fileID: 1185599367677070239}
   m_PrefabAsset: {fileID: 0}
+--- !u!65 &3856270332900495492 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 2733721499595217691, guid: 1b7d8d28308257248ae096c188eb6202, type: 3}
+  m_PrefabInstance: {fileID: 1185599367677070239}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7255031440559130908 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8420347017716335235, guid: 1b7d8d28308257248ae096c188eb6202, type: 3}
@@ -94,5 +99,6 @@ MonoBehaviour:
   _entityDefinitionData: {fileID: 11400000, guid: 7318843b90710764f97d46d8bc15de07, type: 2}
   _entityModel: {fileID: 0}
   _rigidbody: {fileID: 2420220123898849964}
+  _collider: {fileID: 3856270332900495492}
   _meshRenderer: {fileID: 2400998617261748978}
   _damagedColor: {r: 0.5411765, g: 0.5411765, b: 0.5411765, a: 1}

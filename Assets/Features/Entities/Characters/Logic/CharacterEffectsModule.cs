@@ -4,19 +4,21 @@ namespace FishFlingers.Entities
 {
     public class CharacterEffectsModule : EntityEffectsModule
     {
-        public Character Character => (Character)_entity;
+        private Character _character;
 
         public CharacterEffectsModule(Character character) : base(character)
-        { }
+        {
+            _character = character;
+        }
 
         public override void AnimateHurt()
         {
-            Character.CharacterModel.FlashRed();
+            _character.CharacterModel.FlashRed();
 
             // The animator is already networked, and so only the owner needs to do this
-            if (Character.IsOwner)
+            if (_character.IsOwner)
             {
-                Character.CharacterModel.AdditiveHurt();
+                _character.CharacterModel.AdditiveHurt();
             }
         }
     }

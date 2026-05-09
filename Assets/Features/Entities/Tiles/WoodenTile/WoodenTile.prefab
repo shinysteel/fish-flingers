@@ -64,6 +64,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 6056385187022425606}
   m_SourcePrefab: {fileID: 100100000, guid: 1b7d8d28308257248ae096c188eb6202, type: 3}
+--- !u!65 &2598326273239812664 stripped
+BoxCollider:
+  m_CorrespondingSourceObject: {fileID: 2733721499595217691, guid: 1b7d8d28308257248ae096c188eb6202, type: 3}
+  m_PrefabInstance: {fileID: 143898321440641315}
+  m_PrefabAsset: {fileID: 0}
 --- !u!54 &3467063576354713616 stripped
 Rigidbody:
   m_CorrespondingSourceObject: {fileID: 3594507156527767859, guid: 1b7d8d28308257248ae096c188eb6202, type: 3}
@@ -94,5 +99,6 @@ MonoBehaviour:
   _entityDefinitionData: {fileID: 11400000, guid: ab01bfd23c3274e4899bd81079252d9c, type: 2}
   _entityModel: {fileID: 0}
   _rigidbody: {fileID: 3467063576354713616}
+  _collider: {fileID: 2598326273239812664}
   _meshRenderer: {fileID: 3519894131876325454}
   _damagedColor: {r: 0.5411765, g: 0.5411765, b: 0.5411765, a: 1}

@@ -9,20 +9,23 @@ namespace FishFlingers.Entities
 {
     public class CharacterDefeatModule : EntityDefeatModule
     {
-        public Character Character => (Character)_entity;
-        public CharacterDefeatSettings CharacterDefeatSettings => (CharacterDefeatSettings)_entityDefeatSettings;
+        private Character _character;
+        private CharacterDefeatSettings _settings;
 
-        
+
         private float _defeatTimer;
 
         private Tween _defeatTween;
 
         public CharacterDefeatModule(Character character) : base(character)
-        { }
+        {
+            _character = character;
+            _settings = (CharacterDefeatSettings)_character.EntityDefinitionData.EntityDefeatSettings;
+        }
 
         public override void Tick()
         {
-            if (!Character.isOwner)
+            if (!_character.isOwner)
             {
                 return;
             }
@@ -37,19 +40,19 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            if (!Character.CharacterPhysicsModule.IsGrounded && !Character.CharacterPhysicsModule.InWater)
+            if (!_character.CharacterPhysicsModule.IsGrounded && !_character.CharacterPhysicsModule.InWater)
             {
                 return;
             }
 
             _defeatTimer += Time.deltaTime;
 
-            if (_defeatTimer < CharacterDefeatSettings.DefeatDuration)
+            if (_defeatTimer < _settings.DefeatDuration)
             {
                 return;
             }
 
-            _defeatTween = Tween.Scale(Character.transform, endValue: Vector3.zero, duration: CharacterDefeatSettings.TweenDuration, ease: Ease.InBack)
+            _defeatTween = Tween.Scale(_character.transform, endValue: Vector3.zero, duration: _settings.TweenDuration, ease: Ease.InBack)
                 .OnComplete(Despawn);
         }
 
@@ -57,11 +60,11 @@ namespace FishFlingers.Entities
         {
             _defeatTimer = 0f;
 
-            Character.CharacterModel.SetDefeated(true);
+            _character.CharacterModel.SetDefeated(true);
 
-            Character.CharacterModel.Animator.Update(0f);
+            _character.CharacterModel.Animator.Update(0f);
 
-            Character.RagdollLogic.SetEnabled(true);
+            _character.RagdollLogic.SetEnabled(true);
 
             _isDefeated = true;
 
@@ -70,12 +73,12 @@ namespace FishFlingers.Entities
 
         protected override void Despawn()
         {
-            Character.RagdollLogic.SetEnabled(false);
+            _character.RagdollLogic.SetEnabled(false);
 
-            Character.CharacterModel.SetDefeated(false);
+            _character.CharacterModel.SetDefeated(false);
 
             // Simulate 1 second to have the character unblink
-            Character.CharacterModel.Animator.Update(1f);
+            _character.CharacterModel.Animator.Update(1f);
 
             base.Despawn();
         }

@@ -172,7 +172,7 @@ MonoBehaviour:
   _entityDefinitionData: {fileID: 11400000, guid: c9ab5d7fa25aec941a4ffacbebd2a915, type: 2}
   _entityModel: {fileID: 0}
   _rigidbody: {fileID: 3543654061985757809}
-  _characterCollider: {fileID: 4807039884850981880}
+  _collider: {fileID: 4807039884850981880}
   _spriteRenderer: {fileID: 4733467646641177941}
   _scaleCurve:
     serializedVersion: 2

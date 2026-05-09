@@ -12,22 +12,25 @@ namespace FishFlingers.Entities
         protected CameraManager _cameraManager;
         protected AudioManager _audioManager;
 
-        protected IEntity _entity;
+        private IEntity _entity;
         protected Rigidbody _rigidbody;
+        protected Collider _collider;
 
-        protected EntityPhysicsSettings _entityPhysicsSettings;
+        private EntityPhysicsSettings _settings;
 
         public Rigidbody Rigidbody => _rigidbody;
+        public Collider Collider => _collider;
 
-        public EntityPhysicsModule(IEntity entity, Rigidbody rigidbody)
+        public EntityPhysicsModule(IEntity entity, Rigidbody rigidbody, Collider collider)
         {
             _cameraManager = GameManager.Instance.Get<CameraManager>();
             _audioManager = GameManager.Instance.Get<AudioManager>();
 
             _entity = entity;
             _rigidbody = rigidbody;
+            _collider = collider;
 
-            _entityPhysicsSettings = _entity.EntityDefinitionData.EntityPhysicsSettings;
+            _settings = _entity.EntityDefinitionData.EntityPhysicsSettings;
         }
 
         public virtual void Tick()

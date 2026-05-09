@@ -51,7 +51,7 @@ namespace FishFlingers.Entities
         {
             float speed = Mathf.Pow(1.1f, _entityLifecycleModule.TimeAlive);
             float time = _entityLifecycleModule.TimeAlive * speed % 1f;
-            float scale = 1f + 0.2f * _scaleCurve.Evaluate(time);
+            float scale = 1f + 0.15f * _scaleCurve.Evaluate(time);
             
             transform.localScale = Vector3.one * scale;
         }

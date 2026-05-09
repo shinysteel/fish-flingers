@@ -6,7 +6,7 @@ namespace FishFlingers.Entities
     [CreateAssetMenu(fileName = "RaftPlayerDefinitionData", menuName = "Data/Entities/Characters/RaftPlayerDefinitionData")]
     public class RaftPlayerDefinitionData : CharacterDefinitionData
     {
-        public RaftPlayerPhysicsSettings RaftPlayerPhysicsSettings => (RaftPlayerPhysicsSettings)_characterPhysicsSettings;
+        public RaftPlayerPhysicsSettings RaftPlayerPhysicsSettings => (RaftPlayerPhysicsSettings)EntityPhysicsSettings;
 
         [SerializeField] private RaftPlayerInteractSettings _interactSettings;
         [SerializeField] private RaftPlayerDropInventoryItemSettings _dropInventoryItemSettings;

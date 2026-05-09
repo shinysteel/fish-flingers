@@ -10,18 +10,23 @@ namespace FishFlingers.Entities
 {
     public class RaftPlayerPhysicsModule : CharacterPhysicsModule
     {
-        public RaftPlayer Player => (RaftPlayer)_entity;
-        public RaftPlayerPhysicsSettings PlayerPhysicsSettings => (RaftPlayerPhysicsSettings)_entityPhysicsSettings;
+        private RaftPlayer _player;
+        private CapsuleCollider _capsuleCollider;
+        private RaftPlayerPhysicsSettings _settings;
 
         private float _jumpTimer;
         private bool _jumpRequest;
         
-        public RaftPlayerPhysicsModule(RaftPlayer player, Rigidbody rigidbody) : base(player, rigidbody)
-        { }
+        public RaftPlayerPhysicsModule(RaftPlayer player, Rigidbody rigidbody, CapsuleCollider capsuleCollider) : base(player, rigidbody, capsuleCollider)
+        {
+            _player = player;
+            _capsuleCollider = capsuleCollider;
+            _settings = (RaftPlayerPhysicsSettings)_player.EntityDefinitionData.EntityPhysicsSettings;
+        }
 
         public override void Tick()
         {
-            if (!Player.isOwner)
+            if (!_player.isOwner)
             {
                 return;
             }
@@ -33,7 +38,7 @@ namespace FishFlingers.Entities
         {
             base.FixedTick();
 
-            if (!Player.isOwner)
+            if (!_player.isOwner)
             {
                 return;
             }
@@ -41,19 +46,19 @@ namespace FishFlingers.Entities
             MoveFixedTick();
             LookFixedTick();
             JumpFixedTick();
-            SwimFixedTick();
+            SwimClimbFixedTick();
         }
 
         private void JumpTick()
         {
             _jumpTimer += Time.deltaTime;
 
-            if (!Player.InputLogic.Jump)
+            if (!_player.InputLogic.Jump)
             {
                 return;
             }
 
-            if (_jumpTimer < PlayerPhysicsSettings.Jump.Cooldown)
+            if (_jumpTimer < _settings.Jump.Cooldown)
             {
                 return;
             }
@@ -64,32 +69,32 @@ namespace FishFlingers.Entities
 
         private void MoveFixedTick()
         {
-            if (Player.AttackLogic.AttackState == RaftPlayerAttackState.Impact)
+            if (_player.AttackLogic.AttackState == RaftPlayerAttackState.Impact)
             {
                 return;
             }
 
-            Vector3 targetVelocity = Player.InputLogic.MoveDirection * PlayerPhysicsSettings.Move.Speed;
+            Vector3 targetVelocity = _player.InputLogic.MoveDirection * _settings.Move.Speed;
 
-            if (Player.AttackLogic.AttackState == RaftPlayerAttackState.Windup)
+            if (_player.AttackLogic.AttackState == RaftPlayerAttackState.Windup)
             {
-                targetVelocity *= PlayerPhysicsSettings.Move.AttackWindupMultiplier;
+                targetVelocity *= _settings.Move.AttackWindupMultiplier;
             }
-            else if (Player.AttackLogic.AttackState == RaftPlayerAttackState.Impact)
+            else if (_player.AttackLogic.AttackState == RaftPlayerAttackState.Impact)
             {
-                targetVelocity *= PlayerPhysicsSettings.Move.AttackImpactMultiplier;
+                targetVelocity *= _settings.Move.AttackImpactMultiplier;
             }
 
             targetVelocity.y = _rigidbody.linearVelocity.y;
 
-            float speed = Player.InputLogic.MoveDirection != Vector3.zero ? PlayerPhysicsSettings.Move.Acceleration : PlayerPhysicsSettings.Move.Deceleration;
+            float speed = _player.InputLogic.MoveDirection != Vector3.zero ? _settings.Move.Acceleration : _settings.Move.Deceleration;
 
             _rigidbody.linearVelocity = Vector3.MoveTowards(_rigidbody.linearVelocity, targetVelocity, speed * Time.fixedDeltaTime);
         }
 
         private void LookFixedTick()
         {
-            Vector3 direction = Player.InputLogic.MoveDirection;
+            Vector3 direction = _player.InputLogic.MoveDirection;
 
             if (direction == Vector3.zero)
             {
@@ -98,11 +103,11 @@ namespace FishFlingers.Entities
 
             Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
 
-            float speed = PlayerPhysicsSettings.Look.Speed;
+            float speed = _settings.Look.Speed;
 
-            if (Player.AttackLogic.AttackState == RaftPlayerAttackState.Impact)
+            if (_player.AttackLogic.AttackState == RaftPlayerAttackState.Impact)
             {
-                speed *= PlayerPhysicsSettings.Look.AttackImpactMultiplier;
+                speed *= _settings.Look.AttackImpactMultiplier;
             }
 
             _rigidbody.MoveRotation(Quaternion.Slerp(_rigidbody.rotation, targetRotation, speed * Time.fixedDeltaTime));
@@ -126,32 +131,32 @@ namespace FishFlingers.Entities
 
             // Cancel out gravity
             _rigidbody.linearVelocity = new Vector3(_rigidbody.linearVelocity.x, 0f, _rigidbody.linearVelocity.z);
-            _rigidbody.AddForce(Vector3.up * PlayerPhysicsSettings.Jump.Strength, ForceMode.Impulse);
+            _rigidbody.AddForce(Vector3.up * _settings.Jump.Strength, ForceMode.Impulse);
 
             _audioManager.PlaySound(SoundId.Jump);
         }
 
-        private void SwimFixedTick()
+        private void SwimClimbFixedTick()
         {
-            // While in water, the player can hold spacebar to propel themselves up
-            if (!Player.InputLogic.Ascend)
-            {
-                return;
-            }
-
             if (!InWater)
             {
                 return;
             }
 
-            Collider waterCollider = _inWaterCollidersNonAlloc[0];
+            if (_player.InputLogic.MoveDirection == Vector3.zero)
+            {
+                return;
+            }
 
-            Physics.ComputePenetration(Player.CapsuleCollider, _rigidbody.position, _rigidbody.rotation, waterCollider, waterCollider.transform.position, waterCollider.transform.rotation, out _, out float depth);
+            //Vector3 center = _rigidbody.position + Player.CapsuleCollider.transform.TransformVector(Player.CapsuleCollider.center);
+            //float radius = Player.CapsuleCollider.radius * Mathf.Max(Player.CapsuleCollider.transform.lossyScale.x, Player.CapsuleCollider.transform.lossyScale.z);
+            //float height = Mathf.Max(Player.CapsuleCollider.height * Player.CapsuleCollider.transform.lossyScale.y, radius * 2f);
+            //float offset = height * 0.5f - radius;
 
-            float ascendFactor = Mathf.Clamp01(depth / PlayerPhysicsSettings.Swim.AscendDepthThreshold);
-            Vector3 ascendForce = Vector3.up * PlayerPhysicsSettings.Swim.AscendStrength * ascendFactor;
+            //Vector3 point1 = center - Vector3.up * offset;
+            //Vector3 point2 = center + Vector3.up * offset;
 
-            _rigidbody.AddForce(ascendForce, ForceMode.Force);
+            //Physics.CapsuleCastNonAlloc(point1, point2, radius, Player.InputLogic.MoveDirection, )
         }
     }
 }

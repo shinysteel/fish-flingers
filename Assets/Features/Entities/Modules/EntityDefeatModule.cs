@@ -15,9 +15,8 @@ namespace FishFlingers.Entities
         protected NetworkManager _networkManager;
         protected PoolManager _poolManager;
 
-        protected IEntity _entity;
-
-        protected EntityDefeatSettings _entityDefeatSettings;
+        private IEntity _entity;
+        private EntityDefeatSettings _settings;
 
         protected bool _isDefeated;
         public bool IsDefeated => _isDefeated;
@@ -33,7 +32,7 @@ namespace FishFlingers.Entities
 
             _entity = entity;
 
-            _entityDefeatSettings = _entity.EntityDefinitionData.EntityDefeatSettings;
+            _settings = _entity.EntityDefinitionData.EntityDefeatSettings;
 
             _entity.EntityHealthModule.OnChanged += HandleHealthChanged;
         }

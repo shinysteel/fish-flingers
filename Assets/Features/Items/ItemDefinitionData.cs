@@ -1,8 +1,9 @@
-using ShinyOwl.Common.Structures;
-using UnityEngine;
 using FishFlingers.Items;
-using UnityEngine.Events;
 using FishFlingers.States;
+using ShinyOwl.Common.Structures;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace FishFlingers.Inventories
 {
@@ -34,7 +35,17 @@ namespace FishFlingers.Inventories
 
         public bool TryCraft(GameplayContext context)
         {
-            return false;
+            List<InventoryChangeParams> parameters = _recipe.ToChangeParams();
+
+            if (!context.LocalPlayer.Inventory.TryRemoveItems(parameters))
+            {
+                return false;
+            }
+
+            NetItemInstance netItemInstance = new NetItemInstance(null, _itemId, 1);
+            context.LocalPlayer.Inventory.TryAddItem(InventoryChangeParams.Create(netItemInstance), false, out _, out _, out _);
+
+            return true;
         }
     }
 }

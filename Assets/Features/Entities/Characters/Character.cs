@@ -6,12 +6,8 @@ namespace FishFlingers.Entities
 {
     public abstract class Character : NetEntity
     {
-        public CharacterDefinitionData CharacterDefinitionData => (CharacterDefinitionData)_entityDefinitionData;
         public CharacterModel CharacterModel => (CharacterModel)_entityModel;
         public CharacterPhysicsModule CharacterPhysicsModule => (CharacterPhysicsModule)_entityPhysicsModule;
-
-        [SerializeField] protected Collider _characterCollider;
-        public Collider CharacterCollider => _characterCollider;
 
         private CharacterRagdollLogic _ragdollLogic;
         protected CharacterStunLogic _stunLogic;
@@ -30,7 +26,7 @@ namespace FishFlingers.Entities
 
         protected override EntityPhysicsModule CreatePhysicsModule()
         {
-            return new CharacterPhysicsModule(this, _rigidbody);
+            return new CharacterPhysicsModule(this, _rigidbody, _collider);
         }
 
         protected override void OnSpawned()
@@ -61,7 +57,7 @@ namespace FishFlingers.Entities
         }
     }
 
-    public abstract class Character<T> : Character where T : CharacterDefinitionData
+    public abstract class Character<T> : Character where T : EntityDefinitionData
     {
         public T DefinitionData => (T)_entityDefinitionData;
     }

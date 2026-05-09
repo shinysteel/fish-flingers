@@ -111,6 +111,7 @@ MonoBehaviour:
   _entityDefinitionData: {fileID: 11400000, guid: 1a9ed0623542a76478eeabfe1fcb2609, type: 2}
   _entityModel: {fileID: 0}
   _rigidbody: {fileID: 4853443629506766343}
+  _collider: {fileID: 6496388388488766554}
 --- !u!114 &1596470918788293711
 MonoBehaviour:
   m_ObjectHideFlags: 0

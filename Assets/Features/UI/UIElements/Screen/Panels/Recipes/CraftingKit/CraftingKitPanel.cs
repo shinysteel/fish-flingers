@@ -1,3 +1,4 @@
+using FishFlingers.Inventories;
 using FishFlingers.Items;
 using System.Collections.Generic;
 using System.Linq;

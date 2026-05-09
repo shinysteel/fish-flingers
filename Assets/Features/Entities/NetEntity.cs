@@ -15,6 +15,7 @@ namespace FishFlingers.Entities
         [SerializeField] protected EntityDefinitionData _entityDefinitionData;
         [SerializeField] protected EntityModel _entityModel;
         [SerializeField] protected Rigidbody _rigidbody;
+        [SerializeField] protected Collider _collider;
 
         private SyncVar<int> _netCurrentHealth;
 
@@ -68,7 +69,7 @@ namespace FishFlingers.Entities
 
         protected virtual EntityPhysicsModule CreatePhysicsModule()
         {
-            return new EntityPhysicsModule(this, _rigidbody);
+            return new EntityPhysicsModule(this, _rigidbody, _collider);
         }
 
         protected override void OnSpawned()

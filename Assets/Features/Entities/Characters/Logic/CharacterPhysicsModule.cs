@@ -7,8 +7,8 @@ namespace FishFlingers.Entities
 {
     public class CharacterPhysicsModule : EntityPhysicsModule
     {
-        public Character Character => (Character)_entity;
-        public CharacterPhysicsSettings CharacterPhysicsSettings => (CharacterPhysicsSettings)_entityPhysicsSettings;
+        private Character _character;
+        private CharacterPhysicsSettings _settings;
 
         protected bool _isGrounded;
         public bool IsGrounded => _isGrounded;
@@ -21,8 +21,11 @@ namespace FishFlingers.Entities
         private RaycastHit[] _isGroundedHitsNonAlloc = new RaycastHit[2];
         protected Collider[] _inWaterCollidersNonAlloc = new Collider[1];
 
-        public CharacterPhysicsModule(Character character, Rigidbody rigidbody) : base(character, rigidbody)
-        { }
+        public CharacterPhysicsModule(Character character, Rigidbody rigidbody, Collider collider) : base(character, rigidbody, collider)
+        {
+            _character = character;
+            _settings = (CharacterPhysicsSettings)_character.EntityDefinitionData.EntityPhysicsSettings;
+        }
 
         public override void FixedTick()
         {
@@ -32,18 +35,18 @@ namespace FishFlingers.Entities
 
         private void IsGroundedFixedTick()
         {
-            Vector3 origin = Character.CharacterCollider.bounds.center;
-            origin.y = Character.CharacterCollider.bounds.min.y;
-            origin += Vector3.up * CharacterPhysicsSettings.ContactDetection.GroundCastRadius;
+            Vector3 origin = _collider.bounds.center;
+            origin.y = _collider.bounds.min.y;
+            origin += Vector3.up * _settings.ContactDetection.GroundCastRadius;
 
-            int hits = Physics.SphereCastNonAlloc(origin, CharacterPhysicsSettings.ContactDetection.GroundCastRadius, Vector3.down, _isGroundedHitsNonAlloc, CharacterPhysicsSettings.ContactDetection.GroundCastDistance, CharacterPhysicsSettings.ContactDetection.GroundMask);
+            int hits = Physics.SphereCastNonAlloc(origin, _settings.ContactDetection.GroundCastRadius, Vector3.down, _isGroundedHitsNonAlloc, _settings.ContactDetection.GroundCastDistance, _settings.ContactDetection.GroundMask);
 
             bool isGrounded = false;
 
             for (int i = 0; i < hits; i++)
             {
                 // Since we include the player layer to jump on other player's heads, we need to ignore our own collider here
-                if (_isGroundedHitsNonAlloc[i].collider.gameObject != Character.gameObject)
+                if (_isGroundedHitsNonAlloc[i].collider.gameObject != _character.gameObject)
                 {
                     isGrounded = true;
                     break;
@@ -55,10 +58,10 @@ namespace FishFlingers.Entities
         
         private void InWaterFixedTick()
         {
-            float radius = Vector3.Distance(Character.CharacterCollider.bounds.center, Character.CharacterCollider.bounds.min) * 0.5f;
+            float radius = Vector3.Distance(_collider.bounds.center, _collider.bounds.min) * 0.5f;
 
             // If we are overlapping a collider on the water mask, we are in water
-            bool inWater = Physics.OverlapSphereNonAlloc(Character.CharacterCollider.bounds.center, radius, _inWaterCollidersNonAlloc, CharacterPhysicsSettings.ContactDetection.WaterMask) > 0;
+            bool inWater = Physics.OverlapSphereNonAlloc(_collider.bounds.center, radius, _inWaterCollidersNonAlloc, _settings.ContactDetection.WaterMask) > 0;
 
             if (inWater)
             {

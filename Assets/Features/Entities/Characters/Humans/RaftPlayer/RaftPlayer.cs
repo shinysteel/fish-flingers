@@ -22,8 +22,6 @@ namespace FishFlingers.Entities
 {
     public class RaftPlayer : Character<RaftPlayerDefinitionData>
     {
-        public CapsuleCollider CapsuleCollider => (CapsuleCollider)_characterCollider;
-
         [SerializeField] private Inventory _inventory;
         [SerializeField] private BoolGrid _inventoryLayout;
         [SerializeField] private Hotbar _hotbar;
@@ -98,7 +96,7 @@ namespace FishFlingers.Entities
 
         protected override EntityPhysicsModule CreatePhysicsModule()
         {
-            return new RaftPlayerPhysicsModule(this, _rigidbody);
+            return new RaftPlayerPhysicsModule(this, _rigidbody, (CapsuleCollider)_collider);
         }
 
         protected override void OnSpawned()

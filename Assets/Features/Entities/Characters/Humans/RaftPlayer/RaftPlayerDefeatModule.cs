@@ -6,11 +6,12 @@ namespace FishFlingers.Entities
 {
     public class RaftPlayerDefeatModule : CharacterDefeatModule
     {
-        public RaftPlayer Player => (RaftPlayer)_entity;
+        private RaftPlayer _player;
+        
 
         public RaftPlayerDefeatModule(RaftPlayer player) : base(player)
-        { 
-            
+        {
+            _player = player;
         }
 
         // Don't inherit Tick logic from CharacterDefeatModule
@@ -19,7 +20,7 @@ namespace FishFlingers.Entities
         
         public override void Defeat()
         {
-            _poolManager.GetProp(PropId.Barrel, new SpawnParams() { Parent = Player.transform });
+            _poolManager.GetProp(PropId.Barrel, new SpawnParams() { Parent = _player.transform });
 
             _isDefeated = true;
 

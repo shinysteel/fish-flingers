@@ -12,6 +12,7 @@ namespace FishFlingers.Entities
         [SerializeField] protected EntityDefinitionData _entityDefinitionData;
         [SerializeField] protected EntityModel _entityModel;
         [SerializeField] private Rigidbody _rigidbody;
+        [SerializeField] private Collider _collider;
 
         protected NetworkManager _networkManager;
         protected EntityManager _entityManager;
@@ -88,7 +89,7 @@ namespace FishFlingers.Entities
 
             _entityEffectsModule ??= new EntityEffectsModule(this);
 
-            _entityPhysicsModule ??= new EntityPhysicsModule(this, _rigidbody);
+            _entityPhysicsModule ??= new EntityPhysicsModule(this, _rigidbody, _collider);
 
             _isSpawned = true;
 
