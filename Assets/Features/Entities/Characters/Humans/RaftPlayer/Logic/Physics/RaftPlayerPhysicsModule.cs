@@ -16,7 +16,10 @@ namespace FishFlingers.Entities
 
         private float _jumpTimer;
         private bool _jumpRequest;
-        
+
+        private bool _isSwimClimbing;
+        private RaycastHit[] _swimClimbHitsNonAlloc = new RaycastHit[5];
+
         public RaftPlayerPhysicsModule(RaftPlayer player, Rigidbody rigidbody, CapsuleCollider capsuleCollider) : base(player, rigidbody, capsuleCollider)
         {
             _player = player;
@@ -138,25 +141,42 @@ namespace FishFlingers.Entities
 
         private void SwimClimbFixedTick()
         {
-            if (!InWater)
-            {
-                return;
-            }
-
             if (_player.InputLogic.MoveDirection == Vector3.zero)
             {
+                _isSwimClimbing = false;
                 return;
             }
 
-            //Vector3 center = _rigidbody.position + Player.CapsuleCollider.transform.TransformVector(Player.CapsuleCollider.center);
-            //float radius = Player.CapsuleCollider.radius * Mathf.Max(Player.CapsuleCollider.transform.lossyScale.x, Player.CapsuleCollider.transform.lossyScale.z);
-            //float height = Mathf.Max(Player.CapsuleCollider.height * Player.CapsuleCollider.transform.lossyScale.y, radius * 2f);
-            //float offset = height * 0.5f - radius;
+            if (!InWater)
+            {
+                // A minimum launch force guarentees the player can climb back up even if they haven't built up much acceleration
+                if (_isSwimClimbing && _rigidbody.linearVelocity.y < _settings.SwimClimb.LaunchStrength)
+                {
+                    Vector3 velocity = _rigidbody.linearVelocity;
+                    velocity.y = _settings.SwimClimb.LaunchStrength;
+                    _rigidbody.linearVelocity = velocity;
+                }
 
-            //Vector3 point1 = center - Vector3.up * offset;
-            //Vector3 point2 = center + Vector3.up * offset;
+                _isSwimClimbing = false;
+                return;
+            }
 
-            //Physics.CapsuleCastNonAlloc(point1, point2, radius, Player.InputLogic.MoveDirection, )
+            Vector3 center = _rigidbody.position + _capsuleCollider.transform.TransformVector(_capsuleCollider.center);
+            float radius = _capsuleCollider.radius * Mathf.Max(_player.transform.lossyScale.x, _player.transform.lossyScale.z);
+            float height = Mathf.Max(_capsuleCollider.height * _capsuleCollider.transform.lossyScale.y, radius * 2f);
+            float offset = height * 0.5f - radius;
+            
+            Vector3 point1 = center - Vector3.up * offset;
+            Vector3 point2 = center + Vector3.up * offset;
+
+            _isSwimClimbing = Physics.CapsuleCastNonAlloc(point1, point2, radius, _player.InputLogic.MoveDirection, _swimClimbHitsNonAlloc, _capsuleCollider.radius * 0.5f, _settings.SwimClimb.Mask) > 0;
+            
+            if (!_isSwimClimbing)
+            {
+                return;
+            }
+
+            _rigidbody.AddForce(Vector3.up * _settings.SwimClimb.ClimbSpeed, ForceMode.Acceleration);
         }
     }
 }

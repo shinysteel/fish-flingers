@@ -9,12 +9,12 @@ namespace FishFlingers.Entities
         [SerializeField] private RaftPlayerMoveSettings _move;
         [SerializeField] private RaftPlayerLookSettings _look;
         [SerializeField] private RaftPlayerJumpSettings _jump;
-        [SerializeField] private RaftPlayerSwimSettings _swim;
+        [SerializeField] private RaftPlayerSwimClimbSettings _swimClimb;
 
         public RaftPlayerMoveSettings Move => _move;
         public RaftPlayerLookSettings Look => _look;
         public RaftPlayerJumpSettings Jump => _jump;
-        public RaftPlayerSwimSettings Swim => _swim;
+        public RaftPlayerSwimClimbSettings SwimClimb => _swimClimb;
     }
 
     [Serializable]
@@ -54,14 +54,14 @@ namespace FishFlingers.Entities
     }
 
     [Serializable]
-    public class RaftPlayerSwimSettings
+    public class RaftPlayerSwimClimbSettings
     {
+        [SerializeField] private float _climbSpeed = 30f;
+        [SerializeField] private float _launchStrength = 3f;
         [SerializeField] private LayerMask _mask;
-        [SerializeField] private float _ascendStrength = 30f;
-        [SerializeField] private float _ascendDepthThreshold = 0.25f;
 
+        public float ClimbSpeed => _climbSpeed;
+        public float LaunchStrength => _launchStrength;
         public LayerMask Mask => _mask;
-        public float AscendStrength => _ascendStrength;
-        public float AscendDepthThreshold => _ascendDepthThreshold;
     }
 }

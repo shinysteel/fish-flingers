@@ -33,9 +33,8 @@ MonoBehaviour:
   _jump:
     _strength: 35
     _cooldown: 0.1
-  _swim:
+  _swimClimb:
+    _speed: 1
     _mask:
       serializedVersion: 2
-      m_Bits: 16
-    _ascendStrength: 400
-    _ascendDepthThreshold: 0.25
+      m_Bits: 129
