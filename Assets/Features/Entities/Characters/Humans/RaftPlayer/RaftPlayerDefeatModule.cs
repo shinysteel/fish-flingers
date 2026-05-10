@@ -1,17 +1,33 @@
 using FishFlingers.Pools;
 using UnityEngine;
 using FishFlingers.Environments;
+using PrimeTween;
+using ShinyOwl.Common.Extensions;
+using PurrNet;
+using System;
 
 namespace FishFlingers.Entities
 {
     public class RaftPlayerDefeatModule : CharacterDefeatModule
     {
         private RaftPlayer _player;
-        
+        private SyncVar<bool> _netInBarrel;
 
-        public RaftPlayerDefeatModule(RaftPlayer player) : base(player)
+        private bool _inBarrel;
+        public bool InBarrel => _inBarrel;
+
+        private Prop _barrelProp;
+
+        public RaftPlayerDefeatModule(RaftPlayer player, SyncVar<bool> netInBarrel) : base(player)
         {
             _player = player;
+            _netInBarrel = netInBarrel;
+
+            _netInBarrel.onChanged += HandleNetInBarrelChanged;
+        }
+
+        protected override void Despawn()
+        {
         }
 
         // Don't inherit Tick logic from CharacterDefeatModule
@@ -20,15 +36,39 @@ namespace FishFlingers.Entities
         
         public override void Defeat()
         {
-            _poolManager.GetProp(PropId.Barrel, new SpawnParams() { Parent = _player.transform });
+            _player.RaftPlayerPhysicsModule.Rigidbody.isKinematic = true;
+            TweenExtensions.Rotation(_player.transform, endValue: Quaternion.LookRotation(Vector3.back, Vector3.up), duration: 0.33f, ease: Ease.OutQuad);
 
             _isDefeated = true;
-
+            
             RaiseDefeated();
         }
 
-        protected override void Despawn()
+        public void SetNetInBarrel(bool inBarrel)
         {
+            _netInBarrel.value = inBarrel;
+        }
+
+        private void HandleNetInBarrelChanged(bool inBarrel)
+        {
+            if (_inBarrel == inBarrel)
+            {
+                return;
+            }
+
+            _inBarrel = inBarrel;
+
+            if (_inBarrel)
+            {
+                _barrelProp = _poolManager.GetProp(PropId.Barrel, new SpawnParams() { Parent = _player.transform });
+            }
+            else
+            {
+                _poolManager.ReturnProp(_barrelProp);
+                _barrelProp = null;
+            }
+
+            _player.RaftPlayerPhysicsModule.Rigidbody.isKinematic = false;
         }
     }
 }

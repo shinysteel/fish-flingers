@@ -17,7 +17,7 @@ MonoBehaviour:
     _groundCastDistance: 0.05
     _groundMask:
       serializedVersion: 2
-      m_Bits: 193
+      m_Bits: 449
     _waterMask:
       serializedVersion: 2
       m_Bits: 16
@@ -34,7 +34,8 @@ MonoBehaviour:
     _strength: 35
     _cooldown: 0.1
   _swimClimb:
-    _speed: 1
+    _climbSpeed: 30
+    _launchStrength: 3
     _mask:
       serializedVersion: 2
-      m_Bits: 129
+      m_Bits: 256

@@ -51,6 +51,11 @@ namespace FishFlingers.Entities
                 return;
             }
 
+            if (_player.RaftPlayerDefeatModule.IsDefeated)
+            {
+                return;
+            }
+
             if (_player.InputLogic.LeftClick)
             {
                 LeftClick();

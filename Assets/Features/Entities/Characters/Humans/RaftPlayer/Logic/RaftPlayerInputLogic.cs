@@ -40,13 +40,11 @@ namespace FishFlingers.Entities
         private Vector2 _gameplayMouse;
         private Vector3 _moveDirection;
         private bool _jump;
-        private bool _ascend;
         private bool _interact;
 
         public Vector2 GameplayMouse => _gameplayMouse;
         public Vector3 MoveDirection => _moveDirection;
         public bool Jump => _jump;
-        public bool Ascend => _ascend;
         public bool Interact => _interact;
 
         private const string MouseScrollWheelAxis = "Mouse ScrollWheel";
@@ -79,19 +77,17 @@ namespace FishFlingers.Entities
             _toggleFishingBag = Input.GetKeyDown(KeyCode.E);
             _toggleCraftingKit = Input.GetKeyDown(KeyCode.C);
 
-            if (Application.isFocused && _player.CanAct)
+            if (Application.isFocused && _player.CanAct && !_player.RaftPlayerDefeatModule.IsDefeated)
             {
                 _gameplayMouse = _mouse;
                 _moveDirection = Vector3.ClampMagnitude(new Vector3(Input.GetAxisRaw(HorizontalAxis), 0f, Input.GetAxisRaw(VerticalAxis)), 1f);
                 _jump = Input.GetKeyDown(KeyCode.Space);
-                _ascend = Input.GetKey(KeyCode.Space);
                 _interact = Input.GetKeyDown(KeyCode.F);
             }
             else
             {
                 _moveDirection = Vector3.zero;
                 _jump = false;
-                _ascend = false;
                 _interact = false;
             }
         }

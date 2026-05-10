@@ -47,7 +47,7 @@ namespace FishFlingers.Environments
         {
             foreach (RaftPlayer player in _context.Players)
             {
-                if (!player.EntityDefeatModule.IsDefeated && player.RaftPlayerPhysicsModule.TimeInWater >= 0.5f)
+                if (player.RaftPlayerPhysicsModule.TimeInWater >= 0.5f && !player.RaftPlayerDefeatModule.InBarrel)
                 {
                     AddDrowning(player);
                 }
@@ -67,7 +67,7 @@ namespace FishFlingers.Environments
             }
 
             Drowning drowning = (Drowning)_entityManager.Spawn(EntityId.Drowning, new SpawnParams() { Position = NetworkManager.HiddenSpawnPosition });
-            drowning.SetTarget(player);
+            drowning.SetTargetPlayer(player);
             _playerDrowningMap.Add(player, drowning);
         }
 

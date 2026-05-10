@@ -40,6 +40,7 @@ namespace FishFlingers.Entities
         private RaftPlayerHotkeyLogic _hotkeyLogic;
         private RaftPlayerTileTargetLogic _tileTargetLogic;
 
+        public RaftPlayerDefeatModule RaftPlayerDefeatModule => (RaftPlayerDefeatModule)_entityDefeatModule;
         public RaftPlayerPhysicsModule RaftPlayerPhysicsModule => (RaftPlayerPhysicsModule)_entityPhysicsModule;
 
         public RaftPlayerInputLogic InputLogic => _inputLogic;
@@ -58,6 +59,7 @@ namespace FishFlingers.Entities
         private SyncVar<NetInventoryItem> _netGrabbedInventoryItem = new SyncVar<NetInventoryItem>(ownerAuth: true);
         private SyncVar<Vector2> _netMousePositionNormalised = new SyncVar<Vector2>(ownerAuth: true);
         private SyncVar<NetBehaviour> _netOpenNetworkId = new SyncVar<NetBehaviour>(ownerAuth: true);
+        private SyncVar<bool> _netInBarrel = new SyncVar<bool>(ownerAuth: true);
 
         public Vector2 MousePositionNormalised => _netMousePositionNormalised.value;
 
@@ -91,7 +93,7 @@ namespace FishFlingers.Entities
 
         protected override EntityDefeatModule CreateDefeatModule()
         {
-            return new RaftPlayerDefeatModule(this);
+            return new RaftPlayerDefeatModule(this, _netInBarrel);
         }
 
         protected override EntityPhysicsModule CreatePhysicsModule()
