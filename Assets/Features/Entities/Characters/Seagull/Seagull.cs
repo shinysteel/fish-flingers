@@ -246,18 +246,19 @@ namespace FishFlingers.Entities
         {
             base.OnSpawned();
 
+            _attackStateAnimationEvents = new StateAnimationEvents(AttackStateName, false)
+            {
+                new StateAnimationEvent(0.3f, () => _audioManager.PlaySound(SoundId.SeagullAttack)),   
+            };
+
             if (isOwner)
             {
+                _attackStateAnimationEvents.Add(new StateAnimationEvent(0.3f, () => _hitboxManager.SpawnHitbox(DefinitionData.AttackSettings.HitboxData, new SpawnParams() { Position = transform.position })));
+                _attackStateAnimationEvents.Add(new StateAnimationEvent(0.3f, () => CharacterPhysicsModule.Rigidbody.AddForce(Vector3.up * 10f, ForceMode.Impulse)));
+                _attackStateAnimationEvents.Add(new StateAnimationEvent(1f, () => _stateMachine.ChangeState(EState.Idle)));
+
                 _stateMachine.ChangeState(EState.Fly);
-
-                _attackStateAnimationEvents = new StateAnimationEvents(AttackStateName, false)
-                {
-                    new StateAnimationEvent(0.3f, () => _hitboxManager.SpawnHitbox(DefinitionData.AttackSettings.HitboxData, new SpawnParams() { Position = transform.position })),
-                    new StateAnimationEvent(0.3f, () => CharacterPhysicsModule.Rigidbody.AddForce(Vector3.up * 10f, ForceMode.Impulse)),
-                    new StateAnimationEvent(0.3f, () => _audioManager.PlaySound(SoundId.SeagullAttack)),
-                    new StateAnimationEvent(1f, () => _stateMachine.ChangeState(EState.Idle))
-                };
-
+                
                 CharacterDefeatModule.OnIsDefeatedChanged += HandleIsDefeatedChanged;
             }
         }
@@ -281,15 +282,15 @@ namespace FishFlingers.Entities
                 return;
             }
 
+            AnimatorStateInfo info = CharacterModel.Animator.GetCurrentAnimatorStateInfo(0);
+            _attackStateAnimationEvents.Tick(info);
+
             if (!isOwner)
             {
                 return;
             }
-
+            
             _stateMachine.Tick();
-
-            AnimatorStateInfo info = CharacterModel.Animator.GetCurrentAnimatorStateInfo(0);
-            _attackStateAnimationEvents.Tick(info);
         }
 
         protected override void FixedUpdate()
