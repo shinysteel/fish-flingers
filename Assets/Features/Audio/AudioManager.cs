@@ -11,7 +11,8 @@ namespace FishFlingers.Audio
     {
         Jump,
         Footstep,
-        PaddleAttack
+        PaddleAttack,
+        SeagullAttack
     }
 
     public class AudioManager : GameSystem<IAudioManagerListener>

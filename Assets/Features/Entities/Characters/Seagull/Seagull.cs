@@ -1,3 +1,4 @@
+using FishFlingers.Audio;
 using PrimeTween;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Extensions;
@@ -253,6 +254,7 @@ namespace FishFlingers.Entities
                 {
                     new StateAnimationEvent(0.3f, () => _hitboxManager.SpawnHitbox(DefinitionData.AttackSettings.HitboxData, new SpawnParams() { Position = transform.position })),
                     new StateAnimationEvent(0.3f, () => CharacterPhysicsModule.Rigidbody.AddForce(Vector3.up * 10f, ForceMode.Impulse)),
+                    new StateAnimationEvent(0.3f, () => _audioManager.PlaySound(SoundId.SeagullAttack)),
                     new StateAnimationEvent(1f, () => _stateMachine.ChangeState(EState.Idle))
                 };
 
