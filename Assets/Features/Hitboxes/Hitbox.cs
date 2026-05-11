@@ -62,8 +62,8 @@ namespace FishFlingers.Hitboxes
 
                 int overlaps = step.Shape switch
                 {
-                    HitboxShape.Box => Physics.OverlapBoxNonAlloc(step.GetPosition(transform), step.Size * 0.5f, _collidersNonAlloc, transform.rotation),
-                    HitboxShape.Sphere => Physics.OverlapSphereNonAlloc(step.GetPosition(transform), step.Radius, _collidersNonAlloc),
+                    HitboxShape.Box => Physics.OverlapBoxNonAlloc(step.GetPosition(transform), step.Size * 0.5f, _collidersNonAlloc, transform.rotation, _data.Mask),
+                    HitboxShape.Sphere => Physics.OverlapSphereNonAlloc(step.GetPosition(transform), step.Radius, _collidersNonAlloc, _data.Mask),
                     _ => 0
                 };
 

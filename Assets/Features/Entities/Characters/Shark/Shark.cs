@@ -251,8 +251,7 @@ namespace FishFlingers.Entities
 
                     Vector3 hitboxDirection = Utils.Math.DirectionToVector3(_shark._swimDirectionEnum);
                     Vector3 hitboxPosition = _shark._targetLines[0].AxisIndexToWorldPosition(axisIndex) + _shark._shiftDirection * Tile.Size * 0.5f + hitboxDirection;
-                    Hitbox hitbox = _shark._poolManager.GetTypedPoolable<Hitbox>(new SpawnParams() { Position = hitboxPosition, Rotation = Quaternion.LookRotation(hitboxDirection, Vector3.up) });
-                    hitbox.Initialise(_shark.DefinitionData.BiteHitboxData);
+                    _shark._hitboxManager.SpawnHitbox(_shark.DefinitionData.BiteHitboxData, new SpawnParams() { Position = hitboxPosition, Rotation = Quaternion.LookRotation(hitboxDirection, Vector3.up) });
 
                     RemoveMarker();
                 }

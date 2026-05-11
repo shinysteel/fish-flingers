@@ -159,8 +159,7 @@ namespace FishFlingers.Entities
 
                 if (_flyTimer > _fish.DefinitionData.FlyDuration)
                 {
-                    Hitbox hitbox = _fish._poolManager.GetTypedPoolable<Hitbox>(new SpawnParams() { Position = _fish._targetTile.transform.position });
-                    hitbox.Initialise(_fish.DefinitionData.ImpactHitboxData);
+                    _fish._hitboxManager.SpawnHitbox(_fish.DefinitionData.ImpactHitboxData, new SpawnParams() { Position = _fish._targetTile.transform.position });
 
                     _fish._entityManager.Despawn(_fish);
                 }

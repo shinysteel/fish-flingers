@@ -1,3 +1,4 @@
+using FishFlingers.Hitboxes;
 using System;
 using UnityEngine;
 
@@ -7,8 +8,10 @@ namespace FishFlingers.Entities
     public class SeagullDefinitionData : CharacterDefinitionData
     {
         [SerializeField] private SeagullFlySettings _flySettings;
+        [SerializeField] private SeagullAttackSettings _attackSettings;
 
         public SeagullFlySettings FlySettings => _flySettings;
+        public SeagullAttackSettings AttackSettings => _attackSettings;
     }
 
 
@@ -20,5 +23,17 @@ namespace FishFlingers.Entities
 
         public float Speed => _speed;
         public float Acceleration => _acceleration;
+    }
+
+    [Serializable]
+    public class SeagullAttackSettings
+    {
+        [SerializeField] private float _range = 0.5f;
+        [SerializeField] private LayerMask _mask;
+        [SerializeField] private HitboxData _hitboxData;
+
+        public float Range => _range;
+        public LayerMask Mask => _mask;
+        public HitboxData HitboxData => _hitboxData;
     }
 }

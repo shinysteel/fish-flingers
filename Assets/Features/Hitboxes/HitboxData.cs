@@ -14,6 +14,7 @@ namespace FishFlingers.Hitboxes
         [SerializeField] private float _knockbackTorqueStrength = 0.5f;
         [SerializeField] private float _stunDuration = 0.2f;
         [SerializeField] private EntityAlliance _alliance = EntityAlliance.Ally;
+        [SerializeField] private LayerMask _mask = -1;
         [SerializeField] private HitboxStep[] _steps = new HitboxStep[0];
 
         public int Damage => _damage;
@@ -21,6 +22,7 @@ namespace FishFlingers.Hitboxes
         public float KnockbackTorqueStrength => _knockbackTorqueStrength;
         public float StunDuration => _stunDuration;
         public EntityAlliance Alliance => _alliance;
+        public LayerMask Mask => _mask;
         public HitboxStep[] Steps => _steps;
 
         // We don't cache this since it's nice to have it update in realtime while editing

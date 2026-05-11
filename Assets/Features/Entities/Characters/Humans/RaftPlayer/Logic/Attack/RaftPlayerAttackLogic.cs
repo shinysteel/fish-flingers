@@ -16,7 +16,7 @@ namespace FishFlingers.Entities
 
     public class RaftPlayerAttackLogic
     {
-        private PoolManager _poolManager;
+        private HitboxManager _hitboxManager;
 
         private RaftPlayer _player;
 
@@ -27,7 +27,7 @@ namespace FishFlingers.Entities
         
         public RaftPlayerAttackLogic(RaftPlayer player)
         {
-            _poolManager = GameManager.Instance.Get<PoolManager>();
+            _hitboxManager = GameManager.Instance.Get<HitboxManager>();
 
             _player = player;
 
@@ -55,8 +55,8 @@ namespace FishFlingers.Entities
         {
             _attackState = RaftPlayerAttackState.Impact;
             _player.EntityPhysicsModule.Rigidbody.AddForce(_player.transform.forward * _settings.LungeStrength, ForceMode.Impulse);
-            Hitbox hitbox = _poolManager.GetTypedPoolable<Hitbox>(new SpawnParams() { Position = _player.transform.position, Rotation = _player.transform.rotation });
-            hitbox.Initialise(_settings.HitboxData);
+
+            _hitboxManager.SpawnHitbox(_settings.HitboxData, new SpawnParams() { Position = _player.transform.position, Rotation = _player.transform.rotation });
         }
     }
 }

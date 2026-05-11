@@ -11,8 +11,14 @@ namespace FishFlingers.Entities
     {
         private StateMachine<EState> _stateMachine;
 
+        private StateAnimationEvents _attackStateAnimationEvents;
+
         private const string InAirBoolName = "InAir";
         private const string IsFlappingBoolName = "IsFlapping";
+
+        private const string AttackTriggerName = "Attack";
+
+        private const string AttackStateName = "Attack";
 
         private enum EState
         {
@@ -21,6 +27,7 @@ namespace FishFlingers.Entities
             Land,
             Idle,
             Poop,
+            Attack,
             Takeoff
         }
 
@@ -45,8 +52,7 @@ namespace FishFlingers.Entities
             private Vector3 _velocity;
 
             public FlyState(StateMachine<EState> parent) : base(parent)
-            {
-            }
+            { }
 
             public override void Enter()
             {
@@ -116,9 +122,10 @@ namespace FishFlingers.Entities
 
         private class LandState : State
         {
+            private Vector3 _landPosition;
+
             public LandState(StateMachine<EState> parent) : base(parent)
-            {
-            }
+            { }
 
             public override void Enter()
             {
@@ -130,41 +137,80 @@ namespace FishFlingers.Entities
 
                 _seagull.CharacterModel.Animator.SetBool(IsFlappingBoolName, true);
 
-                Vector3 landPosition = tile.transform.position;
-                landPosition.y = tile.GetSurfaceY();
+                _landPosition = tile.transform.position;
+                _landPosition.y = tile.GetSurfaceY();
 
-                Tween.Position(_seagull.transform, endValue: landPosition, duration: 2f, ease: Ease.InOutQuad).OnComplete(() => _parentStateMachine.ChangeState(EState.Idle));
+                _seagull._rigidbody.isKinematic = false;
 
-                TweenExtensions.Rotation(_seagull.transform, endValue: Quaternion.LookRotation(Utils.Math.DirectionToVector3(Utils.Math.GetRandomDirection()), Vector3.up), duration: 1f, ease: Ease.OutQuad);
+                TweenExtensions.Rotation(_seagull.transform, endValue: Quaternion.LookRotation(Vector3.forward, Vector3.up), duration: 1f, ease: Ease.OutQuad);
+            }
+
+            public override void FixedTick()
+            {
+                if (_seagull.CharacterPhysicsModule.IsGrounded)
+                {
+                    _parentStateMachine.ChangeState(EState.Idle);
+                    return;
+                }
+
+                _seagull.CharacterPhysicsModule.Rigidbody.AddForce(Vector3.up * 7f, ForceMode.Acceleration);
+
+                Vector3 direction = (_landPosition - _seagull.transform.position);
+                direction.y = 0f;
+                direction.Normalize();
+
+                _seagull.CharacterPhysicsModule.Rigidbody.AddForce(direction * 1f, ForceMode.Acceleration);
             }
         }
 
         private class IdleState : State
         {
+            private Collider[] _collidersNonAlloc = new Collider[5];
+
             public IdleState(StateMachine<EState> parent) : base(parent)
-            {
-            }
+            { }
 
             public override void Enter()
             {
-                _seagull._rigidbody.isKinematic = false;
-
                 _seagull.CharacterModel.Animator.SetBool(InAirBoolName, false);
+            }
+
+            public override void FixedTick()
+            {
+                if (Physics.OverlapSphereNonAlloc(_seagull.transform.position, _seagull.DefinitionData.AttackSettings.Range, _collidersNonAlloc, _seagull.DefinitionData.AttackSettings.Mask) > 0)
+                {
+                    Vector3 direction = (_collidersNonAlloc[0].transform.position - _seagull.transform.position);
+                    direction.y = 0f;
+                    direction.Normalize();
+
+                    TweenExtensions.Rotation(_seagull.transform, endValue: Quaternion.LookRotation(direction, Vector3.up), duration: 0.2f, ease: Ease.OutQuad);
+
+                    _parentStateMachine.ChangeState(EState.Attack);
+                }
             }
         }
 
         private class PoopState : State
         {
             public PoopState(StateMachine<EState> parent) : base(parent)
+            { }
+        }
+
+        private class AttackState : State
+        {
+            public AttackState(StateMachine<EState> parent) : base(parent)
+            { }
+
+            public override void Enter()
             {
+                _seagull.CharacterModel.SetTrigger(AttackTriggerName);
             }
         }
 
         private class TakeoffState : State
         {
             public TakeoffState(StateMachine<EState> parent) : base(parent)
-            {
-            }
+            { }
         }
 
         protected override void Awake()
@@ -177,33 +223,22 @@ namespace FishFlingers.Entities
             LandState landState = new LandState(_stateMachine);
             IdleState idleState = new IdleState(_stateMachine);
             PoopState poopState = new PoopState(_stateMachine);
+            AttackState attackState = new AttackState(_stateMachine);
             TakeoffState takeoffState = new TakeoffState(_stateMachine);
 
             flyState.Initialise(this);
             landState.Initialise(this);
             idleState.Initialise(this);
             poopState.Initialise(this);
+            attackState.Initialise(this);
             takeoffState.Initialise(this);
 
             _stateMachine.AddState(EState.Fly, flyState);
             _stateMachine.AddState(EState.Land, landState);
             _stateMachine.AddState(EState.Idle, idleState);
             _stateMachine.AddState(EState.Poop, poopState);
+            _stateMachine.AddState(EState.Attack, attackState);
             _stateMachine.AddState(EState.Takeoff, takeoffState);
-        }
-
-        protected override void Update()
-        {
-            base.Update();
-
-            _stateMachine.Tick();
-        }
-
-        protected override void FixedUpdate()
-        {
-            base.FixedUpdate();
-
-            _stateMachine.FixedTick();
         }
 
         protected override void OnSpawned()
@@ -213,7 +248,68 @@ namespace FishFlingers.Entities
             if (isOwner)
             {
                 _stateMachine.ChangeState(EState.Fly);
+
+                _attackStateAnimationEvents = new StateAnimationEvents(AttackStateName, false)
+                {
+                    new StateAnimationEvent(0.3f, () => _hitboxManager.SpawnHitbox(DefinitionData.AttackSettings.HitboxData, new SpawnParams() { Position = transform.position })),
+                    new StateAnimationEvent(0.3f, () => CharacterPhysicsModule.Rigidbody.AddForce(Vector3.up * 10f, ForceMode.Impulse)),
+                    new StateAnimationEvent(1f, () => _stateMachine.ChangeState(EState.Idle))
+                };
+
+                CharacterDefeatModule.OnIsDefeatedChanged += HandleIsDefeatedChanged;
             }
+        }
+
+        protected override void OnDespawned()
+        {
+            if (isOwner)
+            {
+                CharacterDefeatModule.OnIsDefeatedChanged -= HandleIsDefeatedChanged;
+            }
+
+            base.OnDespawned();
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (!isFullySpawned)
+            {
+                return;
+            }
+
+            if (!isOwner)
+            {
+                return;
+            }
+
+            _stateMachine.Tick();
+
+            AnimatorStateInfo info = CharacterModel.Animator.GetCurrentAnimatorStateInfo(0);
+            _attackStateAnimationEvents.Tick(info);
+        }
+
+        protected override void FixedUpdate()
+        {
+            base.FixedUpdate();
+
+            if (!isFullySpawned)
+            {
+                return;
+            }
+
+            if (!isOwner)
+            {
+                return;
+            }
+
+            _stateMachine.FixedTick();
+        }
+
+        private void HandleIsDefeatedChanged(bool defeated)
+        {
+            _stateMachine.ChangeState(EState.None);
         }
     }
 }
