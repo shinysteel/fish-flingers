@@ -58,6 +58,14 @@ MonoBehaviour:
     m_Localized: Valuable metal that's hard to come by out here
     m_Metadata:
       m_Items: []
+  - m_Id: 3159134252134400
+    m_Localized: Palm Seed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3159134281494528
+    m_Localized: Grows into a Palm Tree
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

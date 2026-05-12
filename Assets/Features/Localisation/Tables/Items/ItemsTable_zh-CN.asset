@@ -58,6 +58,14 @@ MonoBehaviour:
     m_Localized: "\u8FD9\u91CC\u5F88\u96BE\u627E\u5230\u7684\u73CD\u8D35\u91D1\u5C5E"
     m_Metadata:
       m_Items: []
+  - m_Id: 3159134252134400
+    m_Localized: "\u68D5\u6988\u7C7D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3159134281494528
+    m_Localized: "\u957F\u6210\u68D5\u6988\u6811"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

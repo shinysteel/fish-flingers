@@ -58,6 +58,14 @@ MonoBehaviour:
     m_Localized: "Cenny metal, kt\xF3ry trudno tu zdoby\u0107"
     m_Metadata:
       m_Items: []
+  - m_Id: 3159134252134400
+    m_Localized: Nasiona palmy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3159134281494528
+    m_Localized: "Ro\u015Bnie w palm\u0119"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

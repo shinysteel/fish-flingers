@@ -39,7 +39,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 42798570853986304
-    m_Localized: Skrzynka do uprawy wszelkich znalezionych sadzonek
+    m_Localized: "Pude\u0142ko do uprawy wszelkich znalezionych nasion"
     m_Metadata:
       m_Items: []
   references:

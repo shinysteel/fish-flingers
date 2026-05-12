@@ -39,6 +39,8 @@ namespace FishFlingers.Entities
         {
             base.OnSpawned();
 
+            transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
+
             if (_netItemInstance.value == null)
             {
                 Log.Error($"{nameof(_netItemInstance)} is null, did you forget to assign it?");

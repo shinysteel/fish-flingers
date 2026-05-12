@@ -58,6 +58,14 @@ MonoBehaviour:
     m_Localized: "Du m\xE9tal pr\xE9cieux, difficile \xE0 trouver par ici."
     m_Metadata:
       m_Items: []
+  - m_Id: 3159134252134400
+    m_Localized: Graine de palmier
+    m_Metadata:
+      m_Items: []
+  - m_Id: 3159134281494528
+    m_Localized: Se transforme en palmier
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

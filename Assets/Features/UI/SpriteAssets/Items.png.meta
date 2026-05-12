@@ -232,6 +232,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: item_palmSeed
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 448
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1680f88855cbe2a4488368f0837cb189
+      internalID: -1237339756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -252,6 +274,7 @@ TextureImporter:
       item_goop: -1028392100
       item_hammer: -1732200139
       item_paddle: -1614097415
+      item_palmSeed: -1237339756
       item_scrap: -2116414943
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

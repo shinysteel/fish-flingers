@@ -10,5 +10,6 @@ namespace FishFlingers.Items
         Hammer    = 3,
         Scrap     = 4,
         Goop      = 5,
+        PalmSeed  = 6,
     }
 }

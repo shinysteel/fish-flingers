@@ -39,7 +39,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 42798570853986304
-    m_Localized: Eine Kiste zum Anpflanzen von gefundenen Setzlingen.
+    m_Localized: Eine Kiste zum Anpflanzen aller gefundenen Samen.
     m_Metadata:
       m_Items: []
   references:
