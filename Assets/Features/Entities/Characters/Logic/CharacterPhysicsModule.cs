@@ -69,8 +69,13 @@ namespace FishFlingers.Entities
             }
             else
             {
-                _timeInWater = 0f;
+                ResetTimeInWater();
             }
+        }
+
+        public void ResetTimeInWater()
+        {
+            _timeInWater = 0f;
         }
     }
 }

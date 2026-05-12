@@ -113,7 +113,7 @@ namespace FishFlingers.Entities
                 if (_timer >= 0.83f)
                 {
                     // Since interpolation is enabled, we need to teleport via rigidbody.position
-                    _drowning._targetPlayer.TeleportRpc(_drowning._targetPlayer.owner.Value, new Vector3(Random.Range(-4f, 4f), 0.5f, 5f));
+                    _drowning._targetPlayer.TeleportRpc(_drowning._targetPlayer.owner.Value, new Vector3(Random.Range(-2f, 2f), 0.5f, 5f));
 
                     _drowning._targetPlayer.SetNetInBarrelRpc(_drowning._targetPlayer.owner.Value, true);
 
@@ -146,13 +146,6 @@ namespace FishFlingers.Entities
 
             private void Despawn()
             {
-                if (_drowning._finisherModel != null)
-                {
-                    _drowning._poolManager.ReturnEntityModel(_drowning._finisherModel);
-
-                    _drowning._finisherModel = null;
-                }
-
                 _drowning._entityManager.Despawn(_drowning);
             }
         }
@@ -235,12 +228,18 @@ namespace FishFlingers.Entities
         [ObserversRpc]
         private void FinisherRpc(EntityId id)
         {
-            // _finisherModel = _poolManager.GetEntityModel(id, new SpawnParams() { Rotation = Quaternion.LookRotation(Vector3.back, Vector3.up), Parent = transform });
+            _finisherModel = _poolManager.GetEntityModel(id, new SpawnParams() { Rotation = Quaternion.LookRotation(Vector3.back, Vector3.up), Parent = transform });
         }
 
         [ObserversRpc]
         private void DisappearRpc()
         {
+            if (_finisherModel != null)
+            {
+                _poolManager.ReturnEntityModel(_finisherModel);
+                _finisherModel = null;
+            }
+
             Tween.StopAll(_spriteRenderer);
             Tween.Alpha(_spriteRenderer, endValue: 0f, duration: 0.33f);
         }
