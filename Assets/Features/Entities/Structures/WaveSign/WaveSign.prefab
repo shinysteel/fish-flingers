@@ -109,6 +109,7 @@ MonoBehaviour:
   _entityModel: {fileID: 0}
   _rigidbody: {fileID: 4386832128480427575}
   _collider: {fileID: 5301047904338821491}
+  _waveText: {fileID: 7140164657380988708}
 --- !u!65 &5301047904338821491
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -224,7 +225,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4451170818008832760, guid: 0563798e147606846b1e82c3f53ac03b, type: 3}
       propertyPath: m_text
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4451170818008832760, guid: 0563798e147606846b1e82c3f53ac03b, type: 3}
       propertyPath: m_fontSize
@@ -263,6 +264,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0563798e147606846b1e82c3f53ac03b, type: 3}
+--- !u!114 &7140164657380988708 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4451170818008832760, guid: 0563798e147606846b1e82c3f53ac03b, type: 3}
+  m_PrefabInstance: {fileID: 6832886055939493340}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshPro
 --- !u!224 &9035182559744374183 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2571593872293525627, guid: 0563798e147606846b1e82c3f53ac03b, type: 3}

@@ -37,6 +37,6 @@ namespace FishFlingers.Entities
 
     public abstract class Structure<T> : Structure where T : StructureDefinitionData
     {
-        public T Data => (T)_entityDefinitionData;
+        public T DefinitionData => (T)_entityDefinitionData;
     }
 }

@@ -22,11 +22,6 @@ namespace FishFlingers.Environments
 
         private void OnTriggerStay(Collider collider)
         {
-            if (!_networkManager.IsServer)
-            {
-                return;
-            }
-
             if (!collider.gameObject.TryGetComponent(out IEntity entity))
             {
                 return;
@@ -36,7 +31,12 @@ namespace FishFlingers.Environments
             {
                 return;
             }
-            
+
+            if (!entity.IsOwner)
+            {
+                return;
+            }
+
             BuoyancyOnTriggerStay(collider, entity);
             CurrentOnTriggerStay(entity);
             DragOnTriggerStay(collider, entity);

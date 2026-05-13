@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class SliderValue : MonoBehaviour
 {
-    [SerializeField] private TMP_Text _text;
+    [SerializeField] private TextMeshProUGUI _text;
     [SerializeField] private Slider _slider;
 
     private void Awake()

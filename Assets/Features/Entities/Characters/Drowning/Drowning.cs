@@ -188,6 +188,7 @@ namespace FishFlingers.Entities
 
         protected override void OnEarlySpawn()
         {
+            Tween.CompleteAll(_spriteRenderer);
             Tween.Alpha(_spriteRenderer, startValue: 0f, endValue: 1f, duration: 0.33f);
         }
 
@@ -240,7 +241,7 @@ namespace FishFlingers.Entities
                 _finisherModel = null;
             }
 
-            Tween.StopAll(_spriteRenderer);
+            Tween.CompleteAll(_spriteRenderer);
             Tween.Alpha(_spriteRenderer, endValue: 0f, duration: 0.33f);
         }
 

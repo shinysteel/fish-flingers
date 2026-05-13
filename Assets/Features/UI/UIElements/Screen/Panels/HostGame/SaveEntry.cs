@@ -13,7 +13,7 @@ public class SaveEntry : MonoBehaviour, ITypedPoolable
     [SerializeField] private Button _button;
     [SerializeField] private Image _thumbnailImage;
     [SerializeField] private AspectRatioFitter _thumbnailAspectRatioFitter;
-    [SerializeField] private TMP_Text _nameText;
+    [SerializeField] private TextMeshProUGUI _nameText;
     [SerializeField] private Image _newWorldImage;
 
     private UIManager _uiManager;
