@@ -134,7 +134,7 @@ namespace FishFlingers.Environments
                 _spawnCounter++;
                 _stepTimer -= step.Interval;
             }
-
+            
             return _spawnCounter == step.Count;
         }
 

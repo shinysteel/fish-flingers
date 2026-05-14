@@ -23,7 +23,9 @@ namespace FishFlingers.Audio
         ClamChestClose,
         SeagullFlap,
         UIPositiveClick,
-        UINegativeClick
+        UINegativeClick,
+        WaveSignJump,
+        WaveSignSlam
     }
 
     public class AudioManager : GameSystem<IAudioManagerListener>
