@@ -1,4 +1,5 @@
 using FishFlingers.Pools;
+using ShinyOwl.Common;
 using UnityEngine;
 
 namespace FishFlingers.Audio
@@ -9,16 +10,9 @@ namespace FishFlingers.Audio
 
         private PoolManager _poolManager;
 
-        private float _timer;
-
         private void Awake()
         {
             _poolManager = GameManager.Instance.Get<PoolManager>();
-        }
-
-        void IPoolable.OnTakenFromPool()
-        {
-            _timer = 0f;
         }
 
         public void Initialise(SoundCueData data)
@@ -34,9 +28,7 @@ namespace FishFlingers.Audio
 
         private void Update()
         {
-            _timer += Time.deltaTime;
-
-            if (_timer >= _audioSource.clip.length)
+            if (!_audioSource.isPlaying)
             {
                 _poolManager.ReturnTypedPoolable(this);
             }
@@ -46,5 +38,8 @@ namespace FishFlingers.Audio
         {
             _audioSource.clip = null;
         }
+
+        void IPoolable.OnTakenFromPool()
+        { }
     }
 }
