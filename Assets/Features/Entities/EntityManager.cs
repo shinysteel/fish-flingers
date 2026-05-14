@@ -53,9 +53,10 @@ namespace FishFlingers.Entities
         private EntityManagerConfig _config;
 
         private Dictionary<EntityId, IEntity> _idPrefabMap = new();
-        private Dictionary<EntityId, EntityModel> _idModelMap = new();
-
         private Dictionary<Type, HashSet<IEntity>> _typePrefabsMap = new();
+
+        private Dictionary<EntityId, EntityModel> _idModelMap = new();
+        private Dictionary<EntityId, Pool<EntityModel>> _modelPools = new();
 
         private List<IEntity> _entities = new();
         public IReadOnlyList<IEntity> Entities => _entities;
@@ -71,12 +72,6 @@ namespace FishFlingers.Entities
             foreach (IEntity prefab in _config.IEntityScanner.GetAssets())
             {
                 _idPrefabMap.Add(prefab.EntityDefinitionData.Id, prefab);
-            }
-
-            // Entity model map
-            foreach (EntityModel model in _config.EntityModelScanner.GetAssets())
-            {
-                _idModelMap.Add(model.Id, model);
             }
 
             // Type entities map
@@ -98,26 +93,27 @@ namespace FishFlingers.Entities
                 }
             }
 
+            // Entity model map
+            foreach (EntityModel model in _config.EntityModelScanner.GetAssets())
+            {
+                _idModelMap.Add(model.Id, model);
+            }
+
             base.Initialise(config);
         }
 
         /// <summary>
         /// Retrieves a single entity mapped to the type
         /// </summary>
-        public IEntity GetEntityPrefab(EntityId id)
+        public IEntity GetPrefab(EntityId id)
         {
             return _idPrefabMap[id];
-        }
-
-        public EntityModel GetEntityModel(EntityId id)
-        {
-            return _idModelMap[id];
         }
 
         /// <summary>
         /// Retrieves a registered collection of entities
         /// </summary>
-        public IEnumerable<T> GetEntityPrefabs<T>() where T : IEntity
+        public IEnumerable<T> GetPrefabs<T>() where T : IEntity
         {
             if (!_typePrefabsMap.TryGetValue(typeof(T), out HashSet<IEntity> entities))
             {
@@ -188,6 +184,16 @@ namespace FishFlingers.Entities
             }
 
             Log.Error($"The top-level class of {entity} is unknown, and so it couldn't be despawned");
+        }
+
+        public EntityModel GetModel(EntityId id, SpawnParams parameters)
+        {
+            return _poolManager.GetPoolable(_modelPools, id, _idModelMap[id], parameters);
+        }
+
+        public void ReturnModel(EntityModel model)
+        {
+            _poolManager.ReturnPoolable(model, model.Id, _modelPools);
         }
 
         // Since NetEntity lifecycle is controlled by Purrnet, we need to manually raise these events

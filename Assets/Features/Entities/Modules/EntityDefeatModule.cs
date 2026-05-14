@@ -5,6 +5,7 @@ using System;
 using ShinyOwl.Common;
 using FishFlingers.Networking;
 using FishFlingers.Pools;
+using FishFlingers.Environments;
 
 namespace FishFlingers.Entities
 {
@@ -19,6 +20,7 @@ namespace FishFlingers.Entities
         protected ItemManager _itemManager;
         protected NetworkManager _networkManager;
         protected PoolManager _poolManager;
+        protected EnvironmentManager _environmentManager;
 
         private IEntity _entity;
         private Func<bool> _isDefeatedGetter;
@@ -36,6 +38,7 @@ namespace FishFlingers.Entities
             _itemManager = GameManager.Instance.Get<ItemManager>();
             _networkManager = GameManager.Instance.Get<NetworkManager>();
             _poolManager = GameManager.Instance.Get<PoolManager>();
+            _environmentManager = GameManager.Instance.Get<EnvironmentManager>();
 
             _entity = entity;
             _isDefeatedGetter = isDefeatedGetter;

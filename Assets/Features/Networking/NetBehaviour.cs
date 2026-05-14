@@ -11,6 +11,7 @@ using FishFlingers.Instantiating;
 using FishFlingers.Pools;
 using FishFlingers.Audio;
 using FishFlingers.Hitboxes;
+using FishFlingers.Effects;
 
 namespace FishFlingers.Networking
 {
@@ -27,6 +28,7 @@ namespace FishFlingers.Networking
         protected PoolManager _poolManager;
         protected AudioManager _audioManager;
         protected HitboxManager _hitboxManager;
+        protected EffectManager _effectManager;
 
         protected virtual void Awake()
         {
@@ -41,6 +43,7 @@ namespace FishFlingers.Networking
             _poolManager = GameManager.Instance.Get<PoolManager>();
             _audioManager = GameManager.Instance.Get<AudioManager>();
             _hitboxManager = GameManager.Instance.Get<HitboxManager>();
+            _effectManager = GameManager.Instance.Get<EffectManager>();
         }
 
         protected override void OnSpawned()

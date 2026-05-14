@@ -147,7 +147,7 @@ namespace FishFlingers.Environments
                 return;
             }
 
-            if (_entityManager.GetEntityPrefab(structureId) is not Structure)
+            if (_entityManager.GetPrefab(structureId) is not Structure)
             {
                 return;
             }

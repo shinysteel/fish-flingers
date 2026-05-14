@@ -1,6 +1,7 @@
 using FishFlingers.Entities;
 using FishFlingers.Inventories;
 using FishFlingers.Networking;
+using FishFlingers.Pools;
 using ShinyOwl.Common;
 using System;
 using System.Collections.Generic;
@@ -17,14 +18,17 @@ namespace FishFlingers.Items
     public class ItemManager : GameSystem<IItemManagerListener>
     {
         private EntityManager _entityManager;
+        private PoolManager _poolManager;
 
         private ItemManagerConfig _config;
 
         private Dictionary<ItemId, ItemDefinitionData> _idDataMap = new();
+        private Dictionary<ItemId, Pool<ItemModel>> _modelPools = new();
 
         public override void Initialise(GameManagerConfig config)
         {
             _entityManager = GameManager.Instance.Get<EntityManager>();
+            _poolManager = GameManager.Instance.Get<PoolManager>();
 
             _config = config.ItemManagerConfig;
 
@@ -103,6 +107,16 @@ namespace FishFlingers.Items
             droppedItem.Set(netItemInstance, type);
 
             return droppedItem;
+        }
+
+        public ItemModel GetModel(ItemId id, SpawnParams parameters)
+        {
+            return _poolManager.GetPoolable(_modelPools, id, _idDataMap[id].Model, parameters);
+        }
+
+        public void ReturnModel(ItemModel model)
+        {
+            _poolManager.ReturnPoolable(model, model.ItemId, _modelPools);
         }
     }
 }

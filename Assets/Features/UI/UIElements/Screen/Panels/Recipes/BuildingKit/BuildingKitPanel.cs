@@ -46,11 +46,11 @@ namespace FishFlingers.UI
             // We populate the entries with either tiles or structures depending on the target
             if (_context.LocalPlayer.TileTargetLogic.Target.CanBuildTile())
             {
-                buildables = _entityManager.GetEntityPrefabs<Tile>().Select(tile => tile.TileDefinitionData);
+                buildables = _entityManager.GetPrefabs<Tile>().Select(tile => tile.TileDefinitionData);
             }
             else if (_context.LocalPlayer.TileTargetLogic.Target.CanBuildStructure())
             {
-                buildables = _entityManager.GetEntityPrefabs<Structure>().Select(structure => structure.StructureDefinitionData);
+                buildables = _entityManager.GetPrefabs<Structure>().Select(structure => structure.StructureDefinitionData);
             }
 
             return buildables;

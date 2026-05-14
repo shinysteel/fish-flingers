@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dc5694a200bdbd458e38e7f7b159a21, type: 3}
   m_Name: EffectManagerConfig
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Effects.EffectManagerConfig
+  _vfxScanner: {fileID: 11400000, guid: 85e1d5692d1619b4099e3cae315b9fea, type: 2}

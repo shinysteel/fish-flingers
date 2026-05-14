@@ -8,7 +8,7 @@ namespace FishFlingers.Entities
 {
     public class RaftPlayerHeldInventoryItemLogic
     {
-        private PoolManager _poolManager;
+        private ItemManager _itemManager;
 
         private RaftPlayer _player;
 
@@ -18,7 +18,7 @@ namespace FishFlingers.Entities
 
         public RaftPlayerHeldInventoryItemLogic(RaftPlayer player)
         {
-            _poolManager = GameManager.Instance.Get<PoolManager>();
+            _itemManager = GameManager.Instance.Get<ItemManager>();
 
             _player = player;
 
@@ -39,14 +39,14 @@ namespace FishFlingers.Entities
         {
             if (_heldModel != null && _heldModel.ItemId != slot.InventoryItem?.ItemInstance.Data.ItemId)
             {
-                _poolManager.ReturnItemModel(_heldModel);
+                _itemManager.ReturnModel(_heldModel);
                 _heldModel = null;
             }
             
             if (_heldModel == null && slot.InventoryItem != null)
             {
                 // Items need to be corrected by 90 degrees on the y-axis when held
-                _heldModel = _poolManager.GetItemModel(slot.InventoryItem.ItemInstance.Data.ItemId, new SpawnParams() 
+                _heldModel = _itemManager.GetModel(slot.InventoryItem.ItemInstance.Data.ItemId, new SpawnParams() 
                 { 
                     Rotation = Quaternion.AngleAxis(90f, Vector3.up),
                     Parent = _player.CharacterModel.ItemLocator

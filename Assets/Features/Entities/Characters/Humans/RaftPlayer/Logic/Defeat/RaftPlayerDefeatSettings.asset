@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Entities.RaftPlayerDefeatSettings
   _defeatDuration: 1
   _tweenDuration: 0.5
+  _defeatsInWater: 0
   _moveInterval: 1
   _moveLinearStrength: 50
-  _moveAngularStrength: 0.75
+  _moveAngularStrength: -0.75
   _movePitch: 20
   _stabalisationStrength: 50
   _stablisationDamping: 2.5

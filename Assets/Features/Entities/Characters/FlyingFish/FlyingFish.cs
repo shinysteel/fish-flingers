@@ -79,7 +79,10 @@ namespace FishFlingers.Entities
 
                 // Animate from underwater to surface
                 _fish.transform.position += Vector3.down * _surfaceDistance;
-                Tween.Position(_fish.transform, _fish.transform.position + Vector3.up * _surfaceDistance, _surfaceDuration, Ease.OutBack);
+                Vector3 surfacePosition = _fish.transform.position + Vector3.up * _surfaceDistance;
+                Tween.Position(_fish.transform, endValue: surfacePosition, duration: _surfaceDuration, ease: Ease.OutBack);
+
+                EffectManager.SpawnVfxRpc(VfxId.WaterSplash, new Vector3(surfacePosition.x, 0f, surfacePosition.z));
 
                 // Place a marker
                 _fish._markerId = _fish._context.EnvironmentMarker.AddNetMarkedCells(_fish._targetTile.Cell);

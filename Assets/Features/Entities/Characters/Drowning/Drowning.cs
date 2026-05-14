@@ -238,7 +238,7 @@ namespace FishFlingers.Entities
         [ObserversRpc]
         private void FinisherRpc(EntityId id)
         {
-            _finisherModel = _poolManager.GetEntityModel(id, new SpawnParams() { Rotation = Quaternion.LookRotation(Vector3.back, Vector3.up), Parent = transform });
+            _finisherModel = _entityManager.GetModel(id, new SpawnParams() { Rotation = Quaternion.LookRotation(Vector3.back, Vector3.up), Parent = transform });
         }
 
         [ObserversRpc]
@@ -246,7 +246,7 @@ namespace FishFlingers.Entities
         {
             if (_finisherModel != null)
             {
-                _poolManager.ReturnEntityModel(_finisherModel);
+                _entityManager.ReturnModel(_finisherModel);
                 _finisherModel = null;
             }
 

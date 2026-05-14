@@ -1,3 +1,4 @@
+using FishFlingers.Pools;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,12 +9,17 @@ namespace FishFlingers.Environments
 
     public class EnvironmentManager : GameSystem<IEnvironmentManagerListener>
     {
+        private PoolManager _poolManager;
+
         private EnvironmentManagerConfig _config;
 
         private Dictionary<PropId, Prop> _idPrefabMap = new();
+        private Dictionary<PropId, Pool<Prop>> _propPools = new();
 
         public override void Initialise(GameManagerConfig config)
         {
+            _poolManager = GameManager.Instance.Get<PoolManager>();
+
             _config = config.EnvironmentManagerConfig;
 
             foreach (Prop prop in _config.PropScanner.GetAssets())
@@ -24,9 +30,14 @@ namespace FishFlingers.Environments
             base.Initialise(config);
         }
 
-        public Prop GetPropPrefab(PropId id)
+        public Prop GetProp(PropId id, SpawnParams parameters)
         {
-            return _idPrefabMap[id];
+            return _poolManager.GetPoolable(_propPools, id, _idPrefabMap[id], parameters);
+        }
+
+        public void ReturnProp(Prop prop)
+        {
+            _poolManager.ReturnPoolable(prop, prop.Id, _propPools);
         }
     }
 }

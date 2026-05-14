@@ -72,8 +72,8 @@ namespace FishFlingers.Entities
             int count = (netItemInstance?.ItemId ?? ItemId.None) != ItemId.None ? Mathf.Min(netItemInstance.Count, MaxItemModels) : 0;
 
             Utils.Collections.ResizeList(_itemModels, count,
-                createElement: () => _poolManager.GetItemModel(netItemInstance.ItemId, new SpawnParams() { Parent = transform }),
-                removeElement: (ItemModel model) => _poolManager.ReturnItemModel(model),
+                createElement: () => _itemManager.GetModel(netItemInstance.ItemId, new SpawnParams() { Parent = transform }),
+                removeElement: (ItemModel model) => _itemManager.ReturnModel(model),
                 processElement: (ItemModel model, int index) => model.transform.localPosition = Data.ModelOrientations[count - 1].Positions[index]);
         }
         

@@ -7,7 +7,7 @@ namespace FishFlingers.Entities
     {
         [SerializeField] private float _moveInterval = 0.75f;
         [SerializeField] private float _moveLinearStrength = 10f;
-        [SerializeField] private float _moveAngularStrength = 10f;
+        [SerializeField] private float _moveAngularStrength = -10f;
         [SerializeField] private float _movePitch = -20f;
         [SerializeField] private float _stabalisationStrength = 20f;
         [SerializeField] private float _stablisationDamping = 2.5f;

@@ -86,7 +86,7 @@ namespace FishFlingers.Entities
 
             Vector3 torqueDirection = Vector3.Cross(forcedirection, Vector3.up);
 
-            _player.RaftPlayerPhysicsModule.Rigidbody.AddTorque(torqueDirection * -_settings.MoveAngularStrength, ForceMode.Impulse);
+            _player.RaftPlayerPhysicsModule.Rigidbody.AddTorque(torqueDirection * _settings.MoveAngularStrength, ForceMode.Impulse);
 
             _moveTimer = 0f;
         }
@@ -148,7 +148,7 @@ namespace FishFlingers.Entities
 
             if (_inBarrel)
             {
-                _barrelProp = _poolManager.GetProp(PropId.Barrel, new SpawnParams() { Parent = _player.transform });
+                _barrelProp = _environmentManager.GetProp(PropId.Barrel, new SpawnParams() { Parent = _player.transform });
                 _player.CharacterModel.transform.localPosition = Vector3.up * 0.1f;
                 _moveTimer = _settings.MoveInterval;
 
@@ -160,7 +160,7 @@ namespace FishFlingers.Entities
             }
             else
             {
-                _poolManager.ReturnProp(_barrelProp);
+                _environmentManager.ReturnProp(_barrelProp);
                 _barrelProp = null;
                 _player.CharacterModel.transform.localPosition = Vector3.zero;
 

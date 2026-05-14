@@ -27,107 +27,95 @@ namespace FishFlingers.Pools
     public interface IPoolManagerListener
     { }
 
+    public interface IPool
+    {
+        IPoolable Get(SpawnParams parameters);
+        void Return(IPoolable poolable);
+    }
+
+    public class Pool<T> : IPool where T : Component, IPoolable
+    {
+        private SceneManager _sceneManager;
+
+        private T _prefab;
+        private Transform _container;
+        private Vector3 _prefabScale;
+
+        private Stack<T> _available = new();
+        private HashSet<T> _inUse = new();
+
+        public Pool(T prefab, Transform container)
+        {
+            _sceneManager = GameManager.Instance.Get<SceneManager>();
+
+            _prefab = prefab;
+            _container = container;
+            _prefabScale = prefab.transform.localScale;
+        }
+
+        public IPoolable Get(SpawnParams parameters)
+        {
+            T obj = _available.Count > 0
+                ? _available.Pop()
+                : Object.Instantiate(_prefab, _container);
+
+            _inUse.Add(obj);
+
+            // When worldPositionStays is false, the child's transform does not get modified
+            // when parenting to something. For pooling, this is relevant for UI where we generally
+            // don't want to touch the rect transform. A side effect from this is that the child's 
+            // scale is now derived from parent's scale * child's local scale, which will compound
+            // whenever the parent's scale is not 1
+
+            obj.transform.SetParent(parameters.Parent, false);
+            obj.transform.localScale = Vector3.Scale(_prefabScale, parameters.Scale);
+
+            obj.transform.localPosition = parameters.Position;
+            obj.transform.localRotation = parameters.Rotation;
+
+            if (parameters.Parent == null)
+            {
+                _sceneManager.MoveGameObjectToScene(obj.gameObject, parameters.SpawnScene.Get());
+            }
+
+            obj.gameObject.SetActive(true);
+            obj.OnTakenFromPool();
+
+            return obj;
+        }
+
+        public void Return(IPoolable poolable)
+        {
+            if (poolable is not T obj)
+            {
+                return;
+            }
+
+            if (!_inUse.Contains(obj))
+            {
+                return;
+            }
+
+            _inUse.Remove(obj);
+            _available.Push(obj);
+
+            obj.transform.SetParent(_container);
+            obj.gameObject.SetActive(false);
+            obj.OnReturnedToPool();
+        }
+    }
+
     public class PoolManager : GameSystem<IPoolManagerListener>
     {
-        private ItemManager _itemManager;
-        private EnvironmentManager _environmentManager;
-        private EntityManager _entityManager;
-
         private PoolManagerConfig _config;
 
         private Dictionary<Type, IPool> _typePools = new();
-        private Dictionary<EntityId, Pool<EntityModel>> _entityModelPools = new();
-        private Dictionary<ItemId, Pool<ItemModel>> _itemModelPools = new();
-        private Dictionary<PropId, Pool<Prop>> _propPools = new();
 
         private Transform _container;
 
         private const string ContainerName = "Pools";
-
-        private interface IPool
-        {
-            IPoolable Get(SpawnParams parameters);
-            void Return(IPoolable poolable);
-        }
-
-        private class Pool<T> : IPool where T : Component, IPoolable
-        {
-            private SceneManager _sceneManager;
-
-            private T _prefab;
-            private Transform _container;
-            private Vector3 _prefabScale;
-
-            private Stack<T> _available = new();
-            private HashSet<T> _inUse = new();
-
-            public Pool(T prefab, Transform container)
-            {
-                _sceneManager = GameManager.Instance.Get<SceneManager>();
-
-                _prefab = prefab;
-                _container = container;
-                _prefabScale = prefab.transform.localScale;
-            }
-
-            public IPoolable Get(SpawnParams parameters)
-            {
-                T obj = _available.Count > 0
-                    ? _available.Pop()
-                    : Object.Instantiate(_prefab, _container);
-
-                _inUse.Add(obj);
-
-                // When worldPositionStays is false, the child's transform does not get modified
-                // when parenting to something. For pooling, this is relevant for UI where we generally
-                // don't want to touch the rect transform. A side effect from this is that the child's 
-                // scale is now derived from parent's scale * child's local scale, which will compound
-                // whenever the parent's scale is not 1
-
-                obj.transform.SetParent(parameters.Parent, false);
-                obj.transform.localScale = Vector3.Scale(_prefabScale, parameters.Scale);
-
-                obj.transform.localPosition = parameters.Position;
-                obj.transform.localRotation = parameters.Rotation;
-
-                if (parameters.Parent == null)
-                {
-                    _sceneManager.MoveGameObjectToScene(obj.gameObject, parameters.SpawnScene.Get());
-                }
-
-                obj.gameObject.SetActive(true);
-                obj.OnTakenFromPool();
-
-                return obj;
-            }
-
-            public void Return(IPoolable poolable)
-            {
-                if (poolable is not T obj)
-                {
-                    return;
-                }
-
-                if (!_inUse.Contains(obj))
-                {
-                    return;
-                }
-
-                _inUse.Remove(obj);
-                _available.Push(obj);
-
-                obj.transform.SetParent(_container);
-                obj.gameObject.SetActive(false);
-                obj.OnReturnedToPool();
-            }
-        }
-
         public override void Initialise(GameManagerConfig config)
         {
-            _itemManager = GameManager.Instance.Get<ItemManager>();
-            _environmentManager = GameManager.Instance.Get<EnvironmentManager>();
-            _entityManager = GameManager.Instance.Get<EntityManager>();
-
             _config = config.PoolManagerConfig;
 
             _container = new GameObject(ContainerName).transform;
@@ -194,7 +182,7 @@ namespace FishFlingers.Pools
             pool.Return(obj);
         }
 
-        private T GetPoolable<T, U>(Dictionary<U, Pool<T>> pools, U id, T prefab, SpawnParams parameters)
+        public T GetPoolable<T, U>(Dictionary<U, Pool<T>> pools, U id, T prefab, SpawnParams parameters)
             where T : Component, IPoolable
             where U : Enum
         {
@@ -208,7 +196,7 @@ namespace FishFlingers.Pools
             return (T)pools[id].Get(parameters);
         }
 
-        private void ReturnPoolable<T, U>(T poolable, U id, Dictionary<U, Pool<T>> pools)
+        public void ReturnPoolable<T, U>(T poolable, U id, Dictionary<U, Pool<T>> pools)
             where T : Component, IPoolable
             where U : Enum
         {
@@ -218,36 +206,6 @@ namespace FishFlingers.Pools
             }
 
             pool.Return(poolable);
-        }
-
-        public EntityModel GetEntityModel(EntityId id, SpawnParams parameters)
-        {
-            return GetPoolable(_entityModelPools, id, _entityManager.GetEntityModel(id), parameters);
-        }
-
-        public void ReturnEntityModel(EntityModel model)
-        {
-            ReturnPoolable(model, model.Id, _entityModelPools);
-        }
-
-        public ItemModel GetItemModel(ItemId id, SpawnParams parameters)
-        {
-            return GetPoolable(_itemModelPools, id, _itemManager.GetItemDefinitionData(id).Model, parameters);
-        }
-
-        public void ReturnItemModel(ItemModel model)
-        {
-            ReturnPoolable(model, model.ItemId, _itemModelPools);
-        }
-
-        public Prop GetProp(PropId id, SpawnParams parameters)
-        {
-            return GetPoolable(_propPools, id, _environmentManager.GetPropPrefab(id), parameters);
-        }
-
-        public void ReturnProp(Prop prop)
-        {
-            ReturnPoolable(prop, prop.Id, _propPools);
         }
     }
 }
