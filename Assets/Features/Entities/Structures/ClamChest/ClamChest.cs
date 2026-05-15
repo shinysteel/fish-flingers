@@ -31,7 +31,7 @@ namespace FishFlingers.Entities
 
         private const float OpenDuration = 0.4f;
 
-        InteractHotkey IInteractable.Hotkey => InteractHotkey.FKey;
+        InteractableSettings IInteractable.Settings => DefinitionData.InteractableSettings;
 
         protected override void Awake()
         {

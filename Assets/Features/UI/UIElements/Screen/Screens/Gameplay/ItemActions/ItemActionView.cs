@@ -31,7 +31,7 @@ namespace FishFlingers.UI
             _context = context;
             _data = data;
 
-            if (_data.InteractHotkey == InteractHotkey.None)
+            if (_data.Hotkey == ActionHotkey.None)
             {
                 return;
             }
@@ -39,28 +39,28 @@ namespace FishFlingers.UI
             _hotkeyImage.gameObject.SetActive(false);
             _hotkeyText.gameObject.SetActive(false);
 
-            if (_data.InteractHotkey == InteractHotkey.FKey)
+            if (_data.Hotkey == ActionHotkey.FKey)
             {
                 _hotkeyText.text = "F";
                 _hotkeyText.gameObject.SetActive(true);
             }
-            else if (_data.InteractHotkey == InteractHotkey.LeftClick)
+            else if (_data.Hotkey == ActionHotkey.LeftClick)
             {
                 _hotkeyImage.sprite = _leftClickSprite;
                 _hotkeyImage.gameObject.SetActive(true);
             }
-            else if (_data.InteractHotkey == InteractHotkey.RightClick)
+            else if (_data.Hotkey == ActionHotkey.RightClick)
             {
                 _hotkeyImage.sprite = _rightClickSprite;
                 _hotkeyImage.gameObject.SetActive(true);
             }
 
-            _actionImage.sprite = _data.ActionSprite;
+            _actionImage.sprite = _data.Sprite;
         }
 
         private void Pressed()
         {
-            _context.LocalPlayer.InteractLogic.Interact(_data.InteractHotkey);
+            _context.LocalPlayer.InteractLogic.Interact(_data.Hotkey);
         }
 
         public void OnReturnedToPool()

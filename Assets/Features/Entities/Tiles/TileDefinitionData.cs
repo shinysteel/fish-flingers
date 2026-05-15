@@ -34,14 +34,17 @@ namespace FishFlingers.Entities
     [CreateAssetMenu(fileName = "TileDefinitionData", menuName = "Data/Entities/TileDefinitionData")]
     public class TileDefinitionData : EntityDefinitionData, IBuildable
     {
+        [SerializeField] private InteractableSettings _interactableSettings;
         [SerializeField] private Recipe _recipe;
         [SerializeField] private TileBobSettings _bobSettings;
         [SerializeField] private TileSinkSettings _sinkSettings;
 
-        public DefinitionData DefinitionData => this;
+        public InteractableSettings InteractableSettings => _interactableSettings;
         public Recipe Recipe => _recipe;
         public TileBobSettings BobSettings => _bobSettings;
         public TileSinkSettings SinkSettings => _sinkSettings;
+
+        DefinitionData ICreatable.DefinitionData => this;
 
         public bool TryBuild(GameplayContext context, RaftPlayerTileTarget target)
         {

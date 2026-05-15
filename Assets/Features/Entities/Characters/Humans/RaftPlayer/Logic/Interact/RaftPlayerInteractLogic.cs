@@ -35,6 +35,7 @@ namespace FishFlingers.Entities
         private class NearbyInteractable : IComparable<NearbyInteractable>
         {
             private IInteractable _interactable;
+            private int _priority;
             private float _angle;
             private float _distance;
 
@@ -45,14 +46,21 @@ namespace FishFlingers.Entities
                 _interactable = interactable;
             }
 
-            public void Set(float angle, float distance)
+            public void Set(int priority, float angle, float distance)
             {
+                _priority = priority;
                 _angle = angle;
                 _distance = distance;
             }
 
             public int CompareTo(NearbyInteractable other)
             {
+                int priorityCompare = other._priority.CompareTo(other._priority);
+                if (priorityCompare != 0)
+                {
+                    return priorityCompare;
+                }
+
                 int angleCompare = _angle.CompareTo(other._angle);
                 if (angleCompare != 0)
                 {
@@ -83,9 +91,9 @@ namespace FishFlingers.Entities
             _promptInteractable = null;
         }
         
-        public void Interact(InteractHotkey hotkey)
+        public void Interact(ActionHotkey hotkey)
         {
-            if (_promptInteractable?.Hotkey != hotkey)
+            if (_promptInteractable?.Settings.Hotkey != hotkey)
             {
                 return;
             }
@@ -144,9 +152,7 @@ namespace FishFlingers.Entities
                     continue;
                 }
 
-                GetAngleAndDistance(interactable, out float angle, out float distance);
-
-                if (!IsNearby(angle, distance))
+                if (!IsNearby(interactable, out _, out _))
                 {
                     continue;
                 }
@@ -160,11 +166,9 @@ namespace FishFlingers.Entities
             // Recalculate angles and distances, and remove any that are no longer 'nearby'
             foreach (NearbyInteractable nearbyInteractable in _nearbyInteractables)
             {
-                GetAngleAndDistance(nearbyInteractable.Interactable, out float angle, out float distance);
-
-                if (nearbyInteractable.Interactable.CanPrompt() && IsNearby(angle, distance))
+                if (nearbyInteractable.Interactable.CanPrompt() && IsNearby(nearbyInteractable.Interactable, out float angle, out float distance))
                 {
-                    nearbyInteractable.Set(angle, distance);
+                    nearbyInteractable.Set(nearbyInteractable.Interactable.Settings.Priority, angle, distance);
                 }
                 else
                 {
@@ -218,19 +222,22 @@ namespace FishFlingers.Entities
             _promptUI.transform.position = _promptInteractable.transform.position + offset;
         }
 
-        private void GetAngleAndDistance(IInteractable interactable, out float angle, out float distance)
+        private bool IsNearby(IInteractable interactable, out float angle, out float distance)
         {
+            distance = Vector3.Distance(_player.transform.position, interactable.transform.position);
+
             Vector3 direction = (interactable.transform.position - _player.transform.position);
             direction.y = 0f;
             direction.Normalize();
 
             angle = Vector3.Angle(_player.transform.forward, direction);
-            distance = Vector3.Distance(_player.transform.position, interactable.transform.position);
-        }
 
-        private bool IsNearby(float angle, float distance)
-        {
-            return angle < _settings.MaxAngle || distance < _settings.MaxDistance;
+            if (distance > _settings.Radius)
+            {
+                return false;
+            }
+
+            return angle < interactable.Settings.MaxAngle || distance < interactable.Settings.MaxDistance;
         }
     }
 }

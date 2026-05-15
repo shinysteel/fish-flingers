@@ -27,3 +27,4 @@ MonoBehaviour:
     _requirements:
     - _itemId: 1
       _count: 2
+  _interactableSettings: {fileID: 11400000, guid: e7d2000787996de4b911b468dcd0015b, type: 2}

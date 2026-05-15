@@ -6,7 +6,7 @@ namespace FishFlingers.Entities
 {
     public class Planter : Structure<PlanterDefinitionData>, IInteractable
     {
-        InteractHotkey IInteractable.Hotkey => InteractHotkey.LeftClick;
+        InteractableSettings IInteractable.Settings => DefinitionData.InteractableSettings;
 
         bool IInteractable.CanPrompt()
         {

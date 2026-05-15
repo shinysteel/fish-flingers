@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace FishFlingers
 {
-    public enum InteractHotkey
+    public enum ActionHotkey
     {
         None,
         FKey,

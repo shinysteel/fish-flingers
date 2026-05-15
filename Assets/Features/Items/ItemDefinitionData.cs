@@ -29,7 +29,7 @@ namespace FishFlingers.Inventories
         public ItemModel Model => _model;
         public ItemActionData[] ActionDatas => _actionDatas;
 
-        public bool TryCraft(GameplayContext context)
+        bool ICraftable.TryCraft(GameplayContext context)
         {
             List<InventoryChangeParams> parameters = _recipe.ToChangeParams();
 

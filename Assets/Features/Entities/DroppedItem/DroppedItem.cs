@@ -28,13 +28,13 @@ namespace FishFlingers.Entities
         private DroppedItemType _type;
         public DroppedItemType Type => _type;
 
-        public DroppedItemDefinitionData Data => (DroppedItemDefinitionData)_entityDefinitionData;
+        public DroppedItemDefinitionData DefinitionData => (DroppedItemDefinitionData)_entityDefinitionData;
 
         private const float DespawnDistance = 15f;
 
         private const int MaxItemModels = 3;
 
-        InteractHotkey IInteractable.Hotkey => InteractHotkey.FKey;
+        InteractableSettings IInteractable.Settings => DefinitionData.InteractableSettings;
 
         protected override void OnSpawned()
         {
@@ -75,7 +75,7 @@ namespace FishFlingers.Entities
             Utils.Collections.ResizeList(_itemModels, count,
                 createElement: () => _itemManager.GetModel(netItemInstance.ItemId, new SpawnParams() { Parent = transform }),
                 removeElement: (ItemModel model) => _itemManager.ReturnModel(model),
-                processElement: (ItemModel model, int index) => model.transform.localPosition = Data.ModelOrientations[count - 1].Positions[index]);
+                processElement: (ItemModel model, int index) => model.transform.localPosition = DefinitionData.ModelOrientations[count - 1].Positions[index]);
         }
         
         protected override void Update()

@@ -8,7 +8,7 @@ namespace FishFlingers.Items
     {
         public override void Execute(GameplayContext context)
         {
-            context.LocalPlayer.InteractLogic.Interact(_interactHotkey);
+            context.LocalPlayer.InteractLogic.Interact(_hotkey);
         }
     }
 }

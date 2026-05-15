@@ -99,7 +99,7 @@ namespace FishFlingers.Entities
         {
             if (!_uiManager.IsLayerInUse(UILayer.Panels))
             {
-                ExecuteItemAction(InteractHotkey.LeftClick);
+                ExecuteItemAction(ActionHotkey.LeftClick);
                 
             }
             else if (_player.GrabbedInventoryItemLogic.GrabbedInventoryItem == null)
@@ -112,14 +112,14 @@ namespace FishFlingers.Entities
             }
         }
 
-        private void ExecuteItemAction(InteractHotkey hotkey)
+        private void ExecuteItemAction(ActionHotkey hotkey)
         {
             if (_player.Hotbar.SelectedSlot.InventoryItem == null)
             {
                 return;
             }
 
-            ItemActionData actionData = _player.Hotbar.SelectedSlot.InventoryItem.ItemInstance.Data.ActionDatas.FirstOrDefault(data => data.InteractHotkey == hotkey);
+            ItemActionData actionData = _player.Hotbar.SelectedSlot.InventoryItem.ItemInstance.Data.ActionDatas.FirstOrDefault(data => data.Hotkey == hotkey);
 
             actionData?.Execute(_context);
         }
@@ -216,12 +216,12 @@ namespace FishFlingers.Entities
 
         private void RightClick()
         {
-            ExecuteItemAction(InteractHotkey.RightClick);
+            ExecuteItemAction(ActionHotkey.RightClick);
         }
 
         private void FKey()
         {
-            _player.InteractLogic.Interact(InteractHotkey.FKey);
+            _player.InteractLogic.Interact(ActionHotkey.FKey);
         }
 
         /// <summary>
@@ -322,7 +322,7 @@ namespace FishFlingers.Entities
             _player.Inventory.TryRemoveItem(_player.Hotbar.SelectedSlot.InventoryItem.ItemInstance.InstanceId);
         }
 
-        private void Interact(InteractHotkey hotkey)
+        private void Interact(ActionHotkey hotkey)
         {
             _player.InteractLogic.Interact(hotkey);
         }

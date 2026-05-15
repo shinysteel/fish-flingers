@@ -6,7 +6,7 @@ namespace FishFlingers.Entities
     public interface IInteractable
     {
         Transform transform { get; }
-        InteractHotkey Hotkey { get; }
+        InteractableSettings Settings { get; }
         bool CanPrompt();
         WorldUI CreatePromptUI();
         void Interact();

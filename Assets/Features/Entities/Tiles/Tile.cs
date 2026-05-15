@@ -34,7 +34,7 @@ namespace FishFlingers.Entities
 
         public const float Size = 1f;
 
-        InteractHotkey IInteractable.Hotkey => InteractHotkey.LeftClick;
+        InteractableSettings IInteractable.Settings => TileDefinitionData.InteractableSettings;
 
         protected override void Awake()
         {
@@ -142,7 +142,7 @@ namespace FishFlingers.Entities
 
         bool IInteractable.CanPrompt()
         {
-            return _currentHealth < _entityHealthModule.Max && _context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem?.ItemInstance.Data.ItemId == ItemId.Hammer;
+            return _isSpawned && _currentHealth < _entityHealthModule.Max && _context.LocalPlayer.Hotbar.SelectedSlot.InventoryItem?.ItemInstance.Data.ItemId == ItemId.Hammer;
         }
 
         WorldUI IInteractable.CreatePromptUI()
