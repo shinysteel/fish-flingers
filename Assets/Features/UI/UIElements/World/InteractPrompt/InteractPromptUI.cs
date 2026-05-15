@@ -1,15 +1,17 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FishFlingers.UI
 {
     public class InteractPromptUI : WorldUI
     {
-        public TextMeshProUGUI _text;
+        [SerializeField] private TextMeshProUGUI _hotkeyText;
+        [SerializeField] private Image _hotkeyImage;
 
         public void Setup(string text)
         {
-            _text.text = text;
+            _hotkeyText.text = text;
         }
     }
 }
