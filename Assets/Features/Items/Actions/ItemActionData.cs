@@ -6,10 +6,10 @@ namespace FishFlingers.Items
     public abstract class ItemActionData : ScriptableObject
     {
         [SerializeField] protected InteractHotkey _interactHotkey;
-        [SerializeField] private Sprite _hotkeySprite;
+        [SerializeField] private Sprite _actionSprite;
 
         public InteractHotkey InteractHotkey => _interactHotkey;
-        public Sprite HotkeySprite => _hotkeySprite;
+        public Sprite ActionSprite => _actionSprite;
 
         public abstract void Execute(GameplayContext context);
     }

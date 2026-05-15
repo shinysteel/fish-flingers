@@ -40,12 +40,12 @@ namespace FishFlingers.Entities
         private Vector2 _gameplayMouse;
         private Vector3 _moveDirection;
         private bool _jump;
-        private bool _interact;
+        private bool _fKey;
 
         public Vector2 GameplayMouse => _gameplayMouse;
         public Vector3 MoveDirection => _moveDirection;
         public bool Jump => _jump;
-        public bool Interact => _interact;
+        public bool FKey => _fKey;
 
         private const string MouseScrollWheelAxis = "Mouse ScrollWheel";
         private const string HorizontalAxis = "Horizontal";
@@ -82,30 +82,14 @@ namespace FishFlingers.Entities
                 _gameplayMouse = _mouse;
                 _moveDirection = Vector3.ClampMagnitude(new Vector3(Input.GetAxisRaw(HorizontalAxis), 0f, Input.GetAxisRaw(VerticalAxis)), 1f);
                 _jump = Input.GetKeyDown(KeyCode.Space);
-                _interact = Input.GetKeyDown(KeyCode.F);
+                _fKey = Input.GetKeyDown(KeyCode.F);
             }
             else
             {
                 _moveDirection = Vector3.zero;
                 _jump = false;
-                _interact = false;
+                _fKey = false;
             }
-        }
-
-        public bool TryGetInteract(out InteractHotkey hotkey)
-        {
-            hotkey = InteractHotkey.None;
-
-            if (_player.InputLogic.Interact)
-            {
-                hotkey = InteractHotkey.FKey;
-            }
-            else if (_player.InputLogic.LeftClick)
-            {
-                hotkey = InteractHotkey.LeftClick;
-            }
-
-            return hotkey != InteractHotkey.None;
         }
 
         public bool TryGetScroll(out float scroll)

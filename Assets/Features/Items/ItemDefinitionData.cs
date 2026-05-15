@@ -16,8 +16,7 @@ namespace FishFlingers.Inventories
         [SerializeField] private Recipe _recipe;
         [SerializeField] private BoolGrid _shape;
         [SerializeField] private ItemModel _model;
-        [SerializeField] private ItemActionData _leftClickAction;
-        [SerializeField] private ItemActionData _rightClickAction;
+        [SerializeField] private ItemActionData[] _actionDatas = new ItemActionData[0];
 
         // To differentiate from InstanceId, we use ItemId
         public ItemId ItemId => _itemId;
@@ -28,8 +27,7 @@ namespace FishFlingers.Inventories
         public Recipe Recipe => _recipe;
         public BoolGrid Shape => _shape;
         public ItemModel Model => _model;
-        public ItemActionData LeftClickAction => _leftClickAction;
-        public ItemActionData RightClickAction => _rightClickAction;
+        public ItemActionData[] ActionDatas => _actionDatas;
 
         public bool TryCraft(GameplayContext context)
         {

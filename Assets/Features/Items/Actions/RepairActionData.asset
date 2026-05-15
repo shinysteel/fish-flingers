@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: RepairActionData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Items.HotkeyActionData
   _interactHotkey: 2
-  _hotkeySprite: {fileID: 21300000, guid: f27c855da8110564bb782fea676764bf, type: 3}
+  _actionSprite: {fileID: 21300000, guid: f27c855da8110564bb782fea676764bf, type: 3}

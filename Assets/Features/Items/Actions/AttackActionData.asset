@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: AttackActionData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Items.AttackActionData
   _interactHotkey: 2
-  _hotkeySprite: {fileID: 21300000, guid: a8f5e5344e9d471479f7d1eca907f0af, type: 3}
+  _actionSprite: {fileID: 21300000, guid: a8f5e5344e9d471479f7d1eca907f0af, type: 3}

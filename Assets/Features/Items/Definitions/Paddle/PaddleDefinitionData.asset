@@ -24,5 +24,5 @@ MonoBehaviour:
       _count: 2
   _shape: {fileID: 11400000, guid: 7b783547d3dcf654dbc1f3049e96379e, type: 2}
   _model: {fileID: 6265077713852142882, guid: 38164e4f096eda0438b78b4f48846e57, type: 3}
-  _leftClickAction: {fileID: 11400000, guid: 434b0bef9dcae244f8afccaa3c0ddebc, type: 2}
-  _rightClickAction: {fileID: 0}
+  _actionDatas:
+  - {fileID: 11400000, guid: 434b0bef9dcae244f8afccaa3c0ddebc, type: 2}

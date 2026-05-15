@@ -6,6 +6,7 @@ using FishFlingers.UI;
 using PurrNet;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Utils;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using NetworkManager = FishFlingers.Networking.NetworkManager;
@@ -54,7 +55,7 @@ namespace FishFlingers.Entities
             {
                 return;
             }
-            
+
             if (_player.InputLogic.LeftClick)
             {
                 LeftClick();
@@ -65,6 +66,11 @@ namespace FishFlingers.Entities
                 RightClick();
             }
 
+            if (_player.InputLogic.FKey)
+            {
+                FKey();
+            }
+
             if (_player.InputLogic.RotateItem)
             {
                 RotateInventoryItem();
@@ -73,11 +79,6 @@ namespace FishFlingers.Entities
             if (_player.InputLogic.DropItem)
             {
                 DropItem();
-            }
-
-            if (_player.InputLogic.TryGetInteract(out InteractHotkey hotkey))
-            {
-                Interact(hotkey);
             }
 
             if (_player.InputLogic.TryGetScroll(out float scroll))
@@ -98,7 +99,7 @@ namespace FishFlingers.Entities
         {
             if (!_uiManager.IsLayerInUse(UILayer.Panels))
             {
-                ExecuteItemLeftClick();
+                ExecuteItemAction(InteractHotkey.LeftClick);
                 
             }
             else if (_player.GrabbedInventoryItemLogic.GrabbedInventoryItem == null)
@@ -111,14 +112,16 @@ namespace FishFlingers.Entities
             }
         }
 
-        private void ExecuteItemLeftClick()
+        private void ExecuteItemAction(InteractHotkey hotkey)
         {
             if (_player.Hotbar.SelectedSlot.InventoryItem == null)
             {
                 return;
             }
 
-            _player.Hotbar.SelectedSlot.InventoryItem.ItemInstance.Data.LeftClickAction?.Execute(_context);
+            ItemActionData actionData = _player.Hotbar.SelectedSlot.InventoryItem.ItemInstance.Data.ActionDatas.FirstOrDefault(data => data.InteractHotkey == hotkey);
+
+            actionData?.Execute(_context);
         }
 
         /// <summary>
@@ -213,17 +216,12 @@ namespace FishFlingers.Entities
 
         private void RightClick()
         {
-            ExecuteItemRightClick();
+            ExecuteItemAction(InteractHotkey.RightClick);
         }
 
-        private void ExecuteItemRightClick()
+        private void FKey()
         {
-            if (_player.Hotbar.SelectedSlot.InventoryItem == null)
-            {
-                return;
-            }
-
-            _player.Hotbar.SelectedSlot.InventoryItem.ItemInstance.Data.RightClickAction?.Execute(_context);
+            _player.InteractLogic.Interact(InteractHotkey.FKey);
         }
 
         /// <summary>
