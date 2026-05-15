@@ -222,8 +222,6 @@ namespace FishFlingers.Entities
 
         private void RefreshVisual()
         {
-            bool itemCanRepair = _player.Hotbar.SelectedSlot.InventoryItem?.ItemInstance.Data.CanRepair ?? false;
-
             if (_isBuilding)
             {
                 if (_target.CanBuildTile())
@@ -237,11 +235,6 @@ namespace FishFlingers.Entities
                     _targetVisual.SetColor(_target.CanBuildStructure() ? RaftPlayerTileTargetVisual.EColor.Valid : RaftPlayerTileTargetVisual.EColor.Invalid);
                 }
             }
-            //else if (itemCanRepair && _target.CanRepair())
-            //{
-            //    _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.Repair);
-            //    _targetVisual.SetColor(RaftPlayerTileTargetVisual.EColor.Valid);
-            //}
             else
             {
                 _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.None);

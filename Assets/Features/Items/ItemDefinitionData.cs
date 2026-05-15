@@ -31,8 +31,6 @@ namespace FishFlingers.Inventories
         public ItemActionData LeftClickAction => _leftClickAction;
         public ItemActionData RightClickAction => _rightClickAction;
 
-        public bool CanRepair => _leftClickAction is RepairActionData || _rightClickAction is RepairActionData;
-
         public bool TryCraft(GameplayContext context)
         {
             List<InventoryChangeParams> parameters = _recipe.ToChangeParams();

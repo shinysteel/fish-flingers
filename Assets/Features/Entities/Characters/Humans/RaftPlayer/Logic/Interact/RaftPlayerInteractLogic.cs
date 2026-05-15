@@ -85,7 +85,12 @@ namespace FishFlingers.Entities
         
         public void Interact(InteractHotkey hotkey)
         {
-            _promptInteractable?.Interact();
+            if (_promptInteractable?.Hotkey != hotkey)
+            {
+                return;
+            }
+
+            _promptInteractable.Interact();
         }
 
         public void Tick()

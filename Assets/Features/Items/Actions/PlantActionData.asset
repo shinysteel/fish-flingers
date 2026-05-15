@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 10c30826ba1695f40a25e9b2b26a33ee, type: 3}
-  m_Name: RepairActionData
+  m_Name: PlantActionData
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Items.HotkeyActionData
   _interactHotkey: 2
-  _hotkeySprite: {fileID: 21300000, guid: f27c855da8110564bb782fea676764bf, type: 3}
+  _hotkeySprite: {fileID: 21300000, guid: ccf1e481dafe2f2469659b19ecc7877a, type: 3}
