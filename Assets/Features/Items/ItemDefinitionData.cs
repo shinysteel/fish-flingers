@@ -24,7 +24,7 @@ namespace FishFlingers.Inventories
         public string SpriteAssetName => _spriteAssetName;
         public int MaxStack => _maxStack;
         public DefinitionData DefinitionData => this;
-        public Recipe Recipe => _recipe;
+        public Recipe BuildRecipe => _recipe;
         public BoolGrid Shape => _shape;
         public ItemModel Model => _model;
         public ItemActionData[] ActionDatas => _actionDatas;

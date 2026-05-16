@@ -58,7 +58,7 @@ namespace FishFlingers.UI
 
         protected override void CreatePressed(IBuildable buildable)
         {
-            List<InventoryChangeParams> parameters = buildable.Recipe.ToChangeParams();
+            List<InventoryChangeParams> parameters = buildable.BuildRecipe.ToChangeParams();
 
             if (!_context.LocalPlayer.Inventory.CanRemoveItems(parameters, out _))
             {

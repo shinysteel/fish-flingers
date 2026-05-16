@@ -259,7 +259,7 @@ namespace FishFlingers.UI
         }
 
         /// <summary>
-        /// Creates a world ui async. These live in the _worldCanvas, and layers aren't relevant
+        /// Creates a world ui. These live in the _worldCanvas, and layers aren't relevant
         /// </summary>
         public T CreateWorldUI<T>(T prefab, Vector3 position) where T : WorldUI
         {

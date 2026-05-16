@@ -107,7 +107,9 @@ namespace FishFlingers.Entities
         
         WorldUI IInteractable.CreatePromptUI()
         {
-            return _uiManager.CreateWorldUI(_uiManager.Config.InteractPromptUIPrefab, Vector3.zero);
+            InteractPromptUI ui = _uiManager.CreateWorldUI(_uiManager.Config.InteractPromptUIPrefab, Vector3.zero);
+            ui.SetupInteract(DefinitionData.IInteractableSettings.Hotkey);
+            return ui;
         }
 
         void IInteractable.Interact()

@@ -54,10 +54,10 @@ namespace FishFlingers.UI
         // Populate the recipe requirements
         private void RefreshEntries()
         {
-            Utils.Collections.ResizeList(_requirementEntries, _creatable.Recipe.Requirements.Length,
+            Utils.Collections.ResizeList(_requirementEntries, _creatable.BuildRecipe.Requirements.Length,
                 createElement: () => _poolManager.GetTypedPoolable<RequirementEntry>(new SpawnParams() { Parent = _requirementEntriesContainer }),
                 removeElement: (RequirementEntry entry) => _poolManager.ReturnTypedPoolable(entry),
-                processElement: (RequirementEntry entry, int index) => entry.Setup(_creatable.Recipe.Requirements[index]));
+                processElement: (RequirementEntry entry, int index) => entry.Setup(_creatable.BuildRecipe.Requirements[index]));
         }
 
         private void CreatePressed()

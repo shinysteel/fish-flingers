@@ -12,8 +12,8 @@ namespace FishFlingers.UI
     {
         [SerializeField] private Button _button;
         [SerializeField] private Image _actionImage;
-        [SerializeField] private Image _hotkeyImage;
         [SerializeField] private TextMeshProUGUI _hotkeyText;
+        [SerializeField] private Image _hotkeyImage;
 
         [SerializeField] private Sprite _leftClickSprite;
         [SerializeField] private Sprite _rightClickSprite;
@@ -36,24 +36,7 @@ namespace FishFlingers.UI
                 return;
             }
 
-            _hotkeyImage.gameObject.SetActive(false);
-            _hotkeyText.gameObject.SetActive(false);
-
-            if (_data.Hotkey == ActionHotkey.FKey)
-            {
-                _hotkeyText.text = "F";
-                _hotkeyText.gameObject.SetActive(true);
-            }
-            else if (_data.Hotkey == ActionHotkey.LeftClick)
-            {
-                _hotkeyImage.sprite = _leftClickSprite;
-                _hotkeyImage.gameObject.SetActive(true);
-            }
-            else if (_data.Hotkey == ActionHotkey.RightClick)
-            {
-                _hotkeyImage.sprite = _rightClickSprite;
-                _hotkeyImage.gameObject.SetActive(true);
-            }
+            ActionHotkeyUtils.Apply(_data.Hotkey, _hotkeyText, _hotkeyImage, _leftClickSprite, _rightClickSprite);
 
             _actionImage.sprite = _data.Sprite;
         }

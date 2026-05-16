@@ -34,15 +34,17 @@ namespace FishFlingers.Entities
     [CreateAssetMenu(fileName = "TileDefinitionData", menuName = "Data/Entities/TileDefinitionData")]
     public class TileDefinitionData : EntityDefinitionData, IBuildable
     {
-        [SerializeField] private IInteractableSettings _iInteractableSettings;
-        [SerializeField] private Recipe _recipe;
+        [SerializeField] private Recipe _buildRecipe;
         [SerializeField] private TileBobSettings _bobSettings;
         [SerializeField] private TileSinkSettings _sinkSettings;
+        [SerializeField] private IInteractableSettings _iInteractableSettings;
+        [SerializeField] private Recipe _repairRecipe;
 
-        public IInteractableSettings IInteractableSettings => _iInteractableSettings;
-        public Recipe Recipe => _recipe;
+        public Recipe BuildRecipe => _buildRecipe;
         public TileBobSettings BobSettings => _bobSettings;
         public TileSinkSettings SinkSettings => _sinkSettings;
+        public IInteractableSettings IInteractableSettings => _iInteractableSettings;
+        public Recipe RepairRecipe => _repairRecipe;
 
         DefinitionData ICreatable.DefinitionData => this;
 

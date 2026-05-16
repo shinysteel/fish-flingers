@@ -7,10 +7,10 @@ namespace FishFlingers.Entities
 {
     public abstract class StructureDefinitionData : EntityDefinitionData, IBuildable
     {
-        [SerializeField] private Recipe _recipe;
+        [SerializeField] private Recipe _buildRecipe;
 
         public DefinitionData DefinitionData => this;
-        public Recipe Recipe => _recipe;
+        public Recipe BuildRecipe => _buildRecipe;
 
         public bool TryBuild(GameplayContext context, RaftPlayerTileTarget target)
         {

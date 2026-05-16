@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 802792bc0bae7984d98b87e0078262b7, type: 3}
   m_Name: ITypedPoolableScanner
-  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Pools.PoolableScanner
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Pools.ITypedPoolableScanner
   _folder: {fileID: 102900000, guid: 00000000000000001000000000000000, type: 3}
   _assets:
   - {fileID: 6797095063698752868, guid: 05acb84182cd7d443af95b8c4d1d0072, type: 3}
@@ -28,5 +28,6 @@ MonoBehaviour:
   - {fileID: 2059183981358864354, guid: b385618c67a5eb74eb4a8fc0df13f02f, type: 3}
   - {fileID: 648661716375963596, guid: b50bf7da868f3794ca88e1922b123858, type: 3}
   - {fileID: 7095426318951412384, guid: bbb2fbbf4199d61449f6101b3102cfb4, type: 3}
+  - {fileID: 1374093096874204827, guid: c92a08032a508734ea992d6fe3ac7cba, type: 3}
   - {fileID: 2297227875456571815, guid: e3566a394fcc2d343a475b43077e0e36, type: 3}
   - {fileID: 4185476403889173136, guid: e5cae3af0be13324989cc7f00cecf5ac, type: 3}

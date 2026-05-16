@@ -10,7 +10,7 @@ namespace FishFlingers.UI
     {
         protected override IEnumerable<ICraftable> GetCreatables()
         {
-            return _itemManager.GetAllItemDefinitionDatas().Where(data => data.Recipe?.Requirements?.Length > 0);
+            return _itemManager.GetAllItemDefinitionDatas().Where(data => data.BuildRecipe?.Requirements?.Length > 0);
         }
 
         protected override void CreatePressed(ICraftable craftable)

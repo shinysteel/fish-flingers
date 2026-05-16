@@ -15,7 +15,10 @@ namespace FishFlingers.Entities
 
         WorldUI IInteractable.CreatePromptUI()
         {
-            return _uiManager.CreateWorldUI(_uiManager.Config.RequirementPromptUIPrefab, Vector3.zero);
+            RequirementPromptUI ui = _uiManager.CreateWorldUI(_uiManager.Config.RequirementPromptUIPrefab, Vector3.zero);
+            ui.SetupInteract(DefinitionData.IInteractableSettings.Hotkey);
+            ui.SetupRequirement(_context, DefinitionData.PlantRecipe);
+            return ui;
         }
 
         void IInteractable.Interact()
