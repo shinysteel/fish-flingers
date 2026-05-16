@@ -5,8 +5,8 @@ namespace FishFlingers.Entities
     [CreateAssetMenu(fileName = "SaplingPlanterDefinitionData", menuName = "Data/Entities/Structures/SaplingPlanterDefinitionData")]
     public class PlanterDefinitionData : StructureDefinitionData
     {
-        [SerializeField] private InteractableSettings _interactableSettings;
+        [SerializeField] private IInteractableSettings _iInteractableSettings;
 
-        public InteractableSettings InteractableSettings => _interactableSettings;
+        public IInteractableSettings IInteractableSettings => _iInteractableSettings;
     }
 }

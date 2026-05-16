@@ -6,7 +6,7 @@ namespace FishFlingers.Entities
 {
     public class Planter : Structure<PlanterDefinitionData>, IInteractable
     {
-        InteractableSettings IInteractable.Settings => DefinitionData.InteractableSettings;
+        IInteractableSettings IInteractable.Settings => DefinitionData.IInteractableSettings;
 
         bool IInteractable.CanPrompt()
         {

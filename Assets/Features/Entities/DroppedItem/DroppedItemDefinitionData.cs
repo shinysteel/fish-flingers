@@ -15,10 +15,10 @@ namespace FishFlingers.Entities
     [CreateAssetMenu(fileName = "DroppedItemDefinitionData", menuName = "Data/Entities/DroppedItemDefinitionData")]
     public class DroppedItemDefinitionData : EntityDefinitionData
     {
-        [SerializeField] private InteractableSettings _interactableSettings;
+        [SerializeField] private IInteractableSettings _iInteractableSettings;
         [SerializeField] private DropOrientation[] _modelOrientations;
 
-        public InteractableSettings InteractableSettings => _interactableSettings;
+        public IInteractableSettings IInteractableSettings => _iInteractableSettings;
         public DropOrientation[] ModelOrientations => _modelOrientations;
     }
 }

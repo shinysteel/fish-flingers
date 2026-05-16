@@ -3,7 +3,12 @@ guid: 8b5a999c9e6ce07478a57c445a4bd594
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Barrel.png
+    second: {fileID: 2100000, guid: caa053fb3c09602408aa310f7ba11782, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

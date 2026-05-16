@@ -6,16 +6,18 @@ using System.Collections.Generic;
 using FishFlingers.UI;
 using ShinyOwl.Common.Framework;
 using System;
-
-using Object = UnityEngine.Object;
 using System.Linq;
 using UnityEngine.Pool;
+using FishFlingers.Environments;
+
+using Object = UnityEngine.Object;
 
 namespace FishFlingers.Entities
 {
     public class RaftPlayerInteractLogic
     {
         private UIManager _uiManager;
+        private EnvironmentManager _environmentManager;
 
         private RaftPlayer _player;
 
@@ -27,6 +29,7 @@ namespace FishFlingers.Entities
 
         private IInteractable _promptInteractable;
         private WorldUI _promptUI;
+        private Prop _promptPreview;
 
         private Collider[] _collidersNonAlloc = new Collider[MaxOverlaps];
         private const int MaxOverlaps = 10;
@@ -55,7 +58,7 @@ namespace FishFlingers.Entities
 
             public int CompareTo(NearbyInteractable other)
             {
-                int priorityCompare = other._priority.CompareTo(other._priority);
+                int priorityCompare = other._priority.CompareTo(_priority);
                 if (priorityCompare != 0)
                 {
                     return priorityCompare;
@@ -74,6 +77,7 @@ namespace FishFlingers.Entities
         public RaftPlayerInteractLogic(RaftPlayer player)
         {
             _uiManager = GameManager.Instance.Get<UIManager>();
+            _environmentManager = GameManager.Instance.Get<EnvironmentManager>();
 
             _player = player;
 
@@ -87,7 +91,13 @@ namespace FishFlingers.Entities
                 _uiManager.DestroyWorldUI(_promptUI);
             }
 
+            if (_promptPreview != null)
+            {
+                _environmentManager.ReturnProp(_promptPreview);
+            }
+
             _promptUI = null;
+            _promptPreview = null;
             _promptInteractable = null;
         }
         
@@ -199,6 +209,11 @@ namespace FishFlingers.Entities
                 {
                     _promptInteractable = _nearbyInteractables[0].Interactable;
                     _promptUI = _promptInteractable.CreatePromptUI();
+
+                    if (_promptInteractable.Settings.PreviewId != PropId.None)
+                    {
+                        _promptPreview = _environmentManager.GetProp(_promptInteractable.Settings.PreviewId, new SpawnParams() { Parent = _promptInteractable.transform });
+                    }
                 }
             }
         }

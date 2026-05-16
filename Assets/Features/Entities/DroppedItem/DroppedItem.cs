@@ -34,7 +34,7 @@ namespace FishFlingers.Entities
 
         private const int MaxItemModels = 3;
 
-        InteractableSettings IInteractable.Settings => DefinitionData.InteractableSettings;
+        IInteractableSettings IInteractable.Settings => DefinitionData.IInteractableSettings;
 
         protected override void OnSpawned()
         {

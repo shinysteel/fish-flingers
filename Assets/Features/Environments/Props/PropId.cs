@@ -5,6 +5,8 @@ namespace FishFlingers.Environments
     public enum PropId
     {
         None,
-        Barrel
+        Barrel,
+        RepairPreview,
+        PlantPreview
     }
 }

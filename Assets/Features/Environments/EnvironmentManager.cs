@@ -24,6 +24,11 @@ namespace FishFlingers.Environments
 
             foreach (Prop prop in _config.PropScanner.GetAssets())
             {
+                if (prop.Id == PropId.None)
+                {
+                    continue;
+                }
+
                 _idPrefabMap.Add(prop.Id, prop);
             }
 

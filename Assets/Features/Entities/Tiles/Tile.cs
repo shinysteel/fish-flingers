@@ -34,7 +34,7 @@ namespace FishFlingers.Entities
 
         public const float Size = 1f;
 
-        InteractableSettings IInteractable.Settings => TileDefinitionData.InteractableSettings;
+        IInteractableSettings IInteractable.Settings => TileDefinitionData.IInteractableSettings;
 
         protected override void Awake()
         {

@@ -31,7 +31,7 @@ namespace FishFlingers.Entities
 
         private const float OpenDuration = 0.4f;
 
-        InteractableSettings IInteractable.Settings => DefinitionData.InteractableSettings;
+        IInteractableSettings IInteractable.Settings => DefinitionData.IInteractableSettings;
 
         protected override void Awake()
         {

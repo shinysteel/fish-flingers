@@ -11,7 +11,10 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ca72f6f013572a4dac416dfc3b8d89b, type: 3}
   m_Name: PropScanner
-  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Environments.ItemDataScanner
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Environments.PropScanner
   _folder: {fileID: 102900000, guid: 00000000000000001000000000000000, type: 3}
   _assets:
-  - {fileID: 3912846459354512328, guid: 7f6e18e9ee385594e96a17739241e9df, type: 3}
+  - {fileID: 501013989962925983, guid: 1c4310e2fa4f6ef4ab3f1b697bfca4e6, type: 3}
+  - {fileID: 5746630631684413413, guid: 3bc8a3af34d255841a8e862968d13a4a, type: 3}
+  - {fileID: 3795425600285321132, guid: b2eff5146ef676146957826f445ccab5, type: 3}
+  - {fileID: 6684268894981187068, guid: cda5cb844123d434c90b8b36c5264c1c, type: 3}
