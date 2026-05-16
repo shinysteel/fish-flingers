@@ -17,3 +17,4 @@ MonoBehaviour:
   _maxAngle: 45
   _maxDistance: 0.5
   _previewId: 3
+  _previewPosition: {x: 0, y: 0.1875, z: 0}

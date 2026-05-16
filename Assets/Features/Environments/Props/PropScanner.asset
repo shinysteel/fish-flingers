@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Environments.PropScanner
   _folder: {fileID: 102900000, guid: 00000000000000001000000000000000, type: 3}
   _assets:
-  - {fileID: 501013989962925983, guid: 1c4310e2fa4f6ef4ab3f1b697bfca4e6, type: 3}
-  - {fileID: 5746630631684413413, guid: 3bc8a3af34d255841a8e862968d13a4a, type: 3}
-  - {fileID: 3795425600285321132, guid: b2eff5146ef676146957826f445ccab5, type: 3}
-  - {fileID: 6684268894981187068, guid: cda5cb844123d434c90b8b36c5264c1c, type: 3}
+  - {fileID: 3462100232551433228, guid: 3bc8a3af34d255841a8e862968d13a4a, type: 3}
+  - {fileID: 8010186833149750098, guid: b2eff5146ef676146957826f445ccab5, type: 3}
+  - {fileID: 4943510228165400058, guid: cda5cb844123d434c90b8b36c5264c1c, type: 3}
