@@ -7,11 +7,7 @@ namespace FishFlingers.UI
 {
     public class InteractPromptUI : WorldUI
     {
-        [SerializeField] private TextMeshProUGUI _hotkeyText;
-        [SerializeField] private Image _hotkeyImage;
-
-        [SerializeField] private Sprite _leftClickSprite;
-        [SerializeField] private Sprite _rightClickSprite;
+        [SerializeField] private ActionHotkeyView _actionHotkeyView;
 
         protected PoolManager _poolManager;
 
@@ -22,7 +18,7 @@ namespace FishFlingers.UI
 
         public void SetupInteract(ActionHotkey hotkey)
         {
-            ActionHotkeyUtils.Apply(hotkey, _hotkeyText, _hotkeyImage, _leftClickSprite, _rightClickSprite);
+            _actionHotkeyView.Set(hotkey);
         }
     }
 }

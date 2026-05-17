@@ -1,4 +1,5 @@
 using FishFlingers.Cameras;
+using FishFlingers.Environments;
 using FishFlingers.Instantiating;
 using FishFlingers.Inventories;
 using FishFlingers.States;
@@ -93,13 +94,14 @@ namespace FishFlingers.Entities
     public class RaftPlayerTileTargetLogic
     {
         private CameraManager _cameraManager;
+        private EnvironmentManager _environmentManager;
 
         private RaftPlayer _player;
         private GameplayContext _context;
 
         private RaftPlayerTileTargetSettings _settings;
 
-        private RaftPlayerTileTargetVisual _targetVisual;
+        private Prop _targetProp;
 
         private RaftPlayerTileTarget _target;
         public RaftPlayerTileTarget Target => _target;
@@ -114,13 +116,12 @@ namespace FishFlingers.Entities
         public RaftPlayerTileTargetLogic(RaftPlayer player, GameplayContext context)
         {
             _cameraManager = GameManager.Instance.Get<CameraManager>();
+            _environmentManager = GameManager.Instance.Get<EnvironmentManager>();
 
             _player = player;
             _context = context;
 
             _settings = _player.DefinitionData.TileTargetSettings;
-
-            _targetVisual = Object.Instantiate(_settings.TargetVisualPrefab);
 
             _target = new RaftPlayerTileTarget(context);
             _target.OnChanged += HandleTargetChanged;
@@ -141,7 +142,7 @@ namespace FishFlingers.Entities
 
         private void HandleTargetChanged()
         {
-            RefreshVisual();
+            RefreshProp();
 
             // Passes along the event from Target -> Logic -> Listener
             OnTargetChanged?.Invoke(_target);
@@ -149,7 +150,7 @@ namespace FishFlingers.Entities
 
         private void HandleHotbarSelectedSlotChanged(HotbarSlot slot)
         {
-            RefreshVisual();
+            RefreshProp();
         }
 
         public void Tick()
@@ -160,7 +161,7 @@ namespace FishFlingers.Entities
             }
 
             DetermineTargetTick();
-            TransformVisualTick();
+            TransformPropTick();
         }
 
         private void DetermineTargetTick()
@@ -209,37 +210,59 @@ namespace FishFlingers.Entities
             _target.SetCell(newTargetCell);
         }
 
-        private void TransformVisualTick()
+        private void TransformPropTick()
         {
-            Vector3 position = _context.Raft.Queries.CellToWorldPosition(_target.Cell);
+            if (_targetProp == null)
+            {
+                return;
+            }
 
+            Vector3 position = _context.Raft.Queries.CellToWorldPosition(_target.Cell);
+            
             if (_target.Tile != null)
             {
                 position.y = _target.Tile.GetSurfaceY();
             }
 
-            _targetVisual.transform.position = position;
+            if (_targetProp.Id == PropId.TileScaffold)
+            {
+                position.y = -0.125f;
+            }
+
+            _targetProp.transform.position = position;
         }
 
-        private void RefreshVisual()
+        private void RefreshProp()
         {
+            PropId id = PropId.None;
+            Color color = Color.white;
+
             if (_isBuilding)
             {
                 if (_target.CanBuildTile())
                 {
-                    _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.TileScaffold);
-                    _targetVisual.SetColor(RaftPlayerTileTargetVisual.EColor.Valid);
+                    id = PropId.TileScaffold;
+                    color = _settings.ValidColor;
                 }
                 else
                 {
-                    _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.StructureScaffold);
-                    _targetVisual.SetColor(_target.CanBuildStructure() ? RaftPlayerTileTargetVisual.EColor.Valid : RaftPlayerTileTargetVisual.EColor.Invalid);
+                    id = PropId.StructureScaffold;
+                    color = _target.CanBuildStructure() ? _settings.ValidColor : _settings.InvalidColor;
                 }
             }
-            else
+
+            if (_targetProp != null && _targetProp.Id != id)
             {
-                _targetVisual.SetVisual(RaftPlayerTileTargetVisual.EVisual.None);
+                _environmentManager.ReturnProp(_targetProp);
+                _targetProp = null;
             }
+
+            if (_targetProp == null && id != PropId.None)
+            {
+                _targetProp = _environmentManager.GetProp(id, new SpawnParams());
+            }
+
+            _targetProp?.SetColor(color);
         }
 
         public void SetIsBuilding(bool building)
@@ -251,7 +274,7 @@ namespace FishFlingers.Entities
 
             _isBuilding = building;
 
-            RefreshVisual();
+            RefreshProp();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace FishFlingers.UI
         private ICreatable _creatable;
         private Action _onCreatePressed;
 
-        private List<RequirementEntry> _requirementEntries = new();
+        private List<BlueprintRequirementEntry> _requirementEntries = new();
 
         private void Awake()
         {
@@ -55,9 +55,9 @@ namespace FishFlingers.UI
         private void RefreshEntries()
         {
             Utils.Collections.ResizeList(_requirementEntries, _creatable.BuildRecipe.Requirements.Length,
-                createElement: () => _poolManager.GetTypedPoolable<RequirementEntry>(new SpawnParams() { Parent = _requirementEntriesContainer }),
-                removeElement: (RequirementEntry entry) => _poolManager.ReturnTypedPoolable(entry),
-                processElement: (RequirementEntry entry, int index) => entry.Setup(_creatable.BuildRecipe.Requirements[index]));
+                createElement: () => _poolManager.GetTypedPoolable<BlueprintRequirementEntry>(new SpawnParams() { Parent = _requirementEntriesContainer }),
+                removeElement: (BlueprintRequirementEntry entry) => _poolManager.ReturnTypedPoolable(entry),
+                processElement: (BlueprintRequirementEntry entry, int index) => entry.Setup(_creatable.BuildRecipe.Requirements[index]));
         }
 
         private void CreatePressed()
@@ -67,7 +67,7 @@ namespace FishFlingers.UI
 
         public void OnReturnedToPool()
         { 
-            foreach (RequirementEntry entry in _requirementEntries)
+            foreach (BlueprintRequirementEntry entry in _requirementEntries)
             {
                 _poolManager.ReturnTypedPoolable(entry);
             }

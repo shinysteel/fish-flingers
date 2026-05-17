@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace FishFlingers.UI
 {
-    public class RequirementEntry : MonoBehaviour, ITypedPoolable
+    public class BlueprintRequirementEntry : MonoBehaviour, ITypedPoolable
     {
         [SerializeField] private TextMeshProUGUI _text;
 

@@ -12,11 +12,7 @@ namespace FishFlingers.UI
     {
         [SerializeField] private Button _button;
         [SerializeField] private Image _actionImage;
-        [SerializeField] private TextMeshProUGUI _hotkeyText;
-        [SerializeField] private Image _hotkeyImage;
-
-        [SerializeField] private Sprite _leftClickSprite;
-        [SerializeField] private Sprite _rightClickSprite;
+        [SerializeField] private ActionHotkeyView _actionHotkeyView;
 
         private GameplayContext _context;
         private ItemActionData _data;
@@ -36,7 +32,7 @@ namespace FishFlingers.UI
                 return;
             }
 
-            ActionHotkeyUtils.Apply(_data.Hotkey, _hotkeyText, _hotkeyImage, _leftClickSprite, _rightClickSprite);
+            _actionHotkeyView.Set(_data.Hotkey);
 
             _actionImage.sprite = _data.Sprite;
         }

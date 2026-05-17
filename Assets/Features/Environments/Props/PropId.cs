@@ -7,6 +7,8 @@ namespace FishFlingers.Environments
         None,
         Barrel,
         RepairPreview,
-        PlantPreview
+        PlantPreview,
+        TileScaffold,
+        StructureScaffold
     }
 }
