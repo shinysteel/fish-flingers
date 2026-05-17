@@ -9,6 +9,7 @@ namespace FishFlingers.Entities
         IInteractableSettings Settings { get; }
         bool CanPrompt();
         WorldUI CreatePromptUI();
+        bool CanInteract();
         void Interact();
     }
 }

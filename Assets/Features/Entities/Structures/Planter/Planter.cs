@@ -21,7 +21,14 @@ namespace FishFlingers.Entities
             return ui;
         }
 
+        bool IInteractable.CanInteract()
+        {
+            return _context.LocalPlayer.Inventory.CanRemoveItems(DefinitionData.PlantRecipe.ToChangeParams(), out _);
+        }
+
         void IInteractable.Interact()
-        { }
+        {
+            _context.LocalPlayer.Inventory.TryRemoveItems(DefinitionData.PlantRecipe.ToChangeParams());
+        }
     }
 }

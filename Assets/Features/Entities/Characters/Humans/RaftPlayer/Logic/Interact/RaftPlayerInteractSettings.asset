@@ -16,5 +16,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 384
   _radius: 1
-  _maxDistance: 0.5
-  _maxAngle: 45
+  _validColor: {r: 0.5411765, g: 1, b: 0.5921569, a: 0.5019608}
+  _invalidColor: {r: 1, g: 0.5411765, b: 0.5411765, a: 0.5019608}

@@ -6,14 +6,12 @@ namespace FishFlingers.Entities
 {
     public class RaftPlayerTileTargetVisual : MonoBehaviour
     {
-        [SerializeField] private GameObject _repairGameObject;
         [SerializeField] private GameObject _tileScaffoldGameObject;
         [SerializeField] private GameObject _structureScaffoldGameObject;
 
         [SerializeField] private Color _validColor;
         [SerializeField] private Color _invalidColor;
 
-        private Material _repairMaterial;
         private Material _tileScaffoldMaterial;
         private Material _structureScaffoldMaterial;
 
@@ -22,7 +20,6 @@ namespace FishFlingers.Entities
         public enum EVisual
         {
             None,
-            Repair,
             TileScaffold,
             StructureScaffold
         }
@@ -35,7 +32,6 @@ namespace FishFlingers.Entities
 
         private void Awake()
         {
-            _repairMaterial = GetMaterial(_repairGameObject);
             _tileScaffoldMaterial = GetMaterial(_tileScaffoldGameObject);
             _structureScaffoldMaterial = GetMaterial(_structureScaffoldGameObject);
         }
@@ -66,13 +62,11 @@ namespace FishFlingers.Entities
                 return;
             }
 
-            _repairGameObject.SetActive(false);
             _tileScaffoldGameObject.SetActive(false);
             _structureScaffoldGameObject.SetActive(false);
 
             (visual switch
             {
-                EVisual.Repair => _repairGameObject,
                 EVisual.TileScaffold => _tileScaffoldGameObject,
                 EVisual.StructureScaffold => _structureScaffoldGameObject,
                 _ => null
@@ -90,7 +84,6 @@ namespace FishFlingers.Entities
                 _ => Color.white
             };
 
-            _repairMaterial.color = new Color(color.r, color.g, color.b, color.a * 0.5f);
             _tileScaffoldMaterial.color = color;
             _structureScaffoldMaterial.color = color;
         }

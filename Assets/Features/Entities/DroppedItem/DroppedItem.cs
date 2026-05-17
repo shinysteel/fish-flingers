@@ -112,6 +112,11 @@ namespace FishFlingers.Entities
             return ui;
         }
 
+        bool IInteractable.CanInteract()
+        {
+            return _context.LocalPlayer.Inventory.CanAddItem(InventoryChangeParams.Create(_netItemInstance), out _, out _, out _);
+        }
+
         void IInteractable.Interact()
         {
             if (_context.LocalPlayer.Inventory.TryAddItem(InventoryChangeParams.Create(_netItemInstance), false, out _, out _, out _))

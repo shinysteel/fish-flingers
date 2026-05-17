@@ -153,9 +153,17 @@ namespace FishFlingers.Entities
             return ui;
         }
 
+        bool IInteractable.CanInteract()
+        {
+            return _context.LocalPlayer.Inventory.CanRemoveItems(TileDefinitionData.RepairRecipe.ToChangeParams(), out _);
+        }
+
         void IInteractable.Interact()
         {
-            _entityHealthModule.ChangeHealth(1);
+            if (_context.LocalPlayer.Inventory.TryRemoveItems(TileDefinitionData.RepairRecipe.ToChangeParams()))
+            {
+                _entityHealthModule.ChangeHealth(1);
+            }
         }
     }
 }

@@ -83,6 +83,11 @@ namespace FishFlingers.Entities
             return ui;
         }
 
+        bool IInteractable.CanInteract()
+        {
+            return true;
+        }
+
         void IInteractable.Interact()
         {
             _context.LocalPlayer.SetNetOpenObjectNetworkId(this);

@@ -208,9 +208,15 @@ namespace FishFlingers.Entities
                     if (_promptInteractable.Settings.PreviewId != PropId.None)
                     {
                         _promptPreview = _environmentManager.GetProp(_promptInteractable.Settings.PreviewId, new SpawnParams() { Parent = _promptInteractable.transform, Position = _promptInteractable.Settings.PreviewPosition });
+                        RefreshPreviewColor();
                     }
                 }
             }
+        }
+
+        private void RefreshPreviewColor()
+        {
+            _promptPreview.SetColor(_promptInteractable.CanInteract() ? _settings.ValidColor : _settings.InvalidColor);
         }
 
         private void AnimateTick()
