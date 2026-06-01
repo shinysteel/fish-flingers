@@ -24,7 +24,7 @@ MonoBehaviour:
       _interval: 1.5
       _endDelay: 3
   - _steps:
-    - _entityId: 103
+    - _entityId: 102
       _count: 5
       _interval: 1.5
       _endDelay: 3
