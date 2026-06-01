@@ -17,6 +17,7 @@ using FishFlingers.Effects;
 using FishFlingers.Hitboxes;
 using FishFlingers.Audio;
 using FishFlingers.Environments;
+using FishFlingers.Rarities;
 
 [CreateAssetMenu(fileName = "GameManagerConfig", menuName = "Configs/Managers/GameManagerConfig")]
 public class GameManagerConfig : ScriptableObject
@@ -40,6 +41,7 @@ public class GameManagerConfig : ScriptableObject
     [SerializeField] private HitboxManagerConfig _hitboxManagerConfig;
     [SerializeField] private AudioManagerConfig _audioManagerConfig;
     [SerializeField] private EnvironmentManagerConfig _environmentManagerConfig;
+    [SerializeField] private RarityManagerConfig _rarityManagerConfig;
 
     public SaveManagerConfig SaveManagerConfig => _saveManagerConfig;
     public InstantiateManagerConfig InstantiateManagerConfig => _instantiateManagerConfig;
@@ -60,4 +62,5 @@ public class GameManagerConfig : ScriptableObject
     public HitboxManagerConfig HitboxManagerConfig => _hitboxManagerConfig;
     public AudioManagerConfig AudioManagerConfig => _audioManagerConfig;
     public EnvironmentManagerConfig EnvironmentManagerConfig => _environmentManagerConfig;
+    public RarityManagerConfig RarityManagerConfig => _rarityManagerConfig;
 }

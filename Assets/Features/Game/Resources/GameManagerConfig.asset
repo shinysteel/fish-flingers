@@ -31,3 +31,4 @@ MonoBehaviour:
   _hitboxManagerConfig: {fileID: 11400000, guid: a0a5de70e267bce458bf94b92586a7fa, type: 2}
   _audioManagerConfig: {fileID: 11400000, guid: dbdf0da829e4bd4478fb08adf481aa30, type: 2}
   _environmentManagerConfig: {fileID: 11400000, guid: 5c56b2dd7cfc02441bab9f5db0d0bfe0, type: 2}
+  _rarityManagerConfig: {fileID: 11400000, guid: 64fd308499e801f4686c618274fbc162, type: 2}

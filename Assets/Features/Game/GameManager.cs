@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
         HitboxManager       ,
         AudioManager        ,
         EnvironmentManager  ,
+        RarityManager       ,
     }
 
     public TManager Get<TManager>() where TManager : IGameSystem

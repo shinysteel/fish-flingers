@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa558a3a06da3f047a6d95a6993a4d9a, type: 3}
+  m_Name: RarityManagerConfig
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Rarities.RarityManagerConfig
+  _rarityColorMappings:
+  - _rarity: 0
+    _color: {r: 1, g: 1, b: 1, a: 1}
+  - _rarity: 1
+    _color: {r: 0.3500391, g: 0.8792453, b: 0.364342, a: 1}
+  - _rarity: 2
+    _color: {r: 0.3027767, g: 0.35701987, b: 0.9169811, a: 1}
+  - _rarity: 3
+    _color: {r: 0.73478085, g: 0.24313721, b: 0.87058824, a: 1}
+  - _rarity: 4
+    _color: {r: 0.87169814, g: 0.61130476, b: 0.20887856, a: 1}

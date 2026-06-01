@@ -15,7 +15,9 @@ MonoBehaviour:
   _nameTerm: -1838845624
   _descriptionTerm: -1838845623
   _sprite: {fileID: 21300000, guid: 003919e1fee7f0f4d9cf4a323b5f5b4f, type: 3}
+  _rarity: 0
   _itemId: 3
+  _itemType: 1
   _spriteAssetName: item_hammer
   _maxStack: 1
   _recipe:

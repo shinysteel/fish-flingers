@@ -15,7 +15,9 @@ MonoBehaviour:
   _nameTerm: -1838845622
   _descriptionTerm: -1838845621
   _sprite: {fileID: 21300000, guid: 32804148b627b9344b6700fd8613e69d, type: 3}
+  _rarity: 0
   _itemId: 2
+  _itemType: 2
   _spriteAssetName: item_paddle
   _maxStack: 1
   _recipe:

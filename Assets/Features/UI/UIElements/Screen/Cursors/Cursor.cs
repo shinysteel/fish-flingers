@@ -20,6 +20,7 @@ namespace FishFlingers.UI
         [SerializeField] private GameObject _visualsGameObject;
         [SerializeField] private ItemView _itemView;
         [SerializeField] private Image _handImage;
+        [SerializeField] private ItemInfo _itemInfo;
 
         private UIManager _uiManager;
 
@@ -28,6 +29,8 @@ namespace FishFlingers.UI
 
         private PointerEventData _pointerEventData;
         private List<RaycastResult> _raycastResults = new();
+
+        private ItemDefinitionData _currentItemDefinitionData;
 
         private Tween _resizeTween;
         private Vector2 _targetSlotSize;
@@ -48,14 +51,22 @@ namespace FishFlingers.UI
 
             _targetSlotSize = DefaultSlotSize;
             Resize(_targetSlotSize);
+
+            RefreshInfo();
         }
 
         private void Update()
         {
+            RaycastUpdate();
             SizeUpdate();
+
+            if (_owner.isOwner)
+            {
+                InfoUpdate();
+            }
         }
 
-        private void SizeUpdate()
+        private void RaycastUpdate()
         {
             _pointerEventData.Reset();
             _pointerEventData.position = RectTransformUtility.WorldToScreenPoint(null, _rectTransform.position);
@@ -63,7 +74,10 @@ namespace FishFlingers.UI
             _raycastResults.Clear();
 
             _uiManager.ScreenGraphicRaycaster.Raycast(_pointerEventData, _raycastResults);
+        }
 
+        private void SizeUpdate()
+        {
             InventoryWidget inventoryWidget = null;
 
             // Check if the cursor is overlapping an inventory widget
@@ -89,6 +103,40 @@ namespace FishFlingers.UI
             _resizeTween = Tween.Custom(startValue: _targetSlotSize, endValue: newTargetSize, duration: ResizeDuration, onValueChange: Resize);
 
             _targetSlotSize = newTargetSize;
+        }
+
+        private void InfoUpdate()
+        {
+            SlotView view = null;
+
+            foreach (RaycastResult result in _raycastResults)
+            {
+                if (result.gameObject.TryGetComponent(out view))
+                {
+                    break;
+                }
+            }
+
+            if (_currentItemDefinitionData == view?.InventoryItem?.ItemInstance.Data)
+            {
+                return;
+            }
+
+            _currentItemDefinitionData = view?.InventoryItem?.ItemInstance.Data;
+            RefreshInfo();
+        }
+
+        private void RefreshInfo()
+        {
+            if (_currentItemDefinitionData == null)
+            {
+                _itemInfo.gameObject.SetActive(false);
+            }
+            else
+            {
+                _itemInfo.Set(_currentItemDefinitionData);
+                _itemInfo.gameObject.SetActive(true);
+            }
         }
 
         private void Resize(Vector2 slotSize)

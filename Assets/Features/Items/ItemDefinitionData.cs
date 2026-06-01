@@ -1,16 +1,24 @@
-using FishFlingers.Items;
 using FishFlingers.States;
 using ShinyOwl.Common.Structures;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using FishFlingers.Inventories;
 
-namespace FishFlingers.Inventories
+namespace FishFlingers.Items
 {
+    public enum ItemType
+    {
+        Resource,
+        Tool,
+        Weapon
+    }
+
     [CreateAssetMenu(fileName = "ItemDefinitionData", menuName = "Data/Items/ItemDefinitionnData")]
     public class ItemDefinitionData : DefinitionData, ICraftable
     {
         [SerializeField] private ItemId _itemId;
+        [SerializeField] private ItemType _itemType;
         [SerializeField] private string _spriteAssetName;
         [SerializeField] private int _maxStack;
         [SerializeField] private Recipe _recipe;
@@ -20,6 +28,7 @@ namespace FishFlingers.Inventories
 
         // To differentiate from InstanceId, we use ItemId
         public ItemId ItemId => _itemId;
+        public ItemType ItemType => _itemType;
 
         public string SpriteAssetName => _spriteAssetName;
         public int MaxStack => _maxStack;

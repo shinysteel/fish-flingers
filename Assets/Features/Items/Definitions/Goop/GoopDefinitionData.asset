@@ -15,12 +15,13 @@ MonoBehaviour:
   _nameTerm: -1843039927
   _descriptionTerm: -1843039926
   _sprite: {fileID: 21300000, guid: 46b216f431950a94e8246a8e62d12397, type: 3}
+  _rarity: 0
   _itemId: 5
+  _itemType: 0
   _spriteAssetName: item_goop
   _maxStack: 3
   _recipe:
     _requirements: []
   _shape: {fileID: 11400000, guid: b87a2e1f7cd586940af0f1731cbf0e20, type: 2}
   _model: {fileID: 8374647551987080815, guid: 119a5e29c3e516248aa790b5386dde29, type: 3}
-  _leftClickAction: {fileID: 0}
-  _rightClickAction: {fileID: 0}
+  _actionDatas: []
