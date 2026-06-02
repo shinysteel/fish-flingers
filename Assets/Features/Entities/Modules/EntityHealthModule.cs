@@ -1,3 +1,5 @@
+using FishFlingers.Pools;
+using FishFlingers.UI;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,6 +8,8 @@ namespace FishFlingers.Entities
 {
     public class EntityHealthModule
     {
+        private PoolManager _poolManager;
+
         private IEntity _entity;
         private Func<int> _getter;
         private Action<int> _setter;
@@ -20,6 +24,8 @@ namespace FishFlingers.Entities
         /// <param name="setter">Does not require clamping - we do that for you</param>
         public EntityHealthModule(IEntity entity, Func<int> getter, Action<int> setter)
         {
+            _poolManager = GameManager.Instance.Get<PoolManager>();
+
             _entity = entity;
             _getter = getter;
             _setter = setter;
@@ -53,6 +59,10 @@ namespace FishFlingers.Entities
 
         public void HandleChanged(int previous, int current)
         {
+            FloatingText text = _poolManager.GetTypedPoolable<FloatingText>(new SpawnParams() { Position = _entity.transform.position + Vector3.up });
+            int difference = Mathf.Abs(current - previous);
+            text.Setup(difference.ToString());
+
             OnChanged?.Invoke(previous, current);
         }
     }
