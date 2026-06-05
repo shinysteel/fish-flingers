@@ -99,7 +99,8 @@ namespace FishFlingers.UI
 
                 Vector2Int cell = kvp.Key;
 
-                view.Setup(_context, this, new Vector2Int(kvp.Key.x, kvp.Key.y));
+                view.Setup(_context);
+                view.SetWidgetAndCell(this, new Vector2Int(kvp.Key.x, kvp.Key.y));
 
                 views.Add(cell, view);
             }
@@ -155,7 +156,8 @@ namespace FishFlingers.UI
             }
             
             InventoryItemView view = _inventoryItemViews[key];
-            view.Setup(this, _context, inventoryItem);
+            view.SetInventoryWidget(this);
+            view.Setup(_context, inventoryItem);
         }
 
         private void RemoveInventoryItemView(string key)

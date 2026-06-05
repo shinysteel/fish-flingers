@@ -45,9 +45,5 @@ namespace FishFlingers.UI
                 }
             }
         }
-
-        public void SetSelected(bool selected)
-        {
-        }
     }
 }

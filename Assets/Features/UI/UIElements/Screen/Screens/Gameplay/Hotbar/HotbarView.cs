@@ -97,11 +97,6 @@ namespace FishFlingers.UI
         {
             int delta = slot.Index - Utils.Math.EuclideanModulo(_selectedIndex, _slotViews.Length);
             _selectedIndex += delta;
-
-            for (int i = 0; i < _slotViews.Length; i++)
-            {
-                _slotViews[i].SetSelected(i == slot.Index);
-            }
         }
     }
 }

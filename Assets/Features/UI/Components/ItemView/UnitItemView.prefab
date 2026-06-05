@@ -104,14 +104,31 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -1061663768874322992, guid: 162fe50ec88a6244b9287662dbd3876b, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7222303831755663951, guid: 162fe50ec88a6244b9287662dbd3876b, type: 3}
-      insertIndex: -1
+      insertIndex: 1
       addedObject: {fileID: 3595727676330838551}
   m_SourcePrefab: {fileID: 100100000, guid: 162fe50ec88a6244b9287662dbd3876b, type: 3}
+--- !u!114 &86802396632392818 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7037038484271009354, guid: 162fe50ec88a6244b9287662dbd3876b, type: 3}
+  m_PrefabInstance: {fileID: 6961711142898444856}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!224 &272249431921763076 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7159542584151935292, guid: 162fe50ec88a6244b9287662dbd3876b, type: 3}
+  m_PrefabInstance: {fileID: 6961711142898444856}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &335008512543948919 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7222303831755663951, guid: 162fe50ec88a6244b9287662dbd3876b, type: 3}
@@ -129,15 +146,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bc6c4c378f0c87489c2ead3438a7b58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.UI.UnitItemView
-  _view: {fileID: 1285989946804460008}
---- !u!114 &1285989946804460008 stripped
+  _rectTransform: {fileID: 272249431921763076}
+  _itemImage: {fileID: 848513991270105958}
+  _countText: {fileID: 86802396632392818}
+  _assignmentImage: {fileID: 5612602127973632964}
+--- !u!114 &848513991270105958 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -1061663768874322992, guid: 162fe50ec88a6244b9287662dbd3876b, type: 3}
+  m_CorrespondingSourceObject: {fileID: 7735620228713654622, guid: 162fe50ec88a6244b9287662dbd3876b, type: 3}
   m_PrefabInstance: {fileID: 6961711142898444856}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 335008512543948919}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06442b5e608c4b24fbf408f885620f08, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.UI.InventoryItemView
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &5612602127973632964 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3278339604883661308, guid: 162fe50ec88a6244b9287662dbd3876b, type: 3}
+  m_PrefabInstance: {fileID: 6961711142898444856}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image

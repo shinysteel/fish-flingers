@@ -92,25 +92,42 @@ PrefabInstance:
       propertyPath: m_Name
       value: InventorySlotView
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4138844643198744038, guid: 59b99d0a4ffc9fc4f8d0bdb873c4a2db, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7222303831755663951, guid: 59b99d0a4ffc9fc4f8d0bdb873c4a2db, type: 3}
-      insertIndex: -1
+      insertIndex: 1
       addedObject: {fileID: 2366098855654131150}
   m_SourcePrefab: {fileID: 100100000, guid: 59b99d0a4ffc9fc4f8d0bdb873c4a2db, type: 3}
---- !u!114 &2508554034969803346 stripped
+--- !u!114 &7459400403451161288 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4138844643198744038, guid: 59b99d0a4ffc9fc4f8d0bdb873c4a2db, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8945574900454679932, guid: 59b99d0a4ffc9fc4f8d0bdb873c4a2db, type: 3}
   m_PrefabInstance: {fileID: 1990606277471686580}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9194884571448075771}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6192ebf94e7a72a44826983e95ccff12, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.UI.SlotView
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &7804075763740775483 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8641748338361621391, guid: 59b99d0a4ffc9fc4f8d0bdb873c4a2db, type: 3}
+  m_PrefabInstance: {fileID: 1990606277471686580}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef16d57506b1ca4479508800a65b6772, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CellOutline
+--- !u!224 &8717776806036653704 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7159542584151935292, guid: 59b99d0a4ffc9fc4f8d0bdb873c4a2db, type: 3}
+  m_PrefabInstance: {fileID: 1990606277471686580}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &9194884571448075771 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7222303831755663951, guid: 59b99d0a4ffc9fc4f8d0bdb873c4a2db, type: 3}
@@ -128,4 +145,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3d9a729ce28c3143bdc0910e9bdf1cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.UI.InventorySlotView
-  _view: {fileID: 2508554034969803346}
+  _rectTransform: {fileID: 8717776806036653704}
+  _image: {fileID: 7459400403451161288}
+  _cellOutline: {fileID: 7804075763740775483}

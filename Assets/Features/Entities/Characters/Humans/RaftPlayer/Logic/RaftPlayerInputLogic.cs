@@ -16,6 +16,8 @@ namespace FishFlingers.Entities
         private bool _one;
         private bool _two;
         private bool _three;
+        private bool _four;
+        private bool _five;
         private bool _rotateItem;
         private bool _dropItem;
         private bool _toggleSettings;
@@ -30,6 +32,8 @@ namespace FishFlingers.Entities
         public bool One => _one;
         public bool Two => _two;
         public bool Three => _three;
+        public bool Four => _four;
+        public bool Five => _five;
         public bool RotateItem => _rotateItem;
         public bool DropItem => _dropItem;
         public bool ToggleSettings => _toggleSettings;
@@ -71,6 +75,8 @@ namespace FishFlingers.Entities
             _one = Input.GetKeyDown(KeyCode.Alpha1);
             _two = Input.GetKeyDown(KeyCode.Alpha2);
             _three = Input.GetKeyDown(KeyCode.Alpha3);
+            _four = Input.GetKeyDown(KeyCode.Alpha4);
+            _five = Input.GetKeyDown(KeyCode.Alpha5);
             _rotateItem = Input.GetKeyDown(KeyCode.R);
             _dropItem = Input.GetKeyDown(KeyCode.Q);
             _toggleSettings = Input.GetKeyDown(KeyCode.Escape);
@@ -113,6 +119,14 @@ namespace FishFlingers.Entities
             else if (_three)
             {
                 number = 3;
+            }
+            else if (_four)
+            {
+                number = 4;
+            }
+            else if (_five)
+            {
+                number = 5;
             }
 
             return number >= 1;

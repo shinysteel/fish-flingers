@@ -18,7 +18,7 @@ namespace FishFlingers.UI
 {
     public class ItemView : MonoBehaviour 
     {
-        [SerializeField] private RectTransform _rectTransform;
+        [SerializeField] protected RectTransform _rectTransform;
         [SerializeField] private Image _itemImage;
         [SerializeField] private TextMeshProUGUI _countText;
         [SerializeField] private Image _assignmentImage;
@@ -26,13 +26,13 @@ namespace FishFlingers.UI
         private ItemManager _itemManager;
 
         private GameplayContext _context;
-        private InventoryItem _inventoryItem;
+        protected InventoryItem _inventoryItem;
 
         public RectTransform RectTransform => _rectTransform;
         public InventoryItem InventoryItem => _inventoryItem;
 
         private static readonly Vector2 DefaultSlotSize = new Vector2(60, 60);
-        private Vector2 _slotSize = DefaultSlotSize;
+        protected Vector2 _slotSize = DefaultSlotSize;
 
         public Vector2 SlotSize => _slotSize;
 
@@ -43,22 +43,12 @@ namespace FishFlingers.UI
 
         public void Setup(GameplayContext context, InventoryItem item)
         {
-            SetContext(context);
-            SetInventoryItem(item);
-
-            Refresh();
-        }
-
-        public void SetContext(GameplayContext context)
-        {
             _context = context;
+            _inventoryItem = item;
 
             _context.LocalPlayer.Hotbar.OnSlotChanged += HandleHotbarSlotChanged;
-        }
 
-        public void SetInventoryItem(InventoryItem item)
-        {
-            _inventoryItem = item;
+            Refresh();
         }
 
         private void OnDestroy()
@@ -100,16 +90,13 @@ namespace FishFlingers.UI
             return rotatedOffset * slotSize;
         }
 
-        public void Refresh()
+        public virtual void Refresh()
         {
-            if (_inventoryItem == null)
-            {
-                return;
-            }
-
             RefreshRect();
             RefreshItemImage();
-            RefreshDetails();
+            RefreshCountText();
+            RefreshAssignmentImage();
+            RefreshDetailsRects();
         }
 
         private void RefreshRect()
@@ -149,20 +136,13 @@ namespace FishFlingers.UI
             _rectTransform.eulerAngles = new Vector3(0f, 0f, _inventoryItem.Rotations * -90f);
         }
 
-        public void RefreshItemImage()
+        protected void RefreshItemImage()
         {
             // Sprite
             _itemImage.sprite = _inventoryItem.ItemInstance.Data.Sprite;
         }
 
-        private void RefreshDetails()
-        {
-            RefreshCountText();
-            RefreshAssignmentImage();
-            RefreshDetailsRects();
-        }
-
-        public void RefreshCountText()
+        protected void RefreshCountText()
         {
             // Size
             _countText.rectTransform.sizeDelta = _slotSize;
@@ -172,7 +152,7 @@ namespace FishFlingers.UI
             _countText.text = count > 1 ? count.ToString() : string.Empty;
         }
 
-        public void RefreshAssignmentImage()
+        protected void RefreshAssignmentImage()
         {
             if (_context.LocalPlayer.Hotbar.IsItemAssigned(_inventoryItem, out int index))
             {

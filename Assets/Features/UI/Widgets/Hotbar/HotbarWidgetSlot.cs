@@ -2,6 +2,7 @@ using FishFlingers.Inventories;
 using FishFlingers.Items;
 using FishFlingers.Pools;
 using FishFlingers.States;
+using PurrLobby;
 using ShinyOwl.Common;
 using ShinyOwl.Common.Utils;
 using System.Collections;
@@ -10,23 +11,17 @@ using UnityEngine.UI;
 
 namespace FishFlingers.UI
 {
-    public class HotbarWidgetSlot : MonoBehaviour, ISlotView, ITypedPoolable
+    public class HotbarWidgetSlot : SlotView, ITypedPoolable
     {
-        [SerializeField] private SlotView _view;
         [SerializeField] private Image _assignmentImage;
         
         private PoolManager _poolManager;
         private ItemManager _itemManager;
 
-        private GameplayContext _context;
-
         private int _index = -1;
         public int Index => _index;
 
         private UnitItemView _unitItemView;
-
-        public InventoryItem InventoryItem => _view.InventoryItem;
-        public CellOutline CellOutline => _view.CellOutline;
 
         private const float SlotSizeScalar = 0.9f;
 
@@ -36,31 +31,18 @@ namespace FishFlingers.UI
             _itemManager = GameManager.Instance.Get<ItemManager>();
         }
 
-        public void Setup(GameplayContext context, int index)
+        public void SetIndex(int index)
         {
-            _view.Setup(context);
-
-            _context = context;
             _index = index;
 
-            _view.CellOutline.SetColor(CellOutline.EColor.Default);
-            _view.CellOutline.SetEnabled(true, true, true, true);
+            _cellOutline.SetColor(CellOutline.EColor.Default);
+            _cellOutline.SetEnabled(true, true, true, true);
         }
 
-        public void SetTransform(Vector2 position, Vector2 size)
+        public override void SetInventoryItem(InventoryItem item)
         {
-            _view.SetTransform(position, size);
-
-            if (_unitItemView != null)
-            {
-                RefreshItemViewSize();
-            }
-        }
-
-        public void SetInventoryItem(InventoryItem item)
-        {
-            _view.SetInventoryItem(item);
-
+            base.SetInventoryItem(item);
+            
             RefreshAssignmentImage();
 
             if (item == null)
@@ -72,15 +54,26 @@ namespace FishFlingers.UI
             if (_unitItemView == null)
             {
                 _unitItemView = _poolManager.GetTypedPoolable<UnitItemView>(new SpawnParams() { Parent = transform });
-                RefreshItemViewSize();
+                _unitItemView.SetSlotSize(_rectTransform.rect.size * SlotSizeScalar);
             }
 
             _unitItemView.Setup(_context, item);
         }
 
+        public override void SetTransform(Vector2 position, Vector2 size)
+        {
+            base.SetTransform(position, size);
+
+            if (_unitItemView != null)
+            {
+                _unitItemView.SetSlotSize(_rectTransform.rect.size * SlotSizeScalar);
+                _unitItemView.Refresh();
+            }
+        }
+
         private void RefreshAssignmentImage()
         {
-            if (_view.InventoryItem != null && _context.LocalPlayer.Hotbar.IsItemAssigned(_view.InventoryItem, out int index))
+            if (_inventoryItem != null && _context.LocalPlayer.Hotbar.IsItemAssigned(_inventoryItem, out int index))
             {
                 _assignmentImage.sprite = _itemManager.GetAssignmentSprite(index);
                 _assignmentImage.enabled = true;
@@ -89,13 +82,6 @@ namespace FishFlingers.UI
             {
                 _assignmentImage.enabled = false;
             }
-        }
-
-        // Invoked when first retrieving the view and by the widget when OnRectTransformDimensionsChange is invoked
-        private void RefreshItemViewSize()
-        {
-            _unitItemView.SetSlotSize(_view.RectTransform.rect.size * SlotSizeScalar);
-            _unitItemView.RefreshView();
         }
         
         private void ReturnUnitItemView()
@@ -110,7 +96,7 @@ namespace FishFlingers.UI
 
         public void OnReturnedToPool()
         {
-            _view.OnDestroy();
+            OnDestroy();
 
             ReturnUnitItemView();
         }

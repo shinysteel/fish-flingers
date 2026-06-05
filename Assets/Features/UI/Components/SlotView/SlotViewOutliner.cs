@@ -7,7 +7,7 @@ using FishFlingers.Entities;
 
 namespace FishFlingers.UI
 {
-    public class SlotViewOutliner<T> where T : Component, ISlotView
+    public class SlotViewOutliner<T> where T : SlotView
     {
         private UIManager _uiManager;
 

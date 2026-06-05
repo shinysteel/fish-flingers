@@ -105,7 +105,7 @@ PrefabInstance:
     - target: {fileID: 3706311271679473846, guid: 9f712c6011906c644ae12943449c3a18, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -1315607875, guid: ca22496820fa44a47a53944ba0583622, type: 3}
+      objectReference: {fileID: -705248846, guid: ca22496820fa44a47a53944ba0583622, type: 3}
     - target: {fileID: 3706311271679473846, guid: 9f712c6011906c644ae12943449c3a18, type: 3}
       propertyPath: m_RaycastTarget
       value: 0

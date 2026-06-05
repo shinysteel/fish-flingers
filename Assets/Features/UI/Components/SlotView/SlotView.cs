@@ -8,26 +8,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using FishFlingers.Entities;
+
 namespace FishFlingers.UI
 {
-    public interface ISlotView
-    { }
-
     public class SlotView : MonoBehaviour
     {
-        [SerializeField] private RectTransform _rectTransform;
+        [SerializeField] protected RectTransform _rectTransform;
         [SerializeField] private Image _image;
-        [SerializeField] private CellOutline _cellOutline;
+        [SerializeField] protected CellOutline _cellOutline;
 
-        public RectTransform RectTransform => _rectTransform;
-        public CellOutline CellOutline => _cellOutline;
+        protected GameplayContext _context;
 
         private int _hotbarIndex = -1;
 
-        private InventoryItem _inventoryItem;
+        protected InventoryItem _inventoryItem;
         public InventoryItem InventoryItem => _inventoryItem;
 
-        private GameplayContext _context;
+        public RectTransform RectTransform => _rectTransform;
+        public CellOutline CellOutline => _cellOutline;
 
         public void Setup(GameplayContext context)
         {
@@ -35,7 +33,7 @@ namespace FishFlingers.UI
             _context.LocalPlayer.Hotbar.OnSlotChanged += HandleHotbarSlotChanged;
         }
 
-        public void OnDestroy()
+        protected void OnDestroy()
         {
             if (_context.LocalPlayer != null)
             {
@@ -72,7 +70,7 @@ namespace FishFlingers.UI
             }
         }
 
-        public void SetInventoryItem(InventoryItem item)
+        public virtual void SetInventoryItem(InventoryItem item)
         {
             if (_inventoryItem == item)
             {
@@ -94,7 +92,7 @@ namespace FishFlingers.UI
             }
         }
 
-        public void SetTransform(Vector2 position, Vector2 size)
+        public virtual void SetTransform(Vector2 position, Vector2 size)
         {
             _rectTransform.anchoredPosition = position;
             _rectTransform.sizeDelta = size;

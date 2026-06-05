@@ -36,7 +36,8 @@ namespace FishFlingers.UI
             foreach (HotbarSlot slot in _hotbar.Slots)
             {
                 _slots[slot.Index] = _poolManager.GetTypedPoolable<HotbarWidgetSlot>(new SpawnParams() { Parent = _slotsRectTransform });
-                _slots[slot.Index].Setup(context, slot.Index);
+                _slots[slot.Index].Setup(context);
+                _slots[slot.Index].SetIndex(slot.Index);
             }
 
             _hotbarOutliner = new HotbarOutliner(context, this);
