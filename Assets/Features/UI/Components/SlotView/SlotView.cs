@@ -1,13 +1,15 @@
+using FishFlingers.Entities;
 using FishFlingers.Inventories;
+using FishFlingers.Items;
+using FishFlingers.Pools;
 using FishFlingers.States;
 using PurrLobby;
 using ShinyOwl.Common;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using FishFlingers.Entities;
 
 namespace FishFlingers.UI
 {
@@ -16,6 +18,9 @@ namespace FishFlingers.UI
         [SerializeField] protected RectTransform _rectTransform;
         [SerializeField] private Image _image;
         [SerializeField] protected CellOutline _cellOutline;
+
+        protected PoolManager _poolManager;
+        protected ItemManager _itemManager;
 
         protected GameplayContext _context;
 
@@ -26,6 +31,12 @@ namespace FishFlingers.UI
 
         public RectTransform RectTransform => _rectTransform;
         public CellOutline CellOutline => _cellOutline;
+
+        private void Awake()
+        {
+            _poolManager = GameManager.Instance.Get<PoolManager>();
+            _itemManager = GameManager.Instance.Get<ItemManager>();
+        }
 
         public void Setup(GameplayContext context)
         {

@@ -1,17 +1,19 @@
 using FishFlingers.Entities;
 using FishFlingers.Inventories;
+using FishFlingers.Pools;
 using FishFlingers.States;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 namespace FishFlingers.UI
 {
-    public class HotbarOutliner : SlotViewOutliner<HotbarWidgetSlot>
+    public class RegisterOutliner<T> : SlotViewOutliner<T> where T : RegisterSlotView, ITypedPoolable
     {
-        private HotbarWidget _hotbarWidget;
+        private RegisterWidget<T> _registerWidget;
 
-        public HotbarOutliner(GameplayContext context, HotbarWidget widget) : base(context)
+        public RegisterOutliner(GameplayContext context, RegisterWidget<T> widget) : base(context)
         {
-            _hotbarWidget = widget;
+            _registerWidget = widget;
         }
 
         public override void Refresh()
@@ -23,7 +25,7 @@ namespace FishFlingers.UI
         {
             InventoryItem grabbedInventoryItem = _context.LocalPlayer.GrabbedInventoryItemLogic.GrabbedInventoryItem;
 
-            foreach (HotbarWidgetSlot slot in _hotbarWidget.Slots)
+            foreach (RegisterSlotView slot in _registerWidget.Slots)
             {
                 CellOutline.EColor color;
 

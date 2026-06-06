@@ -53,7 +53,8 @@ namespace FishFlingers.UI
 
         private void OnDestroy()
         {
-            if (_context.LocalPlayer != null)
+            // Context can be null. Currently ItemView can exist in a state where it is not assigned an item in the script Cursor
+            if (_context?.LocalPlayer != null)
             {
                 _context.LocalPlayer.Hotbar.OnSlotChanged -= HandleHotbarSlotChanged;
             }
