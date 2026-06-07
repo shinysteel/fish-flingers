@@ -23,7 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411201200128
-    m_Localized: Madera flotando en el mar
+    m_Localized: Un trozo de madera podrida y empapada.
     m_Metadata:
       m_Items: []
   - m_Id: 1411201200129
@@ -39,7 +39,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394433
-    m_Localized: Puede reparar baldosas y construir estructuras.
+    m_Localized: El viejo y confiable para construir y arreglar cosas.
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394434
@@ -55,7 +55,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394437
-    m_Localized: "Metal valioso que es dif\xEDcil de conseguir por aqu\xED."
+    m_Localized: Trozos de metal de una cosa de metal
     m_Metadata:
       m_Items: []
   - m_Id: 3159134252134400
@@ -63,7 +63,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 3159134281494528
-    m_Localized: Se convierte en una palmera
+    m_Localized: El comienzo de algo grande
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12721394154827776
+    m_Localized: "Aleta de tibur\xF3n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12721394188382208
+    m_Localized: La poderosa aleta de un enemigo peligroso
     m_Metadata:
       m_Items: []
   references:

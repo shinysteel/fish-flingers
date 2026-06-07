@@ -15,7 +15,7 @@ MonoBehaviour:
   _nameTerm: 1122912567
   _descriptionTerm: 1152272695
   _sprite: {fileID: 21300000, guid: 47df12be43c48c148bb6ade7b5203eee, type: 3}
-  _rarity: 0
+  _rarity: 1
   _itemId: 6
   _itemType: 0
   _spriteAssetName: item_palmSeed

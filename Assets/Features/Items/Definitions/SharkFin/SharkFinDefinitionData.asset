@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b87a32c41585134fa7bda360bec58d1, type: 3}
+  m_Name: SharkFinDefinitionData
+  m_EditorClassIdentifier: Assembly-CSharp::FishFlingers.Items.ItemDefinitionData
+  _nameTerm: 1669874186
+  _descriptionTerm: 1703428618
+  _sprite: {fileID: 21300000, guid: 2ebca4e0f16730d41b8337deffdf3183, type: 3}
+  _rarity: 0
+  _itemId: 7
+  _itemType: 0
+  _spriteAssetName: item_sharkFin
+  _maxStack: 2
+  _recipe:
+    _requirements: []
+  _shape: {fileID: 11400000, guid: b87a2e1f7cd586940af0f1731cbf0e20, type: 2}
+  _model: {fileID: 7404101766178785133, guid: db64cf2a8c85a384db51fcd6c106e236, type: 3}
+  _actionDatas: []

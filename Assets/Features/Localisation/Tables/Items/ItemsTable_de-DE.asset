@@ -23,7 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411201200128
-    m_Localized: Im Meer treibendes Holz
+    m_Localized: "Ein verrottendes, durchn\xE4sstes St\xFCck Holz"
     m_Metadata:
       m_Items: []
   - m_Id: 1411201200129
@@ -39,7 +39,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394433
-    m_Localized: Kann Fliesen reparieren und Strukturen errichten
+    m_Localized: "Das altbew\xE4hrte Werkzeug zum Bauen und Reparieren von Dingen"
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394434
@@ -55,7 +55,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394437
-    m_Localized: "Wertvolles Metall, das hier drau\xDFen schwer zu finden ist."
+    m_Localized: Metallteile eines Metalldings
     m_Metadata:
       m_Items: []
   - m_Id: 3159134252134400
@@ -63,7 +63,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 3159134281494528
-    m_Localized: "W\xE4chst zu einer Palme heran"
+    m_Localized: "Der Beginn von etwas Gro\xDFartigem"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12721394154827776
+    m_Localized: Haifischflosse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12721394188382208
+    m_Localized: "Die m\xE4chtige Flosse eines gef\xE4hrlichen Feindes"
     m_Metadata:
       m_Items: []
   references:

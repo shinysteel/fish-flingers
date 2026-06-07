@@ -23,7 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411201200128
-    m_Localized: "Madeira \xE0 deriva no mar"
+    m_Localized: "Um peda\xE7o de madeira apodrecida e encharcada."
     m_Metadata:
       m_Items: []
   - m_Id: 1411201200129
@@ -39,7 +39,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394433
-    m_Localized: Pode reparar azulejos e construir estruturas.
+    m_Localized: "O velho e confi\xE1vel para construir e consertar coisas."
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394434
@@ -55,7 +55,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394437
-    m_Localized: "Metal valioso e dif\xEDcil de encontrar por aqui."
+    m_Localized: "peda\xE7os de metal de uma coisa de metal"
     m_Metadata:
       m_Items: []
   - m_Id: 3159134252134400
@@ -63,7 +63,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 3159134281494528
-    m_Localized: Cresce e se transforma em uma palmeira.
+    m_Localized: "O in\xEDcio de algo grandioso"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12721394154827776
+    m_Localized: "Barbatana de tubar\xE3o"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12721394188382208
+    m_Localized: A poderosa barbatana de um inimigo perigoso
     m_Metadata:
       m_Items: []
   references:

@@ -63,6 +63,14 @@ MonoBehaviour:
     m_Key: items.palmSeedDescription
     m_Metadata:
       m_Items: []
+  - m_Id: 12721394154827776
+    m_Key: items.sharkFinName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12721394188382208
+    m_Key: items.sharkFinDescription
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

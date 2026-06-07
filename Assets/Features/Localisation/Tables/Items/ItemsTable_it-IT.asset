@@ -23,7 +23,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411201200128
-    m_Localized: Legno che galleggia nel mare
+    m_Localized: Un pezzo di legno marcio e impregnato d'acqua
     m_Metadata:
       m_Items: []
   - m_Id: 1411201200129
@@ -39,7 +39,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394433
-    m_Localized: "Pu\xF2 riparare le piastrelle e costruire strutture"
+    m_Localized: Il vecchio e affidabile per costruire e riparare le cose
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394434
@@ -55,7 +55,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394437
-    m_Localized: Metallo prezioso, difficile da reperire da queste parti.
+    m_Localized: Pezzi di metallo di un oggetto metallico
     m_Metadata:
       m_Items: []
   - m_Id: 3159134252134400
@@ -63,7 +63,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 3159134281494528
-    m_Localized: Si trasforma in una palma
+    m_Localized: L'inizio di qualcosa di grande
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12721394154827776
+    m_Localized: Pinna di squalo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12721394188382208
+    m_Localized: La potente pinna di un nemico pericoloso
     m_Metadata:
       m_Items: []
   references:
