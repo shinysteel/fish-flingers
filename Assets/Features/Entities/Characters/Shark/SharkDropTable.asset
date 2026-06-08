@@ -21,3 +21,7 @@ MonoBehaviour:
     _weight: 1
     _minCount: 1
     _maxCount: 1
+  - _value: 10
+    _weight: 1
+    _minCount: 1
+    _maxCount: 1

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e278c19ff91cdba43a5cc29df2a64756
+guid: 3ecd4fcb2cfaebc4db5d9b06b24ad084
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -298,6 +298,50 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: item_toothSpear
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 384
+        width: 64
+        height: 64
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eaa6de6a28f322a4286bcaf8b3cec17b
+      internalID: -129897675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_makoTooth
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 384
+        width: 64
+        height: 64
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31e3ceab53ca4e64591faf96cd9c0d1d
+      internalID: -1079111457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -318,10 +362,12 @@ TextureImporter:
       item_finBack: 825567185
       item_goop: -1028392100
       item_hammer: -1732200139
+      item_makoTooth: -1079111457
       item_paddle: -1614097415
       item_palmSeed: -1237339756
       item_scrap: -2116414943
       item_sharkFin: 1553281493
+      item_toothSpear: -129897675
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

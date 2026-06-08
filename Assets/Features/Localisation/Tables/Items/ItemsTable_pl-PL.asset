@@ -82,6 +82,22 @@ MonoBehaviour:
     m_Localized: "Najfajniejsza cz\u0119\u015B\u0107 rekina przyklejona do plec\xF3w"
     m_Metadata:
       m_Items: []
+  - m_Id: 13062890099929088
+    m_Localized: "W\u0142\xF3cznia z\u0119bata"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13062890104123392
+    m_Localized: "Kiedy \u017Cycie daje ci z\u0119by, robisz w\u0142\xF3cznie"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928704
+    m_Localized: "Z\u0105b Mako"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928705
+    m_Localized: "Materia\u0142 klasy A do rozrywania tratw"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

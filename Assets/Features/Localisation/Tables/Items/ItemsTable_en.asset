@@ -82,6 +82,22 @@ MonoBehaviour:
     m_Localized: The coolest part of a shark, stuck to your back
     m_Metadata:
       m_Items: []
+  - m_Id: 13062890099929088
+    m_Localized: Tooth Spear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13062890104123392
+    m_Localized: When life gives you teeth, you make spears
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928704
+    m_Localized: Mako Tooth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928705
+    m_Localized: A-grade material for tearing through rafts
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

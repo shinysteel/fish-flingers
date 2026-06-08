@@ -79,6 +79,22 @@ MonoBehaviour:
     m_Key: items.finBackDescription
     m_Metadata:
       m_Items: []
+  - m_Id: 13062890099929088
+    m_Key: items.toothSpearName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13062890104123392
+    m_Key: items.toothSpearDescription
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928704
+    m_Key: items.makoToothName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928705
+    m_Key: items.makoToothDescription
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -82,6 +82,22 @@ MonoBehaviour:
     m_Localized: "A parte mais legal de um tubar\xE3o, grudada nas suas costas."
     m_Metadata:
       m_Items: []
+  - m_Id: 13062890099929088
+    m_Localized: "Lan\xE7a de dentes"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13062890104123392
+    m_Localized: "Quando a vida te d\xE1 dentes, voc\xEA faz lan\xE7as."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928704
+    m_Localized: Dente de Mako
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928705
+    m_Localized: Material de primeira qualidade para romper jangadas.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

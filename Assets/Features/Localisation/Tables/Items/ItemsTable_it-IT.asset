@@ -82,6 +82,22 @@ MonoBehaviour:
     m_Localized: "La parte pi\xF9 bella di uno squalo, attaccata alla tua schiena"
     m_Metadata:
       m_Items: []
+  - m_Id: 13062890099929088
+    m_Localized: Lancia denti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13062890104123392
+    m_Localized: "Quando la vita ti d\xE0 i denti, tu fai delle lance"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928704
+    m_Localized: Dente di Mako
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928705
+    m_Localized: "Materiale di prima qualit\xE0 per squarciare le zattere"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

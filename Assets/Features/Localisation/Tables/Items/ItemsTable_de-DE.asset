@@ -82,6 +82,22 @@ MonoBehaviour:
     m_Localized: "Das Coolste an einem Hai, klebt an deinem R\xFCcken"
     m_Metadata:
       m_Items: []
+  - m_Id: 13062890099929088
+    m_Localized: Zahnspeer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13062890104123392
+    m_Localized: "Wenn dir das Leben Z\xE4hne gibt, machst du Speere daraus."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928704
+    m_Localized: Mako-Zahn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928705
+    m_Localized: "Material der G\xFCteklasse A zum Durchtrennen von Fl\xF6\xDFen"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

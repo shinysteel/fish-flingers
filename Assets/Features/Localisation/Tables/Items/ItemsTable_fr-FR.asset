@@ -82,6 +82,22 @@ MonoBehaviour:
     m_Localized: "La partie la plus cool d'un requin, coll\xE9e \xE0 votre dos"
     m_Metadata:
       m_Items: []
+  - m_Id: 13062890099929088
+    m_Localized: Lance dentaire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13062890104123392
+    m_Localized: Quand la vie vous donne des dents, vous en faites des lances
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928704
+    m_Localized: Dent de Mako
+    m_Metadata:
+      m_Items: []
+  - m_Id: 13071559113928705
+    m_Localized: "Mat\xE9riau de premi\xE8re qualit\xE9 pour d\xE9chirer les radeaux"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
