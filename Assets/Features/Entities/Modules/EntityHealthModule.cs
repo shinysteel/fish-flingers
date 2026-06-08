@@ -62,7 +62,7 @@ namespace FishFlingers.Entities
             FloatingText text = _poolManager.GetTypedPoolable<FloatingText>(new SpawnParams() { Position = _entity.transform.position + Vector3.up });
             int difference = Mathf.Abs(current - previous);
             text.Setup(difference.ToString());
-
+            
             OnChanged?.Invoke(previous, current);
         }
     }

@@ -160,10 +160,10 @@ namespace FishFlingers.Entities
 
         void IInteractable.Interact()
         {
-            if (_context.LocalPlayer.Inventory.TryRemoveItems(TileDefinitionData.RepairRecipe.ToChangeParams()))
-            {
-                _entityHealthModule.ChangeHealth(1);
-            }
+            //if (_context.LocalPlayer.Inventory.TryRemoveItems(TileDefinitionData.RepairRecipe.ToChangeParams()))
+            //{
+            //    _entityHealthModule.ChangeHealth(1);
+            //}
         }
     }
 }
