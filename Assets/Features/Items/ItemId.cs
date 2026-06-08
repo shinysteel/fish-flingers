@@ -12,5 +12,6 @@ namespace FishFlingers.Items
         Goop      = 5,
         PalmSeed  = 6,
         SharkFin  = 7,
+        FinBack   = 8,
     }
 }

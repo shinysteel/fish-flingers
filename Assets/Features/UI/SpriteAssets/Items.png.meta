@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 852434f20d6a1b644a5c67a01efaf177
+guid: e278c19ff91cdba43a5cc29df2a64756
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -240,7 +240,7 @@ TextureImporter:
         y: 448
         width: 64
         height: 64
-      alignment: 0
+      alignment: 6
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -250,6 +250,50 @@ TextureImporter:
       bones: []
       spriteID: 1680f88855cbe2a4488368f0837cb189
       internalID: -1237339756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_sharkFin
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 448
+        width: 64
+        height: 64
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b5144875735799c459e8ae16ca762cad
+      internalID: 1553281493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: item_finBack
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 448
+        width: 64
+        height: 64
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 72e42e5b62d2ab942bedfd5ee5791024
+      internalID: 825567185
       vertices: []
       indices: 
       edges: []
@@ -271,11 +315,13 @@ TextureImporter:
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       item_driftwood: -173479647
+      item_finBack: 825567185
       item_goop: -1028392100
       item_hammer: -1732200139
       item_paddle: -1614097415
       item_palmSeed: -1237339756
       item_scrap: -2116414943
+      item_sharkFin: 1553281493
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

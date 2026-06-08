@@ -74,6 +74,14 @@ MonoBehaviour:
     m_Localized: "Pot\u0119\u017Cna p\u0142etwa niebezpiecznego wroga"
     m_Metadata:
       m_Items: []
+  - m_Id: 12976089012203520
+    m_Localized: "P\u0142etwa tylna"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12976089012203521
+    m_Localized: "Najfajniejsza cz\u0119\u015B\u0107 rekina przyklejona do plec\xF3w"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -74,6 +74,14 @@ MonoBehaviour:
     m_Localized: A poderosa barbatana de um inimigo perigoso
     m_Metadata:
       m_Items: []
+  - m_Id: 12976089012203520
+    m_Localized: Fin Back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12976089012203521
+    m_Localized: "A parte mais legal de um tubar\xE3o, grudada nas suas costas."
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

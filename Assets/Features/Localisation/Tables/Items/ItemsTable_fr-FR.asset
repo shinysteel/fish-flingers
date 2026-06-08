@@ -74,6 +74,14 @@ MonoBehaviour:
     m_Localized: La puissante nageoire d'un ennemi dangereux
     m_Metadata:
       m_Items: []
+  - m_Id: 12976089012203520
+    m_Localized: "Aileron arri\xE8re"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12976089012203521
+    m_Localized: "La partie la plus cool d'un requin, coll\xE9e \xE0 votre dos"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

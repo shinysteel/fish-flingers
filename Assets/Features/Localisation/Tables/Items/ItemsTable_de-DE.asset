@@ -74,6 +74,14 @@ MonoBehaviour:
     m_Localized: "Die m\xE4chtige Flosse eines gef\xE4hrlichen Feindes"
     m_Metadata:
       m_Items: []
+  - m_Id: 12976089012203520
+    m_Localized: "R\xFCckenflosse"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12976089012203521
+    m_Localized: "Das Coolste an einem Hai, klebt an deinem R\xFCcken"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

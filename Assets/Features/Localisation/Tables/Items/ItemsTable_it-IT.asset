@@ -47,7 +47,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394435
-    m_Localized: Un mezzo per lanciare il pesce
+    m_Localized: Un mezzo per lanciare i pesci
     m_Metadata:
       m_Items: []
   - m_Id: 1411205394436
@@ -72,6 +72,14 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 12721394188382208
     m_Localized: La potente pinna di un nemico pericoloso
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12976089012203520
+    m_Localized: Pinna posteriore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12976089012203521
+    m_Localized: "La parte pi\xF9 bella di uno squalo, attaccata alla tua schiena"
     m_Metadata:
       m_Items: []
   references:

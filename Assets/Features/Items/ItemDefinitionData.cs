@@ -11,7 +11,9 @@ namespace FishFlingers.Items
     {
         Resource,
         Tool,
-        Weapon
+        Weapon,
+        Hat,
+        Clothing
     }
 
     [CreateAssetMenu(fileName = "ItemDefinitionData", menuName = "Data/Items/ItemDefinitionnData")]
